@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-numpy
-spiceypy
-pytest
-httpx
-rasterio
-pyproj
