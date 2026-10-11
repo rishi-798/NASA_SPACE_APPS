@@ -1,0 +1,260 @@
+{
+  "policy": "Choose the validated terrain product for each footprint; preserve provenance, compare overlaps and align datums before transitions. No blind averaging or claiming improved accuracy from upsampling.",
+  "sources": [
+    {
+      "id": "site04",
+      "role": "preferred local elevation within its footprint",
+      "resolutionMetres": 5,
+      "source": "https://pgda.gsfc.nasa.gov/products/78",
+      "downloaded": true,
+      "uncertainty": "paired RMS raster",
+      "notes": "LOLA already is a NASA DEM; not a third independent measurement to average",
+      "shared_grid_ids": "SITE04-A1 through SITE04-P16; original aliases retained"
+    },
+    {
+      "id": "cesium-moon",
+      "role": "global streaming terrain and imagery",
+      "source": "https://cesium.com/platform/cesium-ion/content/cesium-moon/",
+      "ionAsset": 2684829,
+      "downloaded": false,
+      "notes": "59m mid-latitude terrain; polar terrain improves to 5m in specified caps"
+    },
+    {
+      "id": "sldem2015",
+      "role": "Native 512ppd scientific mid-latitude global tier; original 32 files retained",
+      "resolutionMetres": 59,
+      "latitudeCoverage": [
+        -60,
+        60
+      ],
+      "source": "https://astrogeology.usgs.gov/search/map/moon_lro_lola_selene_kaguya_tc_dem_merge_60n60s_59m",
+      "downloaded": true,
+      "notes": "Requires separate polar data; same source family as Cesium mid-latitudes"
+    },
+    {
+      "id": "cgi-moon-kit",
+      "role": "visual colour; original-resolution crops applied to historical scenes",
+      "source": "https://svs.gsfc.nasa.gov/4720/",
+      "downloaded": true,
+      "notes": "Colour processed for aesthetics. Do not use as replacement for finer local DEM or paint observed illumination into dynamic shading."
+    },
+    {
+      "id": "NAC_DTM_APOLLO11",
+      "role": "validated local DEM crop; original sample heights retained",
+      "resolutionMetres": 2,
+      "source": "https://data.lroc.im-ldi.com/lroc/view_rdr_product/NAC_DTM_APOLLO11",
+      "downloaded": true,
+      "notes": "Stereo DEM tied to LOLA; validate footprint, nodata, datum and quality before use"
+    },
+    {
+      "id": "NAC_DTM_APOLLO14",
+      "role": "validated local DEM crop; original sample heights retained",
+      "resolutionMetres": 2,
+      "source": "https://data.lroc.im-ldi.com/lroc/view_rdr_product/NAC_DTM_APOLLO14",
+      "downloaded": true,
+      "notes": "Stereo DEM tied to LOLA; validate footprint, nodata, datum and quality before use"
+    },
+    {
+      "id": "NAC_DTM_APOLLO15",
+      "role": "validated local DEM crop; original sample heights retained",
+      "resolutionMetres": 2,
+      "source": "https://data.lroc.im-ldi.com/lroc/view_rdr_product/NAC_DTM_APOLLO15",
+      "downloaded": true,
+      "notes": "Stereo DEM tied to LOLA; validate footprint, nodata, datum and quality before use"
+    },
+    {
+      "id": "NAC_DTM_LUNOKHOD2_2",
+      "role": "validated local DEM crop",
+      "resolutionMetres": 5,
+      "downloaded": true,
+      "source": "https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_LUNOKHOD2_2",
+      "relativeLEMetres": 3.84,
+      "LOLA_RMSMetres": 1.75
+    },
+    {
+      "id": "SLDEM2015-Lunokhod1-native-crop",
+      "role": "coarse native terrain fallback; no fine measured elevations claimed",
+      "downloaded": true,
+      "resolutionNorthSouthMetres": 59.2253,
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_315_360_float.lbl"
+    }
+  ],
+  "scientific_dataset_manifest": "moon-dataset.json",
+  "global_scientific_sources": [
+    {
+      "id": "LOLA64-SVS",
+      "source": "https://svs.gsfc.nasa.gov/4720/",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_60s_30s_000_045_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_60s_30s_000_045_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_60s_30s_045_090_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_60s_30s_045_090_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_60s_30s_090_135_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_60s_30s_090_135_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_60s_30s_135_180_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_60s_30s_135_180_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_60s_30s_180_225_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_60s_30s_180_225_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_60s_30s_225_270_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_60s_30s_225_270_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_60s_30s_270_315_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_60s_30s_270_315_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_60s_30s_315_360_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_60s_30s_315_360_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30s_00s_000_045_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30s_00s_000_045_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30s_00s_045_090_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30s_00s_045_090_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30s_00s_090_135_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30s_00s_090_135_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30s_00s_135_180_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30s_00s_135_180_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30s_00s_180_225_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30s_00s_180_225_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30s_00s_225_270_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30s_00s_225_270_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30s_00s_270_315_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30s_00s_270_315_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30s_00s_315_360_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30s_00s_315_360_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_00n_30n_000_045_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_000_045_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_00n_30n_045_090_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_045_090_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_00n_30n_090_135_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_090_135_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_00n_30n_135_180_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_135_180_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_00n_30n_180_225_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_180_225_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_00n_30n_225_270_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_225_270_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_00n_30n_270_315_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_270_315_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_00n_30n_315_360_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_315_360_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30n_60n_000_045_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_000_045_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30n_60n_045_090_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_045_090_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30n_60n_090_135_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_090_135_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30n_60n_135_180_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_135_180_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30n_60n_180_225_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_180_225_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30n_60n_225_270_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_225_270_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30n_60n_270_315_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_270_315_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "sldem2015_512_30n_60n_315_360_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_315_360_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "ldem_60n_60m_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/float_img/ldem_60n_60m_float.lbl",
+      "downloaded": true
+    },
+    {
+      "id": "ldem_60s_60m_float",
+      "source": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/float_img/ldem_60s_60m_float.lbl",
+      "downloaded": true
+    }
+  ]
+}
