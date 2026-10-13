@@ -13,6 +13,9 @@ export type CelestialPosition = {
   visible: boolean;
   flat_visible?: boolean;
   terrain_horizon?: number;
+  distance_km?: number;
+  /** JPL SPICE vector in the Moon ME frame, from the lunar center to the body. */
+  moon_fixed_position_km?: [number, number, number];
 };
 
 export type VisibilityResponse = {
