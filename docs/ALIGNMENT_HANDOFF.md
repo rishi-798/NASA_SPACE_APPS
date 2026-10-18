@@ -1,5 +1,8 @@
 # G7 alignment handoff for frontend integration
 
+Terrain is available through the cloud backend; see [CLOUD_TERRAIN.md](CLOUD_TERRAIN.md).
+Teammates do not need to download the full raster dataset for website integration.
+
 The G7 scientific export's coordinate transform was checked against the original DEM and Cesium 1.145.0, then rendered and clicked in a local WebGL preview. The unfinished Blender terrain asset is deliberately withheld. This commit provides the verified transform, adapter and check results; it does not enable a ready local scene in the live app.
 
 ## Files to use

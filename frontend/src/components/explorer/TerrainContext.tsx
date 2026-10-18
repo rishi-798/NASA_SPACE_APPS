@@ -3,7 +3,9 @@ import "../../terrain-context.css";
 
 type Catalogue = {
   latitude: number; longitude: number; grid_id: string; global_child_grid_id: string;
-  statistics_grid_id: string; statistics_scope: string; point_elevation_m: null;
+  statistics_grid_id: string; statistics_scope: string; point_elevation_m: number | null;
+  point_elevation_note?: string | null;
+  point_terrain?: { source_id: string; source_url: string; sampling: string; coordinate_frame: string; sample_spacing_x_m: number; sample_spacing_y_m: number; vertical_reference_radius_m: number } | null;
   local_elevation_files: number; expected_elevation_files: number; scene_available: false;
   statistics: {
     elevation_min_m: number | null; elevation_max_m: number | null;
@@ -56,14 +58,15 @@ export function TerrainContext({ latitude, longitude }: { latitude: number; long
         <div><dt>Regional height range</dt><dd>{metres(native ? stats.native_elevation_min_m : stats.elevation_min_m)} to {metres(native ? stats.native_elevation_max_m : stats.elevation_max_m)}</dd></div>
         <div><dt>Source sampling</dt><dd>{metres(native ? stats.native_statistics_spacing_m : stats.source_resolution_m)} — not measurement accuracy</dd></div>
         {stats.height_uncertainty_rms_m_median !== null && <div><dt>Median reported height RMS</dt><dd>{metres(stats.height_uncertainty_rms_m_median)}</dd></div>}
-        <div><dt>Point height</dt><dd>Unavailable — elevation rasters not supplied</dd></div>
+        <div><dt>Point height</dt><dd>{data.point_elevation_m !== null ? metres(data.point_elevation_m) : "Unavailable - no valid local elevation at this point"}</dd></div>
       </dl>
+      {data.point_terrain && <p>Point height from {data.point_terrain.source_id}, using the nearest original data pixel. Height is relative to the Moon reference sphere ({data.point_terrain.vertical_reference_radius_m.toLocaleString("en")} m radius). This is not a landing-safety assessment.</p>}
       <details><summary>Source and coverage</summary><p>{native ? stats.native_statistics_source_ids : stats.terrain_source}</p>
         <p>Summary grid: {data.statistics_grid_id}. Global child: {data.global_child_grid_id}.</p>
         <p>{data.local_elevation_files} / {data.expected_elevation_files} elevation files present locally. Upstream completion reports do not prove these files are installed here.</p>
         {stats.source_url && <a href={stats.source_url} target="_blank" rel="noreferrer">Elevation product reference</a>}
       </details>
-      <p>These supplied CSV statistics describe a region, not the exact selected point. The local Blender surface remains a placeholder.</p>
+      <p>Regional ranges describe the surrounding area. Point height, when available, is sampled separately from the terrain file. The detailed Blender scene is still pending.</p>
     </> : null}
   </section>;
 }

@@ -1,5 +1,16 @@
 # NASA-APP
 
+## Cloud terrain and visual integrations
+
+This repository includes the Earth textures and launch-site globe, Cesium Moon
+viewer improvements, Earth/Moon mission scene, stars, lighting and route controls.
+The 41-source terrain connection is configured in `render.yaml` and
+`data/cloud-release.json`; the large scientific rasters stay on Hugging Face.
+See `docs/CLOUD_TERRAIN.md` for the current deployment and dataset links.
+No teammate needs to download or host the full terrain dataset.
+The existing Render service currently watches `Deejee585/nasa-space-apps-cloud`;
+publishing this copy to NASA-APP does not change that service's GitHub connection.
+
 A cinematic space-project website combining the visual direction of the three
 requested Aura references, with this project's own content throughout. The new
 home page introduces Rishi's Cesium Moon viewer and Suhas's Python/SPICE visibility
