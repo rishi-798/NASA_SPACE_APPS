@@ -73,3 +73,34 @@ def test_new_models_and_local_draco_are_available():
         assert len(result.content) > 1000
         if decoder.endswith('.wasm'):
             assert result.content[:4] == b'\x00asm'
+
+
+def test_point_height_is_separate_from_regional_summary(monkeypatch, tmp_path):
+    import numpy as np
+    import rasterio
+    from rasterio.transform import from_origin
+    monkeypatch.setenv('LUNAR_DATASET_DIR', str(tmp_path))
+    parent = identify(0, 0)['parent_grid_id']
+    record = {'grid_id': parent, 'elevation_max_m': 999}
+    with sqlite3.connect(tmp_path / 'moon-grid-index.sqlite') as connection:
+        connection.execute('CREATE TABLE grids (grid_id TEXT PRIMARY KEY, record_json TEXT)')
+        connection.execute('INSERT INTO grids VALUES (?,?)', (parent, json.dumps(record)))
+    source = {'id': 'test-raster', 'role': 'elevation', 'format': 'lola-global-tiff',
+              'path': 'test.tif', 'url': 'https://example.test/terrain'}
+    manifest_path = tmp_path / 'moon-dataset.json'
+    manifest_path.write_text(json.dumps({'sources': [source]}))
+    with rasterio.open(tmp_path / 'test.tif', 'w', driver='GTiff', width=4, height=2,
+                       count=1, dtype='float32', transform=from_origin(-180, 90, 90, 90)) as image:
+        image.write(np.array([[1, 2, 3, 4], [5, 6, 1.25, 8]], dtype='float32'), 1)
+    client = TestClient(app)
+    value = client.get('/api/terrain/catalogue?lat=0&lon=0').json()
+    assert value['point_elevation_m'] == 1250
+    assert value['point_terrain']['source_id'] == 'test-raster'
+    assert value['statistics']['elevation_max_m'] == 999
+    assert value['scene_available'] is False
+    source['path'] = 'missing.tif'
+    manifest_path.write_text(json.dumps({'sources': [source]}))
+    missing = client.get('/api/terrain/catalogue?lat=0&lon=0').json()
+    assert missing['point_elevation_m'] is None
+    assert missing['point_terrain'] is None
+    assert missing['point_elevation_note']
