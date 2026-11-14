@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: brahmos-lunar-browser
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python -m scripts.prepare_cloud_runtime && python -m backend.download_kernels && cd frontend && npm ci && npm run build
+    startCommand: python -m uvicorn backend.app:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: LUNAR_DATASET_DIR
+        value: data/lunar-cloud
+      - key: LUNAR_COG_BASE_URL
+        value: https://huggingface.co/datasets/Deejee-2-406/brahmos-lunar-terrain-cogs/resolve/a6b2c53f65661fbd5165eae5a83449aeb35abcd8
+      - key: LUNAR_COG_RELEASE_FILE
+        value: data/cloud-release.json
+      - key: GDAL_CACHEMAX
+        value: "32"
+      - key: CPL_VSIL_CURL_CACHE_SIZE
+        value: "8388608"
+      - key: GDAL_DISABLE_READDIR_ON_OPEN
+        value: EMPTY_DIR
+      - key: GDAL_HTTP_TIMEOUT
+        value: "20"
+      - key: GDAL_HTTP_MAX_RETRY
+        value: "2"
+      - key: OPENBLAS_NUM_THREADS
+        value: "1"
