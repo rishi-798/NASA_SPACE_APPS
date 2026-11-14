@@ -8,6 +8,7 @@ const links = [
   { to: "/missions", label: "Missions" },
   { to: "/timeline", label: "Timeline" },
   { to: "/about", label: "About" },
+  { to: "/discover", label: "Discover" },
 ];
 
 export function Navigation() {
