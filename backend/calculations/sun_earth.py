@@ -56,10 +56,12 @@ def _local_angles(vector: np.ndarray, latitude: float, longitude: float) -> tupl
         [math.cos(lat) * math.cos(lon), math.cos(lat) * math.sin(lon), math.sin(lat)]
     )
 
-    elevation = math.degrees(math.asin(float(np.clip(np.dot(direction, up), -1.0, 1.0))))
-    azimuth = math.degrees(
-        math.atan2(float(np.dot(direction, east)), float(np.dot(direction, north)))
-    ) % 360
+    east_component = float(np.dot(direction, east))
+    north_component = float(np.dot(direction, north))
+    up_component = float(np.dot(direction, up))
+    # atan2 stays well-conditioned at zenith/nadir, unlike asin near +/-1.
+    elevation = math.degrees(math.atan2(up_component, math.hypot(east_component, north_component)))
+    azimuth = math.degrees(math.atan2(east_component, north_component)) % 360
     return azimuth, elevation
 
 
