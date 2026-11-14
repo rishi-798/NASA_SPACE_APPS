@@ -3,6 +3,7 @@ import { lazy, Suspense, useCallback, useEffect, useReducer, useRef, useState } 
 import { Link } from "react-router-dom";
 import { MoonMap, type MoonControls, type MoonLocation } from "../MoonMap";
 import { ConditionsPanel } from "../components/explorer/ConditionsPanel";
+import { LaunchWeatherPanel } from "../components/trip/LaunchWeatherPanel";
 import { TerrainContext } from "../components/explorer/TerrainContext";
 import { HorizonContainer } from "../components/visualization/HorizonContainer";
 import { VisibilityTimeline } from "../components/visualization/VisibilityTimeline";
@@ -139,6 +140,7 @@ export function TripPage() {
             <span>{site.country}{site.historical ? " / historical" : ""}</span><strong>{site.name}</strong><small>{site.pad}</small></button>)}</div>
           {!filteredDepartures.length && <p role="status">No matching launch sites. Try a country or spaceport name.</p>}
           {departure && <div className="trip-selected"><strong>{departure.name} / {departure.pad}</strong><p>{departure.latitude.toFixed(2)}°, {departure.longitude.toFixed(2)}°</p><a href={departure.source} target="_blank" rel="noreferrer">Spaceport reference <ArrowUpRight /></a></div>}
+          {departure && <LaunchWeatherPanel key={departure.id} siteId={departure.id} />}
           <p className="trip-note">Pins are approximate prototype locations, not surveyed pad coordinates. Compatibility here is a catalogue association, not a launch approval.</p>
           <button className="trip-primary" disabled={!departure} onClick={() => go("rocket")}>Depart from here <ArrowRight /></button>
         </aside></div>}

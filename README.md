@@ -68,6 +68,10 @@ Landing and operating payloads near the **lunar South Pole** presents extreme ph
 
 ---
 
+## Earth Launch-Site Weather (Meteomatics)
+
+The trip planner's Departure step can load a 24-hour hourly Earth forecast for the selected launch pad: temperature, wind speed, and precipitation. Provider credentials stay in backend environment variables; missing access leaves the planner usable. Weather is independent of lunar SPICE analysis and does not establish launch safety. See [configuration, API contract, and limitations](docs/METEOMATICS.md).
+
 ## 📡 NASA Open Data Integration
 
 | NASA Data Product | Agency / Mission | Role in Project |

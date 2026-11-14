@@ -1,15 +1,7 @@
+import launchSiteRecords from "../../../data/launch_sites.json";
 import { moonMapSites } from "./moonMapSites";
 
-export const launchSites = [
-  { id: "kennedy-39a", name: "Kennedy Space Center", pad: "LC-39A", country: "United States", latitude: 28.61, longitude: -80.60, rockets: ["saturn-v", "falcon-9"], historical: false, source: "https://www.nasa.gov/kennedy/" },
-  { id: "kennedy-39b", name: "Kennedy Space Center", pad: "LC-39B", country: "United States", latitude: 28.63, longitude: -80.62, rockets: ["sls"], historical: false, source: "https://www.nasa.gov/kennedy/" },
-  { id: "cape-41", name: "Cape Canaveral", pad: "SLC-41", country: "United States", latitude: 28.58, longitude: -80.58, rockets: ["vulcan"], historical: false, source: "https://www.ulalaunch.com/" },
-  { id: "sriharikota", name: "Satish Dhawan Space Centre", pad: "Second Launch Pad", country: "India", latitude: 13.72, longitude: 80.23, rockets: ["lvm3"], historical: false, source: "https://www.isro.gov.in/SDSC.html" },
-  { id: "tanegashima", name: "Tanegashima Space Center", pad: "Yoshinobu launch complex", country: "Japan", latitude: 30.40, longitude: 130.98, rockets: ["h-iia"], historical: true, source: "https://global.jaxa.jp/about/centers/tnsc/" },
-  { id: "xichang", name: "Xichang", pad: "Launch complex (approximate)", country: "China", latitude: 28.25, longitude: 102.03, rockets: ["long-march-3b"], historical: false, source: "https://www.cnsa.gov.cn/english/" },
-  { id: "wenchang", name: "Wenchang", pad: "Launch complex (approximate)", country: "China", latitude: 19.61, longitude: 110.95, rockets: ["long-march-5"], historical: false, source: "https://www.cnsa.gov.cn/english/" },
-  { id: "baikonur", name: "Baikonur Cosmodrome", pad: "Proton complex (approximate)", country: "Kazakhstan / Soviet heritage", latitude: 45.92, longitude: 63.34, rockets: ["proton"], historical: true, source: "https://www.esa.int/Enabling_Support/Space_Transportation/Europe_s_Spaceport/Baikonur_Cosmodrome" },
-];
+export const launchSites = launchSiteRecords;
 
 const originalRockets = [
   { id: "saturn-v", name: "Saturn V", category: "Historical crewed lunar launcher", mission: "Apollo programme", note: "NASA's verified GLB. Historical prototype default, not an available launch service.", model: "/saturn-v.glb", source: "https://science.nasa.gov/3d-resources/saturn-v/" },
