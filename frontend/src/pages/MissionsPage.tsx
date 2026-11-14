@@ -4,6 +4,7 @@ import {
   Database,
   MapPin,
 } from "@phosphor-icons/react";
+import { missionExplorerUrl, missionTypeLabel } from "../lib/missionNavigation";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { RouteIntro } from "../components/ui/RouteIntro";
@@ -13,12 +14,14 @@ export function MissionsPage() {
   const [selectedId, setSelectedId] = useState(missions[0]?.id ?? "");
   const selected = missions.find((m) => m.id === selectedId) ?? missions[0]!;
 
+  const explorerUrl = missionExplorerUrl(selected);
+
   return (
     <article className="editorial-page missions-page">
       <RouteIntro
         eyebrow="CLPS & Artemis mission archive"
-        title={<>THE LANDING<br />ARCHIVE.</>}
-        description="Comprehensive manifest of NASA Commercial Lunar Payload Services (CLPS) and Artemis lunar landing missions, scientific instruments, and landing areas."
+        title={<>THE MISSION<br />ARCHIVE.</>}
+        description="Selected CLPS deliveries, crewed flybys, and orbital demonstrations, with verified sources and landing areas where applicable."
         side={
           <div className="dataset-readout">
             <Database aria-hidden="true" />
@@ -28,7 +31,7 @@ export function MissionsPage() {
       />
 
       <div className="mission-browser">
-        <section className="mission-index" aria-label="Mission-linked landing sites">
+        <section className="mission-index" aria-label="Mission records">
           <div className="mission-columns" aria-hidden="true">
             <span>Mission</span>
             <span>Target area</span>
@@ -66,9 +69,11 @@ export function MissionsPage() {
             {selected.description}
           </p>
 
+          <p>{missionTypeLabel(selected)} · Last verified <time dateTime={selected.lastVerified}>{selected.lastVerified}</time></p>
+          <p className="trip-note">{selected.scheduleNote}</p>
           <dl className="mission-data-list">
             <div>
-              <dt>Target Date</dt>
+              <dt>{selected.dateLabel}</dt>
               <dd>{selected.landingDate}</dd>
             </div>
             <div>
@@ -77,32 +82,29 @@ export function MissionsPage() {
             </div>
             <div>
               <dt>Spacecraft / Lander</dt>
-              <dd>{selected.lander ?? "Commercial Lander"}</dd>
+              <dd>{selected.lander ?? "Not specified"}</dd>
             </div>
             <div>
               <dt>Launch Vehicle</dt>
-              <dd>{selected.launchVehicle ?? "Falcon 9 / Heavy"}</dd>
+              <dd>{selected.launchVehicle ?? "Not specified"}</dd>
             </div>
             <div>
               <dt>Mission Objective</dt>
               <dd>{selected.objective}</dd>
             </div>
             <div>
-              <dt>Key Payloads</dt>
+              <dt>Payload highlights</dt>
               <dd>{selected.payloads.join(", ")}</dd>
             </div>
           </dl>
 
           <div className="mission-actions" style={{ marginTop: "28px" }}>
-            <Link
-              className="primary-text-link"
-              to={selected.siteId ? `/explorer?site=${selected.siteId}` : `/explorer`}
-            >
-              Analyze landing conditions <ArrowRight />
-            </Link>
-            <a className="source-link" href={selected.source} target="_blank" rel="noreferrer">
-              Official NASA Record <ArrowUpRight />
-            </a>
+            {explorerUrl ? <Link className="primary-text-link" to={explorerUrl}>
+              Explore landing area <ArrowRight />
+            </Link> : <p className="trip-note">{selected.status === "Cancelled" ? "Task order ended; no active landing destination." : selected.missionType !== "surface" ? "No lunar surface landing is part of this mission." : "Landing coordinates are not available."}</p>}
+            {selected.sources.map((source, index) => <a key={source} className="source-link" href={source} target="_blank" rel="noreferrer">
+              {index === 0 ? "Mission source" : `Supporting source ${index}`} <ArrowUpRight />
+            </a>)}
           </div>
         </aside>
       </div>

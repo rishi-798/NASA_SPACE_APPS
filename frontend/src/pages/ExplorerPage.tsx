@@ -9,6 +9,7 @@ import { TerrainContext } from "../components/explorer/TerrainContext";
 import { HorizonContainer } from "../components/visualization/HorizonContainer";
 import { VisibilityTimeline } from "../components/visualization/VisibilityTimeline";
 import { landingSites } from "../data/landingSites";
+import { explorerDestination } from "../lib/missionNavigation";
 import { ApiError, getAnalysis } from "../lib/api";
 import type { MoonLocation } from "../MoonMap";
 import { formatCoordinate } from "../lib/format";
@@ -19,18 +20,23 @@ function timestamp(date: string, time: string) {
 }
 
 export function ExplorerPage() {
+  const [params] = useSearchParams();
+  return <ExplorerWorkspace key={params.toString()} />;
+}
+
+function ExplorerWorkspace() {
   const root = useRef<HTMLElement>(null);
   const [searchParams] = useSearchParams();
-  const requestedSite = searchParams.get("site");
+  const destination = explorerDestination(searchParams, landingSites.map((site) => site.id));
   const firstSite = landingSites[0]!;
-  const initialSite = landingSites.find((site) => site.id === requestedSite) ?? firstSite;
+  const initialSite = landingSites.find((site) => site.id === destination.siteId) ?? firstSite;
 
   const [selectedId, setSelectedId] = useState(initialSite.id);
   const [date, setDate] = useState("2026-10-03");
   const [time, setTime] = useState("18:00");
   const [analysisState, setAnalysisState] = useState<AnalysisState>("idle");
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [pickedLocation, setPickedLocation] = useState<MoonLocation | null>(null);
+  const [pickedLocation, setPickedLocation] = useState<MoonLocation | null>(destination.location);
   const activeRequest = useRef<AbortController | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>();
 
