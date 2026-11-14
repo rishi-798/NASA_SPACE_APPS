@@ -12,7 +12,8 @@ def test_grid_identity_remains_available_without_elevation_data():
     result = response.json()
     assert result['grid_id'] == identify(.67416, 23.47315)['grid_id']
     assert result['elevation_m'] is None
-    assert result['scene_available'] is False
+    assert result['scene_available'] is True
+    assert result['local_scene_id'] == 'REGION-APOLLO-11'
     assert client.get('/api/terrain/identity?lat=91&lon=0').status_code == 422
 
 

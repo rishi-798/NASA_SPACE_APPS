@@ -19,3 +19,4 @@ backend/kernels/*.tpc
 backend/kernels/*.tf
 data/lunar
 tmp
+outputs
