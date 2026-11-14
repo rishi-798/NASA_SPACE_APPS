@@ -14,6 +14,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+import numpy as np
+
 from fastapi import APIRouter, HTTPException, Query, Response
 from fastapi.responses import FileResponse
 
@@ -464,9 +466,14 @@ def get_model_lighting(
     time: Optional[str] = Query(None, description="ISO UTC timestamp (e.g. 2026-11-15T12:00:00Z). Defaults to current UTC."),
 ):
     """Computes exact astronomical sub-solar and sub-Earth vectors relative to the 3D model's tangent plane."""
+    from backend.local_scenes import scenes
+    local_scene = next((item for item in scenes() if item['id'].lower() == model_id.strip().lower()), None)
     spec = next((s for s in KNOWN_MODELS if s["id"] == model_id.strip().lower()), None)
+    if local_scene:
+        spec = {"id": local_scene['id'], "name": local_scene['name'],
+                "center_lat": local_scene['anchor']['latitude'], "center_lon": local_scene['anchor']['longitude']}
     if not spec:
-        raise HTTPException(status_code=404, detail=f"Model '{model_id}' not found")
+        raise HTTPException(status_code=404, detail="Terrain model not found")
 
     if time is None:
         target_time = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
@@ -482,39 +489,43 @@ def get_model_lighting(
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"SPICE ephemeris calculation failed: {e}")
 
-    sun_az = vis["sun"]["azimuth"]
-    sun_el = vis["sun"]["elevation"]
-    earth_az = vis["earth"]["azimuth"]
-    earth_el = vis["earth"]["elevation"]
+    lat, lon = map(math.radians, (spec['center_lat'], spec['center_lon']))
+    rotation = np.array([
+        [-math.sin(lon), math.cos(lon), 0],
+        [-math.sin(lat)*math.cos(lon), -math.sin(lat)*math.sin(lon), math.cos(lat)],
+        [math.cos(lat)*math.cos(lon), math.cos(lat)*math.sin(lon), math.sin(lat)],
+    ])
+    site = rotation[2] * 1737.4
+    if local_scene:
+        transform = np.asarray(local_scene['local_to_moon_fixed'], dtype=float)
+        rotation = transform[:3, :3].T
+        site = transform[:3, 3] / 1000
+    sun_fixed = np.array(vis['sun']['moon_fixed_position_km'])
+    earth_fixed = np.array(vis['earth']['moon_fixed_position_km'])
+    earth_to_sun = sun_fixed - earth_fixed
+    earth_to_observer = site - earth_fixed
+    cosine_phase = float(np.dot(earth_to_sun, earth_to_observer) /
+                         (np.linalg.norm(earth_to_sun) * np.linalg.norm(earth_to_observer)))
 
-    # Convert azimuth (clockwise from North) and elevation into local Z-up vector
-    # x = East, y = North, z = Up
-    def to_vector(az_deg: float, el_deg: float) -> List[float]:
-        theta = math.radians(el_deg)
-        phi = math.radians(az_deg)
-        x = round(math.cos(theta) * math.sin(phi), 6)
-        y = round(math.cos(theta) * math.cos(phi), 6)
-        z = round(math.sin(theta), 6)
-        return [x, y, z]
+    def sky_body(name, radius_km):
+        vector = (sun_fixed if name == 'sun' else earth_fixed) - site
+        distance = float(np.linalg.norm(vector))
+        local = rotation @ (vector / distance)
+        elevation = math.degrees(math.atan2(float(local[2]), math.hypot(float(local[0]), float(local[1]))))
+        return {
+            "azimuth_deg": math.degrees(math.atan2(float(local[0]), float(local[1]))) % 360,
+            "elevation_deg": elevation, "visible": elevation > 0,
+            "directional_vector_local_z_up": [float(v) for v in local],
+            "distance_km": distance,
+            "angular_radius_deg": math.degrees(math.asin(radius_km / distance)),
+        }
 
+    sun, earth = sky_body('sun', 695700), sky_body('earth', 6378.137)
+    earth['illuminated_fraction'] = (1 + max(-1, min(1, cosine_phase))) / 2
+    earth['sun_direction_local_z_up'] = [float(v) for v in rotation @ (earth_to_sun / np.linalg.norm(earth_to_sun))]
     return {
-        "model_id": spec["id"],
-        "model_name": spec["name"],
-        "time": target_time,
-        "center_coordinates": {
-            "latitude_deg": spec["center_lat"],
-            "longitude_deg": spec["center_lon"],
-        },
-        "sun": {
-            "azimuth_deg": round(sun_az, 3),
-            "elevation_deg": round(sun_el, 3),
-            "visible": vis["sun"]["visible"],
-            "directional_vector_local_z_up": to_vector(sun_az, sun_el),
-        },
-        "earth": {
-            "azimuth_deg": round(earth_az, 3),
-            "elevation_deg": round(earth_el, 3),
-            "visible": vis["earth"]["visible"],
-            "directional_vector_local_z_up": to_vector(earth_az, earth_el),
-        },
+        "model_id": spec['id'], "model_name": spec['name'], "time": target_time,
+        "center_coordinates": {"latitude_deg": spec['center_lat'], "longitude_deg": spec['center_lon']},
+        "sun": sun, "earth": earth,
+        "note": "Geometric SPICE sky at the model anchor; terrain mesh occludes the sky. Earth texture orientation is illustrative.",
     }

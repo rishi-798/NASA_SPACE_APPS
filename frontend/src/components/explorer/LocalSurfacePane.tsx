@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import type { MoonLocation } from '../../MoonMap';
 import type { TerrainChoice, TerrainRegion } from './terrainTypes';
 import '../../local-surface.css';
+import { surfaceTime } from '../../lib/surfaceViewMath';
 
 const Viewer = lazy(() => import('./LocalTerrainViewer'));
 const base = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
@@ -48,9 +49,30 @@ export function LocalSurfacePane({ latitude, longitude, observationTime, onPick 
       </button>}
     </>}
     {visible && <Suspense fallback={<p role="status">Opening 3D viewer…</p>}>
-      <Viewer key={active.id} region={active} latitude={latitude} longitude={longitude}
+      <SurfaceSession key={active.id} region={active} latitude={latitude} longitude={longitude}
         observationTime={observationTime} onPick={onPick} />
     </Suspense>}
     <p className="local-surface-note">Source terrain stays at true scale. Surface views are model previews, not photographs or landing-safety assessments. Crater overviews and the other Site04 grids are not enabled yet.</p>
   </section>;
+}
+
+function SurfaceSession(props: {
+  region: TerrainRegion; latitude: number; longitude: number; observationTime: string;
+  onPick: (point: MoonLocation) => void;
+}) {
+  const [clock, setClock] = useState({start: props.observationTime, minutes: 0});
+  const minutes = clock.start === props.observationTime ? clock.minutes : 0;
+  const time = surfaceTime(props.observationTime, minutes);
+  return <>
+    <div className="surface-time-controls">
+      <label>Surface lighting · 24-hour UTC window
+        <input aria-label="Surface lighting time" type="range" min="0" max="1440" step="10" value={minutes}
+          aria-valuetext={`${time} (${minutes} minutes from window start)`}
+          onChange={event => setClock({start: props.observationTime, minutes: Number(event.target.value)})} />
+      </label>
+      <time dateTime={time}>{time.replace('T', ' ').replace('.000Z', ' UTC')}</time>
+      <p>+{(minutes / 60).toFixed(1)} h from the selected observation time. SPICE positions drive the sky and terrain shadows together.</p>
+    </div>
+    <Viewer {...props} observationTime={time} />
+  </>;
 }
