@@ -32,6 +32,7 @@ import {
 import { createMoonGuides, lunarPosition, MOON, RADIUS } from "./moonGuides";
 import { featuredMoonSites, moonMapSites, MOON_TERRAIN_ASSET_ID } from "./data/moonMapSites";
 import "cesium/Build/Cesium/Widgets/widgets.css";
+import { getMoonIonToken } from "./lib/viewerConfig";
 
 const VIEWS = {
   near: [10, -25],
@@ -320,9 +321,11 @@ export function MoonMap({
 
     async function loadTerrain() {
       try {
-        const accessToken = import.meta.env.VITE_CESIUM_ION_ACCESS_TOKEN?.trim();
+        const accessToken = await getMoonIonToken();
+        if (cancelled) return;
+        if (!accessToken) throw new Error("Cesium project token is not configured");
         const resource = await IonResource.fromAssetId(MOON_TERRAIN_ASSET_ID,
-          accessToken ? { accessToken } : undefined,
+          { accessToken },
         );
         if (cancelled) return;
         const terrain = await Cesium3DTileset.fromUrl(resource, {
