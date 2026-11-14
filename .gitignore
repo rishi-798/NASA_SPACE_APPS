@@ -20,3 +20,8 @@ data/lunar/
 START-LOCAL-RASTERS.cmd
 local-raster-check.json
 *.blend1
+
+# Local backend secrets (only example files belong in Git).
+.env
+.env.*
+!.env.example

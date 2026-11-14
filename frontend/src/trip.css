@@ -119,3 +119,14 @@
 @media (max-width: 900px) { .trip-layout, .trip-analysis { grid-template-columns: 1fr; } .trip-visual, .trip-earth-wrap, .trip-space-scene { min-height: 500px; } .trip-moon-visual { height: 540px; } .trip-site-list { max-height: 280px; } .trip-topline > span { display: none; } }
 @media (max-width: 600px) { .trip-page { padding: 10px 18px 45px; } .trip-heading { margin-bottom: 25px; } .trip-heading h1 { font-size: 38px; } .trip-progress { gap: 6px; margin-top: 20px; } .trip-progress button { padding: 10px 13px; } .trip-panel { padding: 20px; } .trip-visual, .trip-earth-wrap, .trip-space-scene { min-height: 410px; } .trip-moon-visual { height: 460px; } .trip-landing-presentation { min-height: 410px; padding: 28px; } .trip-footer { flex-direction: column; gap: 0; } .trip-rocket-gallery { grid-auto-columns: 210px; } .trip-stat-list > div { grid-template-columns: 85px minmax(0,1fr); } .trip-space-scene-mission .trip-overview-labels { left: 14px; right: 14px; top: 15px; font-size: 8px; } .trip-space-data { top: 42px; left: 14px; gap: 5px; } .trip-space-data span { min-height: 25px; padding: 5px 8px; font-size: 8px; } .trip-space-timeline { left: 12px; right: 12px; bottom: 78px; grid-template-columns: 68px minmax(0,1fr) 58px; gap: 8px; padding: 7px 8px; } .trip-space-timeline button { min-height: 32px; font-size: 9px; } .trip-space-timeline output { font-size: 8px; } .trip-space-scene-mission .trip-globe-hint { left: 14px; right: 14px; bottom: 12px; font-size: 8px; } }
 @media (prefers-reduced-motion: reduce) { .trip-page *, .trip-page *::before, .trip-page *::after { animation: none !important; transition: none !important; } }
+
+.launch-weather { min-width: 0; margin: 1.5rem 0; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.launch-weather h3 { margin: 0.5rem 0; font-size: 1.25rem; }
+.launch-weather details { margin: 1rem 0; }
+.launch-weather summary { cursor: pointer; }
+.launch-weather-table { max-width: 100%; max-height: 320px; overflow: auto; margin-top: 0.75rem; }
+.launch-weather table { border-collapse: collapse; width: 100%; font-size: 0.75rem; }
+.launch-weather caption { text-align: left; padding-bottom: 0.5rem; }
+.launch-weather th, .launch-weather td { text-align: left; padding: 0.6rem; border-bottom: 1px solid var(--line); }
+.launch-weather th[scope="row"] { white-space: nowrap; font-weight: 400; }
+.launch-weather .source-link { display: inline-block; margin-top: 0.75rem; }
