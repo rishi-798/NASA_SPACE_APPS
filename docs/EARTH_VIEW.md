@@ -37,3 +37,6 @@ subdivision; cloud bump/displacement replaces subsurface scattering; short
 ray integration replaces the volume/compositor atmosphere. Cycles render passes,
 blurred shadow-pass compositing and 16-streak lens glare are not reproduced
 exactly. Earth illumination remains illustrative, not date-specific.
+
+Earth and launch pins now rotate together through a fixed sunlight direction. One day is shown in two minutes for illustration; this does not simulate the selected mission date. Rotation pauses while dragging or flying to a selected site, and respects reduced-motion preferences. City lights and cloud shadows follow the rotating geography.
+

@@ -36,7 +36,9 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
     scene.add(new THREE.AmbientLight(0x8aa4c9, .035));
     const geometry = new THREE.SphereGeometry(1, 192, 128);
     const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .8, metalness: 0 });
-    const earth = new THREE.Mesh(geometry, material); scene.add(earth);
+    const globe = new THREE.Group(); scene.add(globe);
+    const earth = new THREE.Mesh(geometry, material); globe.add(earth);
+    const localSun = { value: sun.clone() };
     const textures: THREE.Texture[] = [];
     let disposed = false;
     const loader = new THREE.TextureLoader();
@@ -48,7 +50,7 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
     });
     const cloudOffset = { value: 0 };
     const cloudMat = new THREE.MeshPhongMaterial({ transparent:true, opacity:.88, depthWrite:false, color:0xffffff });
-    const clouds = new THREE.Mesh(new THREE.SphereGeometry(1.0015,192,128),cloudMat);scene.add(clouds);
+    const clouds = new THREE.Mesh(new THREE.SphereGeometry(1.0015,192,128),cloudMat);globe.add(clouds);
     const atmosphereMat = new THREE.ShaderMaterial({ transparent:true, depthWrite:false, side:THREE.FrontSide,
       uniforms: { sun:{value:sun} },
       vertexShader:`varying vec3 vW;void main(){vW=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
@@ -67,17 +69,17 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
       if(disposed)return;
       material.map=day;material.normalMap=normal;material.normalScale.set(.25,.25);textures.push(height); material.displacementMap=height;material.displacementScale=.0014;
       material.onBeforeCompile = shader => {
-        shader.uniforms.oceanMask={value:spec};shader.uniforms.cityMap={value:nights};shader.uniforms.sunDirection={value:sun};shader.uniforms.cloudMask={value:cloud};shader.uniforms.cloudOffset=cloudOffset;
-        shader.fragmentShader='uniform sampler2D oceanMask;uniform sampler2D cityMap;uniform vec3 sunDirection;uniform sampler2D cloudMask;uniform float cloudOffset;\n'+shader.fragmentShader;
+        shader.uniforms.oceanMask={value:spec};shader.uniforms.cityMap={value:nights};shader.uniforms.sunDirection={value:sun};shader.uniforms.localSun=localSun;shader.uniforms.cloudMask={value:cloud};shader.uniforms.cloudOffset=cloudOffset;
+        shader.fragmentShader='uniform sampler2D oceanMask;uniform sampler2D cityMap;uniform vec3 sunDirection;uniform vec3 localSun;uniform sampler2D cloudMask;uniform float cloudOffset;\n'+shader.fragmentShader;
         shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
           float ocean=texture2D(oceanMask,vMapUv).r;
           float grey=dot(diffuseColor.rgb,vec3(.2126,.7152,.0722));
           diffuseColor.rgb=mix(diffuseColor.rgb,vec3(grey)*vec3(.70,.85,1.),ocean*.70);
           float lat=(vMapUv.y-.5)*3.14159265;float lon=(vMapUv.x-.5)*6.2831853;
           vec3 radial=vec3(cos(lat)*cos(lon),sin(lat),-cos(lat)*sin(lon));
-          float solarDot=dot(radial,sunDirection);
+          float solarDot=dot(radial,localSun);
           float cloudDistance=-solarDot+sqrt(solarDot*solarDot+1.0015*1.0015-1.);
-          vec3 cloudPoint=normalize(radial+sunDirection*cloudDistance);
+          vec3 cloudPoint=normalize(radial+localSun*cloudDistance);
           vec2 cloudUv=vec2(fract(atan(-cloudPoint.z,cloudPoint.x)/6.2831853+.5-cloudOffset),asin(cloudPoint.y)/3.14159265+.5);
           float cloudShadow=texture2D(cloudMask,cloudUv).g*smoothstep(.02,.15,solarDot);
           diffuseColor.rgb*=1.-cloudShadow*.32;`);
@@ -94,7 +96,7 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
     }).catch(()=>{if(!disposed)setFailed(true);});
     const pins = launchSites.map(site=>{
       const pin=new THREE.Mesh(new THREE.SphereGeometry(.018,12,8),new THREE.MeshBasicMaterial({color:0xff8b52}));
-      pin.position.copy(point(site.latitude,site.longitude,1.025));pin.userData.site=site;scene.add(pin);return pin;
+      pin.position.copy(point(site.latitude,site.longitude,1.025));pin.userData.site=site;globe.add(pin);return pin;
     });
     const raycaster=new THREE.Raycaster();let down={x:0,y:0};
     const press=(e:PointerEvent)=>{down={x:e.clientX,y:e.clientY};};
@@ -109,16 +111,23 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
     const resize=()=>{const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();};
     const observer=new ResizeObserver(resize);observer.observe(host);resize();
     let previous:string|null|undefined=undefined;let target:THREE.Vector3|null=null;let last=performance.now();
+    let interacting=false;
+    const inverseRotation=new THREE.Quaternion();
     renderer.setAnimationLoop(()=>{
       const now=performance.now(),dt=Math.min((now-last)/1000,.1);last=now;
-      if(previous!==selected.current){previous=selected.current;const site=launchSites.find(s=>s.id===previous);if(site){target=point(site.latitude,site.longitude,Math.max(2.5,camera.position.length()));}}
+      // Illustrative cycle: one turn every two minutes, independent of mission date.
+      if(!reduced && !interacting && !target)globe.rotation.y+=dt*Math.PI*2/120;
+      globe.updateMatrixWorld(true);
+      localSun.value.copy(sun).applyQuaternion(inverseRotation.copy(globe.quaternion).invert());
+      if(previous!==selected.current){previous=selected.current;const site=launchSites.find(s=>s.id===previous);if(site){target=point(site.latitude,site.longitude,Math.max(2.5,camera.position.length())).applyQuaternion(globe.quaternion);}}
       if(target){camera.position.lerp(target,reduced?1:.08);if(camera.position.distanceTo(target)<.002)target=null;}
       pins.forEach(p=>{p.scale.setScalar(p.userData.site.id===selected.current?1.6:1);});
       if(!reduced)clouds.rotation.y+=dt*.002;
       cloudOffset.value=clouds.rotation.y/(Math.PI*2);
       controls.update();renderer.render(scene,camera);
     });
-    const cancelFlight=()=>{target=null;};controls.addEventListener('start',cancelFlight);
+    const cancelFlight=()=>{target=null;interacting=true;};controls.addEventListener('start',cancelFlight);
+    controls.addEventListener('end',()=>{interacting=false;});
     return()=>{disposed=true;renderer.setAnimationLoop(null);observer.disconnect();controls.dispose();
       renderer.domElement.removeEventListener('pointerdown',press);renderer.domElement.removeEventListener('pointerup',click);
       scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();const ms=Array.isArray(o.material)?o.material:[o.material];ms.forEach(m=>m.dispose());}});
@@ -127,5 +136,5 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
   return <div className="trip-earth-wrap"><div ref={root} className="trip-earth" aria-label="Earth globe. Drag to rotate, scroll to zoom, and click a launch pin." />
     {!ready && !failed && <p className="trip-globe-error" role="status">Loading Earth textures…</p>}
     {failed && <p className="trip-globe-error" role="status">Earth view unavailable. Choose a departure from the list.</p>}
-    <p className="trip-globe-hint">Drag to rotate. Scroll to zoom. Select a launch pin. <a href="https://www.solarsystemscope.com/textures/" target="_blank" rel="noreferrer">Textures: Solar System Scope</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a></p></div>;
+    <p className="trip-globe-hint">Earth rotates through day and night (sped up). Drag to explore. Scroll to zoom. Select a launch pin. <a href="https://www.solarsystemscope.com/textures/" target="_blank" rel="noreferrer">Textures: Solar System Scope</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a></p></div>;
 }
