@@ -8,7 +8,7 @@ from starlette.staticfiles import StaticFiles
 
 
 DIST_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
-PAGES = {".", "explorer", "missions", "timeline", "about", "trip"}
+PAGES = {".", "explorer", "missions", "timeline", "about", "trip", "discover"}  # Discovery added 2026-11-14.
 
 
 class SPAStaticFiles(StaticFiles):
