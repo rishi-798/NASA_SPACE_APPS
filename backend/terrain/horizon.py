@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import json
 import math
+from copy import deepcopy
 from functools import lru_cache
 from pathlib import Path
 
@@ -25,7 +28,7 @@ def validate_profile(profile: dict, site: dict | None = None) -> dict:
     except (KeyError, TypeError, ValueError) as exc:
         raise HorizonError("horizon profile is missing valid metadata") from exc
 
-    count = 360 / step if math.isfinite(step) and step > 0 else 0
+    count = 360 / step if math.isfinite(step) and step > 0 else 0.0
     if not (count.is_integer() and 1 <= count <= 3600):
         raise HorizonError("azimuth step must divide 360 degrees")
     if not isinstance(angles, list) or len(angles) != int(count):
@@ -78,7 +81,7 @@ def validate_profile(profile: dict, site: dict | None = None) -> dict:
 
 
 @lru_cache(maxsize=16)
-def _read_profile(path: Path) -> dict:
+def _read_profile(path: Path, mtime_ns: int, size: int, ctime_ns: int) -> dict:
     try:
         with path.open(encoding="utf-8") as file:
             return validate_profile(json.load(file))
@@ -88,9 +91,18 @@ def _read_profile(path: Path) -> dict:
 
 def load_profile(site: dict, directory: Path = PROFILE_DIR) -> dict | None:
     path = directory / f"{site['id']}.json"
-    if not path.is_file():
+    try:
+        stat = path.stat()
+    except FileNotFoundError:
         return None
-    return validate_profile(_read_profile(path), site)
+    except OSError as exc:
+        raise HorizonError(f"could not read horizon profile {path.name}: {exc}") from exc
+    profile = _read_profile(path, stat.st_mtime_ns, stat.st_size, stat.st_ctime_ns)
+    if (profile["site_id"] != site["id"]
+        or abs(float(profile["latitude"]) - site["latitude"]) > 1e-8
+        or abs(float(profile["longitude"]) - site["longitude"]) > 1e-8):
+        raise HorizonError("horizon profile does not match the landing site")
+    return deepcopy(profile)
 
 
 def horizon_at(profile: dict, azimuth: float) -> float:
@@ -111,3 +123,4 @@ def apply_horizon(result: dict, profile: dict | None) -> dict:
         body["terrain_horizon"] = boundary
         body["visible"] = body["elevation"] > boundary
     return result
+

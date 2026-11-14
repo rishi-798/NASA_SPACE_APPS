@@ -1,11 +1,13 @@
 from datetime import datetime, timedelta, timezone
 import math
+from copy import deepcopy
+from functools import lru_cache
 
 import numpy as np
 import spiceypy
 from spiceypy.utils.exceptions import SpiceyError
 
-from backend.spice_kernels import SPICE_LOCK, load_spice_kernels
+from backend.spice_kernels import SPICE_LOCK, load_spice_kernels, kernel_directory
 
 
 MOON_FRAME = "MOON_ME"
@@ -27,12 +29,15 @@ def validate_coordinates(latitude: float, longitude: float) -> tuple[float, floa
 def parse_utc_time(value: str) -> datetime:
     try:
         parsed = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
-    except (AttributeError, ValueError) as exc:
+    except (AttributeError, TypeError, ValueError) as exc:
         raise ValueError("time must be an ISO 8601 timestamp with a timezone") from exc
 
     if parsed.tzinfo is None:
         raise ValueError("time must include a timezone, for example 2026-10-03T18:00:00Z")
-    return parsed.astimezone(timezone.utc)
+    try:
+        return parsed.astimezone(timezone.utc)
+    except (OverflowError, ValueError) as exc:
+        raise ValueError("time is outside the supported UTC range") from exc
 
 
 def _local_angles(vector: np.ndarray, latitude: float, longitude: float) -> tuple[float, float]:
@@ -60,6 +65,46 @@ def _local_angles(vector: np.ndarray, latitude: float, longitude: float) -> tupl
     return azimuth, elevation
 
 
+
+@lru_cache(maxsize=4096)
+def _cached_visibility(latitude: float, longitude: float, output_time: str, directory: str) -> dict:
+    """Caller holds SPICE_LOCK and has loaded this kernel directory."""
+    try:
+        et = spiceypy.utc2et(output_time)
+        _, radii = spiceypy.bodvrd("MOON", "RADII", 3)
+        equatorial_radius = float(radii[0])
+        flattening = (equatorial_radius - float(radii[2])) / equatorial_radius
+        site_fixed = spiceypy.georec(
+            math.radians(longitude), math.radians(latitude), 0.0, equatorial_radius, flattening
+        )
+
+        # SPICE rotates the surface point between the lunar fixed frame and inertial J2000.
+        j2000_to_fixed = spiceypy.pxform("J2000", MOON_FRAME, et)
+
+        bodies = {}
+        for name, target in (("sun", "SUN"), ("earth", "EARTH")):
+            moon_to_body, _light_time_seconds = spiceypy.spkpos(
+                target, et, "J2000", "NONE", "MOON"
+            )
+            distance_km = float(np.linalg.norm(moon_to_body))
+            moon_center_to_body_fixed = j2000_to_fixed @ moon_to_body
+            body_from_site_fixed = moon_center_to_body_fixed - site_fixed
+            azimuth, elevation = _local_angles(body_from_site_fixed, latitude, longitude)
+            bodies[name] = {
+                "azimuth": azimuth,
+                "elevation": elevation,
+                "visible": elevation > 0,
+                "distance_km": float(distance_km),
+                "moon_fixed_position_km": [
+                    float(component) for component in moon_center_to_body_fixed
+                ],
+            }
+    except SpiceyError as exc:
+        raise SpiceCalculationError(f"SPICE could not calculate the Sun/Earth position: {exc}") from exc
+
+    return bodies
+
+
 def calculate_visibility(latitude: float, longitude: float, utc_time: str) -> dict:
     latitude, longitude = validate_coordinates(latitude, longitude)
     time = parse_utc_time(utc_time)
@@ -67,40 +112,7 @@ def calculate_visibility(latitude: float, longitude: float, utc_time: str) -> di
 
     with SPICE_LOCK:
         load_spice_kernels()
-        try:
-            et = spiceypy.utc2et(output_time)
-            _, radii = spiceypy.bodvrd("MOON", "RADII", 3)
-            equatorial_radius = float(radii[0])
-            flattening = (equatorial_radius - float(radii[2])) / equatorial_radius
-            site_fixed = spiceypy.georec(
-                math.radians(longitude), math.radians(latitude), 0.0, equatorial_radius, flattening
-            )
-
-            # SPICE rotates the surface point between the lunar fixed frame and inertial J2000.
-            fixed_to_j2000 = spiceypy.pxform(MOON_FRAME, "J2000", et)
-            j2000_to_fixed = spiceypy.pxform("J2000", MOON_FRAME, et)
-            site_j2000 = fixed_to_j2000 @ site_fixed
-
-            bodies = {}
-            for name, target in (("sun", "SUN"), ("earth", "EARTH")):
-                moon_to_body, _light_time_seconds = spiceypy.spkpos(
-                    target, et, "J2000", "NONE", "MOON"
-                )
-                distance_km = float(np.linalg.norm(moon_to_body))
-                body_from_site_fixed = j2000_to_fixed @ (moon_to_body - site_j2000)
-                moon_center_to_body_fixed = j2000_to_fixed @ moon_to_body
-                azimuth, elevation = _local_angles(body_from_site_fixed, latitude, longitude)
-                bodies[name] = {
-                    "azimuth": azimuth,
-                    "elevation": elevation,
-                    "visible": elevation > 0,
-                    "distance_km": float(distance_km),
-                    "moon_fixed_position_km": [
-                        float(component) for component in moon_center_to_body_fixed
-                    ],
-                }
-        except SpiceyError as exc:
-            raise SpiceCalculationError(f"SPICE could not calculate the Sun/Earth position: {exc}") from exc
+        bodies = deepcopy(_cached_visibility(latitude, longitude, output_time, str(kernel_directory())))
 
     return {
         "site": None,
@@ -139,10 +151,16 @@ def calculate_visibility_window(
     if (end_time - start_time) // step + 1 > MAX_WINDOW_SAMPLES:
         raise ValueError(f"window exceeds {MAX_WINDOW_SAMPLES} samples")
 
+    with SPICE_LOCK:
+        load_spice_kernels()
+    directory = str(kernel_directory())
     samples = []
     current = start_time
     while current <= end_time:
-        result = calculate_visibility(latitude, longitude, current.isoformat())
+        output_time = current.isoformat().replace("+00:00", "Z")
+        with SPICE_LOCK:
+            bodies = deepcopy(_cached_visibility(latitude, longitude, output_time, directory))
+        result = {"time": output_time, **bodies}
         samples.append(
             {
                 "time": result["time"],
@@ -154,3 +172,4 @@ def calculate_visibility_window(
             break
         current += step
     return samples
+

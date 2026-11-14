@@ -1,4 +1,6 @@
 import json
+from copy import deepcopy
+from functools import lru_cache
 from pathlib import Path
 
 from backend.calculations.sun_earth import validate_coordinates
@@ -10,6 +12,13 @@ LANDING_SITES_FILE = (
 
 
 def load_landing_sites(path: Path = LANDING_SITES_FILE) -> list[dict]:
+    path = Path(path).resolve()
+    stat = path.stat()
+    return deepcopy(_read_landing_sites(path, stat.st_mtime_ns, stat.st_size, stat.st_ctime_ns))
+
+
+@lru_cache(maxsize=16)
+def _read_landing_sites(path: Path, mtime_ns: int, size: int, ctime_ns: int) -> list[dict]:
     with path.open(encoding="utf-8") as file:
         sites = json.load(file)
 
@@ -64,3 +73,4 @@ def get_landing_site(site_id: str) -> dict:
         if site["id"] == site_id:
             return site
     raise KeyError(site_id)
+

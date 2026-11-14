@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import timedelta
 
 from backend.calculations.sun_earth import parse_utc_time
@@ -10,18 +12,27 @@ def summarize_window(
     end_time = parse_utc_time(end)
     if end_time <= start_time:
         raise ValueError("summary end must be after start")
+    if isinstance(step_minutes, bool) or not isinstance(step_minutes, int) or step_minutes < 1:
+        raise ValueError("step_minutes must be a positive integer")
 
     keys = ("sunlight", "earth_visible", "both", "darkness", "comm_blackout")
     windows = {key: [] for key in keys}
     opened = {key: None for key in keys}
     totals = {key: 0.0 for key in keys}
-    step = timedelta(minutes=step_minutes)
+    try:
+        step = timedelta(minutes=step_minutes)
+    except OverflowError as exc:
+        raise ValueError("step_minutes is too large") from exc
+    expected = start_time
 
     for sample in samples:
         time = parse_utc_time(sample["time"])
+        if time != expected:
+            raise ValueError("summary samples must cover the window in regular time order")
         if time >= end_time:
             break
-        until = min(time + step, end_time)
+        until = time + min(step, end_time - time)
+        expected = until
         sun = sample["sun"]["visible"]
         earth = sample["earth"]["visible"]
         states = {
@@ -39,6 +50,9 @@ def summarize_window(
             elif opened[key] is not None:
                 windows[key].append((opened[key], time))
                 opened[key] = None
+
+    if expected < end_time:
+        raise ValueError("summary samples do not cover the requested window")
 
     for key in keys:
         if opened[key] is not None:
@@ -70,3 +84,4 @@ def summarize_window(
             for key in ("sunlight", "earth_visible", "both")
         },
     }
+

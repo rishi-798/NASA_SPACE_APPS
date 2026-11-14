@@ -31,7 +31,7 @@ def build_profile(
         raise ValueError("preprocessing settings must be finite")
     if not (max_distance_m > min_distance_m > 0 and observer_height_m >= 0):
         raise ValueError("invalid terrain distance or observer height")
-    count = 360 / azimuth_step if azimuth_step > 0 else 0
+    count = 360 / azimuth_step if azimuth_step > 0 else 0.0
     if not (count.is_integer() and 1 <= count <= 3600):
         raise ValueError("azimuth step must divide 360 degrees")
 
@@ -58,7 +58,10 @@ def build_profile(
         ):
             raise ValueError("site is outside the DEM")
         row, col = dataset.index(x, y)
-        site_height = float(dataset.read(1, window=Window(col, row, 1, 1))[0, 0])
+        site_pixel = dataset.read(1, window=Window(col, row, 1, 1), masked=True)[0, 0]
+        if np.ma.is_masked(site_pixel) or not math.isfinite(float(site_pixel)):
+            raise ValueError("site has no DEM elevation")
+        site_height = float(site_pixel)
         if not math.isfinite(site_height):
             raise ValueError("site has no DEM elevation")
 
@@ -169,3 +172,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
