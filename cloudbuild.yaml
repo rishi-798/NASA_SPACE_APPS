@@ -1,0 +1,26 @@
+# Build and verify the combined service — 2026-11-14.
+substitutions:
+  _LOCATION: us-central1
+  _REPOSITORY: nasa-site-20261114
+  _TAG: '2026-11-14'
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-t'
+      - '${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/lunar-browser:${_TAG}'
+      - '.'
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - run
+      - '--rm'
+      - '--entrypoint'
+      - python
+      - '${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/lunar-browser:${_TAG}'
+      - '-m'
+      - infra20261114.check_container20261114
+images:
+  - '${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/lunar-browser:${_TAG}'
+timeout: 1200s
+options:
+  logging: CLOUD_LOGGING_ONLY
