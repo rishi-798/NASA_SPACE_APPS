@@ -97,7 +97,7 @@ function ExplorerWorkspace() {
     setErrorMessage(undefined);
 
     try {
-      const response = await getAnalysis(selectedSite.id, pickedLocation, timestamp(date, time), date, controller.signal);
+      const response = await getAnalysis(selectedSite.id, pickedLocation, timestamp(date, time), controller.signal);
       if (controller.signal.aborted) return;
       setResult(response);
       setAnalysisState("success");

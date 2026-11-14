@@ -59,3 +59,17 @@ test('refresh starts at departure for every saved stage while retaining choices'
   assert.equal(departureOnly.stage,'earth');
   assert.equal(departureOnly.departureId,'earth');
 });
+test('plan reuses the preview result for the unchanged revision without a new request', () => {
+  const state=planned();
+  const result={conditions:{latitude:-80.123456}};
+  const planned_=missionReducer(state,{type:'plan',revision:state.revision,result});
+  assert.equal(planned_.stage,'reveal');
+  assert.equal(planned_.result,result);
+  assert.equal(planned_.resultRevision,state.revision);
+});
+test('plan ignores a preview from an older revision', () => {
+  const state=planned();
+  const changed=missionReducer(state,{type:'time',time:'2026-10-11T18:00:00Z'});
+  assert.equal(missionReducer(changed,{type:'plan',revision:state.revision,result:{}}),changed);
+  assert.equal(missionReducer(newMission(),{type:'plan',revision:0,result:{}}).stage,'earth');
+});

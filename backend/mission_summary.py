@@ -1,6 +1,17 @@
+"""Duration-weighted visibility summary over one sample set.
+
+Sampling model (sample-and-hold): each sample's state holds from its timestamp
+until the next step or the range end, whichever is sooner. A sample exactly at
+``end`` contributes zero duration. Window boundaries are sample times; crossings
+are NOT refined, so a true rise/set can occur up to one step before a boundary.
+"""
 from datetime import timedelta
 
 from backend.calculations.sun_earth import parse_utc_time
+
+
+def _iso(value):
+    return value.isoformat().replace("+00:00", "Z")
 
 
 def summarize_window(
@@ -46,8 +57,12 @@ def summarize_window(
 
     def output_window(pair):
         return {
-            "start": pair[0].isoformat().replace("+00:00", "Z"),
-            "end": pair[1].isoformat().replace("+00:00", "Z"),
+            "start": _iso(pair[0]),
+            "end": _iso(pair[1]),
+            "duration_minutes": (pair[1] - pair[0]).total_seconds() / 60,
+            # True when the window may extend beyond the requested range.
+            "starts_at_range_start": pair[0] == start_time,
+            "ends_at_range_end": pair[1] == end_time,
         }
 
     def longest(key):
@@ -55,18 +70,25 @@ def summarize_window(
         return max(lengths, default=0)
 
     duration = (end_time - start_time).total_seconds()
+    earth_hidden = longest("comm_blackout")
     return {
         "site": site_id,
-        "start": start_time.isoformat().replace("+00:00", "Z"),
-        "end": end_time.isoformat().replace("+00:00", "Z"),
+        "start": _iso(start_time),
+        "end": _iso(end_time),
         "step_minutes": step_minutes,
+        "total_minutes": duration / 60,
         "sunlight_percent": round(100 * totals["sunlight"] / duration, 1),
         "earth_visible_percent": round(100 * totals["earth_visible"] / duration, 1),
         "both_available_percent": round(100 * totals["both"] / duration, 1),
         "longest_darkness_minutes": longest("darkness"),
-        "longest_comm_blackout_minutes": longest("comm_blackout"),
+        "longest_earth_hidden_minutes": earth_hidden,
+        # Legacy name kept for the existing frontend. It means "Earth below the horizon in use";
+        # no communications link is modelled.
+        "longest_comm_blackout_minutes": earth_hidden,
+        "longest_joint_window_minutes": longest("both"),
         "windows": {
             key: [output_window(pair) for pair in windows[key]]
             for key in ("sunlight", "earth_visible", "both")
         },
+        "percent_rounding": "percentages rounded to 0.1; durations are exact sums of held intervals",
     }

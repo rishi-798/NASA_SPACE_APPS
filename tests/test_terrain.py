@@ -103,7 +103,7 @@ def test_horizon_wraparound_and_visibility():
     apply_horizon(result, profile)
     assert result["sun"] == {
         "azimuth": 0, "elevation": 1, "flat_visible": True,
-        "terrain_horizon": 2, "visible": False,
+        "terrain_horizon": 2, "terrain_clearance": -1, "visible": False,
     }
     assert result["earth"]["visible"] is True
     assert apply_horizon({"sun": {}, "earth": {}}, None) == {"sun": {}, "earth": {}}

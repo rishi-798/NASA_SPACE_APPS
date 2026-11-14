@@ -1,0 +1,307 @@
+# CLPS Lunar Mission Browser: backend
+
+FastAPI backend for investigating lunar locations. It calculates **Sun visibility, Earth visibility, and the
+periods when both are visible** for Athena (IM-2), Odysseus (IM-1) or any custom coordinate. It uses NASA/NAIF
+**SPICE**, plus a LOLA terrain-horizon profile where one exists.
+
+> **Visibility does not by itself prove adequate power, a working communications link, or a safe landing.**
+> The API never returns `safe_to_land` or `mission_viable`. Power, antenna pointing, link budgets,
+> ground-station access, slope, roughness, hazards and descent are reported as `"not assessed"`.
+
+This rebuild comes from `itsmetapasvi-glitch/NASA-APP`. It takes `main` (the cloud terrain and the current
+frontend contract) and merges in the `rishi-landing-viability` analysis bundle. The existing SPICE calculation,
+Athena LOLA profile, summary logic and cloud-terrain reads are **reused, not replaced**. See
+[What changed](#what-changed-from-the-reference-repo).
+
+---
+
+## Quick start
+
+Requires Python 3.10 or newer. Run every command from the repository root.
+
+**macOS / Linux**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m backend.download_kernels        # ~45 MB from NAIF, once; writes kernels/manifest.json
+uvicorn backend.app:app --reload          # http://127.0.0.1:8000/docs
+```
+
+**Windows (PowerShell)**
+```powershell
+py -3 -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python -m backend.download_kernels
+uvicorn backend.app:app --reload
+```
+
+Check that the service is ready, then run the demo and the tests:
+```bash
+curl http://127.0.0.1:8000/api/ready           # 200 = calculations can run
+python -m scripts.demo_compare                 # Athena vs Odysseus, fixed inputs
+pytest -q
+```
+
+The frontend's Vite dev server proxies `/api` to `127.0.0.1:8000`, so the old frontend works unchanged.
+
+### Reproducible demo (`python -m scripts.demo_compare`)
+Fixed range: 2026-10-12 → 2026-10-26 UTC, 30-minute step, 673 samples per site, identical grid for both sites.
+
+| site | horizon | sun % | earth % | both % | longest dark | longest Earth-hidden |
+|---|---|---|---|---|---|---|
+| IM-1 Odysseus | flat_horizon (terrain **not** assessed) | 59.2 | 100.0 | 59.2 | 137.0 h | 0.0 h |
+| IM-2 Athena | terrain_profile (LOLA) | 63.7 | 67.9 | 63.7 | 122.0 h | 108.0 h |
+
+The two rows are **not equal-confidence**: Odysseus ignores terrain, and the API says so in
+`comparison_notes`.
+
+---
+
+## Environment variables
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `SPICE_KERNELS_DIR` | `backend/kernels` | Folder holding the five kernels and `manifest.json` |
+| `CORS_ORIGINS` | localhost:5173/5174 | Comma-separated frontend origins |
+| `LOG_LEVEL` | `INFO` | Server log level. Full diagnostics go to the logs, never to responses |
+| `LUNAR_DATASET_DIR` | `data/lunar` if present | Cloud/local terrain catalogue directory (unchanged) |
+| `LUNAR_COG_BASE_URL` | unset | Hugging Face `resolve/<commit>` URL for streamed terrain COGs (unchanged) |
+| `LUNAR_COG_RELEASE_FILE` | unset | Pinned release file, e.g. `data/cloud-release.json` (unchanged) |
+| `GDAL_HTTP_TIMEOUT`, `GDAL_CACHEMAX`, … | see `render.yaml` | Bounded remote raster reads (unchanged) |
+| `ALLOW_SYNTHETIC_TERRAIN` | unset | **Tests only.** Lets fixture profiles marked `"synthetic": true` load |
+
+There is no database, no accounts, no queues and no paid services.
+
+## Kernel and terrain preparation
+
+- **Kernels:** run `python -m backend.download_kernels`. It installs these files and records their URL, size
+  and SHA-256 in `backend/kernels/manifest.json`. At load time each kernel is checked against that hash, and
+  `/api/ready` reports any mismatch.
+
+  | File | Role |
+  |---|---|
+  | `naif0012.tls` | Leap seconds |
+  | `de440s.bsp` | DE440 short ephemeris: Sun, Earth, Moon (1849–2150) |
+  | `pck00011.tpc` | Moon radii (1737.4 km sphere) |
+  | `moon_pa_de440_200625.bpc` | High-accuracy lunar orientation |
+  | `moon_de440_220930.tf` | Defines `MOON_ME` as `MOON_ME_DE440_ME421` (from NAIF's CLPS PDS4 archive) |
+
+- **Athena horizon profile:** `backend/terrain/profiles/athena-im2.json` is checked in, about 19 KB, with
+  720 × 0.5° bins. It comes from PGDA `LDEM_80S_80MPP_ADJ.TIF` (LOLA, 80 m/pixel, DE421 `MOON_ME`), with a 40 km
+  radius, 160 m inner exclusion and an assumed 2 m instrument height. To regenerate it, run
+  `python -m backend.terrain.preprocess athena-im2`. That reads only a window of the remote GeoTIFF; see
+  [backend/terrain/README.md](../backend/terrain/README.md).
+- **Cloud terrain** (`/api/terrain/*`, point heights and regional stats): this is unchanged. See
+  [docs/CLOUD_TERRAIN.md](CLOUD_TERRAIN.md). Nothing downloads the 55 GB dataset. Without
+  configuration, those routes return explicit 503s, and visibility does not depend on them.
+
+---
+
+## API
+
+Interactive OpenAPI docs are at `/docs`, and the raw schema at `/openapi.json`.
+
+Every error body includes `detail`, which the existing frontend reads, plus a structured `error` object:
+```json
+{"detail": "landing site not found", "error": {"code": "unknown_site", "message": "landing site not found", "details": null}}
+```
+
+| HTTP | `error.code` | When |
+|---|---|---|
+| 422 | `invalid_request` | Bad fields, a timestamp without a timezone, end ≤ start, a bad step, both or neither of site and coordinates, non-finite or out-of-range lat/lon |
+| 422 | `too_many_samples` | More than 2,000 samples per location |
+| 422 | `outside_kernel_coverage` | A range outside 1849-12-26 to 2150-01-20 |
+| 404 | `unknown_site` | Unknown `site_id` |
+| 503 | `kernels_unavailable` | Kernels missing, corrupt (SHA-256 mismatch) or unloadable |
+| 503 | `terrain_unavailable` | A configured horizon profile is missing, corrupt or refused |
+| 503 | `terrain_data_unavailable` | Cloud terrain catalogue or rasters not available (`/api/terrain/*`) |
+| 504 | `external_data_timeout` | A remote terrain read timed out |
+| 502 | `calculation_failed` | SPICE raised. Only the short SPICE code is returned; details are logged |
+
+### Endpoints
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/health`, `/api/health` | Liveness only |
+| GET | `/api/ready` | **Scientific readiness.** Covers kernels, hashes and coverage, plus per-site terrain status and cloud-terrain configuration. Returns 503 when calculations can't run. Makes no network calls |
+| GET | `/api/methodology` | Model, assumptions, limitations, viability text and limits |
+| GET | `/api/sites` | Site list (unchanged shape, plus new descriptive fields) |
+| GET | `/api/sites/{id}` | One site with its `terrain` status (new) |
+| GET | `/api/sites/{id}/horizon` | The profile, or `null` when the site has **no** profile. **503 when a configured profile is broken** |
+| GET | `/api/analysis` | **Main endpoint.** `site_id` **or** `lat`+`lon`, plus `start`, `end`, `step_minutes`, `allow_flat_fallback`, `name` |
+| POST | `/api/analysis` | The same fields as a JSON body |
+| GET/POST | `/api/compare` | Athena and Odysseus on one shared range and grid |
+| GET | `/api/sites/{id}/visibility`, `/visibility/window`, `/summary` | Existing routes, preserved |
+| GET | `/api/visibility`, `/api/visibility/window`, `/api/summary` | Existing coordinate routes, preserved |
+| GET | `/api/terrain/catalogue`, `/identity`, `/lookup`, `/grids/{id}` | Existing cloud terrain routes, preserved |
+
+Defaults: if `start` is omitted it is 00:00 UTC today. If `end` is omitted it is `start + 24 h`.
+`step_minutes` defaults to 30 and must be an integer from 1 to 1440. `request.defaults_applied` lists which
+defaults were used.
+
+### Example requests
+```bash
+# Athena, one UTC day, 30-minute samples
+curl "http://127.0.0.1:8000/api/analysis?site_id=athena-im2&start=2026-10-12T00:00:00Z&end=2026-10-13T00:00:00Z&step_minutes=30"
+
+# Custom coordinate (east-positive longitude), JSON body
+curl -X POST http://127.0.0.1:8000/api/analysis -H "Content-Type: application/json" \
+  -d '{"lat": -89.5, "lon": 135, "name": "Near Shackleton", "start": "2026-10-12T00:00:00Z", "end": "2026-10-19T00:00:00Z", "step_minutes": 60}'
+
+# Comparison
+curl "http://127.0.0.1:8000/api/compare?start=2026-10-12T00:00:00Z&end=2026-10-26T00:00:00Z&step_minutes=30"
+
+# Explicitly accept a DEGRADED flat result if Athena's profile were broken (default is a 503)
+curl "http://127.0.0.1:8000/api/analysis?site_id=athena-im2&allow_flat_fallback=true"
+```
+
+### Analysis response (abridged)
+```jsonc
+{
+  "schema_version": 1,                       // unchanged: the rishi frontend checks === 1; all additions are additive
+  "request": {"start": "2026-10-12T00:00:00Z", "end": "...Z", "step_minutes": 30, "sample_count": 49, "defaults_applied": []},
+  "site": {"id": "athena-im2", "name": "...", "latitude": -84.79, "longitude": 29.2, "kind": "named",
+           "source": "...", "coordinate_source": "...", "coordinate_note": "...", "terrain_status": "profile_loaded"},
+  "samples": [{
+    "time": "2026-10-12T00:00:00Z",
+    "sun": {"azimuth": 139.35, "elevation": -2.73, "visible": false,          // visible is AUTHORITATIVE
+            "distance_km": 1.49e8, "moon_fixed_position_km": [x, y, z],
+            "flat_visible": false, "terrain_horizon": 2.26, "terrain_clearance": -4.99},  // terrain mode only
+    "earth": { /* same fields */ },
+    "both_visible": false, "status": "neither visible at this sample"
+  }],
+  "summary": {
+    "total_minutes": 1440, "sunlight_percent": 0.0, "earth_visible_percent": 0.0, "both_available_percent": 0.0,
+    "longest_darkness_minutes": 1440, "longest_earth_hidden_minutes": 1440,
+    "longest_comm_blackout_minutes": 1440,   // legacy alias of longest_earth_hidden_minutes
+    "longest_joint_window_minutes": 0,
+    "windows": {"sunlight": [], "earth_visible": [], "both": []}   // each {start, end, duration_minutes, starts_at_range_start, ends_at_range_end}
+  },
+  "horizon": {"azimuth_step": 0.5, "horizon": [720 bins], "source": "...", ...},   // or null
+  "terrain": {"mode": "terrain_profile | flat_horizon | flat_horizon_degraded",
+              "status": "profile_loaded | no_profile_for_location | configured_profile_missing | configured_profile_invalid",
+              "terrain_obstruction_assessed": true, "message": "...", "profile_metadata": {...}},
+  "engineering_checks": {"sun_earth_visibility": "assessed (geometry only)", "power_generation": "not assessed",
+                         "communications_link": "not assessed", "landing_slope_roughness_hazards": "not assessed", ...},
+  "provenance": {"engine", "frame", "coordinates", "observer", "geometry", "angles", "visibility_rule", "clearance",
+                 "sampling", "time", "kernels": [...filenames], "kernel_details": {files: [{sha256, source_url, ...}]},
+                 "ephemeris_coverage", "horizon_mode": "LOLA terrain", "terrain_source", "site_coordinates",
+                 "limitations", "sources", "sample_values": false},
+  "assumptions": [...], "limitations": [...], "warnings": [...]
+}
+```
+The compare response contains `request`, `shared_sample_times`, `sites[]`, `table[]` and `comparison_notes[]`.
+Each entry in `sites[]` is `{site_id, ok, analysis | null, error | null}`. A failing site is **listed with its
+error, never omitted**. An invalid range or missing kernels fail the whole comparison.
+
+---
+
+## Scientific model
+
+These descriptions are read from the code, and `/api/methodology` returns the same text.
+
+- **Engine:** the existing `backend/calculations/sun_earth.py`. It uses SPICE `spkpos` (Moon→Sun/Earth, J2000,
+  `abcorr="NONE"`) and `pxform` (MOON_ME↔J2000), subtracts the surface point, and projects the result onto local
+  east/north/up. It is checked against **JPL Horizons** (5 cases, under 0.02°) and against **NAIF `azlcpo`** (under
+  1e-6°). The frontend does not recompute geometry.
+- **Frame:** `MOON_ME`, which `moon_de440_220930.tf` defines as `MOON_ME_DE440_ME421`. Latitude is
+  planetocentric. **Longitude is east-positive**, from −180 to 180.
+- **Observer:** placed at 0 m on the 1737.4 km reference sphere (`pck00011`). Site elevations are not used in
+  the Sun/Earth geometry. Athena's DEM surface is about 5.3 km above the sphere, which shifts the directions by
+  under 0.001°. The terrain profile carries its own observer, 2 m above the DEM surface.
+- **Geometric, not apparent**, target-centre directions: no light-time or aberration correction, and no
+  refraction (the Moon has no atmosphere).
+- **Azimuth** is measured clockwise from north, 0–360. **Elevation** is measured from the local horizontal plane.
+- **Visibility:** the target **centre** must be above the horizon in use. That is the terrain horizon at its
+  azimuth (linear interpolation between 0.5° bins), or 0° on a flat horizon. Disc edges and partial discs are not
+  modelled.
+- **`terrain_clearance`** = `elevation − terrain_horizon`, in degrees, and appears only in terrain mode.
+  `visible` stays authoritative.
+- **Sampling:** samples run at `start + k·step`. `end` is included only when it falls on the grid.
+  Sample-and-hold: each state holds until the next step or the end, so the final interval can be short. A sample
+  exactly at `end` has zero duration. Percentages are duration-weighted and rounded to 0.1; window durations are
+  exact. **Crossings are not refined**: boundaries are accurate to one step, and windows shorter than a step can
+  be missed.
+- **Joint visibility:** both conditions hold in the same sample. It is a *candidate* opportunity, not an
+  operating window.
+- **Time:** timestamps must include a timezone and are normalised to UTC. `Z`, `+00:00` and offsets that denote
+  the same instant give identical results, including across DST changes.
+
+### Terrain honesty
+- **Athena:** the real LOLA profile. `terrain.mode = terrain_profile`.
+- **Odysseus:** `horizon_profile: null` in `data/landing_sites.json`. It has no profile because it sits at the
+  DEM's 80° S coverage edge. Its results are `flat_horizon`, with `terrain_obstruction_assessed: false` and a
+  lower-confidence warning.
+- **Custom coordinates:** always `flat_horizon`. No arbitrary-location horizon is computed.
+- **A configured profile that is missing or corrupt** returns **503** by default, including on `/horizon`. With
+  `allow_flat_fallback=true` you instead get an explicit `flat_horizon_degraded` result with a DEGRADED warning.
+  It never silently falls back to flat.
+- Cesium terrain, a sampled point elevation or a regional statistic is not a horizon and is never used for
+  visibility.
+
+### Concurrency and caching
+- Routes are sync `def`, so FastAPI runs them in its threadpool. All SPICE calls hold `SPICE_LOCK`, an RLock,
+  because the kernel pool is process-global. `/health` answered in about 4 ms during a 2,000-sample job.
+- A bounded LRU (32 entries) holds finished analyses. Its key covers the site id, lat and lon, the profile file
+  fingerprint, terrain status, normalised start/end, step, and a kernel fingerprint. Results are deep-copied on
+  return. 2,000 samples take about 0.75 s cold and about 0.05 s from cache.
+
+---
+
+## What changed from the reference repo
+
+| Area | Change | Compatibility |
+|---|---|---|
+| `GET /api/analysis` | Merged from `rishi-landing-viability`. Adds `request`, `terrain`, `engineering_checks`, `assumptions`, `limitations`, `warnings`, per-sample `both_visible`/`status`, and optional `start`/`end`/`step_minutes` | Additive; `schema_version` stays 1 |
+| `POST /api/analysis`, `/api/compare`, `/api/ready`, `/api/methodology`, `/api/sites/{id}`, `/api/health` | New | — |
+| Terrain profile loading | `horizon_profile` is set per site in `landing_sites.json`. A **configured but missing/corrupt** file now returns 503 instead of a silent flat result | `null` still means no profile |
+| `apply_horizon` | Adds `terrain_clearance` (degrees) in terrain mode | Additive; flat mode is unchanged |
+| Summary | Adds `total_minutes`, `longest_earth_hidden_minutes`, `longest_joint_window_minutes`, and per-window `duration_minutes`, `starts_at_range_start`, `ends_at_range_end` | `longest_comm_blackout_minutes` is kept as an alias |
+| Errors | `{detail, error: {code, message, details}}`. Local paths and SPICE free text are removed from responses and logged instead. SPICE errors are 502 | `detail` is still a string |
+| Kernels | `manifest.json` stores SHA-256 hashes, checked at load. The downloader uses certifi (fixes macOS SSL) | Same five files |
+| Step | `/api/analysis` and `/api/compare` cap `step_minutes` at 1440 | Legacy routes are unchanged |
+| Athena metadata | Adds LROC's precise position (84.7906° S, 29.1957° E, about 22 m from the rounded profile point) as a note. The coordinates stay −84.79/29.20 because the profile was built for that point | Unchanged |
+
+## Frontend client
+- The Explorer and Trip pages make **one** `GET /api/analysis` request per analysis. Previously they made four
+  (`/visibility`, `/visibility/window`, `/summary`, `/horizon`), with the window and summary each recalculating
+  the same samples. The conditions shown are the first sample of that same sample set.
+- The analysis window is the **24 hours starting at the selected UTC time**, not the selected calendar day. The
+  timeline axis and cursor are relative to that window (`frontend/src/lib/analysisWindow.ts`).
+- "Plan this landing" reuses the successful preview while its inputs (the mission revision) are unchanged. It
+  does not send the requests again.
+
+## Sources and credits
+- SPICE toolkit and kernels: NASA/JPL NAIF, https://naif.jpl.nasa.gov. SpiceyPy (A. Annex et al.).
+- LOLA DEM `LDEM_80S_80MPP_ADJ`: NASA GSFC PGDA, https://pgda.gsfc.nasa.gov/products/90.
+- Athena position: LROC, *IM-2 Athena Seen Obliquely*, https://lroc.im-ldi.com/images/1408. Odysseus position:
+  NASA/LROC, https://www.nasa.gov/missions/lro/nasas-lro-images-intuitive-machines-odysseus-lander/.
+- Reference cases: JPL Horizons, https://ssd.jpl.nasa.gov/horizons/.
+- Original implementation: the NASA-APP team, on branches `suhas-backend` (SPICE engine), `rishi-landing-viability` and
+  `rishi-cesium-moon` (analysis bundle, Moon viewer), and `dip-hemanth-terrain`/`main` (terrain and cloud terrain).
+
+## Tests
+`pytest -q` gives **160 passed, 1 skipped**. The skip needs the external Moon catalogue (`data/lunar`).
+Frontend unit tests: `cd frontend && npm test` gives 16 passed. The suite covers:
+- JPL Horizons and `azlcpo` reference cases
+- zenith and nadir checks
+- terrain and flat modes, and terrain blocking a positive-elevation Sun
+- missing, corrupt and synthetic profiles
+- window boundaries, partial final intervals and zero-duration end samples
+- real sunrise transitions (Athena over terrain, Odysseus on a flat horizon), checked across samples,
+  windows and percentages, plus 1-minute resampling to confirm each crossing lies inside its 30-minute step
+- DST and ISO equivalence
+- invalid and excessive requests, and missing or corrupt kernels
+- comparison grid identity and per-site failure
+- cache separation and immutability
+- error hygiene
+
+## Remaining gaps
+- No arbitrary-location horizon. Custom points and Odysseus are flat-horizon only.
+- Crossings are not refined, and partial-disc (limb) visibility is not modelled.
+- The Athena profile is not regenerated at LROC's precise coordinate. The 22 m difference is below DEM resolution,
+  but this has not been verified.
+- The cloud-terrain routes are tested only offline. Remote Hugging Face reads were not exercised here.
+- The frontend is not part of this step. Two frontend-asset tests are skipped until `frontend/` is restored.

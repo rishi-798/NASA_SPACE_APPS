@@ -56,7 +56,23 @@ def load_landing_sites(path: Path = LANDING_SITES_FILE) -> list[dict]:
         if mission is not None and not isinstance(mission, str):
             raise ValueError(f"landing site {site_id} has an invalid mission")
 
+        profile = site.get("horizon_profile")
+        if profile is not None and (
+            not isinstance(profile, str) or not profile.endswith(".json") or "/" in profile or "\\" in profile
+        ):
+            raise ValueError(f"landing site {site_id} has an invalid horizon_profile filename")
+        for key in ("coordinate_source", "coordinate_note", "horizon_note"):
+            if site.get(key) is not None and not isinstance(site[key], str):
+                raise ValueError(f"landing site {site_id} has an invalid {key}")
+        if not isinstance(site.get("comparison", False), bool):
+            raise ValueError(f"landing site {site_id} has an invalid comparison flag")
+
     return sites
+
+
+def comparison_site_ids() -> list[str]:
+    """Sites in the Athena/Odysseus comparison (flagged in landing_sites.json)."""
+    return [site["id"] for site in load_landing_sites() if site.get("comparison")]
 
 
 def get_landing_site(site_id: str) -> dict:
