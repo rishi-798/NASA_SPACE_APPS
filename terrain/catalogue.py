@@ -216,6 +216,12 @@ def catalogue_selection(latitude,longitude):
     # File presence is checked locally; upstream 'downloaded' flags are ignored.
     sources=data.get('sources',[])
     elevation_sources=[s for s in sources if s.get('role')=='elevation']
+    point_terrain = None
+    point_note = None
+    try:
+        point_terrain = elevation(latitude, longitude)
+    except TerrainUnavailable as exc:
+        point_note = str(exc)
     return {'latitude':latitude,'longitude':longitude,'grid_id':grid_id,
             'global_child_grid_id':cell['grid_id'],'global_parent_grid_id':cell['parent_grid_id'],
             'bounds':cell['bounds'],'blender_object_name':grid_id,
@@ -227,10 +233,11 @@ def catalogue_selection(latitude,longitude):
                 'native_elevation_min_m','native_elevation_max_m','native_elevation_mean_m',
                 'native_statistics_spacing_m','native_statistics_source_ids','native_statistics_scope',
                 'height_uncertainty_rms_m_median','height_uncertainty_rms_m_p95')},
-            'point_elevation_m':None,'scene_available':False,
+            'point_elevation_m':point_terrain['elevation_m'] if point_terrain else None,
+            'point_terrain':point_terrain,'point_elevation_note':point_note,'scene_available':False,
             'local_elevation_files':sum(source_ready(s) for s in elevation_sources),
             'expected_elevation_files':len(elevation_sources),
-            'note':'Catalogue summaries only. No point height, local mesh or landing-safety claim.'}
+            'note':'Regional summaries and original-pixel point heights are separate. No local mesh or landing-safety claim.'}
 
 
 def lookup(latitude,longitude):
