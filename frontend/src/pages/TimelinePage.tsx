@@ -5,11 +5,17 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { RouteIntro } from "../components/ui/RouteIntro";
+import { missionExplorerUrl, missionTypeLabel } from "../lib/missionNavigation";
 import { missions, missionRecordCount } from "../data/landingSites";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const years = [2024, 2025, 2026, 2027, 2028];
+const years = [...new Set(missions.filter((m) => m.status !== "Cancelled").map((m) => m.year))].sort((a, b) => a - b);
+const groups = [
+  { title: "Lunar surface missions", records: missions.filter((m) => m.missionType === "surface" && m.status !== "Cancelled") },
+  { title: "Flybys and orbital demonstrations", records: missions.filter((m) => m.missionType !== "surface" && m.status !== "Cancelled") },
+  { title: "Cancelled task orders", records: missions.filter((m) => m.status === "Cancelled") },
+];
 
 export function TimelinePage() {
   const root = useRef<HTMLElement>(null);
@@ -50,18 +56,18 @@ export function TimelinePage() {
       <RouteIntro
         eyebrow="Mission chronology"
         title={<>LUNAR<br />CHRONOLOGY.</>}
-        description="Multi-year flight manifest for NASA's Commercial Lunar Payload Services (CLPS) and Artemis lunar surface exploration from 2024 through 2028."
+        description="Selected CLPS deliveries, crewed flybys, and orbital demonstrations. Future dates are targets; cancelled task orders are archived separately."
         side={<span className="archive-status"><CalendarDots /> {missionRecordCount} flight programs tracked</span>}
       />
 
       <section className="chronology" aria-labelledby="chronology-title">
-        <h2 id="chronology-title" className="sr-only">CLPS mission chronology</h2>
+        <h2 id="chronology-title" className="sr-only">CLPS and Artemis mission chronology</h2>
         <div className="chronology-line" aria-hidden="true">
           <span className="chronology-progress" />
         </div>
         <div className="chronology-years">
           {years.map((year) => {
-            const yearMissions = missions.filter((m) => m.year === year);
+            const yearMissions = missions.filter((m) => m.year === year && m.status !== "Cancelled");
             return (
               <div key={year}>
                 <span>{year}</span>
@@ -80,28 +86,30 @@ export function TimelinePage() {
       <section className="unscheduled" aria-labelledby="unscheduled-title">
         <div className="unscheduled-heading">
           <p className="eyebrow">Flight manifest & roadmap</p>
-          <h2 id="unscheduled-title">Surface Missions (2024–2028)</h2>
+          <h2 id="unscheduled-title">Mission archive and roadmap</h2>
           <p style={{ color: "var(--muted)", marginTop: "12px", lineHeight: "1.6" }}>
-            Each mission carries scientific payloads to investigate lunar volatile extraction, polar illumination, radio astronomy, and crewed exploration viability.
+            Surface deliveries, lunar flybys, and Earth-orbit demonstrations serve different objectives. Dates and categories below follow the linked mission sources.
           </p>
         </div>
         <div className="unscheduled-list">
-          {missions.map((m) => (
+          {groups.map((group) => <section className="mission-timeline-group" key={group.title} aria-label={group.title}>
+          <h3>{group.title}</h3>
+          {group.records.map((m) => (
             <article className="unscheduled-record" key={m.id}>
-              <span>{m.year} · {m.status.toUpperCase()}</span>
-              <h3>{m.name}</h3>
+              <span>{m.dateLabel}: {m.landingDate} · {m.status.toUpperCase()}</span>
+              <p>{missionTypeLabel(m)}</p>
+              <h4>{m.name}</h4>
               <p>{m.landingArea}</p>
               <p style={{ fontSize: "13px", color: "var(--muted)", margin: "8px 0 16px" }}>
                 {m.objective}
               </p>
-              <Link
-                to={m.siteId ? `/explorer?site=${m.siteId}` : `/explorer`}
-                aria-label={`Analyze ${m.name}`}
-              >
-                Analyze landing conditions <ArrowRight />
-              </Link>
+              <p className="trip-note">{m.scheduleNote}</p>
+              <p>Last verified <time dateTime={m.lastVerified}>{m.lastVerified}</time></p>
+              {missionExplorerUrl(m) && <Link to={missionExplorerUrl(m)!} aria-label={`Explore ${m.name} landing area`}>Explore landing area <ArrowRight /></Link>}
+              <a className="source-link" href={m.source} target="_blank" rel="noreferrer">Mission source</a>
             </article>
           ))}
+          </section>)}
         </div>
       </section>
     </article>
