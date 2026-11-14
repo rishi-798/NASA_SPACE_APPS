@@ -119,6 +119,21 @@ def test_real_positions_have_valid_angles_and_visibility(latitude, longitude, ti
         assert body["visible"] is (body["elevation"] > 0)
 
 
+def test_positions_include_moon_fixed_vectors_and_ephemeris_ranges():
+    result = calculate_visibility(-89.5, 135, "2026-10-03T18:00:00Z")
+
+    for name in ("sun", "earth"):
+        body = result[name]
+        vector = body["moon_fixed_position_km"]
+        assert len(vector) == 3
+        assert all(math.isfinite(component) for component in vector)
+        assert math.sqrt(sum(component * component for component in vector)) == pytest.approx(
+            body["distance_km"], rel=1e-10
+        )
+    assert 147_000_000 < result["sun"]["distance_km"] < 152_000_000
+    assert 350_000 < result["earth"]["distance_km"] < 420_000
+
+
 def test_south_pole_calculation_matches_real_kernel_reference():
     result = calculate_visibility(-89.5, 135, "2026-10-03T18:00:00Z")
 

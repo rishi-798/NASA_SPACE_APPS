@@ -83,13 +83,21 @@ def calculate_visibility(latitude: float, longitude: float, utc_time: str) -> di
 
             bodies = {}
             for name, target in (("sun", "SUN"), ("earth", "EARTH")):
-                moon_to_body, _ = spiceypy.spkpos(target, et, "J2000", "NONE", "MOON")
+                moon_to_body, _light_time_seconds = spiceypy.spkpos(
+                    target, et, "J2000", "NONE", "MOON"
+                )
+                distance_km = float(np.linalg.norm(moon_to_body))
                 body_from_site_fixed = j2000_to_fixed @ (moon_to_body - site_j2000)
+                moon_center_to_body_fixed = j2000_to_fixed @ moon_to_body
                 azimuth, elevation = _local_angles(body_from_site_fixed, latitude, longitude)
                 bodies[name] = {
                     "azimuth": azimuth,
                     "elevation": elevation,
                     "visible": elevation > 0,
+                    "distance_km": float(distance_km),
+                    "moon_fixed_position_km": [
+                        float(component) for component in moon_center_to_body_fixed
+                    ],
                 }
         except SpiceyError as exc:
             raise SpiceCalculationError(f"SPICE could not calculate the Sun/Earth position: {exc}") from exc
