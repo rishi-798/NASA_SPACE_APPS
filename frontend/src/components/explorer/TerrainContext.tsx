@@ -58,7 +58,7 @@ export function TerrainContext({ latitude, longitude }: { latitude: number; long
         <div><dt>Regional height range</dt><dd>{metres(native ? stats.native_elevation_min_m : stats.elevation_min_m)} to {metres(native ? stats.native_elevation_max_m : stats.elevation_max_m)}</dd></div>
         <div><dt>Source sampling</dt><dd>{metres(native ? stats.native_statistics_spacing_m : stats.source_resolution_m)} — not measurement accuracy</dd></div>
         {stats.height_uncertainty_rms_m_median !== null && <div><dt>Median reported height RMS</dt><dd>{metres(stats.height_uncertainty_rms_m_median)}</dd></div>}
-        <div><dt>Point height</dt><dd>Unavailable — elevation rasters not supplied</dd></div>
+        <div><dt>Point height</dt><dd>{data.point_elevation_m !== null ? metres(data.point_elevation_m) : "Unavailable - no valid local elevation at this point"}</dd></div>
       </dl>
       {data.point_terrain && <p>Point height from {data.point_terrain.source_id}, using the nearest original data pixel. Height is relative to the Moon reference sphere ({data.point_terrain.vertical_reference_radius_m.toLocaleString("en")} m radius). This is not a landing-safety assessment.</p>}
       <details><summary>Source and coverage</summary><p>{native ? stats.native_statistics_source_ids : stats.terrain_source}</p>
