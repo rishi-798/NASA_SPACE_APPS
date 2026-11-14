@@ -17,7 +17,8 @@ steps:
       - '--entrypoint'
       - python
       - '${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/lunar-browser:${_TAG}'
-      - /app/infra20261114/check_container20261114.py
+      - '-m'
+      - infra20261114.check_container20261114
 images:
   - '${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/lunar-browser:${_TAG}'
 timeout: 1200s
