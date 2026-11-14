@@ -6,6 +6,7 @@ import { ConditionsPanel } from "../components/explorer/ConditionsPanel";
 import { ExplorerControls } from "../components/explorer/ExplorerControls";
 import { MoonExplorer } from "../components/explorer/MoonExplorer";
 import { TerrainContext } from "../components/explorer/TerrainContext";
+import { LocalSurfacePane } from "../components/explorer/LocalSurfacePane";
 import { HorizonContainer } from "../components/visualization/HorizonContainer";
 import { VisibilityTimeline } from "../components/visualization/VisibilityTimeline";
 import { landingSites } from "../data/landingSites";
@@ -167,6 +168,9 @@ export function ExplorerPage() {
           <TerrainContext latitude={location.latitude} longitude={location.longitude} />
         </aside>
       </div>
+
+      <LocalSurfacePane latitude={location.latitude} longitude={location.longitude}
+        observationTime={timestamp(date, time)} onPick={pickLocation} />
 
       <div className="analysis-grid" data-reveal>
         <HorizonContainer data={conditions} profile={result?.horizon ?? null} />
