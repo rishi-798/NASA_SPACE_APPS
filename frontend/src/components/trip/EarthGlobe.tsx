@@ -31,11 +31,11 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true; controls.enablePan = false; controls.minDistance = 1.3; controls.maxDistance = 5;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const sun = point(15, -35, 1).normalize();
-    const light = new THREE.DirectionalLight(0xffffff, 2.7); light.position.copy(sun.clone().multiplyScalar(5)); scene.add(light);
-    scene.add(new THREE.AmbientLight(0x8aa4c9, .45));
-    const geometry = new THREE.SphereGeometry(1, 96, 64);
-    const material = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 70, specular: new THREE.Color(.10,.10,.10) });
+    const sun = point(5, -5, 1).normalize();
+    const light = new THREE.DirectionalLight(0xffffff, 3.0); light.position.copy(sun.clone().multiplyScalar(5)); scene.add(light);
+    scene.add(new THREE.AmbientLight(0x8aa4c9, .035));
+    const geometry = new THREE.SphereGeometry(1, 192, 128);
+    const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .8, metalness: 0 });
     const earth = new THREE.Mesh(geometry, material); scene.add(earth);
     const textures: THREE.Texture[] = [];
     let disposed = false;
@@ -46,22 +46,51 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
       if (color) t.colorSpace = THREE.SRGBColorSpace;
       t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); textures.push(t); return t;
     });
-    const nightMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-      uniforms: { night: { value: null }, sun: { value: sun } },
-      vertexShader: `varying vec2 vUv; varying vec3 vN; void main(){vUv=uv;vN=normalize(mat3(modelMatrix)*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-      fragmentShader: `uniform sampler2D night; uniform vec3 sun; varying vec2 vUv; varying vec3 vN; void main(){float dark=1.-smoothstep(-.25,.12,dot(normalize(vN),sun));vec3 lights=texture2D(night,vUv).rgb;gl_FragColor=vec4(lights*dark*1.6,dark);}` });
-    const night = new THREE.Mesh(new THREE.SphereGeometry(1.001,96,64),nightMat); scene.add(night);
-    const cloudMat = new THREE.MeshPhongMaterial({ transparent:true, opacity:.75, depthWrite:false, color:0xffffff });
-    const clouds = new THREE.Mesh(new THREE.SphereGeometry(1.012,96,64),cloudMat);scene.add(clouds);
-    const atmosphereMat = new THREE.ShaderMaterial({ transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, side:THREE.BackSide,
+    const cloudOffset = { value: 0 };
+    const cloudMat = new THREE.MeshPhongMaterial({ transparent:true, opacity:.88, depthWrite:false, color:0xffffff });
+    const clouds = new THREE.Mesh(new THREE.SphereGeometry(1.0015,192,128),cloudMat);scene.add(clouds);
+    const atmosphereMat = new THREE.ShaderMaterial({ transparent:true, depthWrite:false, side:THREE.FrontSide,
       uniforms: { sun:{value:sun} },
-      vertexShader:`varying vec3 vN;varying vec3 vW;void main(){vN=normalize(mat3(modelMatrix)*normal);vW=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
-      fragmentShader:`uniform vec3 sun;varying vec3 vN;varying vec3 vW;void main(){float rim=pow(1.-abs(dot(normalize(vN),normalize(cameraPosition-vW))),3.);float daylight=.25+.75*max(0.,dot(normalize(vN),sun));gl_FragColor=vec4(vec3(.12,.42,1.)*daylight,rim*.55);}` });
-    const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(1.045,96,64),atmosphereMat);scene.add(atmosphere);
-    void Promise.all([load('daymap',true),load('nightmap',true),load('clouds'),load('normal'),load('specular')]).then(([day,nights,cloud,normal,spec])=>{
+      vertexShader:`varying vec3 vW;void main(){vW=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+      fragmentShader:`uniform vec3 sun;varying vec3 vW;void main(){
+        vec3 o=cameraPosition;vec3 d=normalize(vW-o);float b=dot(o,d);float outer=b*b-dot(o,o)+1.012*1.012;
+        if(outer<0.)discard;float start=-b-sqrt(outer);float end=-b+sqrt(outer);
+        float inner=b*b-dot(o,o)+1.;if(inner>=0.)end=min(end,-b-sqrt(inner));
+        float stepSize=max(0.,end-start)/12.;float optical=0.;float illumination=0.;
+        for(int i=0;i<12;i++){vec3 p=o+d*(start+(float(i)+.5)*stepSize);float density=exp(-max(0.,length(p)-1.)/.0013);
+          float daylight=smoothstep(-.06,.15,dot(normalize(p),sun));optical+=density*stepSize;illumination+=density*stepSize*daylight;}
+        float alpha=1.-exp(-optical*45.);float lit=illumination/max(optical,.00001);
+        vec3 tint=mix(vec3(.035,.10,.24),vec3(.30,.55,1.),lit);
+        gl_FragColor=vec4(tint,alpha*(.08+.92*lit));}` });
+    const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(1.012,96,64),atmosphereMat);scene.add(atmosphere);
+    void Promise.all([load('daymap',true),load('nightmap',true),load('clouds'),load('normal'),load('specular'),loader.loadAsync('/earth/tutorial-topography.png')]).then(([day,nights,cloud,normal,spec,height])=>{
       if(disposed)return;
-      material.map=day;material.normalMap=normal;material.normalScale.set(.25,.25);material.specularMap=spec;material.needsUpdate=true;
-      nightMat.uniforms.night.value=nights;cloudMat.alphaMap=cloud;cloudMat.needsUpdate=true;setReady(true);
+      material.map=day;material.normalMap=normal;material.normalScale.set(.25,.25);textures.push(height); material.displacementMap=height;material.displacementScale=.0014;
+      material.onBeforeCompile = shader => {
+        shader.uniforms.oceanMask={value:spec};shader.uniforms.cityMap={value:nights};shader.uniforms.sunDirection={value:sun};shader.uniforms.cloudMask={value:cloud};shader.uniforms.cloudOffset=cloudOffset;
+        shader.fragmentShader='uniform sampler2D oceanMask;uniform sampler2D cityMap;uniform vec3 sunDirection;uniform sampler2D cloudMask;uniform float cloudOffset;\n'+shader.fragmentShader;
+        shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
+          float ocean=texture2D(oceanMask,vMapUv).r;
+          float grey=dot(diffuseColor.rgb,vec3(.2126,.7152,.0722));
+          diffuseColor.rgb=mix(diffuseColor.rgb,vec3(grey)*vec3(.70,.85,1.),ocean*.70);
+          float lat=(vMapUv.y-.5)*3.14159265;float lon=(vMapUv.x-.5)*6.2831853;
+          vec3 radial=vec3(cos(lat)*cos(lon),sin(lat),-cos(lat)*sin(lon));
+          float solarDot=dot(radial,sunDirection);
+          float cloudDistance=-solarDot+sqrt(solarDot*solarDot+1.0015*1.0015-1.);
+          vec3 cloudPoint=normalize(radial+sunDirection*cloudDistance);
+          vec2 cloudUv=vec2(fract(atan(-cloudPoint.z,cloudPoint.x)/6.2831853+.5-cloudOffset),asin(cloudPoint.y)/3.14159265+.5);
+          float cloudShadow=texture2D(cloudMask,cloudUv).g*smoothstep(.02,.15,solarDot);
+          diffuseColor.rgb*=1.-cloudShadow*.32;`);
+        shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
+          roughnessFactor=mix(.85,.22,ocean);`);
+        shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+          vec3 worldNormal=normalize(inverseTransformDirection(normal,viewMatrix));
+          float darkness=1.-smoothstep(-.22,-.035,dot(worldNormal,sunDirection));
+          vec3 city=texture2D(cityMap,vMapUv).rgb;
+          totalEmissiveRadiance+=vec3(1.,.67,.36)*dot(city,vec3(.2126,.7152,.0722))*darkness*1.8;`);
+      };
+      material.needsUpdate=true;cloudMat.alphaMap=cloud;cloudMat.bumpMap=cloud;cloudMat.bumpScale=.001;
+      cloudMat.displacementMap=cloud;cloudMat.displacementScale=.0003;cloudMat.needsUpdate=true;setReady(true);
     }).catch(()=>{if(!disposed)setFailed(true);});
     const pins = launchSites.map(site=>{
       const pin=new THREE.Mesh(new THREE.SphereGeometry(.018,12,8),new THREE.MeshBasicMaterial({color:0xff8b52}));
@@ -86,6 +115,7 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
       if(target){camera.position.lerp(target,reduced?1:.08);if(camera.position.distanceTo(target)<.002)target=null;}
       pins.forEach(p=>{p.scale.setScalar(p.userData.site.id===selected.current?1.6:1);});
       if(!reduced)clouds.rotation.y+=dt*.002;
+      cloudOffset.value=clouds.rotation.y/(Math.PI*2);
       controls.update();renderer.render(scene,camera);
     });
     const cancelFlight=()=>{target=null;};controls.addEventListener('start',cancelFlight);

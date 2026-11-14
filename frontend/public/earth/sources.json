@@ -50,5 +50,13 @@
       ],
       "output": "specular.jpg"
     }
-  ]
+  ],
+  "tutorial_topography": {
+    "source": "https://drive.google.com/file/d/1IW5tX5xrZS8SqTww19HcTxc3yWgGDIjB/view",
+    "reference": "https://www.youtube.com/watch?v=0YZzHn0iz8U",
+    "credit": "NASA imagery distributed in Blender Guru tutorial texture folder",
+    "source_name": "topography_5k.png",
+    "sha256": "520c739cbb9091a96686d57e81ce1790c950f41805971f07ab4013f82011fc06",
+    "usage": "Visual relief; not calibrated terrain heights"
+  }
 }
