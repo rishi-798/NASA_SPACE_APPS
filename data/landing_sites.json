@@ -5,7 +5,12 @@
     "latitude": -80.13,
     "longitude": 1.44,
     "mission": "IM-1 Odysseus",
-    "source": "https://www.nasa.gov/missions/lro/nasas-lro-images-intuitive-machines-odysseus-lander/"
+    "source": "https://www.nasa.gov/missions/lro/nasas-lro-images-intuitive-machines-odysseus-lander/",
+    "coordinate_source": "LRO/LROC NAC imaging (frame M1463440322L) reported by NASA and LROC: 80.13 S, 1.44 E, about 2,579 m elevation.",
+    "coordinate_note": "Published to hundredths of a degree. The SPICE observer is placed at 0 m on the reference sphere; the published elevation is not used in the Sun/Earth geometry.",
+    "horizon_profile": null,
+    "horizon_note": "Odysseus has no terrain-horizon profile: its reported location is close to the 80 S coverage edge of the LOLA DEM used for Athena.",
+    "comparison": true
   },
   {
     "id": "athena-im2",
@@ -13,6 +18,10 @@
     "latitude": -84.79,
     "longitude": 29.20,
     "mission": "IM-2 Athena",
-    "source": "https://pds.nasa.gov/ds-view/pds/viewContext.jsp?identifier=urn:nasa:pds:context:instrument_host:spacecraft.clps_to_prime1_athena&version=1.0"
+    "source": "https://pds.nasa.gov/ds-view/pds/viewContext.jsp?identifier=urn:nasa:pds:context:instrument_host:spacecraft.clps_to_prime1_athena&version=1.0",
+    "coordinate_source": "Rounded landed position. LROC (https://lroc.im-ldi.com/images/1408) gives 84.7906 S, 29.1957 E, about 22 m from these rounded coordinates.",
+    "coordinate_note": "The rounded coordinates are kept because the LOLA horizon profile was generated for exactly this point. The 22 m offset is below the profile DEM's 80 m pixel size, but local terrain results may still change with the precise position.",
+    "horizon_profile": "athena-im2.json",
+    "comparison": true
   }
 ]

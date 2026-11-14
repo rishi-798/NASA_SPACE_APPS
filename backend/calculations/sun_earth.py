@@ -1,12 +1,15 @@
 from datetime import datetime, timedelta, timezone
+import logging
 import math
 
 import numpy as np
 import spiceypy
 from spiceypy.utils.exceptions import SpiceyError
 
-from backend.spice_kernels import SPICE_LOCK, load_spice_kernels
+from backend.spice_kernels import SPICE_LOCK, load_spice_kernels, spice_code
 
+
+log = logging.getLogger("backend.calculations")
 
 MOON_FRAME = "MOON_ME"
 MAX_WINDOW_SAMPLES = 2000
@@ -100,7 +103,11 @@ def calculate_visibility(latitude: float, longitude: float, utc_time: str) -> di
                     ],
                 }
         except SpiceyError as exc:
-            raise SpiceCalculationError(f"SPICE could not calculate the Sun/Earth position: {exc}") from exc
+            # Full SPICE text can include local kernel paths: log it, return only the short code.
+            log.error("SPICE calculation failed at %s (%s, %s): %s", output_time, latitude, longitude, exc)
+            raise SpiceCalculationError(
+                f"SPICE could not calculate the Sun/Earth position ({spice_code(exc)})."
+            ) from exc
 
     return {
         "site": None,

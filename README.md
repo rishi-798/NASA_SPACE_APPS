@@ -1,4 +1,6 @@
 # CLPS Lunar Browser & Mission Architect
+
+For the updated analysis API, methodology, setup, and validation, see [Analysis documentation](docs/ANALYSIS.md).
 ### NASA Space Apps Challenge
 
 [![NASA Space Apps](https://img.shields.io/badge/NASA%20Space%20Apps-2026-blue.svg)](https://www.spaceappschallenge.org/)

@@ -1,3 +1,5 @@
+from pathlib import Path
+import pytest
 from fastapi.testclient import TestClient
 from backend.app import app
 from terrain.grid_scheme import identify
@@ -21,6 +23,7 @@ def test_missing_raster_does_not_return_fabricated_height(monkeypatch, tmp_path)
     assert 'moon-dataset.json' in result.json()['detail']
 
 
+@pytest.mark.skipif(not (Path(__file__).resolve().parents[1] / "frontend" / "public").is_dir(), reason="frontend not present in this checkout")
 def test_trip_route_and_rocket_asset_are_served():
     client = TestClient(app)
     assert client.get('/trip').status_code == 200

@@ -1,3 +1,5 @@
+> **v2 backend:** these routes are preserved unchanged (fields only added). The combined `/api/analysis`, `/api/compare`, `/api/ready`, `/api/methodology` routes, error codes, terrain modes and field additions are documented in the root [README](ANALYSIS.md#api) and live at `/docs`.
+
 # Shared API format
 
 This is the response format for the frontend and visualizations.

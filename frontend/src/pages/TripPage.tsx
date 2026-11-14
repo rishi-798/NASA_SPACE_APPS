@@ -95,6 +95,13 @@ export function TripPage() {
   }
   async function analyze(finalize: boolean) {
     if (!landing || !missionReady(mission)) return;
+    if (finalize && currentPreview?.state === "success" && currentPreview.result) {
+      // Inputs are unchanged since the preview (same revision): reuse it instead of recalculating,
+      // so an upstream failure now cannot block a result that was just displayed.
+      active.current?.abort();
+      dispatch({ type: "plan", revision: currentPreview.revision, result: currentPreview.result });
+      return;
+    }
     active.current?.abort();
     const controller = new AbortController();
     active.current = controller;
@@ -104,7 +111,7 @@ export function TripPage() {
     const matchedSite = landingSites.find((site) => site.latitude === landing.latitude && site.longitude === landing.longitude);
     try {
       const result = await getAnalysis(matchedSite?.id ?? "custom", matchedSite ? null : landing,
-        mission.utcTime, mission.utcTime.slice(0, 10), controller.signal);
+        mission.utcTime, controller.signal);
       if (controller.signal.aborted) return;
       if (finalize) dispatch({ type: "result", revision, result });
       else setPreview({ revision, state: "success", result });

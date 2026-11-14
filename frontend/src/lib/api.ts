@@ -1,5 +1,6 @@
 import type { MoonLocation } from "../MoonMap";
-import type { AnalysisResult, HorizonProfile, MissionSummary, VisibilityResponse, VisibilitySample } from "../types";
+import type { AnalysisBundle, AnalysisResult, VisibilityResponse } from "../types";
+import { analysisQuery, analysisWindow, toAnalysisResult } from "./analysisWindow";
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
 
@@ -53,33 +54,26 @@ export function getSiteVisibility(
   );
 }
 
+/**
+ * One request, one calculation: GET /api/analysis returns the samples, summary, windows and horizon
+ * computed from a single sample set covering the 24 hours from `time`.
+ */
 export async function getAnalysis(
   siteId: string,
   location: MoonLocation | null,
   time: string,
-  date: string,
   signal: AbortSignal,
 ): Promise<AnalysisResult> {
-  const start = `${date}T00:00:00Z`;
-  const end = new Date(new Date(start).getTime() + 86400000).toISOString();
-  const range = new URLSearchParams({ start, end, step_minutes: "30" });
-  const coordinates = location
-    ? new URLSearchParams({ lat: String(location.latitude), lon: String(location.longitude) })
-    : null;
-  const base = `/api/sites/${encodeURIComponent(siteId)}`;
-  const [conditions, samples, summary, horizon] = await Promise.all([
-    coordinates
-      ? request<VisibilityResponse>(`/api/visibility?${coordinates}&time=${encodeURIComponent(time)}`, signal)
-      : getSiteVisibility(siteId, time, signal),
-    request<VisibilitySample[]>(
-      coordinates ? `/api/visibility/window?${coordinates}&${range}` : `${base}/visibility/window?${range}`, signal,
-    ),
-    request<MissionSummary>(
-      coordinates ? `/api/summary?${coordinates}&${range}` : `${base}/summary?${range}`, signal,
-    ),
-    coordinates ? Promise.resolve(null) : request<HorizonProfile | null>(`${base}/horizon`, signal),
-  ]);
-  return {
-    conditions, samples, summary, horizon,
-  };
+  let params: URLSearchParams;
+  try {
+    params = analysisQuery(siteId, location, time);
+  } catch (error) {
+    throw new ApiError(error instanceof Error ? error.message : "Choose a valid UTC date and time.");
+  }
+  const bundle = await request<AnalysisBundle>(`/api/analysis?${params}`, signal);
+  try {
+    return toAnalysisResult(bundle, analysisWindow(time).start);
+  } catch (error) {
+    throw new ApiError(error instanceof Error ? error.message : "The calculation returned invalid data.");
+  }
 }

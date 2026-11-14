@@ -14,6 +14,8 @@ export type MissionAction =
   | { type: "time"; time: string }
   | { type: "stage"; stage: TripStage }
   | { type: "prepare" }
+  /** Finalize with a preview result already computed for this exact revision (no new request). */
+  | { type: "plan"; revision: number; result: AnalysisResult }
   | { type: "result"; revision: number; result: AnalysisResult }
   | { type: "error"; revision: number; error: string }
   | { type: "reset" };
@@ -47,6 +49,8 @@ export function missionReducer(mission: MissionRecord, action: MissionAction): M
       return { ...mission, stage: action.stage, error: null };
     }
     case "prepare": return missionReady(mission) ? { ...mission, stage: "preparing", result: null, resultRevision: null, error: null } : mission;
+    case "plan": return action.revision === mission.revision && missionReady(mission)
+      ? { ...mission, result: action.result, resultRevision: action.revision, stage: "reveal", error: null } : mission;
     case "result": return action.revision === mission.revision && mission.stage === "preparing"
       ? { ...mission, result: action.result, resultRevision: action.revision, stage: "reveal", error: null } : mission;
     case "error": return action.revision === mission.revision && mission.stage === "preparing"

@@ -1,4 +1,5 @@
 from pathlib import Path
+import pytest
 import json
 import sqlite3
 import math
@@ -59,6 +60,7 @@ def test_imported_catalogue_has_expected_records_and_actual_missing_files(monkey
     assert global_point['statistics']['native_statistics_spacing_m'] is not None
 
 
+@pytest.mark.skipif(not (Path(__file__).resolve().parents[1] / "frontend" / "public").is_dir(), reason="frontend not present in this checkout")
 def test_new_models_and_local_draco_are_available():
     client = TestClient(app)
     for model in ('sls-block-1.glb', 'ares-i-a.glb', 'ares-i-b.glb'):
