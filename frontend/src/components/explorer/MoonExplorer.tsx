@@ -6,13 +6,14 @@ import type { LandingSite } from "../../types";
 import { featuredMoonSites, moonMapSites } from "../../data/moonMapSites";
 
 type MoonExplorerProps = {
+  observationTime: string | null;
   selectedSite: LandingSite;
   pickedLocation: MoonLocation | null;
   onLocationSelect: (location: MoonLocation | null) => void;
   onSiteSelect: (id: string) => void;
 };
 
-export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, onSiteSelect }: MoonExplorerProps) {
+export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, onSiteSelect, observationTime }: MoonExplorerProps) {
   const [showGrid, setShowGrid] = useState(false);
   const [showAxis, setShowAxis] = useState(false);
   const controlsRef = useRef<MoonControls | null>(null);
@@ -36,6 +37,7 @@ export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, o
           showGrid={showGrid}
           showAxis={showAxis}
           controlsRef={controlsRef}
+          observationTime={observationTime}
         />
       </div>
 

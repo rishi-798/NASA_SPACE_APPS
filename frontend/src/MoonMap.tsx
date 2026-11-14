@@ -5,6 +5,9 @@ import {
   Cartesian2,
   Cartesian3,
   Cesium3DTileset,
+  CustomShader,
+  LightingModel,
+  SkyBox,
   Color,
   ConstantPositionProperty,
   DirectionalLight,
@@ -12,6 +15,8 @@ import {
   HeightReference,
   HorizontalOrigin,
   IonResource,
+  ImageBasedLighting,
+  JulianDate,
   LabelStyle,
   Math as CesiumMath,
   Matrix3,
@@ -54,6 +59,7 @@ interface MoonMapProps {
   selectedLocation: MoonLocation | null;
   showGrid: boolean;
   showAxis: boolean;
+  observationTime?: string | null;
   controlsRef: RefObject<MoonControls | null>;
 }
 
@@ -61,6 +67,7 @@ interface SceneState {
   viewer: Viewer;
   guides: ReturnType<typeof createMoonGuides>;
   point: Entity;
+  light: DirectionalLight;
 }
 
 export function MoonMap({
@@ -70,10 +77,12 @@ export function MoonMap({
   showGrid,
   showAxis,
   controlsRef,
+  observationTime = "2026-10-03T18:00:00Z",
 }: MoonMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<SceneState | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [lightingNote, setLightingNote] = useState("Calculating sunlight…");
   const [referenceOnly, setReferenceOnly] = useState(false);
 
   useEffect(() => {
@@ -95,7 +104,9 @@ export function MoonMap({
         fullscreenButton: false,
         infoBox: false,
         selectionIndicator: false,
-        skyBox: false,
+        // Default Cesium star map is decorative, not lunar astrometry.
+        shadows: true,
+        skyBox: SkyBox.createEarthSkyBox(),
         skyAtmosphere: false,
         requestRenderMode: true,
         scene3DOnly: true,
@@ -109,7 +120,9 @@ export function MoonMap({
       return;
     }
 
-    viewer.scene.backgroundColor = Color.fromCssColorString("#0a1014");
+    if (viewer.scene.sun) viewer.scene.sun.show = false;
+    if (viewer.scene.moon) viewer.scene.moon.show = false;
+    viewer.scene.backgroundColor = Color.fromCssColorString("#000000");
     viewer.scene.fog.enabled = false;
     viewer.resolutionScale = Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
     viewer.scene.postProcessStages.fxaa.enabled = true;
@@ -120,20 +133,9 @@ export function MoonMap({
     });
     viewer.scene.light = light;
 
-    const removeLightListener = viewer.scene.preRender.addEventListener(() => {
-      const direction = Cartesian3.clone(viewer.camera.directionWC);
-      Cartesian3.add(
-        direction,
-        Cartesian3.multiplyByScalar(viewer.camera.rightWC, 0.45, new Cartesian3()),
-        direction,
-      );
-      Cartesian3.add(
-        direction,
-        Cartesian3.multiplyByScalar(viewer.camera.upWC, -0.35, new Cartesian3()),
-        direction,
-      );
-      Cartesian3.normalize(direction, light.direction);
-    });
+    viewer.scene.shadowMap.maximumDistance = 150000;
+    viewer.scene.shadowMap.size = 2048;
+    viewer.scene.shadowMap.darkness = 0.05;
 
     const controller = viewer.scene.screenSpaceCameraController;
     controller.minimumZoomDistance = 50000;
@@ -153,7 +155,7 @@ export function MoonMap({
         disableDepthTestDistance: 100000,
       },
     });
-    sceneRef.current = { viewer, guides, point };
+    sceneRef.current = { viewer, guides, point, light };
 
     const setView = (name: ViewName = "near", animate = true) => {
       const [longitude, latitude] = VIEWS[name] ?? VIEWS.near;
@@ -325,7 +327,9 @@ export function MoonMap({
         if (cancelled) return;
         const terrain = await Cesium3DTileset.fromUrl(resource, {
           enableCollision: true,
-          maximumScreenSpaceError: 8,
+          maximumScreenSpaceError: 2,
+          dynamicScreenSpaceError: false,
+          imageBasedLighting: new ImageBasedLighting(),
         });
 
         if (cancelled) {
@@ -333,6 +337,11 @@ export function MoonMap({
           return;
         }
 
+        terrain.customShader = new CustomShader({
+            lightingModel: LightingModel.UNLIT,
+            fragmentShaderText: "void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) { vec3 normalEC = normalize(cross(dFdx(fsInput.attributes.positionEC), dFdy(fsInput.attributes.positionEC))); material.normalEC = normalEC; float sunlight = max(dot(normalEC, normalize(czm_lightDirectionEC)), 0.0); material.diffuse *= 0.006 + 1.2 * sunlight; }",
+          });
+        terrain.imageBasedLighting.imageBasedLightingFactor = new Cartesian2(0.03, 0);
         viewer.scene.primitives.add(terrain);
         const ready = () => {
           if (!cancelled) {
@@ -342,6 +351,8 @@ export function MoonMap({
             viewer.scene.requestRender();
           }
         };
+        // Let users explore as soon as a real surface tile is visible; finer tiles keep streaming.
+        terrain.tileVisible.addEventListener(() => { if (!terrainReady) ready(); });
         terrain.initialTilesLoaded.addEventListener(ready);
         if (terrain.tilesLoaded) ready();
         terrain.tileFailed.addEventListener((error) => {
@@ -367,10 +378,31 @@ export function MoonMap({
       clickHandler.destroy();
       viewer.scene.canvas.removeEventListener("pointerdown", interruptFlight);
       viewer.scene.canvas.removeEventListener("wheel", interruptFlight);
-      removeLightListener();
       viewer.destroy();
     };
   }, [controlsRef, onLocationSelect, onSiteSelect]);
+
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene || !observationTime) return;
+    const abort = new AbortController();
+    const base = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
+    // At lat/lon 0, local up/east/north correspond to lunar fixed X/Y/Z.
+    // Solar parallax across the Moon is negligible for this global directional light.
+    void fetch(`${base}/api/visibility?lat=0&lon=0&time=${encodeURIComponent(observationTime)}`, {signal:abort.signal})
+      .then(async response => {
+        if (!response.ok) throw new Error("Sun calculation unavailable");
+        const data = await response.json() as {sun:{azimuth:number;elevation:number}};
+        if (abort.signal.aborted || scene.viewer.isDestroyed()) return;
+        const az = CesiumMath.toRadians(data.sun.azimuth), el = CesiumMath.toRadians(data.sun.elevation);
+        if (!Number.isFinite(az) || !Number.isFinite(el)) throw new Error("Invalid sunlight direction");
+        scene.light.direction = new Cartesian3(-Math.sin(el), -Math.cos(el)*Math.sin(az), -Math.cos(el)*Math.cos(az));
+        scene.viewer.clock.currentTime = JulianDate.fromIso8601(observationTime);
+        scene.viewer.scene.requestRender();
+        setLightingNote(`Sunlight for ${observationTime.replace("T", " ")}`);
+      }).catch(() => { if (!abort.signal.aborted) setLightingNote("Sun calculation unavailable; lighting is illustrative."); });
+    return () => abort.abort();
+  }, [observationTime, controlsRef, onLocationSelect, onSiteSelect]);
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -401,6 +433,7 @@ export function MoonMap({
         className="moon-map"
         aria-label="Interactive 3D Moon. Drag to rotate, scroll to zoom, and click to select coordinates."
       />
+      <p className="map-lighting-note" role="status">{lightingNote}</p>
       {referenceOnly && <p className="map-reference-note" role="status">Reference globe: ion terrain unavailable. Coordinate picking uses the lunar sphere, not measured surface heights.</p>}
       {status !== "ready" && (
         <div className="map-message" role="status">
