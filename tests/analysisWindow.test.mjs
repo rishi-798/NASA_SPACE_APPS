@@ -28,6 +28,7 @@ test('one request carries the site or coordinates plus the window', () => {
   assert.equal(site.get('start'), '2026-10-12T18:00:00.000Z');
   assert.equal(site.get('end'), '2026-10-13T18:00:00.000Z');
   assert.equal(site.get('step_minutes'), '30');
+  assert.equal(site.get('allow_flat_fallback'), 'true');  // degraded results are labelled, never silent
   const custom = analysisQuery('custom', { latitude: -83, longitude: 24 }, '2026-10-12T18:00:00Z');
   assert.equal(custom.get('site_id'), null);
   assert.equal(custom.get('lat'), '-83');

@@ -35,9 +35,12 @@ class HorizonProfileMissing(HorizonError):
     """The site is configured with a profile file that does not exist."""
 
 
-def validate_profile(profile: dict, site: dict | None = None) -> dict:
+def validate_profile(profile: dict, site: dict | None = None, *, allow_partial: bool = False) -> dict:
     if not isinstance(profile, dict):
         raise HorizonError("horizon profile must be an object")
+    if profile.get("partial") and not allow_partial:
+        # Some azimuths lack terrain out to the full radius: unusable for visibility.
+        raise HorizonError("horizon profile has partial azimuth coverage and cannot be used for visibility")
     if profile.get("synthetic") and os.environ.get("ALLOW_SYNTHETIC_TERRAIN") != "1":
         # Test fixtures are marked synthetic and must never be served as real analysis.
         raise HorizonError("horizon profile is a synthetic test fixture and cannot be used for real analysis")

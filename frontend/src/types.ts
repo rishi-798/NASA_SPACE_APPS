@@ -119,3 +119,34 @@ export type AnalysisResult = {
   horizon: HorizonProfile | null;
   terrain: TerrainStatus | null;
 };
+
+export type ComparisonRow = {
+  site_id: string;
+  name: string;
+  mission: string;
+  horizon_mode: TerrainStatus["mode"];
+  terrain_obstruction_assessed: boolean;
+  sunlight_percent: number;
+  earth_visible_percent: number;
+  both_available_percent: number;
+  longest_darkness_minutes: number;
+  longest_earth_hidden_minutes: number;
+  longest_joint_window_minutes: number;
+};
+
+export type ComparisonSiteResult = {
+  site_id: string;
+  ok: boolean;
+  analysis: AnalysisBundle | null;
+  error: { code: string; message: string } | null;
+};
+
+/** Response of GET /api/compare. Failed sites are listed in `sites` with their error, never omitted. */
+export type ComparisonResult = {
+  schema_version: 1;
+  request: { start: string; end: string; step_minutes: number; sample_count: number };
+  shared_sample_times: boolean;
+  sites: ComparisonSiteResult[];
+  table: ComparisonRow[];
+  comparison_notes: string[];
+};

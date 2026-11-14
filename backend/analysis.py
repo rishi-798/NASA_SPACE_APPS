@@ -23,7 +23,8 @@ from backend.errors import ApiError, classify
 from backend.landing_sites import comparison_site_ids, get_landing_site
 from backend.mission_summary import summarize_window
 from backend.spice_kernels import KERNEL_FILES, coverage, kernel_fingerprint, kernel_provenance, load_spice_kernels
-from backend.terrain.horizon import apply_horizon, profile_path, resolve_horizon
+from backend.terrain import on_demand
+from backend.terrain.horizon import apply_horizon, profile_metadata, profile_path, resolve_horizon
 
 log = logging.getLogger("backend.analysis")
 
@@ -34,7 +35,11 @@ MAX_STEP_MINUTES = 1440
 HORIZON_MODE_LABELS = {
     "terrain_profile": "LOLA terrain",
     "flat_horizon": "Flat horizon — terrain unavailable",
-    "flat_horizon_degraded": "Flat horizon — DEGRADED: configured terrain profile unavailable",
+    "flat_horizon_degraded": "Flat horizon — DEGRADED: terrain horizon unavailable",
+}
+STATUS_LABELS = {  # more specific labels where the status adds information
+    "profile_generated": "LOLA terrain (generated for this coordinate)",
+    "not_requested": "Flat horizon — terrain not requested",
 }
 
 
@@ -151,15 +156,68 @@ def _label(sun: bool, earth: bool) -> str:
     return "neither visible at this sample"
 
 
+TERRAIN_MODES = ("auto", "flat")
+FLAT_MESSAGE = (
+    "Visibility uses a flat local horizon (elevation > 0 deg). Terrain obstruction is NOT assessed: nearby ridges "
+    "or crater rims may hide the Sun or Earth when this says visible. Lower confidence than a terrain-aware result."
+)
+
+
+def _custom_terrain(site: dict, allow_flat_fallback: bool):
+    """On-demand LOLA horizon for a custom coordinate. Returns (profile | None, terrain_info)."""
+    try:
+        profile, info = on_demand.get_profile(site["latitude"], site["longitude"])
+    except on_demand.OnDemandTerrainError as exc:
+        if not allow_flat_fallback:
+            raise
+        return None, {
+            "mode": "flat_horizon_degraded", "status": "on_demand_failed", "terrain_obstruction_assessed": False,
+            "message": f"{exc} This point is inside the LOLA DEM coverage, so a terrain horizon exists but could not "
+                       "be computed now. Results use a flat local horizon and are DEGRADED.",
+            "profile_metadata": None,
+        }
+    if profile is None:
+        status = "on_demand_disabled" if info["status"] == "disabled" else "no_profile_for_location"
+        return None, {"mode": "flat_horizon", "status": status, "terrain_obstruction_assessed": False,
+                      "message": f"{info['message']} {FLAT_MESSAGE}", "profile_metadata": None}
+    log.info("On-demand horizon for %s,%s (cache %s)", site["latitude"], site["longitude"], info["cache"])
+    meta = profile_metadata(profile)
+    return profile, {
+        "mode": "terrain_profile", "status": "profile_generated", "terrain_obstruction_assessed": True,
+        "message": (
+            f"LOLA terrain-horizon profile generated for this exact coordinate from LDEM_80S_80MPP_ADJ "
+            f"({meta['pixel_resolution_m']:.0f} m/pixel, {meta['max_distance_m'] / 1000:.0f} km radius, "
+            f"terrain within {meta['min_distance_m']:.0f} m excluded, {meta['observer_height_m']:g} m observer). "
+            "A target is visible only when its centre is above the terrain horizon at its azimuth."
+        ),
+        "profile_metadata": meta,
+        "profile_key": info["key"],
+    }
+
+
 def build_analysis(site_id=None, lat=None, lon=None, start=None, end=None, step_minutes=None, *,
-                   allow_flat_fallback: bool = False, name: str | None = None) -> dict:
-    """Synchronous; FastAPI runs it in its threadpool. SPICE calls take SPICE_LOCK."""
+                   allow_flat_fallback: bool = False, name: str | None = None, terrain_mode: str = "auto") -> dict:
+    """Synchronous; FastAPI runs it in its threadpool. SPICE calls take SPICE_LOCK.
+
+    terrain_mode: "auto" uses the best available horizon (a site's saved LOLA profile, or an on-demand
+    LOLA profile for a custom south-polar coordinate); "flat" explicitly skips terrain.
+    """
+    if terrain_mode not in TERRAIN_MODES:
+        raise ValueError(f"terrain_mode must be one of: {', '.join(TERRAIN_MODES)}")
     site = resolve_site(site_id, lat, lon, name)
     request = normalize_range(start, end, step_minutes)
-    profile, terrain = resolve_horizon(site, allow_flat_fallback=allow_flat_fallback)
+    if terrain_mode == "flat":
+        profile, terrain = None, {
+            "mode": "flat_horizon", "status": "not_requested", "terrain_obstruction_assessed": False,
+            "message": f"Terrain horizon not requested (terrain_mode=flat). {FLAT_MESSAGE}", "profile_metadata": None}
+    elif site["kind"] == "custom":
+        profile, terrain = _custom_terrain(site, allow_flat_fallback)
+    else:
+        profile, terrain = resolve_horizon(site, allow_flat_fallback=allow_flat_fallback)
 
     key = (site.get("id"), site["latitude"], site["longitude"], _profile_fingerprint(site), terrain["status"],
-           request["start"], request["end"], request["step_minutes"], kernel_fingerprint())
+           terrain.pop("profile_key", None), request["start"], request["end"], request["step_minutes"],
+           kernel_fingerprint())
     cached = CACHE.get(key)
     if cached is None:
         cached = _compute(site, request, profile, terrain)
@@ -203,7 +261,7 @@ def _compute(site: dict, request: dict, profile, terrain: dict) -> dict:
             "kernels": list(KERNEL_FILES),
             "kernel_details": kernel_provenance(),
             "ephemeris_coverage": {"start": _iso(low), "end": _iso(high)},
-            "horizon_mode": HORIZON_MODE_LABELS[terrain["mode"]],
+            "horizon_mode": STATUS_LABELS.get(terrain["status"], HORIZON_MODE_LABELS[terrain["mode"]]),
             "terrain_source": terrain["profile_metadata"],
             "site_coordinates": site.get("coordinate_source"),
             "limitations": methodology.LIMITATIONS,

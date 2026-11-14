@@ -121,3 +121,27 @@ def test_profile_loader_rejects_mismatch_and_bad_data(tmp_path):
     path2.write_text(json.dumps({**profile, "site_id": "bad"}))
     with pytest.raises(HorizonError, match="invalid angle"):
         load_profile({**SITE, "id": "bad"}, tmp_path)
+
+
+def test_radius_beyond_dem_edge_is_refused_not_silently_truncated(tmp_path):
+    # The synthetic DEM is +/-10 km; a 12 km radius only fits along the diagonals.
+    dem = tmp_path / "small.tif"
+    make_dem(dem)
+    with pytest.raises(ValueError, match="does not reach 12000 m"):
+        build_profile(str(dem), SITE, SOURCE, 12000, 10, 0, 150)
+    partial = build_profile(str(dem), SITE, SOURCE, 12000, 10, 0, 150, allow_partial=True)
+    assert partial["partial"] is True
+    assert any(partial["complete_bins"]) and not all(partial["complete_bins"])
+    shortest = min(partial["azimuth_reach_m"])
+    assert 9000 < shortest < 11000                    # data stops at the DEM edge (+/-10 km square)
+    with pytest.raises(HorizonError, match="partial azimuth coverage"):
+        validate_profile(partial, SITE)               # never usable for visibility
+    path = tmp_path / "test-site.json"
+    path.write_text(json.dumps(partial))
+    with pytest.raises(HorizonError):
+        load_profile(SITE, tmp_path)
+
+
+def test_full_coverage_profile_is_not_marked_partial(tmp_path):
+    profile = profile_from_dem(tmp_path)
+    assert "partial" not in profile and "azimuth_reach_m" not in profile

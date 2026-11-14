@@ -132,11 +132,13 @@ def test_odysseus_flat_mode_is_explicit_and_lower_confidence():
 
 
 def test_custom_coordinate_and_post_form():
-    g = get(lat=-83, lon=24, name="Ridge", **DAY).json()
-    p = client.post("/api/analysis", json={"lat": -83, "lon": 24, "name": "Ridge", **DAY}).json()
+    # -70 S is outside the LOLA 80 S DEM, so there is genuinely no terrain profile.
+    g = get(lat=-70, lon=24, name="Ridge", **DAY).json()
+    p = client.post("/api/analysis", json={"lat": -70, "lon": 24, "name": "Ridge", **DAY}).json()
     assert g == p
     assert g["site"]["kind"] == "custom" and g["site"]["id"] is None and g["site"]["name"] == "Ridge"
     assert g["terrain"]["status"] == "no_profile_for_location"
+    assert "outside the LOLA 80 S DEM coverage" in g["terrain"]["message"]
 
 
 # ----------------------------------------------------- configured terrain failures

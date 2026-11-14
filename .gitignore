@@ -25,3 +25,7 @@ local-raster-check.json
 .env
 .env.*
 !.env.example
+# On-demand LOLA horizon profiles (regenerated from the DEM when missing)
+backend/terrain/cache/
+# Optional local copy of the LOLA 80S DEM (scripts/fetch_lola_dem.py, 189 MB)
+backend/terrain/dem/

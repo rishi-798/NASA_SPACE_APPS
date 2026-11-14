@@ -25,7 +25,14 @@ def build_profile(
     azimuth_step: float = 0.5,
     observer_height_m: float = 2,
     min_distance_m: float = 160,
+    allow_partial: bool = False,
 ) -> dict:
+    """Horizon profile from a LOLA DEM. Every azimuth bin must have terrain out to max_distance_m.
+
+    Near the DEM edge the read window is clipped, so some directions would silently use less terrain.
+    That raises ValueError unless allow_partial=True, which instead marks the profile "partial" and
+    records how far each bin reaches (azimuth_reach_m). Partial profiles are refused for visibility.
+    """
     settings = (max_distance_m, azimuth_step, observer_height_m, min_distance_m)
     if not all(math.isfinite(value) for value in settings):
         raise ValueError("preprocessing settings must be finite")
@@ -121,9 +128,18 @@ def build_profile(
         if not np.all(np.isfinite(horizon)):
             raise ValueError("DEM does not cover every azimuth bin")
         peak_distance = np.zeros(int(count))
+        reach = np.zeros(int(count))
         for candidate, elevations, ranges in contributions:
             winners = elevations == horizon[candidate]
             peak_distance[candidate[winners]] = ranges[winners]
+            np.maximum.at(reach, candidate, ranges)
+        # A bin is complete when terrain cells reach the radius (within two pixel diagonals).
+        complete = reach >= max_distance_m - 2 * math.hypot(*dataset.res)
+        if not np.all(complete) and not allow_partial:
+            raise ValueError(
+                f"DEM coverage does not reach {max_distance_m:.0f} m in every azimuth "
+                f"(shortest {float(reach.min()):.0f} m; {int((~complete).sum())} of {int(count)} bins short)"
+            )
 
         profile = {
             "site_id": site["id"],
@@ -144,7 +160,11 @@ def build_profile(
             "horizon": [round(float(value), 4) for value in horizon],
             "peak_distance_m": [round(float(value), 1) for value in peak_distance],
         }
-        return validate_profile(profile, site)
+        if not np.all(complete):
+            profile["partial"] = True
+            profile["azimuth_reach_m"] = [round(float(value), 1) for value in reach]
+            profile["complete_bins"] = [bool(value) for value in complete]
+        return validate_profile(profile, site, allow_partial=allow_partial)
 
 
 def main():

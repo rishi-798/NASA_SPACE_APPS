@@ -5,7 +5,7 @@ import {
   Warning,
 } from "@phosphor-icons/react";
 import { formatAzimuth, formatSignedDegree, formatUtcDisplay } from "../../lib/format";
-import type { AnalysisState, CelestialPosition, VisibilityResponse } from "../../types";
+import type { AnalysisState, CelestialPosition, TerrainStatus, VisibilityResponse } from "../../types";
 import { StatusIndicator } from "../ui/StatusIndicator";
 
 type ConditionsPanelProps = {
@@ -13,6 +13,19 @@ type ConditionsPanelProps = {
   state: AnalysisState;
   observationTime: string | null;
   errorMessage?: string;
+  /** Backend terrain status for this analysis (mode, status, explanation). */
+  terrain?: TerrainStatus | null;
+};
+
+const TERRAIN_LABELS: Record<string, string> = {
+  profile_loaded: "LOLA horizon · saved site profile · 2 m observer",
+  profile_generated: "LOLA horizon · generated for this point · 2 m observer",
+  no_profile_for_location: "No terrain profile here · flat horizon",
+  not_requested: "Terrain not requested · flat horizon",
+  on_demand_disabled: "Terrain generation off · flat horizon",
+  on_demand_failed: "DEGRADED · terrain unavailable · flat horizon",
+  configured_profile_missing: "DEGRADED · terrain profile missing · flat horizon",
+  configured_profile_invalid: "DEGRADED · terrain profile unusable · flat horizon",
 };
 
 type TelemetryRowProps = {
@@ -54,9 +67,15 @@ export function ConditionsPanel({
   state,
   observationTime,
   errorMessage,
+  terrain,
 }: ConditionsPanelProps) {
   const terrainClear = !!conditions && conditions.sun.visible && conditions.earth.visible;
-  const hasTerrain = conditions?.sun.terrain_horizon !== undefined;
+  const hasTerrain = terrain ? terrain.mode === "terrain_profile" : conditions?.sun.terrain_horizon !== undefined;
+  const terrainLabel = state === "loading"
+    ? "Calculating geometry and terrain horizon (a new south-polar point can take a few seconds)"
+    : !conditions ? "Awaiting horizon analysis"
+      : terrain ? TERRAIN_LABELS[terrain.status] ?? terrain.mode
+        : hasTerrain ? "LOLA horizon · 2 m observer" : "No terrain profile · flat horizon";
   const observed = conditions?.time ?? observationTime;
 
   return (
@@ -84,6 +103,16 @@ export function ConditionsPanel({
         </div>
       )}
 
+      {state === "success" && terrain && terrain.mode !== "terrain_profile" && (
+        <div className="service-notice" role="status">
+          <Warning weight="fill" aria-hidden="true" />
+          <div>
+            <strong>{terrain.mode === "flat_horizon_degraded" ? "Degraded result: terrain not assessed" : "Flat horizon: terrain not assessed"}</strong>
+            <p>{terrain.message}</p>
+          </div>
+        </div>
+      )}
+
       <div className={`telemetry-stack${state === "loading" ? " telemetry-loading" : ""}`}>
         <TelemetryRow
           kind="sun"
@@ -93,7 +122,7 @@ export function ConditionsPanel({
         />
         <TelemetryRow
           kind="earth"
-          title="Earth / Comms"
+          title="Earth visible"
           subtitle="Line of sight"
           data={conditions?.earth}
         />
@@ -102,7 +131,7 @@ export function ConditionsPanel({
             <Mountains weight="light" aria-hidden="true" />
             <div>
               <p>Terrain</p>
-              <span>{!conditions ? "Awaiting horizon analysis" : hasTerrain ? "LOLA horizon · 2 m observer" : "No terrain profile · flat horizon"}</span>
+              <span>{terrainLabel}</span>
             </div>
           </div>
           <StatusIndicator

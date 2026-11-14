@@ -18,7 +18,11 @@ export function analysisWindow(time: string): { start: string; end: string } {
 /** Query for GET /api/analysis: a named site, or custom coordinates when `location` is given. */
 export function analysisQuery(siteId: string, location: AnalysisLocation | null, time: string): URLSearchParams {
   const { start, end } = analysisWindow(time);
-  const params = new URLSearchParams({ start, end, step_minutes: String(ANALYSIS_STEP_MINUTES) });
+  // allow_flat_fallback: if terrain data cannot be read right now, get an explicitly DEGRADED,
+  // labelled flat-horizon result (shown with a warning) instead of no result at all.
+  const params = new URLSearchParams({
+    start, end, step_minutes: String(ANALYSIS_STEP_MINUTES), allow_flat_fallback: "true",
+  });
   if (location) {
     params.set("lat", String(location.latitude));
     params.set("lon", String(location.longitude));

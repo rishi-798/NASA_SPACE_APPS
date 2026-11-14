@@ -10,6 +10,7 @@ serialised by ``backend.spice_kernels.SPICE_LOCK``.
 """
 import logging
 import os
+from typing import Literal
 from urllib.parse import urlparse
 
 from fastapi import Body as RequestBody, FastAPI, Query
@@ -130,7 +131,18 @@ def ready():
             info = {"mode": "unknown", "status": "error", "terrain_obstruction_assessed": False, "message": str(exc)}
         profiles.append({"site_id": site["id"], **{k: info[k] for k in
                          ("mode", "status", "terrain_obstruction_assessed", "message")}})
+    from backend.terrain import on_demand
+    cache = on_demand.cache_dir()
+    on_demand_status = {
+        "enabled": on_demand.enabled(),
+        "source": on_demand.PGDA_DEM_URL,
+        "reads_from": "remote PGDA (windowed)" if on_demand.is_remote() else "local copy",
+        "coverage": on_demand.coverage_note(),
+        "cached_profiles": len(list(cache.glob("*.json"))) if cache.is_dir() else 0,
+        "remote_reads_probed": False,
+    }
     body = {"ready": calc["available"], "calculations": calc, "terrain_profiles": profiles,
+            "on_demand_terrain": on_demand_status,
             "cloud_terrain": _cloud_terrain_status(), "cache": analysis.CACHE.stats()}
     return JSONResponse(status_code=200 if calc["available"] else 503, content=body)
 
@@ -269,10 +281,13 @@ def get_analysis(
     step_minutes: int | None = Query(None, ge=1, le=analysis.MAX_STEP_MINUTES, description="Default 30."),
     allow_flat_fallback: bool = False,
     name: str | None = Query(None, max_length=80),
+    terrain_mode: Literal["auto", "flat"] = Query(
+        "auto", description="auto: saved LOLA profile, or an on-demand LOLA profile for custom points south of "
+                            "~81.3 S (first request ~5-10 s, then cached). flat: explicitly skip terrain."),
 ):
     with api_errors():
         return analysis.build_analysis(site_id, lat, lon, start, end, step_minutes,
-                                       allow_flat_fallback=allow_flat_fallback, name=name)
+                                       allow_flat_fallback=allow_flat_fallback, name=name, terrain_mode=terrain_mode)
 
 
 @app.post("/api/analysis", response_model=AnalysisResponse, tags=["analysis"], **NEW,
@@ -280,7 +295,8 @@ def get_analysis(
 def post_analysis(body: AnalysisRequest = RequestBody(...)):
     with api_errors():
         return analysis.build_analysis(body.site_id, body.lat, body.lon, body.start, body.end, body.step_minutes,
-                                       allow_flat_fallback=body.allow_flat_fallback, name=body.name)
+                                       allow_flat_fallback=body.allow_flat_fallback, name=body.name,
+                                       terrain_mode=body.terrain_mode)
 
 
 @app.get("/api/compare", response_model=CompareResponse, tags=["analysis"], **NEW,

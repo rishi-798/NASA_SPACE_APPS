@@ -25,6 +25,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python -m backend.download_kernels        # ~45 MB from NAIF, once; writes kernels/manifest.json
+python -m scripts.fetch_lola_dem          # optional, recommended: 189 MB LOLA DEM for reliable terrain
 uvicorn backend.app:app --reload          # http://127.0.0.1:8000/docs
 ```
 
@@ -34,6 +35,7 @@ py -3 -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python -m backend.download_kernels
+python -m scripts.fetch_lola_dem
 uvicorn backend.app:app --reload
 ```
 
@@ -70,6 +72,12 @@ The two rows are **not equal-confidence**: Odysseus ignores terrain, and the API
 | `LUNAR_COG_BASE_URL` | unset | Hugging Face `resolve/<commit>` URL for streamed terrain COGs (unchanged) |
 | `LUNAR_COG_RELEASE_FILE` | unset | Pinned release file, e.g. `data/cloud-release.json` (unchanged) |
 | `GDAL_HTTP_TIMEOUT`, `GDAL_CACHEMAX`, … | see `render.yaml` | Bounded remote raster reads (unchanged) |
+| `TERRAIN_ON_DEMAND` | `1` | `0` turns off on-demand LOLA horizons for custom points |
+| `LOLA_80S_DEM_PATH` | unset | Path to `LDEM_80S_80MPP_ADJ.TIF`. Otherwise the copy from `scripts.fetch_lola_dem` is used if present, else remote windowed reads from PGDA |
+| `TERRAIN_READ_ATTEMPTS` | `2` | Attempts for remote DEM reads (local reads are not retried) |
+| `TERRAIN_CACHE_DIR` | `backend/terrain/cache` | Generated profiles, about 19 KB each (Git-ignored) |
+| `TERRAIN_CACHE_MAX_FILES` | `300` | Cache bound; the oldest profiles are evicted first |
+| `TERRAIN_ON_DEMAND_MAX_CONCURRENT` | `2` | Concurrent profile generations |
 | `ALLOW_SYNTHETIC_TERRAIN` | unset | **Tests only.** Lets fixture profiles marked `"synthetic": true` load |
 
 There is no database, no accounts, no queues and no paid services.
@@ -130,7 +138,7 @@ Every error body includes `detail`, which the existing frontend reads, plus a st
 | GET | `/api/sites` | Site list (unchanged shape, plus new descriptive fields) |
 | GET | `/api/sites/{id}` | One site with its `terrain` status (new) |
 | GET | `/api/sites/{id}/horizon` | The profile, or `null` when the site has **no** profile. **503 when a configured profile is broken** |
-| GET | `/api/analysis` | **Main endpoint.** `site_id` **or** `lat`+`lon`, plus `start`, `end`, `step_minutes`, `allow_flat_fallback`, `name` |
+| GET | `/api/analysis` | **Main endpoint.** `site_id` **or** `lat`+`lon`, plus `start`, `end`, `step_minutes`, `allow_flat_fallback`, `terrain_mode` (`auto` or `flat`), `name` |
 | POST | `/api/analysis` | The same fields as a JSON body |
 | GET/POST | `/api/compare` | Athena and Odysseus on one shared range and grid |
 | GET | `/api/sites/{id}/visibility`, `/visibility/window`, `/summary` | Existing routes, preserved |
@@ -234,7 +242,20 @@ These descriptions are read from the code, and `/api/methodology` returns the sa
 - **Odysseus:** `horizon_profile: null` in `data/landing_sites.json`. It has no profile because it sits at the
   DEM's 80° S coverage edge. Its results are `flat_horizon`, with `terrain_obstruction_assessed: false` and a
   lower-confidence warning.
-- **Custom coordinates:** always `flat_horizon`. No arbitrary-location horizon is computed.
+- **Custom coordinates south of about 81.31° S: terrain-aware on demand.** The backend generates a LOLA horizon
+  for the exact point with the same generator that produced Athena's profile. That generator, run against PGDA,
+  reproduces Athena's checked-in profile bit for bit. It reads only a window of about ±44 km around the point,
+  and the result is `terrain_profile` / `profile_generated`. A new point takes about 1 s with the local DEM copy
+  (`scripts.fetch_lola_dem`), or 5–14 s with remote reads; later requests are instant from the disk cache. Use `python -m scripts.warm_terrain -89.5,135 ...` before a demo.
+  - The coverage rule is "distance from pole + 40 km ≤ the DEM's 304 km half-width", checked before any read.
+    Points outside it are `flat_horizon` / `no_profile_for_location`, with the reason given.
+  - If the DEM can't be read, the result is a 503, or a 504 on a timeout. With `allow_flat_fallback=true` it is
+    instead an explicit `flat_horizon_degraded` / `on_demand_failed` result. The frontend asks for that fallback
+    and shows the warning.
+  - `terrain_mode=flat` skips terrain explicitly and reports `not_requested`.
+  - Example (2026-10-12 to 26): near Shackleton (89.5° S, 135° E), a flat horizon gives 100% sunlight, while
+    the generated LOLA horizon gives **0% Sun and 0% Earth**, with crater walls up to 30°.
+- **Custom coordinates north of the coverage limit:** `flat_horizon`.
 - **A configured profile that is missing or corrupt** returns **503** by default, including on `/horizon`. With
   `allow_flat_fallback=true` you instead get an explicit `flat_horizon_degraded` result with a DEGRADED warning.
   It never silently falls back to flat.
@@ -249,6 +270,16 @@ These descriptions are read from the code, and `/api/methodology` returns the sa
   return. 2,000 samples take about 0.75 s cold and about 0.05 s from cache.
 
 ---
+
+## Validation against real missions
+
+[docs/VALIDATION.md](VALIDATION.md) checks the engine against Odysseus and Athena. Run it with
+`python -m scripts.validate_missions`.
+- The published Odysseus position lands on LOLA terrain 15 m from its published elevation.
+- Both missions' plans fit inside the predicted sunlit periods.
+- Both landers lost power while their sites were still sunlit and in view of Earth. Both were on their sides, and
+  Athena lay in a ~20 m crater far below the map's resolution. That is the documented case for "visibility is not
+  power".
 
 ## What changed from the reference repo
 
@@ -283,7 +314,9 @@ These descriptions are read from the code, and `/api/methodology` returns the sa
   `rishi-cesium-moon` (analysis bundle, Moon viewer), and `dip-hemanth-terrain`/`main` (terrain and cloud terrain).
 
 ## Tests
-`pytest -q` gives **160 passed, 1 skipped**. The skip needs the external Moon catalogue (`data/lunar`).
+`pytest -q` gives **179 passed, 3 skipped**. The skips are the external Moon catalogue (`data/lunar`) and two opt-in
+data checks. `RUN_NETWORK_TESTS=1 pytest -k "real_pgda or partial"` regenerates Athena from the LOLA DEM (exact
+match required) and checks the Odysseus terrain numbers. They use the local DEM copy when present.
 Frontend unit tests: `cd frontend && npm test` gives 16 passed. The suite covers:
 - JPL Horizons and `azlcpo` reference cases
 - zenith and nadir checks
@@ -299,7 +332,10 @@ Frontend unit tests: `cd frontend && npm test` gives 16 passed. The suite covers
 - error hygiene
 
 ## Remaining gaps
-- No arbitrary-location horizon. Custom points and Odysseus are flat-horizon only.
+- Terrain horizons exist only inside the LOLA 80° S DEM (south of about 81.31° S). Odysseus (80.13° S) and
+  points further north stay flat. A partial-radius horizon near the DEM edge is not attempted.
+- On-demand profiles use the 80 m/pixel DEM, a 40 km radius, a 160 m inner exclusion and a 2 m observer.
+  Terrain beyond 40 km and features smaller than a pixel are not represented.
 - Crossings are not refined, and partial-disc (limb) visibility is not modelled.
 - The Athena profile is not regenerated at LROC's precise coordinate. The 22 m difference is below DEM resolution,
   but this has not been verified.

@@ -1,6 +1,7 @@
 import type { MoonLocation } from "../MoonMap";
-import type { AnalysisBundle, AnalysisResult, VisibilityResponse } from "../types";
+import type { AnalysisBundle, AnalysisResult, ComparisonResult, VisibilityResponse } from "../types";
 import { analysisQuery, analysisWindow, toAnalysisResult } from "./analysisWindow";
+import { comparisonQuery, validateComparison } from "./comparison";
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
 
@@ -75,5 +76,21 @@ export async function getAnalysis(
     return toAnalysisResult(bundle, analysisWindow(time).start);
   } catch (error) {
     throw new ApiError(error instanceof Error ? error.message : "The calculation returned invalid data.");
+  }
+}
+
+/** Athena vs Odysseus over the same 24 h window and sample times (GET /api/compare). */
+export async function getComparison(time: string, signal: AbortSignal): Promise<ComparisonResult> {
+  let params: URLSearchParams;
+  try {
+    params = comparisonQuery(time);
+  } catch (error) {
+    throw new ApiError(error instanceof Error ? error.message : "Choose a valid UTC date and time.");
+  }
+  const result = await request<ComparisonResult>(`/api/compare?${params}`, signal);
+  try {
+    return validateComparison(result, analysisWindow(time).start);
+  } catch (error) {
+    throw new ApiError(error instanceof Error ? error.message : "The comparison returned invalid data.");
   }
 }

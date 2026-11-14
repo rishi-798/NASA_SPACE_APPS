@@ -2264,3 +2264,90 @@ a {
   .timeline-page .chronology-years { min-width: 0; }
   .timeline-page .chronology-line { display: none; }
 }
+
+/* Site comparison */
+.site-comparison {
+  padding: clamp(1.5rem, 3vw, 2.75rem);
+  border-top: 1px solid var(--line);
+}
+
+.comparison-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-small);
+  color: var(--text);
+  background: transparent;
+  font: 500 0.7rem var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.comparison-button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.comparison-button:disabled { opacity: 0.5; cursor: progress; }
+
+.comparison-scroll { margin-top: 1.25rem; overflow-x: auto; }
+
+.comparison-table {
+  width: 100%;
+  min-width: 460px;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 0.8rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.comparison-table thead th {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.comparison-table tbody th {
+  color: var(--muted);
+  font: 400 0.66rem var(--mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.comparison-table td strong { display: block; font: 500 1rem var(--mono); }
+
+.comparison-bar {
+  display: block;
+  height: 3px;
+  margin-top: 0.45rem;
+  background: var(--line);
+}
+
+.comparison-bar i { display: block; height: 100%; background: var(--sun); }
+
+.confidence {
+  display: block;
+  margin-top: 0.35rem;
+  font: 500 0.55rem var(--mono);
+  letter-spacing: 0.08em;
+}
+
+.confidence-terrain_profile { color: var(--success); }
+.confidence-flat_horizon { color: var(--sun); }
+.confidence-flat_horizon_degraded { color: var(--danger); }
+
+.comparison-caution { color: var(--sun); }
+.comparison-caution strong { font-weight: 600; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

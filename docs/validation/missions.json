@@ -1,0 +1,127 @@
+{
+  "generated_utc": "2026-11-14T23:08:09Z",
+  "odysseus-im1": {
+    "flat_sunset_utc": "2024-03-03T07:13:00Z",
+    "flat_sunlit_days_after_landing": 9.33,
+    "daily": {
+      "2024-02-22": {
+        "sun_max": 10.49,
+        "earth_min": 15.42
+      },
+      "2024-02-23": {
+        "sun_max": 10.91,
+        "earth_min": 14.59
+      },
+      "2024-02-24": {
+        "sun_max": 10.95,
+        "earth_min": 13.56
+      },
+      "2024-02-25": {
+        "sun_max": 10.87,
+        "earth_min": 12.34
+      },
+      "2024-02-26": {
+        "sun_max": 10.39,
+        "earth_min": 11.01
+      },
+      "2024-02-27": {
+        "sun_max": 9.48,
+        "earth_min": 9.6
+      },
+      "2024-02-28": {
+        "sun_max": 8.2,
+        "earth_min": 8.18
+      },
+      "2024-02-29": {
+        "sun_max": 6.59,
+        "earth_min": 6.8
+      },
+      "2024-03-01": {
+        "sun_max": 4.73,
+        "earth_min": 5.52
+      },
+      "2024-03-02": {
+        "sun_max": 2.7,
+        "earth_min": 4.41
+      },
+      "2024-03-03": {
+        "sun_max": 0.6,
+        "earth_min": 3.53
+      }
+    },
+    "terrain": {
+      "full_profile_refused": "DEM coverage does not reach 40000 m in every azimuth (shortest 3991 m; 335 of 720 bins short)",
+      "complete_azimuths_deg": [
+        82.5,
+        274.5
+      ],
+      "dem_height_m": 2594.0,
+      "published_elevation_m": 2579,
+      "first_terrain_sunset_utc": "2024-03-02T14:14:00Z",
+      "first_terrain_sunset_azimuth": 273.4,
+      "first_terrain_sunset_horizon_deg": 1.49,
+      "final_terrain_sunset_utc": "2024-03-02T14:14:00Z",
+      "terrain_sunlit_days_after_landing": 8.62,
+      "events": [
+        [
+          "2024-03-02T14:14:00Z",
+          "SET",
+          273.4
+        ]
+      ]
+    }
+  },
+  "athena-im2": {
+    "surface_window_utc": [
+      "2025-03-06T17:30:00Z",
+      "2025-03-07T06:15:00Z"
+    ],
+    "surface_window_sun_elevation_deg": [
+      2.47,
+      2.97
+    ],
+    "surface_window_min_terrain_clearance_deg": 1.61,
+    "surface_window_sun_visible_all_samples": true,
+    "surface_window_earth_visible_all_samples": true,
+    "surface_window_earth_elevation_deg": [
+      11.19,
+      11.31
+    ],
+    "shadow_length_per_metre_of_relief_m": [
+      19.3,
+      23.2
+    ],
+    "terrain_sunset_utc": "2025-03-19T17:44:00Z",
+    "terrain_sunlit_days_after_landing": 13.01,
+    "flat_sunset_utc": "2025-03-19T11:22:00Z"
+  },
+  "missions": {
+    "odysseus-im1": {
+      "landed_utc": "2024-02-22T23:23:00Z",
+      "landed_note": "about 23:23 UTC (5:23 p.m. CST) on 22 Feb 2024",
+      "end_note": "went dormant on 29 Feb 2024 as it entered lunar night; its final image was received that day",
+      "planned": "operations that the early end (27 Feb) left 'two to three days short', i.e. about 29 Feb-1 Mar",
+      "condition": "on its side in a small degraded crater with a 12 deg slope; operators would collect data 'until sunlight no longer shines on the solar panels', expected 'Tuesday morning' (27 Feb) 'based on the position of Earth and the moon'",
+      "published_elevation_m": 2579,
+      "sources": [
+        "https://www.lroc.asu.edu/images/1360",
+        "https://www.universetoday.com/articles/lunar-night-permanently-ends-the-odysseus-mission",
+        "https://www.pbs.org/newshour/amp/science/private-u-s-lunar-lander-to-cease-operations-tuesday-after-landing-sideways",
+        "https://www.businessday.co.za/bd/world/2024-03-01-us-moon-lander-odysseus-goes-dark-a-week-after-hard-soft-landing/"
+      ]
+    },
+    "athena-im2": {
+      "landed_utc": "2025-03-06T17:30:00Z",
+      "landed_note": "about 12:30 p.m. ET (17:30 UTC) on 6 Mar 2025; sources differ by a few minutes",
+      "end_utc": "2025-03-07T06:15:00Z",
+      "end_note": "mission ended 12:15 a.m. CT on 7 Mar 2025 (06:15 UTC), about 12 h 45 min after landing",
+      "planned": "10 days of surface operations",
+      "condition": "on its side in a ~20 m crater 'where sunlight could not reach the solar cells'; the company cited the Sun's direction, solar-panel orientation and crater cold",
+      "sources": [
+        "https://lroc.im-ldi.com/images/1408",
+        "https://spacepolicyonline.com/news/im-2-mission-ends-one-day-after-lunar-landing/",
+        "https://spaceflightnow.com/2025/03/07/intuitive-machines-im-2-mission-ends-with-lander-on-its-side-on-the-moon/"
+      ]
+    }
+  }
+}

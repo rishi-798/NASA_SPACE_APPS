@@ -84,7 +84,8 @@ class Summary(_Open):
 
 class Terrain(_Open):
     mode: Literal["terrain_profile", "flat_horizon", "flat_horizon_degraded"]
-    status: Literal["profile_loaded", "no_profile_for_location", "configured_profile_missing", "configured_profile_invalid"]
+    status: Literal["profile_loaded", "profile_generated", "no_profile_for_location", "configured_profile_missing",
+                    "configured_profile_invalid", "on_demand_failed", "on_demand_disabled", "not_requested"]
     terrain_obstruction_assessed: bool
     message: str
     profile_metadata: Optional[dict]
@@ -123,6 +124,7 @@ class AnalysisRequest(BaseModel):
     end: Optional[str] = Field(None, examples=["2026-10-13T00:00:00Z"], description="Default start + 24 h.")
     step_minutes: Optional[int] = Field(None, ge=1, le=1440, description="Default 30.")
     allow_flat_fallback: bool = Field(False, description="If a configured terrain profile is unusable, return an explicitly DEGRADED flat-horizon result instead of 503.")
+    terrain_mode: Literal["auto", "flat"] = Field("auto", description="auto: best available horizon (saved LOLA profile, or an on-demand LOLA profile for custom points south of ~81.3 S). flat: explicitly skip terrain.")
 
 
 class CompareRequest(BaseModel):

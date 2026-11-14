@@ -33,7 +33,11 @@ def synthetic_profile(horizon_deg: float, step: float = 0.5) -> dict:
 
 
 @pytest.fixture(autouse=True)
-def _fresh_cache():
+def _fresh_cache(tmp_path, monkeypatch):
+    # Tests never read the remote LOLA DEM: on-demand terrain is off unless a test enables it
+    # (with a local synthetic DEM), and any generated profile goes to a temp cache.
+    monkeypatch.setenv("TERRAIN_ON_DEMAND", "0")
+    monkeypatch.setenv("TERRAIN_CACHE_DIR", str(tmp_path / "terrain-cache"))
     analysis.CACHE.clear()
     yield
     analysis.CACHE.clear()

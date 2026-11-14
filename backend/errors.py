@@ -41,6 +41,8 @@ def classify(exc: Exception) -> ApiError:
     if isinstance(exc, KeyError):
         return ApiError(404, "unknown_site", "landing site not found")
     if isinstance(exc, HorizonError):  # before ValueError: HorizonError subclasses it
+        if getattr(exc, "timeout", False):
+            return ApiError(504, "external_data_timeout", str(exc))
         return ApiError(503, "terrain_unavailable", str(exc))
     if isinstance(exc, KernelError):
         return ApiError(503, "kernels_unavailable", str(exc))
