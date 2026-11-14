@@ -32,6 +32,9 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
     controls.enableDamping = true; controls.enablePan = false; controls.minDistance = 1.3; controls.maxDistance = 5;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const sun = point(5, -5, 1).normalize();
+    // Keep the original lighting angle fixed in camera space as the user orbits.
+    camera.lookAt(0, 0, 0);
+    const cameraSun = sun.clone().applyQuaternion(camera.quaternion.clone().invert());
     const light = new THREE.DirectionalLight(0xffffff, 3.0); light.position.copy(sun.clone().multiplyScalar(5)); scene.add(light);
     scene.add(new THREE.AmbientLight(0x8aa4c9, .035));
     const geometry = new THREE.SphereGeometry(1, 192, 128);
@@ -118,13 +121,17 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
       // Illustrative cycle: one turn every two minutes, independent of mission date.
       if(!reduced && !interacting && !target)globe.rotation.y+=dt*Math.PI*2/120;
       globe.updateMatrixWorld(true);
-      localSun.value.copy(sun).applyQuaternion(inverseRotation.copy(globe.quaternion).invert());
+      
       if(previous!==selected.current){previous=selected.current;const site=launchSites.find(s=>s.id===previous);if(site){target=point(site.latitude,site.longitude,Math.max(2.5,camera.position.length())).applyQuaternion(globe.quaternion);}}
       if(target){camera.position.lerp(target,reduced?1:.08);if(camera.position.distanceTo(target)<.002)target=null;}
       pins.forEach(p=>{p.scale.setScalar(p.userData.site.id===selected.current?1.6:1);});
       if(!reduced)clouds.rotation.y+=dt*.002;
       cloudOffset.value=clouds.rotation.y/(Math.PI*2);
-      controls.update();renderer.render(scene,camera);
+      controls.update();
+      sun.copy(cameraSun).applyQuaternion(camera.quaternion).normalize();
+      light.position.copy(sun).multiplyScalar(5);
+      localSun.value.copy(sun).applyQuaternion(inverseRotation.copy(globe.quaternion).invert());
+      renderer.render(scene,camera);
     });
     const cancelFlight=()=>{target=null;interacting=true;};controls.addEventListener('start',cancelFlight);
     controls.addEventListener('end',()=>{interacting=false;});

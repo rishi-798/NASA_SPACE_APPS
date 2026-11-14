@@ -40,3 +40,5 @@ exactly. Earth illumination remains illustrative, not date-specific.
 
 Earth and launch pins now rotate together through a fixed sunlight direction. One day is shown in two minutes for illustration; this does not simulate the selected mission date. Rotation pauses while dragging or flying to a selected site, and respects reduced-motion preferences. City lights and cloud shadows follow the rotating geography.
 
+
+Lighting now maintains a fixed angle relative to the camera. Orbiting Earth moves illumination, cloud shadows, atmosphere and night lights together with the viewing direction. This is presentation lighting, independent of mission date.
