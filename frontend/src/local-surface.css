@@ -11,3 +11,13 @@
 .local-terrain-canvas { width:100%; height:520px; border-radius:16px; overflow:hidden; margin-top:16px; background:#000; }
 .local-terrain-canvas canvas { width:100%; height:100%; display:block; touch-action:none; }
 @media(max-width:650px) { .local-surface { padding:16px; } .local-terrain-canvas { height:360px; } }
+
+.local-view-modes { display:flex; gap:10px; flex-wrap:wrap; }
+.local-view-modes button[aria-pressed="false"] { background:#1a1c21; color:#fff; }
+.local-view-modes button:disabled { opacity:.45; cursor:not-allowed; }
+.local-terrain-canvas canvas:focus-visible { outline:3px solid #ffad57; outline-offset:-4px; }
+.surface-time-controls { margin-top:20px; padding:16px; background:#15181d; border-radius:12px; }
+.surface-time-controls label { display:block; }
+.surface-time-controls input[type="range"] { display:block; width:100%; margin:16px 0; accent-color:#a2ecd3; }
+.surface-time-controls time { font-family:var(--mono); font-size:14px; }
+.surface-time-controls p { font-size:13px; margin-bottom:0; }
