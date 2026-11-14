@@ -1,0 +1,83 @@
+[
+  {
+    "id": "apollo-11",
+    "name": "Apollo 11",
+    "object": "Lunar Module",
+    "latitude": 0.67416,
+    "longitude": 23.47314,
+    "dtm": "NAC_DTM_APOLLO11",
+    "coordinateFrame": "Mean Earth/polar axis",
+    "longitudeConvention": "degrees east, -180 to 180",
+    "sourceUrl": "https://lroc.im-ldi.com/data/support/downloads/2016_LROC_Coordinates_of_Human_Features.pdf",
+    "localSceneState": "built, source samples checked; astronomical lighting not integrated",
+    "dtmSourceUrl": "https://data.lroc.im-ldi.com/lroc/view_rdr_product/NAC_DTM_APOLLO11",
+    "blenderScene": "Apollo 11 - Local decorative"
+  },
+  {
+    "id": "apollo-14",
+    "name": "Apollo 14",
+    "object": "Lunar Module",
+    "latitude": -3.64589,
+    "longitude": -17.47194,
+    "dtm": "NAC_DTM_APOLLO14",
+    "coordinateFrame": "Mean Earth/polar axis",
+    "longitudeConvention": "degrees east, -180 to 180",
+    "sourceUrl": "https://lroc.im-ldi.com/data/support/downloads/2016_LROC_Coordinates_of_Human_Features.pdf",
+    "localSceneState": "built, source samples checked; astronomical lighting not integrated",
+    "dtmSourceUrl": "https://data.lroc.im-ldi.com/lroc/view_rdr_product/NAC_DTM_APOLLO14",
+    "blenderScene": "Apollo 14 - Local decorative"
+  },
+  {
+    "id": "apollo-15",
+    "name": "Apollo 15",
+    "object": "Lunar Module",
+    "latitude": 26.13239,
+    "longitude": 3.6333,
+    "dtm": "NAC_DTM_APOLLO15",
+    "coordinateFrame": "Mean Earth/polar axis",
+    "longitudeConvention": "degrees east, -180 to 180",
+    "sourceUrl": "https://lroc.im-ldi.com/data/support/downloads/2016_LROC_Coordinates_of_Human_Features.pdf",
+    "localSceneState": "built, source samples checked; astronomical lighting not integrated",
+    "dtmSourceUrl": "https://data.lroc.im-ldi.com/lroc/view_rdr_product/NAC_DTM_APOLLO15",
+    "blenderScene": "Apollo 15 - Local decorative"
+  },
+  {
+    "id": "lunokhod-1",
+    "name": "Lunokhod 1",
+    "object": "Rover final observed position",
+    "latitude": 38.315,
+    "longitude": -35.0081,
+    "dtm": "SLDEM2015 native crop",
+    "lander": {
+      "name": "Luna 17",
+      "latitude": 38.23764,
+      "longitude": -35.00163
+    },
+    "coordinateFrame": "Mean Earth/polar axis",
+    "longitudeConvention": "degrees east, -180 to 180",
+    "sourceUrl": "https://lroc.im-ldi.com/data/support/downloads/2016_LROC_Coordinates_of_Human_Features.pdf",
+    "localSceneState": "built, source samples checked; astronomical lighting not integrated",
+    "dtmSourceUrl": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_315_360_float.lbl",
+    "terrainQuality": "Coarse scientific fallback: ~59m north-south, ~46m east-west. Fine elevation not available in this build. Cosmetic detail is not additional measured terrain.",
+    "blenderScene": "Lunokhod 1 - Local decorative"
+  },
+  {
+    "id": "lunokhod-2",
+    "name": "Lunokhod 2",
+    "object": "Rover final observed position",
+    "latitude": 25.8323,
+    "longitude": 30.9222,
+    "dtm": "NAC_DTM_LUNOKHOD2_2",
+    "lander": {
+      "name": "Luna 21",
+      "latitude": 25.9994,
+      "longitude": 30.4076
+    },
+    "coordinateFrame": "Mean Earth/polar axis",
+    "longitudeConvention": "degrees east, -180 to 180",
+    "sourceUrl": "https://lroc.im-ldi.com/data/support/downloads/2016_LROC_Coordinates_of_Human_Features.pdf",
+    "localSceneState": "built, source samples checked; astronomical lighting not integrated",
+    "dtmSourceUrl": "https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_LUNOKHOD2_2",
+    "blenderScene": "Lunokhod 2 - Local decorative"
+  }
+]
