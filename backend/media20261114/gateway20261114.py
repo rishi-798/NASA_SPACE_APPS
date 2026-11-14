@@ -5,7 +5,7 @@ import requests
 from fastapi import HTTPException
 
 ALLOWED = {'https://api.nasa.gov/planetary/apod', 'https://images-api.nasa.gov/search',
-           'https://science.nasa.gov/wp-json/wp/v2/apod-basic'}
+           'https://science.nasa.gov/wp-json/wp/v2/apod-basic', 'https://mars.nasa.gov/rss/api/'}
 
 
 @lru_cache(maxsize=128)
