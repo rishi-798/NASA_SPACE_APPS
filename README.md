@@ -1,5 +1,14 @@
 # NASA-APP
 
+## Current raster ownership and online demo
+
+Dip owns and hosts the entire raster dataset on his computer. **No teammate is
+assigned raster downloading, extraction, transfer, storage or configuration.**
+The frontend and backend are served together through an HTTPS tunnel; the browser
+requests selected-point results, not the 55 GB dataset. See
+`docs/OWNER_HOSTED_BACKEND.md`. This supersedes older handoff transfer tasks.
+
+
 A cinematic space-project website combining the visual direction of the three
 requested Aura references, with this project's own content throughout. The new
 home page introduces Rishi's Cesium Moon viewer and Suhas's Python/SPICE visibility

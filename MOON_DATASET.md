@@ -1,3 +1,9 @@
+# Current ownership
+
+Dip hosts the complete raster dataset and backend. Nobody else needs to download
+or configure the rasters. Earlier file-transfer/setup text below is historical
+reference, not an assignment. See docs/OWNER_HOSTED_BACKEND.md.
+
 # Lunar terrain data setup
 
 ## Current local integration

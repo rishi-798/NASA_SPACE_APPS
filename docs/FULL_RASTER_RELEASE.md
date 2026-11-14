@@ -15,7 +15,11 @@ These are download assets, not files inside ordinary Git history. Cloning the
 branch gets the app and manifests; downloading the release gets the large data.
 No paid Git LFS is used. All original files remain on Dip's computer.
 
-## Team/server setup
+## Owner-only recovery reference - not team tasks
+
+Only Dip manages these files. Teammates use the hosted API and do not perform
+these recovery steps. The release is a backup/distribution copy, not a required
+team download.
 
 1. Wait until the release is published. Sign in to GitHub with repository access.
 2. Install the project requirements, including requests. Allow about 111 GB free
