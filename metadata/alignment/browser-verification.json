@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "actual_glb_rendered": true,
+  "actual_depth_pick": true,
+  "browser": "headless Chrome / software WebGL",
+  "initial_selection": {
+    "grid": "SITE04-G7",
+    "latitude": -89.80094797539147,
+    "longitude": -155.4140084276668,
+    "modelReady": true,
+    "webgl2": true
+  },
+  "selected_surface_handoff": {
+    "picked": {
+      "latitude": -89.80096663075993,
+      "longitude": -155.4101949932677,
+      "height_m": 1703.325349840683
+    },
+    "selected": {
+      "latitude": -89.80096663075993,
+      "longitude": -155.4101949932677,
+      "grid_id": "SITE04-G7"
+    },
+    "local": {
+      "x": 15.378417551897655,
+      "y": 2.928998160175979,
+      "z": 6.183906408739858
+    }
+  },
+  "screen_pick_horizontal_error_m": 0.6950613331768217,
+  "live_ion_asset_checked": false,
+  "page_errors": []
+}

@@ -17,7 +17,7 @@ The source registry and native-summary verification report are handoff metadata.
 
 ## Exact point-height sampling
 
-The handoff ZIP does not contain `moon-dataset.json` or the original raster files. Obtain the manifest and its referenced raster files from the dataset owner, or download them from the source URLs recorded in that manifest to the specified relative paths. Verify the manifest checksums before sampling. The catalogue index alone cannot provide point heights. Until those files are available, `/api/terrain/lookup` returns HTTP 503 for point-height sampling.
+The scientific manifest is now versioned at `metadata/moon-dataset.json`. Copy it into `LUNAR_DATASET_DIR` and supply all of its referenced rasters and quality files at their original relative paths. The new team handoff ZIP contains the manifest and catalogue; the large raster companion remains a separate transfer. Source-page URLs are references and may not be direct raster downloads. Verify source checksums before sampling. Completion flags describe the source computer's dataset, not your backend's files. The catalogue index alone cannot provide point heights. Until the necessary files are available, `/api/terrain/lookup` returns HTTP 503 for point-height sampling.
 
 ## API
 

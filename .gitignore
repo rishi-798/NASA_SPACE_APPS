@@ -17,3 +17,7 @@ moon-grid-index.building.sqlite
 __pycache__/
 *.pyc
 .pytest_cache/
+node_modules/
+*.glb
+*.gltf
+*.blend1

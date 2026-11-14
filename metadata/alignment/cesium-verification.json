@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "cesium_version": "1.145.0",
+  "actual_export_controls_checked": 47,
+  "max_control_position_error_m": 0.000028842142494100818,
+  "max_control_height_error_m": 0.000010078387731482508,
+  "max_control_angular_error_deg": 1.3491339245774725e-7,
+  "cesium_enu_matrix_matches": true,
+  "one_metre_cardinal_axes_pass": true,
+  "engine_axis_correction_identity": true,
+  "selected_coordinates_preserved_with_translated_rotated_world": true,
+  "live_ion_terrain_checked": false
+}

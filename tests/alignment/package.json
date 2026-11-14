@@ -1,0 +1,8 @@
+{
+  "name": "lunar-alignment-checks",
+  "private": true,
+  "type": "module",
+  "scripts": {"test": "node verify_cesium.mjs"},
+  "devDependencies": {"cesium": "1.145.0"},
+  "engines": {"node": ">=22"}
+}

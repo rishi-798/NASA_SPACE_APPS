@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "source_unique_vertices": 40000,
+  "exported_unique_vertices": 40000,
+  "exported_triangle_count": 79202,
+  "max_export_axis_error_m": 0.0,
+  "max_placed_vertex_error_m": 3.366070548605288e-05,
+  "minimum_outward_normal_dot": 0.4394838822964998,
+  "selected_coordinate_ray_checks": [
+    {
+      "latitude": -89.80094797539147,
+      "longitude": -155.4140084276668,
+      "render_surface_height_m": 1702.573936361121,
+      "nearest_dem_pixel_height_m": 1702.7977294921875,
+      "render_minus_nearest_dem_height_m": -0.22379313106648624,
+      "moon_fixed_hit_m": [
+        -5494.062101737006,
+        -2513.7533762260896,
+        -1739092.0789301705
+      ]
+    }
+  ],
+  "original_project_unchanged": true,
+  "live_ion_overlay_checked": false,
+  "production_ready": false
+}
