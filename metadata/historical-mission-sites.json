@@ -1,0 +1,52 @@
+[
+  {
+    "id": "MISSION-APOLLO-11",
+    "name": "Apollo 11",
+    "latitude": 0.67416,
+    "longitude": 23.47314,
+    "source_url": "https://data.lroc.im-ldi.com/lroc/view_rdr_product/NAC_DTM_APOLLO11",
+    "source_resolution_m": 2.0000000000006,
+    "coordinate_frame": "ME/DE421",
+    "grid_id": "MISSION-APOLLO-11"
+  },
+  {
+    "id": "MISSION-APOLLO-14",
+    "name": "Apollo 14",
+    "latitude": -3.64589,
+    "longitude": -17.47194,
+    "source_url": "https://data.lroc.im-ldi.com/lroc/view_rdr_product/NAC_DTM_APOLLO14",
+    "source_resolution_m": 2.0000000000006,
+    "coordinate_frame": "ME/DE421",
+    "grid_id": "MISSION-APOLLO-14"
+  },
+  {
+    "id": "MISSION-APOLLO-15",
+    "name": "Apollo 15",
+    "latitude": 26.13239,
+    "longitude": 3.6333,
+    "source_url": "https://data.lroc.im-ldi.com/lroc/view_rdr_product/NAC_DTM_APOLLO15",
+    "source_resolution_m": 2.0000000000006,
+    "coordinate_frame": "ME/DE421",
+    "grid_id": "MISSION-APOLLO-15"
+  },
+  {
+    "id": "MISSION-LUNOKHOD-1",
+    "name": "Lunokhod 1",
+    "latitude": 38.315,
+    "longitude": -35.0081,
+    "source_url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_315_360_float.lbl",
+    "source_resolution_m": 59.225293797166955,
+    "coordinate_frame": "ME/DE421",
+    "grid_id": "MISSION-LUNOKHOD-1"
+  },
+  {
+    "id": "MISSION-LUNOKHOD-2",
+    "name": "Lunokhod 2",
+    "latitude": 25.8323,
+    "longitude": 30.9222,
+    "source_url": "https://data.lroc.im-ldi.com/lroc/view_rdr/NAC_DTM_LUNOKHOD2_2",
+    "source_resolution_m": 4.9999999999999,
+    "coordinate_frame": "ME/DE421",
+    "grid_id": "MISSION-LUNOKHOD-2"
+  }
+]

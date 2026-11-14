@@ -1,0 +1,19 @@
+# Large lunar datasets and generated local index files stay outside Git.
+site04_1km_grid.csv
+moon-grid-index.sqlite
+moon-grid-index.building.sqlite
+*.tif
+*.tiff
+*.img
+*.lbl
+*.npy
+*.blend
+*.zip
+
+# Local environment, credentials, and runtime caches.
+.env
+.env.*
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/

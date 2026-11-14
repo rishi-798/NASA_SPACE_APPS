@@ -1,0 +1,8 @@
+{
+  "global_grids": 379726,
+  "source_pixels_counted": 12837631592,
+  "independent_expected_pixels": 12837631592,
+  "every_native_global_tier_pixel_counted_once": true,
+  "original_resolution_retained": true,
+  "local_overlay_statistics": "Original Site04 and mission rows, not averaged into global source tier"
+}
