@@ -8,6 +8,7 @@ const MissionsPage = lazy(() => import("./pages/MissionsPage").then((module) => 
 const TimelinePage = lazy(() => import("./pages/TimelinePage").then((module) => ({ default: module.TimelinePage })));
 const AboutPage = lazy(() => import("./pages/AboutPage").then((module) => ({ default: module.AboutPage })));
 const TripPage = lazy(() => import("./pages/TripPage").then((module) => ({ default: module.TripPage })));
+const DiscoverPage = lazy(() => import("./discover20261114/DiscoverPage20261114").then((module) => ({ default: module.DiscoverPage20261114 })));
 
 export function App() {
   return (
@@ -20,6 +21,7 @@ export function App() {
         <Route path="/timeline" element={<TimelinePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/trip" element={<TripPage />} />
+        <Route path="/discover" element={<DiscoverPage />} />
         <Route path="*" element={<Navigate replace to="/" />} />
       </Route>
     </Routes>

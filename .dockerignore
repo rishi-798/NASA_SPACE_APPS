@@ -1,0 +1,19 @@
+# Build only required source and public assets — 2026-11-14.
+.git
+**/node_modules
+frontend/dist
+frontend/.prerender
+**/__pycache__
+.pytest_cache
+.venv
+**/.env
+**/.env.*
+!**/.env.example
+*.log
+backend/kernels/*.bsp
+backend/kernels/*.bpc
+backend/kernels/*.tls
+backend/kernels/*.tpc
+backend/kernels/*.tf
+data/lunar
+tmp
