@@ -33,6 +33,7 @@ from backend.models import (
 from backend.spice_kernels import kernel_provenance, kernel_status
 from backend.terrain.horizon import apply_horizon, load_profile, resolve_horizon
 from backend.terrain_api import router as terrain_router
+from backend.local_scenes import router as local_scenes_router
 from backend.viewer_config20261114 import router as viewer_config_router
 from backend.media20261114.routes20261114 import router as discovery_router
 from backend.media20261114 import apod20261114  # Registers the 2026-11-14 APOD route.
@@ -52,6 +53,7 @@ app = FastAPI(
 )
 install_handlers(app)
 app.include_router(terrain_router)
+app.include_router(local_scenes_router)
 app.include_router(viewer_config_router)
 app.include_router(discovery_router)
 app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=6)

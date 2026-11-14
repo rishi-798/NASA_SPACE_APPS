@@ -1,0 +1,732 @@
+{
+  "scenes": [
+    {
+      "id": "SITE04-G7",
+      "name": "G7",
+      "grid_id": "SITE04-G7",
+      "anchor": {
+        "latitude": -89.80076354312652,
+        "longitude": -155.55604521958347
+      },
+      "coverage": {
+        "kind": "grid",
+        "grid_id": "SITE04-G7"
+      },
+      "model_url": "/terrain/SITE04-G7.glb",
+      "model_bytes": 6645272,
+      "sha256": "e3cf796a206953bdf7f484b25b69a4033fea6a9b1241edf0147c712c893a1bf5",
+      "local_to_moon_fixed": [
+        [
+          0.4138029443011841,
+          -0.9103609734657271,
+          -0.0031656402519526718,
+          -5505.364546371464
+        ],
+        [
+          -0.9103664774626047,
+          -0.41380044248442155,
+          -0.0014389273872512148,
+          -2502.4384301688483
+        ],
+        [
+          0.0,
+          0.003477325154564149,
+          -0.9999939540866082,
+          -1739089.354205158
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Y",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "MOON_ME / DE421",
+      "source_id": "Site04_final_adj_5mpp_surf.tif",
+      "source_spacing_m": 5,
+      "source_mismatch": false,
+      "height_delta_m": null,
+      "view_state": "measured terrain preview",
+      "source_production_ready": false,
+      "appearance_note": "Measured G7 alignment export; decorative rocks and procedural materials are not baked into this model."
+    },
+    {
+      "id": "REGION-APOLLO-11",
+      "name": "Apollo 11",
+      "anchor": {
+        "latitude": 0.67416,
+        "longitude": 23.47314
+      },
+      "grid_id": "MOON-R0270-C0617-r9-c2",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Apollo%2011%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 10693532,
+      "sha256": "3b0653ebec20484bd1ea3bdaeb6869adf3d40196866f88eb15ef7410a458e2c4",
+      "local_to_moon_fixed": [
+        [
+          -0.39831911154621447,
+          -0.010792363949904299,
+          0.9171834114600019,
+          1593514.4590706076
+        ],
+        [
+          0.9172469053515713,
+          -0.0046866386737620955,
+          0.3982915390024087,
+          691991.719862785
+        ],
+        [
+          0.0,
+          0.9999307777532975,
+          0.011766040187148625,
+          20442.31822115202
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_00n_30n_000_045_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": true,
+      "height_delta_m": 4.6922607421875,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Apollo%2011%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    },
+    {
+      "id": "REGION-APOLLO-12",
+      "name": "Apollo 12",
+      "anchor": {
+        "latitude": -3.0128,
+        "longitude": -23.4219
+      },
+      "grid_id": "MOON-R0282-C0474-r1-c5",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Apollo%2012%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 10701660,
+      "sha256": "fe47a4887aa58da5cffc26893196af55fe0a9b1f7c1e17ff50dbdb4acac90d2c",
+      "local_to_moon_fixed": [
+        [
+          0.397498652309835,
+          0.048228330074759504,
+          0.9163344638231529,
+          1592039.4974463459
+        ],
+        [
+          0.9176027579578567,
+          -0.02089215190518341,
+          -0.3969492367758198,
+          -689659.6039743093
+        ],
+        [
+          0.0,
+          0.9986178178697648,
+          -0.05255905091446392,
+          -91316.09505878961
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_30s_00s_315_360_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": false,
+      "height_delta_m": null,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Apollo%2012%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    },
+    {
+      "id": "REGION-APOLLO-14",
+      "name": "Apollo 14",
+      "anchor": {
+        "latitude": -3.64589,
+        "longitude": -17.47194
+      },
+      "grid_id": "MOON-R0284-C0492-r0-c0",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Apollo%2014%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 10702388,
+      "sha256": "05561ca706d9c70fe2fddd21ba6c86f9809647f043a10ff4472455298c7dd0f3",
+      "local_to_moon_fixed": [
+        [
+          0.3002386907057141,
+          0.06065607570571781,
+          0.9519335948916293,
+          1653889.4277647168
+        ],
+        [
+          0.9538641038446297,
+          -0.01909213343895551,
+          -0.29963104284674935,
+          -520578.9738419423
+        ],
+        [
+          0.0,
+          0.9979761174099966,
+          -0.06358985044225732,
+          -110481.00615837786
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_30s_00s_315_360_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": true,
+      "height_delta_m": 1.2239990234375,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Apollo%2014%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    },
+    {
+      "id": "REGION-APOLLO-15",
+      "name": "Apollo 15",
+      "anchor": {
+        "latitude": 26.13239,
+        "longitude": 3.6333
+      },
+      "grid_id": "MOON-R0193-C0499-r7-c8",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Apollo%2015%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 11911068,
+      "sha256": "db517f42d3c59d6fc971a438e37d786b5627d202c7a2f8e32705954510018a8b",
+      "local_to_moon_fixed": [
+        [
+          -0.06337055667779255,
+          -0.4395614966543683,
+          0.8959742536509175,
+          1556665.668293104
+        ],
+        [
+          0.9979900663565479,
+          -0.02791135671200081,
+          0.05689273785070258,
+          98845.44274181065
+        ],
+        [
+          0.0,
+          0.8977787293233602,
+          0.44044676542634836,
+          765232.2102517376
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_00n_30n_000_045_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": true,
+      "height_delta_m": 5.012939453125,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Apollo%2015%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    },
+    {
+      "id": "REGION-APOLLO-16",
+      "name": "Apollo 16",
+      "anchor": {
+        "latitude": -8.9734,
+        "longitude": 15.5011
+      },
+      "grid_id": "MOON-R0300-C0585-r2-c9",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Apollo%2016%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 10799008,
+      "sha256": "e6c35c7f03a1c562839dedf7872fc748497b17fa30753d5796978f33090ad00f",
+      "local_to_moon_fixed": [
+        [
+          -0.26725687640560447,
+          0.15030233309323401,
+          0.9518313772305733,
+          1653711.834800398
+        ],
+        [
+          0.9636253224225272,
+          0.04168563353854988,
+          0.26398588208949786,
+          458649.0715422936
+        ],
+        [
+          0.0,
+          0.9877608600381067,
+          -0.15597590639832726,
+          -270992.53977645375
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_30s_00s_000_045_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": false,
+      "height_delta_m": -3.203749656677246e-07,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Apollo%2016%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    },
+    {
+      "id": "REGION-APOLLO-17",
+      "name": "Apollo 17",
+      "anchor": {
+        "latitude": 20.1911,
+        "longitude": 30.7723
+      },
+      "grid_id": "MOON-R0211-C0600-r7-c1",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Apollo%2017%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 11395720,
+      "sha256": "34eaf81428662e016064009d2b767d9447839328e4fe9a8b181d6a4efb4b5356",
+      "local_to_moon_fixed": [
+        [
+          -0.5116275355567561,
+          -0.2965574904661653,
+          0.8064061753908699,
+          1401050.0891240975
+        ],
+        [
+          0.85920734683784,
+          -0.176589479310791,
+          0.48018630856847994,
+          834275.6925068771
+        ],
+        [
+          0.0,
+          0.9385466480922267,
+          0.3451524146733527,
+          599667.805253483
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_00n_30n_000_045_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": false,
+      "height_delta_m": -1.1444091796875e-05,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Apollo%2017%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    },
+    {
+      "id": "REGION-LUNA-21",
+      "name": "Luna 21",
+      "anchor": {
+        "latitude": 25.9994,
+        "longitude": 30.4076
+      },
+      "grid_id": "MOON-R0194-C0574-r1-c5",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Luna%2021%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 11909292,
+      "sha256": "589a4721896ce005154eda4621f6f25abfffa3ae1a9aebf61afbdefb38854b02",
+      "local_to_moon_fixed": [
+        [
+          -0.5061481678146922,
+          -0.378063560743901,
+          0.7751657734030012,
+          1346773.0147103742
+        ],
+        [
+          0.8624465387592615,
+          -0.22187598881585652,
+          0.45492528328194254,
+          790387.187174047
+        ],
+        [
+          0.0,
+          0.8987986368617993,
+          0.4383617346157981,
+          761609.6777214876
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_00n_30n_000_045_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": false,
+      "height_delta_m": -8.0108642578125e-05,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Luna%2021%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    },
+    {
+      "id": "REGION-LUNOKHOD-1",
+      "name": "Lunokhod 1 region",
+      "anchor": {
+        "latitude": 38.315,
+        "longitude": -35.0081
+      },
+      "grid_id": "MOON-R0156-C0344-r7-c7",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Lunokhod%201%20region%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 13641220,
+      "sha256": "123eb91ab6f5169cd70769305e9f6087ce3f0195fbe99060f34839395352e8ed",
+      "local_to_moon_fixed": [
+        [
+          0.5736922355109286,
+          -0.507811263505114,
+          0.6426546036338749,
+          1116548.1083534942
+        ],
+        [
+          0.8190709486451544,
+          0.3556802734363487,
+          -0.4501270089361124,
+          -782050.6653256017
+        ],
+        [
+          0.0,
+          0.7846140858699797,
+          0.6199844645266654,
+          1077161.0086686285
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_30n_60n_315_360_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": true,
+      "height_delta_m": 0.0,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Lunokhod%201%20region%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    },
+    {
+      "id": "REGION-LUNOKHOD-2",
+      "name": "Lunokhod 2",
+      "anchor": {
+        "latitude": 25.8323,
+        "longitude": 30.9222
+      },
+      "grid_id": "MOON-R0194-C0575-r6-c9",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Lunokhod%202%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 11887384,
+      "sha256": "39fe98b6c00e7e143d1eee1fd4cb89741514a6d26c09891b1299c5e974f4aff6",
+      "local_to_moon_fixed": [
+        [
+          -0.5138736819846567,
+          -0.37380525050605934,
+          0.7721421330672444,
+          1341519.7419910305
+        ],
+        [
+          0.8578658630366008,
+          -0.22391458699942487,
+          0.4625239656118859,
+          803589.1378540905
+        ],
+        [
+          0.0,
+          0.900073270585778,
+          0.43573857710446157,
+          757052.2038612915
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_00n_30n_000_045_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": true,
+      "height_delta_m": -5.748046875,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Lunokhod%202%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    },
+    {
+      "id": "REGION-SURVEYOR-1",
+      "name": "Surveyor 1",
+      "anchor": {
+        "latitude": -2.4745,
+        "longitude": -43.3398
+      },
+      "grid_id": "MOON-R0280-C0414-r5-c1",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Surveyor%201%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 10703104,
+      "sha256": "f2e68ad0aa47ee317d06c29720aa7bfa4d4b7d6be9d1872e679e60a1b828260e",
+      "local_to_moon_fixed": [
+        [
+          0.6863237282510045,
+          0.03140082926921932,
+          0.7266180069065497,
+          1262426.1251994392
+        ],
+        [
+          0.7272961845353249,
+          -0.02963185380656583,
+          -0.6856837559694301,
+          -1191306.9576212878
+        ],
+        [
+          0.0,
+          0.9990675358358871,
+          -0.043174747698259346,
+          -75011.80665095578
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_30s_00s_315_360_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": false,
+      "height_delta_m": 2.956390380859375e-05,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Surveyor%201%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    },
+    {
+      "id": "REGION-SURVEYOR-5",
+      "name": "Surveyor 5",
+      "anchor": {
+        "latitude": 1.4551,
+        "longitude": 23.1943
+      },
+      "grid_id": "MOON-R0268-C0616-r5-c3",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Surveyor%205%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 10696624,
+      "sha256": "4dacfa8eea31ab0aed81129062313811119530ccf53ccddb4ffbc84c9257a9c7",
+      "local_to_moon_fixed": [
+        [
+          -0.39385046859541023,
+          -0.02334110983785512,
+          0.9188781208510262,
+          1596458.847166573
+        ],
+        [
+          0.919174525532108,
+          -0.010001263951320264,
+          0.3937234642895953,
+          684055.1468567429
+        ],
+        [
+          0.0,
+          0.9996775316625423,
+          0.025393556054377167,
+          44118.76428887489
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_00n_30n_000_045_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": false,
+      "height_delta_m": -5.91278076171875e-05,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Surveyor%205%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    },
+    {
+      "id": "REGION-SURVEYOR-6",
+      "name": "Surveyor 6",
+      "anchor": {
+        "latitude": 0.4742,
+        "longitude": -1.4275
+      },
+      "grid_id": "MOON-R0271-C0541-r5-c6",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Surveyor%206%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 10680592,
+      "sha256": "012942c0bb2e691c3777b47ce942103aa22c5a4729953640493212f365ad9afd",
+      "local_to_moon_fixed": [
+        [
+          0.024911997589726603,
+          -0.008273688275087636,
+          0.9996554098580251,
+          1736801.3090873328
+        ],
+        [
+          0.9996896480288717,
+          0.00020617809014381204,
+          -0.024911144383702823,
+          -43280.62225224529
+        ],
+        [
+          0.0,
+          0.9999657511999708,
+          0.00827625682770768,
+          14379.168612459322
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_00n_30n_315_360_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": false,
+      "height_delta_m": 1.0013580322265625e-05,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Surveyor%206%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    },
+    {
+      "id": "REGION-SURVEYOR-7",
+      "name": "Surveyor 7",
+      "anchor": {
+        "latitude": -40.9812,
+        "longitude": -11.5127
+      },
+      "grid_id": "MOON-R0397-C0385-r3-c6",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 10000
+      },
+      "model_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Surveyor%207%20-%20Measured%20terrain%20candidate.glb",
+      "model_bytes": 14137244,
+      "sha256": "b981257f2a621fc8ff7c331148c3498f3a5e62552fbb3a58496b2e9cd10966e1",
+      "local_to_moon_fixed": [
+        [
+          0.19958513650674076,
+          0.642616753315532,
+          0.7397360891857246,
+          1285217.4813512778
+        ],
+        [
+          0.9798804892871302,
+          -0.13089019919695175,
+          -0.1506717706426676,
+          -261777.1343145707
+        ],
+        [
+          0.0,
+          0.7549248069260851,
+          -0.6558113569370486,
+          -1139406.6515424282
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "gltf_up": "Z",
+      "reference_radius_m": 1737400.0,
+      "coordinate_frame": "ME/DE421",
+      "source_id": "sldem2015_512_60s_30s_315_360_float",
+      "source_spacing_m": 59.225293797166955,
+      "source_mismatch": false,
+      "height_delta_m": -7.748603820800781e-07,
+      "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Surveyor%207%20measured%20terrain%20metadata.json",
+      "view_state": "measured terrain preview",
+      "source_production_ready": false
+    }
+  ]
+}
