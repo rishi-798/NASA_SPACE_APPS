@@ -1,5 +1,13 @@
 # 3D model sources
 
+## Earth launch-site globe textures
+
+- Solar System Scope / INOVE: https://www.solarsystemscope.com/textures/
+- Licensed under CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+- Local 2K, 4K and 8K day, night, cloud, normal and specular textures are in
+  `earth/`. Browser conversions and source hashes are recorded in
+  `earth/sources.json`. See `docs/EARTH_VIEW.md` for presentation details.
+
 ## nasa-moon.glb
 
 - Credit: NASA's Goddard Space Flight Center.

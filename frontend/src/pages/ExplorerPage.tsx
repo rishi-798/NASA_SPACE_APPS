@@ -132,6 +132,7 @@ export function ExplorerPage() {
       <div className="explorer-grid">
         <div className="explorer-visual" data-reveal>
           <MoonExplorer
+            observationTime={date && time ? timestamp(date, time) : null}
             selectedSite={selectedSite}
             pickedLocation={pickedLocation}
             onLocationSelect={pickLocation}

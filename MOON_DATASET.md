@@ -1,5 +1,9 @@
 # Lunar terrain data setup
 
+Current online setup: terrain is streamed from the pinned Hugging Face release;
+see [docs/CLOUD_TERRAIN.md](docs/CLOUD_TERRAIN.md). Teammates do not need to
+download or host the full dataset. Local setup instructions below are optional.
+
 ## Current local integration
 
 The October 11 handoff's CSV, source manifest and generated catalogue index are
