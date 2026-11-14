@@ -1,5 +1,17 @@
 # NASA-APP
 
+## Discovery and Cloud Run work — 2026-11-14
+
+The original lunar workspace remains available. `/discover` adds independently
+written APOD browsing, Curiosity/Perseverance raw imagery, NASA image/video search
+and device-local favorites. Current NASA feeds are key-free; source credits and
+original links stay attached to each item.
+
+Build and deployment configuration is documented in
+[`docs/CLOUD_RUN_2026-11-14.md`](docs/CLOUD_RUN_2026-11-14.md).
+The dated progress file records implementation and verification separately.
+Earlier lunar code, assets and scientific data retain their original provenance.
+
 ## Cloud terrain and visual integrations
 
 This repository includes the Earth textures and launch-site globe, Cesium Moon
