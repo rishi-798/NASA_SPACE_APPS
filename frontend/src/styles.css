@@ -2238,3 +2238,29 @@ a {
   }
 }
 .map-lighting-note { position:absolute; bottom:44px; left:12px; max-width:calc(100% - 24px); margin:0; color:#c5cbd1; font-size:11px; pointer-events:none; background:#0009; padding:4px 7px; border-radius:4px; }
+
+/* Mission chronology groups include provenance and mission-specific actions. */
+.timeline-page .chronology-years {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 2rem;
+}
+.mission-timeline-group + .mission-timeline-group { margin-top: 3rem; }
+.mission-timeline-group > h3 { color: var(--accent); font-size: 1.1rem; }
+.timeline-page .unscheduled-record {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 1.5rem 0;
+}
+.timeline-page .unscheduled-record h4 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+.timeline-page .unscheduled-record > p,
+.timeline-page .unscheduled-record > span { line-height: 1.6; }
+@media (max-width: 900px) {
+  .timeline-page .chronology-years { min-width: 0; }
+  .timeline-page .chronology-line { display: none; }
+}

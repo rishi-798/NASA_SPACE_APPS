@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "test": "node --experimental-strip-types --test ../tests/missionState.test.mjs ../tests/lunarSceneAdapter.test.mjs ../tests/analysisWindow.test.mjs",
+    "test": "node --experimental-strip-types --test ../tests/missionState.test.mjs ../tests/lunarSceneAdapter.test.mjs ../tests/analysisWindow.test.mjs ../tests/missionNavigation.test.mjs",
     "test:alignment": "node ../tests/alignment/verify_cesium.mjs",
     "dev": "vite",
     "build": "tsc --noEmit && vite build && vite build --ssr src/prerender.tsx --outDir .prerender && node ../scripts/prerender.mjs",
