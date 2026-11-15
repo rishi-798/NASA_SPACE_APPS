@@ -7,6 +7,7 @@ import type { TerrainRegion } from './terrainTypes';
 import type { MoonLocation } from '../../MoonMap';
 import { eyePosition, lookDirection, type Vec3 } from '../../lib/surfaceViewMath';
 import { createRegolithTextures } from '../../lib/regolithTexture';
+import { buildLunarSurfaceDetail, lunarDetailHeight } from '../../lib/lunarSurfaceDetail';
 
 const api = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 type SkyBody = { directional_vector_local_z_up: Vec3; angular_radius_deg: number; elevation_deg: number };
@@ -72,6 +73,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
       const slot = count < 1800 ? count++ : Math.floor(random() * candidates);
       if (slot >= 1800) continue;
       transform.position.copy(point);
+      transform.position.z += lunarDetailHeight(point.x, point.y, hit.point);
       transform.quaternion.setFromUnitVectors(up, normal);
       transform.quaternion.multiply(spin.setFromAxisAngle(up, random() * Math.PI * 2));
       // Many small fragments and occasional larger rocks, mostly buried in dust.
@@ -165,6 +167,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
   const pickRef = useRef(onPick);
   const [state, setState] = useState('Loading measured terrain…');
   const [lighting, setLighting] = useState('Calculating SPICE sky…');
+  const [skyReady, setSkyReady] = useState(false);
   const [inspection, setInspection] = useState(true);
   const [showRocks, setShowRocks] = useState(true);
   const [loaded, setLoaded] = useState(0);
@@ -246,6 +249,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     let inspectActive = true;
     let rocks: THREE.InstancedMesh | null = null;
     let rocksVisible = true;
+    let detail: THREE.Mesh | null = null;
+    let detailSource: THREE.Mesh | null = null;
+    const detailAnchor = new THREE.Vector3(Infinity, Infinity, Infinity);
 
     const value: Runtime = {
       terrain: null, inverse, marker, up: new THREE.Vector3(0, 0, 1), mode: 'orbit',
@@ -264,9 +270,13 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           }
         }
         if (next === 'eye' && !value.selectedPoint) return false;
-        if (next === value.mode) { focusSun(); render(); return true; }
+        if (next === value.mode) {
+          if (detail) detail.visible = next === 'eye' && !!value.selectedPoint && rocksVisible;
+          focusSun(); render(); return true;
+        }
         if (next === 'eye') { savedPosition.copy(camera.position); savedTarget.copy(controls.target); }
         value.mode = next;
+        if (detail) detail.visible = next === 'eye' && !!value.selectedPoint && rocksVisible;
         controls.enabled = next === 'orbit';
         marker.visible = next === 'orbit' && !!value.selectedPoint;
         if (next === 'orbit') {
@@ -297,8 +307,27 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         render();
       },
       render: () => render(),
-      placeRocks(hit) { rocks = scatterRocks(scene, rocks, hit); if (rocks) rocks.visible = rocksVisible; },
-      setRocksVisible(on) { rocksVisible = on; if (rocks) rocks.visible = on; render(); },
+      placeRocks(hit) {
+        if (detailAnchor.distanceToSquared(hit.point) < .0001 && detailSource === hit.object) return;
+        rocks = scatterRocks(scene, rocks, hit);
+        if (rocks) rocks.visible = rocksVisible;
+        if (detail) { scene.remove(detail); detail.geometry.dispose(); detail = null; }
+        detailAnchor.copy(hit.point);
+        detailSource = hit.object instanceof THREE.Mesh ? hit.object : null;
+        const geometry = buildLunarSurfaceDetail(hit);
+        if (geometry && detailSource) {
+          detail = new THREE.Mesh(geometry, detailSource.material);
+          detail.castShadow = true; detail.receiveShadow = true;
+          detail.visible = value.mode === 'eye' && rocksVisible;
+          scene.add(detail);
+        }
+      },
+      setRocksVisible(on) {
+        rocksVisible = on;
+        if (rocks) rocks.visible = on;
+        if (detail) detail.visible = on && value.mode === 'eye' && !!value.selectedPoint;
+        render();
+      },
       setLighting(data) {
         sky = data;
         if (data) {
@@ -445,6 +474,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
                 roughness: 0.95,
                 metalness: 0.0,
               });
+              if (detail && detailSource === child) detail.material = child.material;
             }
           });
           render();
@@ -491,6 +521,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
                     );
                   };
                   child.material = mat;
+                  if (detail && detailSource === child) detail.material = mat;
                   mat.needsUpdate = true;
                 }
               });
@@ -634,10 +665,12 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             !Number.isFinite(data.earth.illuminated_fraction) || data.earth.illuminated_fraction < 0 || data.earth.illuminated_fraction > 1 ||
             data.earth.sun_direction_local_z_up?.length !== 3 || !data.earth.sun_direction_local_z_up.every(Number.isFinite)) throw new Error('Invalid SPICE sky response.');
           runtime.current?.setLighting(data);
+          setSkyReady(true);
           setLighting(`Sun ${data.sun.elevation_deg.toFixed(2)}° · Earth ${data.earth.elevation_deg.toFixed(2)}° · Earth illuminated ${(data.earth.illuminated_fraction * 100).toFixed(1)}% · ${data.time}`);
         }).catch(error => {
           if (!controller.signal.aborted) {
             runtime.current?.setLighting(null);
+            setSkyReady(false);
             setLighting(error instanceof Error ? error.message : 'SPICE sky unavailable.');
           }
         });
@@ -650,19 +683,19 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       <button type="button" aria-pressed={mode === 'orbit' || !onMesh} onClick={() => setMode('orbit')}>Orbit Camera</button>
       <button type="button" disabled={!onMesh} aria-pressed={mode === 'eye' && onMesh} onClick={() => setMode('eye')}>Lander Eye-Level (1.8m)</button>
     </div>
-    {mode === 'eye' && onMesh && <div className="local-sky-tools" style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '10px' }}>
-      <button type="button" onClick={() => runtime.current?.faceBody('sun')}>Look toward Sun</button>
-      <button type="button" onClick={() => runtime.current?.faceBody('earth')}>Look toward Earth</button>
-      <button type="button" onClick={() => runtime.current?.faceBody('north')}>Horizon North (0°)</button>
-      <span style={{ fontSize: '0.85rem', color: '#76ffd0', marginLeft: 'auto', fontFamily: 'monospace' }}>
-        🔭 1.8m Eye-Level · Heading {camHeading.toString().padStart(3, '0')}° · Pitch {camPitch}°
-      </span>
-    </div>}
-    <p>{mode === 'eye' && onMesh ? 'Camera fixed 1.8 m above the selected mesh point. Drag or use arrow keys to look around; switch to Orbit Camera to choose another point.' : 'Drag to orbit, scroll to zoom, and click the mesh to choose an eye-level position.'}</p>
+    <p className="local-view-hint">{mode === 'eye' && onMesh ? 'Drag or use arrow keys to look around.' : 'Drag to orbit, scroll to zoom, and click the mesh to choose an eye-level position.'}</p>
     <div className="local-terrain-canvas" ref={host} style={{ position: 'relative', border: '1px solid rgba(118, 255, 208, 0.22)', borderRadius: '16px', overflow: 'hidden' }} />
-    <p role="status">{state}</p><p role="status">{lighting}</p>
-    <label><input type="checkbox" checked={showRocks} onChange={e => setShowRocks(e.target.checked)} /> Illustrative nearby rocks</label>
-    <p>Rocks and surface texture are illustrative. Terrain shape and selected coordinates remain measured.</p>
+    {mode === 'eye' && onMesh && <div className="local-sky-tools">
+      <div className="local-sky-actions" role="group" aria-label="Look toward a landmark">
+        <button type="button" disabled={!skyReady} onClick={() => runtime.current?.faceBody('sun')}>Face Sun</button>
+        <button type="button" disabled={!skyReady} onClick={() => runtime.current?.faceBody('earth')}>Face Earth</button>
+        <button type="button" onClick={() => runtime.current?.faceBody('north')}>Face north</button>
+      </div>
+      <span className="local-view-heading">Heading {camHeading.toString().padStart(3, '0')}° · Pitch {camPitch}°</span>
+    </div>}
+    <p role="status">{mode === 'eye' && state.startsWith('Measured terrain ready') ? 'Eye-level view · 1.8 m above the selected point' : state}</p><p role="status">{lighting}</p>
+    <label><input type="checkbox" checked={showRocks} onChange={e => setShowRocks(e.target.checked)} /> Illustrative rocks and fine relief</label>
+    <p>Nearby rocks and fine surface relief are illustrative. Selected coordinates use the measured terrain.</p>
     <label><input type="checkbox" checked={inspection} onChange={e => setInspection(e.target.checked)} /> Topographic relief light (illustrative)</label>
     <p>{region.source_id} · {region.source_spacing_m.toFixed(1)} m source sampling · 1:1 scale. Horizon and shadows are limited to this exported patch.</p>
     <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginTop: '0.35rem' }}>Surface detail is illustrative · Solar &amp; Earth ephemeris from NAIF SPICE DE440</p>
