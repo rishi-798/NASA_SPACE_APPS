@@ -242,6 +242,14 @@ export function TripPage() {
       {mission.stage === "rocket" && <>
         <div className="trip-layout trip-rocket-layout"><div className="trip-visual">{rocket?.model ? <Suspense fallback={sceneLoading}><SpaceScene key={rocket.id} modelUrl={rocket.model} modelName={rocket.name} modelCredit={rocket.modelCredit} /></Suspense> : <div className="trip-model-pending"><RocketLaunch weight="thin" /><h2>{rocket?.name ?? "Choose a rocket below"}</h2><p>{rocket ? "Unavailable: no 3D model is supplied for this launcher." : "Select a launcher from the gallery below."}</p></div>}</div>
           <aside className="trip-panel"><p className="trip-section-label">Rocket selection</p><h2>{rocket?.name ?? "Choose a launcher"}</h2>{rocket && <><p>{rocket.category}</p><p>{rocket.mission}</p></>}<p className="trip-note">{rocket?.note ?? "The catalogue includes historical and conceptual choices. It does not establish a feasible crewed flight."}</p>
+            {rocket?.specs && (
+              <dl className="trip-stat-list rocket-specs-list" aria-label="Vehicle launch specifications">
+                <div><dt>Payload to TLI</dt><dd>{rocket.specs.payloadTli}</dd></div>
+                <div><dt>Liftoff Thrust</dt><dd>{rocket.specs.liftoffThrust}</dd></div>
+                <div><dt>Stages</dt><dd>{rocket.specs.stages}</dd></div>
+                <div><dt>Propellants</dt><dd>{rocket.specs.propellants}</dd></div>
+              </dl>
+            )}
             {rocket && <><a href={rocket.source} target="_blank" rel="noreferrer">Source / model reference <ArrowUpRight /></a>{!departure?.rockets.includes(rocket.id) && <p className="trip-notice">Concept selection: this launcher is not associated with the selected pad in our catalogue. No compatibility is implied.</p>}</>}
             {rocket?.modelCredit.startsWith("John Morris") && <p className="trip-note">3D model by <a href="https://github.com/johnmorrisdotca/uchusen-rockets" target="_blank" rel="noreferrer">John Morris / Uchusen Rockets</a> · <a href="/third-party-licenses/uchusen-rockets-MIT.txt" target="_blank" rel="noreferrer">MIT license</a>.</p>}
             <p className="trip-note">Injection Δv is calculated from your transfer dates in the Flight step. Vehicle performance, staging and descent Δv are not assessed.</p>
@@ -269,7 +277,7 @@ export function TripPage() {
             </button>
           </div>
           {tripMoonView === "surface" && (
-            <span className="visual-view-badge">1:1 Continuous Lunar Topography</span>
+            <span className="visual-view-badge">Continuous Lunar Topography (LOLA/Kaguya DEM Preview)</span>
           )}
         </div>
 

@@ -72,12 +72,24 @@ function TelemetryRow({ kind, title, subtitle, data }: TelemetryRowProps) {
       <dl className="telemetry-values">
         <div>
           <dt>Elevation</dt>
-          <dd aria-label={data ? undefined : "Not calculated"}>{data ? formatSignedDegree(data.elevation) : "Not calculated"}</dd>
+          <dd aria-label={data ? `Elevation ${formatSignedDegree(data.elevation)}` : "Not calculated"}>{data ? formatSignedDegree(data.elevation) : "Not calculated"}</dd>
         </div>
         <div>
           <dt>Azimuth</dt>
-          <dd aria-label={data ? undefined : "Not calculated"}>{data ? formatAzimuth(data.azimuth) : "Not calculated"}</dd>
+          <dd aria-label={data ? `Azimuth ${formatAzimuth(data.azimuth)}` : "Not calculated"}>{data ? formatAzimuth(data.azimuth) : "Not calculated"}</dd>
         </div>
+        {data?.terrain_horizon !== undefined && (
+          <div>
+            <dt>Terrain Horizon</dt>
+            <dd>{formatSignedDegree(data.terrain_horizon)}</dd>
+          </div>
+        )}
+        {data?.terrain_clearance !== undefined && (
+          <div>
+            <dt>Clearance</dt>
+            <dd className={data.terrain_clearance < 0 ? "warn" : ""}>{formatSignedDegree(data.terrain_clearance)}</dd>
+          </div>
+        )}
       </dl>
     </article>
   );
@@ -251,7 +263,7 @@ export function ConditionsPanel({
         <span className={`mode-dot ${conditions ? "mode-live" : "mode-preview"}`} />
         <span>
           {conditions
-            ? "SUHAS / SPICE · GEOMETRIC POSITION"
+            ? "NASA NAIF / JPL SPICE · LOLA DEM"
             : state === "loading" ? "CALCULATING WITH SPICE" : "SELECT PARAMETERS · ANALYZE CONDITIONS"}
         </span>
       </div>

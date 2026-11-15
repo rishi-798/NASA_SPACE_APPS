@@ -1,15 +1,24 @@
-export function formatCoordinate(value: number, axis: "lat" | "lon") {
+export function formatCoordinate(value: number, axis: "lat" | "lon", precision = 2) {
+  if (!Number.isFinite(value)) return "—";
+  const rounded = Number(value.toFixed(precision));
+  if (rounded === 0) return `${(0).toFixed(precision)}°`;
   const suffix =
-    axis === "lat" ? (value < 0 ? "S" : "N") : value < 0 ? "W" : "E";
-  return `${Math.abs(value).toFixed(2)}° ${suffix}`;
+    axis === "lat" ? (rounded < 0 ? "S" : "N") : rounded < 0 ? "W" : "E";
+  return `${Math.abs(rounded).toFixed(precision)}° ${suffix}`;
 }
 
-export function formatSignedDegree(value: number) {
-  return `${value >= 0 ? "+" : "−"}${Math.abs(value).toFixed(1)}°`;
+export function formatSignedDegree(value: number, precision = 1) {
+  if (!Number.isFinite(value)) return "—";
+  const rounded = Number(value.toFixed(precision));
+  if (Object.is(rounded, -0) || rounded === 0) return `0.${"0".repeat(precision)}°`;
+  return `${rounded > 0 ? "+" : "−"}${Math.abs(rounded).toFixed(precision)}°`;
 }
 
-export function formatAzimuth(value: number) {
-  return `${value.toFixed(1).padStart(5, "0")}°`;
+export function formatAzimuth(value: number, precision = 1) {
+  if (!Number.isFinite(value)) return "—";
+  const normalized = ((value % 360) + 360) % 360;
+  const parts = normalized.toFixed(precision).split(".");
+  return `${parts[0].padStart(3, "0")}.${parts[1]}°`;
 }
 
 export function formatUtcDisplay(iso: string) {

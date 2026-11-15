@@ -229,20 +229,24 @@ function ExplorerWorkspace() {
               <button
                 type="button"
                 className={`visual-toggle-btn ${visualMode === "orbit" ? "active" : ""}`}
+                aria-pressed={visualMode === "orbit"}
                 onClick={() => setVisualMode("orbit")}
               >
-                🌐 Global Moon Orbit
+                <span aria-hidden="true">🌐</span> Global Moon Orbit
               </button>
               <button
                 type="button"
                 className={`visual-toggle-btn ${visualMode === "surface" ? "active" : ""}`}
+                aria-pressed={visualMode === "surface"}
                 onClick={() => setVisualMode("surface")}
               >
-                🏔️ 3D Surface Terrain
+                <span aria-hidden="true">🏔️</span> 3D Surface Terrain
               </button>
             </div>
-            {visualMode === "surface" && (
-              <span className="visual-view-badge">1:1 Continuous Lunar Topography</span>
+            {visualMode === "surface" ? (
+              <span className="visual-view-badge">Continuous Lunar Topography (LOLA/Kaguya DEM Preview)</span>
+            ) : (
+              <span className="visual-view-badge">Global Selenographic Orbit (IAU / SPICE DE440)</span>
             )}
           </div>
 

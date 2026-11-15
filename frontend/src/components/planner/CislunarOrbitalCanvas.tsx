@@ -27,7 +27,7 @@ const MOON_POS = new THREE.Vector3(3.2, 0.22, 0);
 const MOON_RADIUS = 0.32;
 const LLO_RADIUS = 0.46;
 
-const L1_POS = new THREE.Vector3(1.85, 0.14, 0);
+const L1_POS = new THREE.Vector3(1.85, 0.1736, 0);
 
 // Atmospheric Rim Glow Shader (Subtle Rayleigh Scattering)
 function createAtmosphereMesh(radius: number) {
@@ -219,6 +219,7 @@ export function CislunarOrbitalCanvas({
 
   const targetCamPosRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 2.8, 9.2));
   const targetCamLookRef = useRef<THREE.Vector3>(new THREE.Vector3(0, 0.05, 0));
+  const isUserInteractingRef = useRef(false);
 
   const transferCurveRef = useRef<THREE.CatmullRomCurve3 | null>(null);
 
@@ -254,6 +255,8 @@ export function CislunarOrbitalCanvas({
     controls.minDistance = 0.4;
     controls.maxDistance = 24.0;
     controls.target.set(0, 0.05, 0);
+    controls.addEventListener("start", () => { isUserInteractingRef.current = true; });
+    controls.addEventListener("end", () => { isUserInteractingRef.current = false; });
     controlsRef.current = controls;
 
     // 4. Directional Sun + Ambient Light
@@ -460,10 +463,18 @@ export function CislunarOrbitalCanvas({
       if (cloudsMeshRef.current) cloudsMeshRef.current.rotation.y += 0.0008;
       if (moonMeshRef.current) moonMeshRef.current.rotation.y += 0.0002;
 
-      // Smooth camera interpolation towards target
+      // Smooth camera interpolation towards target when user is not manually interacting
+      if (cameraPreset === "vehicle" && spacecraftRef.current) {
+        const pos = spacecraftRef.current.position;
+        targetCamPosRef.current.set(pos.x + 0.28, pos.y + 0.18, pos.z + 0.55);
+        targetCamLookRef.current.copy(pos);
+      }
+
       if (cameraRef.current && controlsRef.current) {
-        cameraRef.current.position.lerp(targetCamPosRef.current, 0.05);
-        controlsRef.current.target.lerp(targetCamLookRef.current, 0.05);
+        if (!isUserInteractingRef.current) {
+          cameraRef.current.position.lerp(targetCamPosRef.current, 0.05);
+          controlsRef.current.target.lerp(targetCamLookRef.current, 0.05);
+        }
         controlsRef.current.update();
       }
 
@@ -502,12 +513,14 @@ export function CislunarOrbitalCanvas({
 
   // Automatic Camera Alignment on Phase Change
   useEffect(() => {
-    if (activePhaseId === "ascent" || activePhaseId === "parking") {
-      onCameraPresetChange("earth");
-    } else if (activePhaseId === "tli" || activePhaseId === "cruise") {
-      onCameraPresetChange("system");
-    } else if (activePhaseId === "arrival" || activePhaseId === "descent") {
-      onCameraPresetChange("moon");
+    if (cameraPreset !== "vehicle") {
+      if (activePhaseId === "ascent" || activePhaseId === "parking") {
+        onCameraPresetChange("earth");
+      } else if (activePhaseId === "tli" || activePhaseId === "cruise") {
+        onCameraPresetChange("system");
+      } else if (activePhaseId === "arrival" || activePhaseId === "descent") {
+        onCameraPresetChange("moon");
+      }
     }
   }, [activePhaseId, onCameraPresetChange]);
 
@@ -522,7 +535,7 @@ export function CislunarOrbitalCanvas({
     const forwardVec = new THREE.Vector3(1, 0, 0);
 
     if (activePhaseId === "ascent") {
-      const theta = -Math.PI * 0.5 + prog * (Math.PI * 0.45);
+      const theta = -Math.PI * 0.5 + prog * (Math.PI * 0.5);
       const r = EARTH_RADIUS + prog * (PARKING_RADIUS - EARTH_RADIUS);
       craftPos.set(EARTH_POS.x + Math.cos(theta) * r, EARTH_POS.y + Math.sin(theta) * r, 0);
       forwardVec.set(-Math.sin(theta), Math.cos(theta), 0).normalize();
@@ -542,7 +555,7 @@ export function CislunarOrbitalCanvas({
       hasPlume = true;
     } else if (activePhaseId === "cruise") {
       if (transferCurveRef.current) {
-        const t = 0.14 + prog * 0.82;
+        const t = 0.14 + prog * 0.86;
         transferCurveRef.current.getPoint(t, craftPos);
         const tangent = transferCurveRef.current.getTangent(t);
         forwardVec.copy(tangent).normalize();
@@ -551,25 +564,24 @@ export function CislunarOrbitalCanvas({
     } else if (activePhaseId === "arrival") {
       const theta = -Math.PI + prog * Math.PI * 1.5;
       craftPos.set(MOON_POS.x + Math.cos(theta) * LLO_RADIUS, MOON_POS.y + Math.sin(theta) * LLO_RADIUS, 0);
-      forwardVec.set(Math.sin(theta), -Math.cos(theta), 0).normalize();
+      forwardVec.set(-Math.sin(theta), Math.cos(theta), 0).normalize();
       hasPlume = prog < 0.65;
+      // In LOI retro-burn, vehicle rotates 180° so main engine bells point in prograde direction (+v) to decelerate
+      if (hasPlume) forwardVec.negate();
     } else if (activePhaseId === "descent") {
       const theta = Math.PI * 0.5 - prog * (Math.PI * 0.38);
       const r = LLO_RADIUS - prog * (LLO_RADIUS - MOON_RADIUS * 1.02);
       craftPos.set(MOON_POS.x + Math.cos(theta) * r, MOON_POS.y + Math.sin(theta) * r, 0.10 * prog);
-      forwardVec.set(Math.sin(theta), -Math.cos(theta), -0.1).normalize();
+      forwardVec.set(-Math.sin(theta), Math.cos(theta), -0.1).normalize();
       hasPlume = true;
+      // Terminal descent pitch towards radial vertical
+      forwardVec.lerp(new THREE.Vector3(0, 1, 0), prog * 0.6).normalize();
     }
 
     craft.position.copy(craftPos);
 
-    // Smoothly align vehicle with flight vector
-    const rotMatrix = new THREE.Matrix4().lookAt(
-      new THREE.Vector3(0, 0, 0),
-      forwardVec,
-      new THREE.Vector3(0, 0, 1)
-    );
-    craft.quaternion.setFromRotationMatrix(rotMatrix);
+    // Smoothly align vehicle with flight vector (aligning +Y nose to forwardVec)
+    craft.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), forwardVec);
 
     // Toggle and pulse engine burn plume
     const plume = craft.getObjectByName("enginePlume");

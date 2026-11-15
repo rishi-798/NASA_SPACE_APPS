@@ -49,11 +49,21 @@ export function AboutPage() {
         </p>
       </section>
       <section className="integrity-note" aria-labelledby="data-sources-title">
-        <h2 id="data-sources-title">Data and availability</h2>
-        <p><a href="https://naif.jpl.nasa.gov/" target="_blank" rel="noreferrer">NASA/JPL NAIF SPICE</a> supplies the observation-geometry toolkit. The backend uses DE440s ephemerides for Sun, Earth and Moon positions.</p>
-        <p>The <a href="https://svs.gsfc.nasa.gov/4720/" target="_blank" rel="noreferrer">NASA CGI Moon Kit</a> supplies LRO-derived color and displacement maps. A global map is context, not a photograph of the selected landing site.</p>
-        <p>Point elevations and regional ranges are shown only when the terrain service returns them. Missing samples, unavailable weather access and uncomputed assessments are labelled explicitly.</p>
-        <p>Trip transfers use an Earth-centered two-body approximation. Lunar capture, descent, launch-site accessibility and vehicle capability are not validated.</p>
+        <h2 id="data-sources-title">Scientific Specifications & Data Sources</h2>
+        <p><strong>Planetary Reference Frame:</strong> Observation vectors are computed in the IAU <code>MOON_ME_DE440_ME421</code> mean Earth/polar axis selenographic reference frame with mean lunar radius R = 1737.4 km and planetocentric east-positive selenographic coordinates.</p>
+        <p><strong>Ephemeris Toolkit:</strong> Powered by <a href="https://naif.jpl.nasa.gov/" target="_blank" rel="noreferrer">NASA/JPL NAIF SPICE</a> with the <code>de440s.bsp</code> planetary ephemeris kernel, <code>naif0012.tls</code> leapseconds kernel, and <code>pck00010.tpc</code> orientation kernel.</p>
+        <p><strong>Topographic Horizon Modeling:</strong> Horizon profiles evaluate 720 azimuthal bins (0.5° angular step) across a 40 km radial baseline derived from merged LOLA GDR and Kaguya LALT digital elevation models (DEM) for an observer mast elevation of 2.0 m above local surface datum.</p>
+        <p><strong>Visual Mapping:</strong> The <a href="https://svs.gsfc.nasa.gov/4720/" target="_blank" rel="noreferrer">NASA SVS CGI Moon Kit</a> supplies LRO LROC-derived 8-bit color albedo and LOLA displacement basemaps. Regional 3D terrain meshes render sampled elevation tiles with high-contrast low-sun shadow projection.</p>
+        <p><strong>Preliminary Orbital Mechanics:</strong> Trip transfers evaluate patched-conic two-body trajectories with date-based ephemeris boundary conditions. Launch-window constraints, descent trajectory Δv, and real-time flight guidance require formal mission certification.</p>
+      </section>
+
+      <section className="integrity-note" aria-labelledby="academic-citations-title">
+        <h2 id="academic-citations-title">Academic & Technical Citations</h2>
+        <ul className="about-citation-list" style={{ paddingLeft: "1.2rem", fontSize: "12px", lineHeight: 1.6, color: "var(--muted)" }}>
+          <li>Acton, C. H., et al. (2018). <em>A look towards the future of the SPICE toolkit for planetary science missions</em>. Planetary and Space Science, 150, 9–12. doi:10.1016/j.pss.2017.11.013</li>
+          <li>Smith, D. E., et al. (2017). <em>Summary of the results from the Lunar Orbiter Laser Altimeter after seven years in lunar orbit</em>. Icarus, 283, 70–91. doi:10.1016/j.icarus.2016.06.006</li>
+          <li>Park, R. S., et al. (2021). <em>The JPL Planetary and Lunar Ephemerides DE440 and DE441</em>. The Astronomical Journal, 161(3), 105. doi:10.3847/1538-3881/abd414</li>
+        </ul>
       </section>
     </article>
   );

@@ -202,7 +202,7 @@ export function step(s: SimState, input: Input, v: VehicleConfig, settings: SimS
       const atContact = rk4(y, lo, seg.F, dir, v.ispS, g);
       const tc = t + lo, prop = propellantAfter(propellant, { h: lo, F: seg.F });
       const vel: Vec3 = [atContact[3], atContact[4], atContact[5]];
-      const contact: Contact = { t: tc, pos: [atContact[0], atContact[1], atContact[2]], vel, verticalSpeed: Math.abs(Math.min(0, vel[2])),
+      const contact: Contact = { t: tc, pos: [atContact[0], atContact[1], atContact[2]], vel, verticalSpeed: Math.abs(vel[2]),
         horizontalSpeed: Math.hypot(vel[0], vel[1]), slope: terrain.slopeAt(atContact[0], atContact[1]), propellantKg: prop };
       events.push({ kind: "contact", t: tc, detail: `Footpad contact at ${contact.verticalSpeed.toFixed(2)} m/s down, ${contact.horizontalSpeed.toFixed(2)} m/s across.` });
       return finish(atContact, tc, prop, tilt, throttle, seg.F, events, contact);

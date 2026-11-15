@@ -1,5 +1,5 @@
 import { useGSAP } from "@gsap/react";
-import { ArrowRight, ArrowUpRight, Broadcast, GlobeHemisphereWest, Mountains, SunHorizon } from "@phosphor-icons/react";
+import { ArrowRight, ArrowUpRight, Broadcast, GlobeHemisphereWest, Mountains, Rocket, SunHorizon } from "@phosphor-icons/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRef } from "react";
@@ -39,11 +39,14 @@ export function HomePage() {
           <p className="eyebrow">NASA Space Apps 2026</p>
           <h1 id="hero-title">THE MOON.<br /><span>IN CONTEXT.</span></h1>
           <p className="hero-description">Explore lunar terrain, track sunlight, and find a clear line of sight to Earth.</p>
-          <div className="hero-actions"><Link className="orbit-button" to="/explorer"><span>Analyze a landing site</span><span className="button-orbit"><ArrowUpRight aria-hidden="true" /></span></Link><Link className="quiet-link" to="/trip">Plan a trip <ArrowRight aria-hidden="true" /></Link></div>
+          <div className="hero-actions">
+            <ExplorerLink>Analyze a landing site</ExplorerLink>
+            <Link className="quiet-link" to="/trip">Plan a trip <ArrowRight aria-hidden="true" /></Link>
+          </div>
         </div>
       </section>
 
-      <div className="project-rail">
+      <div className="project-rail" role="status" aria-label="Lunar platform metrics" data-home-reveal>
         <span>ONE MOON. MANY QUESTIONS.</span>
         <span><i aria-hidden="true" /> {landingSites.length} landing sites</span>
         <span>3D exploration + SPICE analysis</span>
@@ -55,16 +58,25 @@ export function HomePage() {
           <p>Our projects, brought together.<br />A shared view of the lunar surface.</p>
         </header>
         <div className="project-grid">
-          <Link className="project-card project-map" to="/explorer" data-home-reveal aria-label="Open Rishi's interactive Moon map in Explorer">
+          <Link className="project-card project-map" to="/explorer" data-home-reveal>
             <div className="project-image"><img src="/lunar-color-map.webp" srcSet="/lunar-color-map-640.webp 640w, /lunar-color-map-1280.webp 1280w, /lunar-color-map.webp 2048w" sizes="(max-width: 640px) calc(100vw - 44px), (max-width: 1600px) 55vw, 820px" alt="LRO-derived global lunar color map showing craters and dark maria" width="2048" height="1024" loading="lazy" /></div>
             <div className="project-card-copy"><div><p className="project-author">RISHI / MOON MAP</p><h3>A world worth<br />looking closer at.</h3><p>Orbit the NASA 3D Moon, choose a location, and put the surface in perspective.</p></div><span className="card-arrow"><ArrowUpRight aria-hidden="true" /></span></div>
           </Link>
           <div className="project-side">
-            <Link className="project-card project-compute" to="/explorer" data-home-reveal aria-label="Open Suhas's visibility analysis in Explorer">
+            <Link className="project-card project-compute" to="/explorer?tool=visibility" data-home-reveal>
               <div className="compute-symbol" aria-hidden="true"><SunHorizon weight="thin" /><Broadcast weight="thin" /></div>
               <div className="project-card-copy"><div><p className="project-author">SUHAS / VISIBILITY ENGINE</p><h3>Beyond the<br />visible surface.</h3><p>Real Sun and Earth geometry. Terrain-aware horizons. One UTC timestamp.</p></div><span className="card-arrow"><ArrowUpRight aria-hidden="true" /></span></div>
             </Link>
-            <Link className="archive-card" to="/missions" data-home-reveal><GlobeHemisphereWest weight="light" aria-hidden="true" /><div><h3>The landing-site archive</h3><p>CLPS & Artemis Manifest</p></div><ArrowUpRight aria-hidden="true" /></Link>
+            <Link className="archive-card" to="/trip" data-home-reveal>
+              <Rocket weight="light" aria-hidden="true" />
+              <div><h3>Mission trajectory architect</h3><p>Translunar transit, Earth departure &amp; 3D flight</p></div>
+              <ArrowUpRight aria-hidden="true" />
+            </Link>
+            <Link className="archive-card" to="/missions" data-home-reveal>
+              <GlobeHemisphereWest weight="light" aria-hidden="true" />
+              <div><h3>The landing-site archive</h3><p>CLPS &amp; Artemis Manifest</p></div>
+              <ArrowUpRight aria-hidden="true" />
+            </Link>
           </div>
         </div>
         <p className="image-source">Lunar color map: NASA CGI Moon Kit. Interactive model: NASA Goddard / Cesium.</p>
@@ -85,7 +97,7 @@ export function HomePage() {
       <section className="home-sites home-section" aria-labelledby="sites-title">
         <header className="section-heading" data-home-reveal><h2 id="sites-title">Start with <span>a site.</span></h2><Link className="quiet-link" to="/missions">Browse mission records <ArrowUpRight aria-hidden="true" /></Link></header>
         <div className="home-site-list">{landingSites.map((site) => <Link className="home-site-row" key={site.id} to={`/explorer?site=${site.id}`} data-home-reveal>
-          <span className="site-mission">{site.mission}</span><h3>{site.name.replace(" landing site", "")}</h3><span className="site-coordinates">{formatCoordinate(site.latitude, "lat")}<br />{formatCoordinate(site.longitude, "lon")}</span><span className="site-row-action">Explore site <ArrowUpRight aria-hidden="true" /></span>
+          <span className="site-mission">{site.mission}</span><h3>{site.name.replace(/\s+landing\s+site/i, "")}</h3><span className="site-coordinates">{formatCoordinate(site.latitude, "lat")}<br />{formatCoordinate(site.longitude, "lon")}</span><span className="site-row-action">Explore site <ArrowUpRight aria-hidden="true" /></span>
         </Link>)}</div>
         <p className="site-dataset-note">{landingSites.length} source-linked landing sites, alongside the wider mission archive.</p>
       </section>

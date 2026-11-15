@@ -316,25 +316,31 @@
 .touch-controls-bar {
   display: grid;
   grid-template-columns: 1fr 1fr 1.2fr 1.2fr;
-  gap: 0.4rem;
-  padding: 0.5rem;
-  background: rgba(15, 23, 42, 0.9);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 0.5rem;
+  padding: 0.6rem 0.5rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
+  background: rgba(15, 23, 42, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  touch-action: none;
 }
 
 .touch-btn {
   background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   color: #f1f5f9;
-  border-radius: 6px;
-  padding: 0.6rem 0.2rem;
+  border-radius: 8px;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 0.6rem 0.4rem;
   font-family: inherit;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   user-select: none;
-  touch-action: manipulation;
+  touch-action: none;
   transition: background 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .touch-btn:active {

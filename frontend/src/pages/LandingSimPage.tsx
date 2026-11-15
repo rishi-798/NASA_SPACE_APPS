@@ -335,14 +335,14 @@ export function LandingSimPage({ landing, rocket, onContinue, onBack }: { landin
           <dl className="sim-hud" aria-live="off">
             <div><dt>Sim time</dt><dd>{simClock(s.t)}</dd></div>
             <div><dt>Altitude</dt><dd>{fmt(Math.max(0, s.altitudeM))} m</dd></div>
-            <div><dt>Vertical</dt><dd className={-s.vel[2] > limits.maxVerticalSpeed && s.altitudeM < 30 ? "warn" : ""}>{fmt(-s.vel[2])} m/s ↓</dd></div>
+            <div><dt>Vertical</dt><dd className={-s.vel[2] > limits.maxVerticalSpeed && s.altitudeM < 30 ? "warn" : ""}>{-s.vel[2] >= 0 ? `${fmt(-s.vel[2])} m/s ↓` : `${fmt(s.vel[2])} m/s ↑`}</dd></div>
             <div><dt>Horizontal</dt><dd>{fmt(hSpeed)} m/s</dd></div>
             <div><dt>Thrust</dt><dd>{fmt(s.thrustN, 0)} N ({fmt(s.throttle * 100, 0)}%)</dd></div>
             <div><dt>Mass</dt><dd>{fmt(s.massKg, 1)} kg</dd></div>
-            <div><dt>Fuel</dt><dd className={s.propellantKg <= 0 ? "warn" : ""}>{fmt(s.propellantKg, 1)} kg</dd></div>
+            <div><dt>Fuel</dt><dd className={s.propellantKg <= vehicle.propellantKg * 0.15 ? "warn" : ""}>{fmt(s.propellantKg, 1)} kg</dd></div>
             <div><dt>To target</dt><dd>{fmt(Math.hypot(s.pos[0], s.pos[1]), 0)} m</dd></div>
             <div><dt>Tilt</dt><dd>{fmt(Math.hypot(s.tilt[0], s.tilt[1]), 1)}°</dd></div>
-            <div><dt>T/W (lunar)</dt><dd className={twr < 1 && s.propellantKg > 0 ? "warn" : ""}>{fmt(twr, 2)}</dd></div>
+            <div><dt>T/W (lunar)</dt><dd className={twr < 1 && s.propellantKg > 0 ? "warn" : ""}>{fmt(s.thrustN / (s.massKg * MOON_G), 2)} / {fmt(twr, 2)}</dd></div>
           </dl>
           {snap.source === "replay" && <p className="sim-replay-flag">REPLAY · recorded states</p>}
         </div>

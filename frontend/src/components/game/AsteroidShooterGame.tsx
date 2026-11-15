@@ -143,7 +143,7 @@ class GameAudio {
   }
 
   public setThrust(active: boolean) {
-    if (this.muted || !this.ctx) return;
+    if (this.muted) return;
     this.initCtx();
     if (!this.ctx) return;
 
@@ -209,7 +209,9 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
   const [highScore, setHighScore] = useState(() => {
     try { return parseInt(localStorage.getItem("nasa-asteroid-highscore") || "0", 10); } catch { return 0; }
   });
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    try { return localStorage.getItem("nasa-asteroid-muted") !== "true"; } catch { return true; }
+  });
 
   // Mutable game simulation loop refs
   const gameRef = useRef({
@@ -280,7 +282,7 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
       const dist = Math.hypot(posX - avoidX, posY - avoidY);
       if (dist < 120) {
         posX = (posX + 200) % 800;
-        posY = (posY + 200) % 600;
+        posY = (posY + 200) % 520;
       }
     }
 
@@ -407,7 +409,7 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
       for (let i = 0; i < 90; i++) {
         gameRef.current.stars.push({
           x: Math.random() * 800,
-          y: Math.random() * 600,
+          y: Math.random() * 520,
           s: Math.random() * 1.8 + 0.6,
           b: Math.random() * 0.7 + 0.3,
         });
@@ -523,7 +525,7 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
           const a = g.asteroids[i];
           a.x = (a.x + a.vx * dt * 60 + w) % w;
           a.y = (a.y + a.vy * dt * 60 + h) % h;
-          a.angle += a.vAngle;
+          a.angle += a.vAngle * dt * 60;
         }
 
         // Laser vs Asteroid Collisions
@@ -575,13 +577,22 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
                 try { localStorage.setItem("nasa-asteroid-highscore", String(g.score)); } catch { /* Ignore */ }
               }
 
-              // Fragment into smaller asteroids
-              if (ast.tier === 3) {
-                g.asteroids.push(createAsteroid(ast.x, ast.y, 2));
-                g.asteroids.push(createAsteroid(ast.x, ast.y, 2));
-              } else if (ast.tier === 2) {
-                g.asteroids.push(createAsteroid(ast.x, ast.y, 1));
-                g.asteroids.push(createAsteroid(ast.x, ast.y, 1));
+              // Fragment into smaller asteroids with spatial separation and opposing impulses
+              if (ast.tier === 3 || ast.tier === 2) {
+                const nextTier = ast.tier === 3 ? 2 : 1;
+                const splitAngle = Math.random() * Math.PI * 2;
+                const sep = ast.radius * 0.55;
+                const dx = Math.cos(splitAngle) * sep;
+                const dy = Math.sin(splitAngle) * sep;
+                const boost = ast.tier === 3 ? 0.8 : 1.2;
+
+                const c1 = createAsteroid(ast.x + dx, ast.y + dy, nextTier);
+                const c2 = createAsteroid(ast.x - dx, ast.y - dy, nextTier);
+                c1.vx = ast.vx * 0.6 + Math.cos(splitAngle) * boost;
+                c1.vy = ast.vy * 0.6 + Math.sin(splitAngle) * boost;
+                c2.vx = ast.vx * 0.6 - Math.cos(splitAngle) * boost;
+                c2.vy = ast.vy * 0.6 - Math.sin(splitAngle) * boost;
+                g.asteroids.push(c1, c2);
               }
 
               g.asteroids.splice(aIdx, 1);
@@ -635,8 +646,10 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
           }
         }
 
-        // Wave cleared -> Next sector
+        // Wave cleared -> Next sector with shield restoration bonus
         if (g.asteroids.length === 0) {
+          g.shields = Math.min(100, g.shields + 25);
+          setShields(g.shields);
           initSector(g.sector + 1, true);
         }
       }
@@ -646,8 +659,8 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
         const p = g.particles[pIdx];
         p.x += p.vx * dt;
         p.y += p.vy * dt;
-        p.vx *= 0.96;
-        p.vy *= 0.96;
+        p.vx *= Math.pow(0.96, dt * 60);
+        p.vy *= Math.pow(0.96, dt * 60);
         p.life -= dt;
         if (p.life <= 0) g.particles.splice(pIdx, 1);
       }
