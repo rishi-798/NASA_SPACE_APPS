@@ -24,6 +24,17 @@ For the local Docker backend, supply the private ignored file with `docker run -
 
 ## Verification
 
+### Public Render deployment — verified November 15, 2026
+
+The existing `brahmos-lunar-browser` Render service has both Meteomatics variables configured in its backend environment. The environment-only deployment `dep-dbt0km8ae00c739ah0og` succeeded; no application code changes were required. Secret values remain outside Git and frontend code.
+
+- Public forecast: https://brahmos-lunar-browser.onrender.com/api/weather/launch-sites/kennedy-39a?include_cloud=true
+- Visitor interface: https://brahmos-lunar-browser.onrender.com/trip
+- Unauthenticated requests for Kennedy LC-39A and Sriharikota returned HTTP 200, each with 25 samples spaced one hour apart and all 25 temperature, wind, precipitation and cloud-cover values present.
+- An actual Chrome incognito session displayed Kennedy's forecast and 25 hourly table rows. Switching to Sriharikota cleared the prior forecast; loading weather displayed the correct site and forecast. Provider attribution and hourly caching remained present.
+
+The configured account is valid until **November 22, 2026**. Before it expires, arrange continued provider access and update the two variables in Render, then redeploy and repeat the public checks. GitHub does not store or renew these credentials. This is a dated verification record, not a guarantee of future provider availability.
+
 Run `python -m pytest tests/test_meteomatics.py -q` and the full backend suite. Run frontend lint, tests and build. Browser checks should cover a successful forecast, missing access, retry, site changes during a request, and mobile table scrolling. Never commit real responses containing an account username.
 
 Provider documentation:
