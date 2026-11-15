@@ -2237,3 +2237,4 @@ a {
     transition-duration: 0.01ms !important;
   }
 }
+.map-lighting-note { position:absolute; bottom:44px; left:12px; max-width:calc(100% - 24px); margin:0; color:#c5cbd1; font-size:11px; pointer-events:none; background:#0009; padding:4px 7px; border-radius:4px; }
