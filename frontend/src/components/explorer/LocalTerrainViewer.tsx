@@ -744,7 +744,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       {/* Sleek Bottom Metadata & Ephemeris Strip */}
       <div className="surface-footer-strip">
         <span className="surface-meta-tag">
-          {region.name} · {region.source_spacing_m.toFixed(1)}m SLDEM2015 Topography (1:1 scale)
+          {region.name} · {region.source_spacing_m.toFixed(1)}m source sampling · 1:1 scale
         </span>
         <span className="surface-sky-tag">
           {lighting.includes('Sun') ? lighting : 'SPICE DE440 Solar & Earth Ephemeris'}
