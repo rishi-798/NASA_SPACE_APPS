@@ -24,7 +24,15 @@ type Runtime = {
   placeRocks: (hit: THREE.Intersection) => void; setRocksVisible: (on: boolean) => void;
 };
 
-function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THREE.Intersection, enriched = false, scans: THREE.Mesh[] = []) {
+// Smooth seeded pockets for the Lunokhod 1 artistic gravel layer only.
+function lunokhodDustPocket(x:number,y:number):number {
+  const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
+  const hash=(a:number,b:number)=>{const n=Math.sin(a*127.1+b*311.7)*43758.5453;return n-Math.floor(n);};
+  const sx=fx*fx*(3-2*fx),sy=fy*fy*(3-2*fy);
+  return THREE.MathUtils.lerp(THREE.MathUtils.lerp(hash(ix,iy),hash(ix+1,iy),sx),THREE.MathUtils.lerp(hash(ix,iy+1),hash(ix+1,iy+1),sx),sy);
+}
+
+function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THREE.Intersection, enriched = false, scans: THREE.Mesh[] = [], hero = false) {
   if (!(hit.object instanceof THREE.Mesh) || hit.faceIndex == null) return previous;
   const capacity = enriched ? 45000 : 1800;
   const mesh = hit.object, positions = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
@@ -71,7 +79,32 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
         };
         material.customProgramCacheKey = () => 'lunar-neutral-fragments-v1';
       }
-      const stones = new THREE.InstancedMesh(template ? template.geometry.clone() : makeRockGeometry(variant), material, capacity);
+      if(hero && new URLSearchParams(window.location.search).get('l1diagnostic') === 'rock-neutral') {
+        material.map=null;material.normalMap=null;material.aoMap=null;material.roughnessMap=null;
+        material.color.set(0xaaaaaa);material.roughness=.95;
+      }
+      const stoneGeometry=template ? template.geometry.clone() : makeRockGeometry(variant);
+      if(hero && new URLSearchParams(window.location.search).get('l1diagnostic') !== 'rock-neutral') {
+        stoneGeometry.computeBoundingBox();
+        const bounds=stoneGeometry.boundingBox!,vertices=stoneGeometry.getAttribute('position');
+        const covers=new Float32Array(vertices.count);
+        for(let i=0;i<vertices.count;i++) {
+          const height=(vertices.getZ(i)-bounds.min.z)/Math.max(.001,bounds.max.z-bounds.min.z);
+          covers[i]=.5+.30*(1-THREE.MathUtils.smoothstep(height,.05,.65));
+        }
+        stoneGeometry.setAttribute('l1DustCover',new THREE.BufferAttribute(covers,1));
+        material.normalScale.multiplyScalar(.6);
+        const originalCompile=material.onBeforeCompile;
+        material.onBeforeCompile=(shader,renderer)=>{
+          originalCompile(shader,renderer);
+          shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\n attribute float l1DustCover; varying float vL1DustCover;');
+          shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n vL1DustCover=l1DustCover;');
+          shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\n varying float vL1DustCover;');
+          shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.215),vL1DustCover);');
+        };
+        material.customProgramCacheKey=()=> 'lunokhod1-dust-coated-stones-v1';
+      }
+      const stones = new THREE.InstancedMesh(stoneGeometry, material, hero ? capacity + 20000 : capacity);
       stones.castShadow = stones.receiveShadow = true;
       stones.frustumCulled = false;
       rocks.add(stones);
@@ -81,6 +114,9 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
   const batches = rocks.children as THREE.InstancedMesh[];
   batches.forEach(batch => { if (!batch.geometry.boundingBox) batch.geometry.computeBoundingBox(); });
   const samplesBySlot: { matrix: THREE.Matrix4; shade: number; scale: number }[] = [];
+  const fineGravel: { matrix: THREE.Matrix4; shade: number; scale: number }[]=[];
+  let gravelSeed=(hit.faceIndex+77123)>>>0;
+  const gravelRandom=()=>{gravelSeed=(1664525*gravelSeed+1013904223)>>>0;return gravelSeed/4294967296;};
   const transform = new THREE.Object3D();
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), point = new THREE.Vector3();
   const ab = new THREE.Vector3(), ac = new THREE.Vector3(), normal = new THREE.Vector3();
@@ -98,13 +134,33 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
     const area = normal.length() / 2;
     normal.normalize();
     if (normal.z < 0) normal.negate();
+    if(hero && fineGravel.length<20000) {
+      for(let i=0,n=Math.min(24000,Math.ceil(area*24));i<n&&fineGravel.length<20000;i++) {
+        const u=Math.sqrt(gravelRandom()),v=gravelRandom();
+        point.copy(a).multiplyScalar(1-u).addScaledVector(b,u*(1-v)).addScaledVector(c,u*v);
+        const d=point.distanceToSquared(hit.point);
+        if(d>400||d<.0625) continue;
+        const pocket=lunokhodDustPocket(point.x*.1+19,point.y*.1-7);
+        if(gravelRandom()>.3+.7*pocket) continue;
+        transform.position.copy(point);transform.position.z+=lunarDetailHeight(point.x,point.y,hit.point,true);
+        transform.quaternion.setFromUnitVectors(up,normal);
+        transform.quaternion.multiply(spin.setFromAxisAngle(up,gravelRandom()*Math.PI*2));
+        const scale=.006+gravelRandom()*.012;
+        transform.scale.set(scale,scale*(.7+gravelRandom()*.5),scale*(.6+gravelRandom()*.35));
+        transform.updateMatrix();fineGravel.push({matrix:transform.matrix.clone(),shade:.8+gravelRandom()*.2,scale});
+      }
+    }
     const samples = Math.min(enriched ? 24000 : 120, Math.max(1, Math.ceil(area * (enriched ? 12 : .09))));
     for (let i = 0; i < samples; i++) {
       const u = Math.sqrt(random()), v = random();
       point.copy(a).multiplyScalar(1-u).addScaledVector(b, u*(1-v)).addScaledVector(c, u*v);
       const distance = point.distanceToSquared(hit.point);
       if (distance > 4900 || distance < (enriched ? .0625 : 4)) continue;
-      if (enriched && random() > .08 + .92 * Math.exp(-distance / 500)) continue;
+      if (enriched) {
+        let probability=.08+.92*Math.exp(-distance/500);
+        if(hero) probability*=.2+1.6*lunokhodDustPocket(point.x*.1+19,point.y*.1-7);
+        if(random()>probability) continue;
+      }
       candidates++;
       const slot = count < capacity ? count++ : Math.floor(random() * candidates);
       if (slot >= capacity) continue;
@@ -122,6 +178,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
       samplesBySlot[slot] = { matrix: transform.matrix.clone(), shade: .65 + random() * .35, scale };
     }
   }
+  samplesBySlot.push(...fineGravel);
   batches.forEach(batch => { batch.count = 0; });
   samplesBySlot.forEach((sample, slot) => {
     // Reserve photographed geometry for visible stones; fine gravel uses cheaper fragments.
@@ -542,7 +599,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       placeRocks(hit) {
         lastRockHit = hit;
         if (detailAnchor.distanceToSquared(hit.point) < .0001 && detailSource === hit.object) return;
-        rocks = scatterRocks(scene, rocks, hit, detailedRegions.has(region.id), rockScans);
+        rocks = scatterRocks(scene, rocks, hit, detailedRegions.has(region.id), rockScans, region.id === 'REGION-LUNOKHOD-1');
         if (rocks) rocks.visible = rocksVisible;
         if (detail) { scene.remove(detail); detail.geometry.dispose(); detail = null; }
         detailAnchor.copy(hit.point);
@@ -827,7 +884,15 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           fines.map.repeat.set(6,6);fines.map.colorSpace=THREE.NoColorSpace;
           fines.map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
           terrainTextures.add(fines.map);fines.normalMap.dispose();
-          const material = new THREE.MeshStandardMaterial({map,normalMap,roughnessMap,bumpMap:fines.map,bumpScale:.16,roughness:1,metalness:0,normalScale:new THREE.Vector2(.8,.8)});
+          const hero = region.id === 'REGION-LUNOKHOD-1';
+          const dust = hero ? createRegolithTextures(24,true,true) : null;
+          if(dust) {
+            dust.map.repeat.set(1,1);
+            dust.map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+            terrainTextures.add(dust.map);dust.normalMap.dispose();
+          }
+          const material = new THREE.MeshStandardMaterial({map:dust?.map ?? map,normalMap,roughnessMap,bumpMap:fines.map,bumpScale:.16,roughness:1,metalness:0,normalScale:new THREE.Vector2(hero ? .5 : .8,hero ? .5 : .8)});
+          if(hero) { material.roughnessMap=null; }
           // Preserve texture structure but keep illustrative regolith neutral gray.
           material.onBeforeCompile = shader => {
             shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\n diffuseColor.rgb = vec3(dot(diffuseColor.rgb,vec3(.2126,.7152,.0722)));');
@@ -839,7 +904,15 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             // matching the tutorials' layered-bump structure.
             shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n #ifdef USE_BUMPMAP\n normal=perturbNormalArb(-vViewPosition,normal,dHdxy_fwd(),faceDirection);\n #endif');
           };
-          material.customProgramCacheKey = () => 'lunar-layered-regolith-v2';
+          if(hero) {
+            const layeredCompile=material.onBeforeCompile;
+            material.onBeforeCompile=(shader,renderer)=>{
+              layeredCompile(shader,renderer);
+              shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>','vec3 l1GeometricNormal=normal;\n #include <normal_fragment_maps>');
+              shader.fragmentShader=shader.fragmentShader.replace('#include <clearcoat_normal_fragment_begin>','normal=normalize(mix(l1GeometricNormal,normal,1.0-smoothstep(6.0,32.0,length(vViewPosition))));\n #include <clearcoat_normal_fragment_begin>');
+            };
+          }
+          material.customProgramCacheKey = () => hero ? 'lunokhod1-layered-dust-v1' : 'lunar-layered-regolith-v2';
           terrain.traverse(child => { if(child instanceof THREE.Mesh) child.material=material; });
           for (const context of [landscapeMesh,underCapMesh]) {
             const positions=context.geometry.getAttribute('position');
@@ -854,6 +927,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           }
           if(detail) detail.material=material;
           render();
+          if(hero) canvas.dataset.lunokhodMaterial="dust-pass";
         }).catch(loadFallbackTextures);
       }
       else texLoader.load(
