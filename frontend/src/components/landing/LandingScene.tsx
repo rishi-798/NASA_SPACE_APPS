@@ -6,7 +6,9 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { thrustDirection, type Vec3 } from "../../sim/physics";
 import type { SnapshotStore } from "../../sim/store";
 import type { Terrain } from "../../sim/terrain";
-import { macroAlbedo, regolithTextures, starField } from "./regolith";
+import { macroAlbedo, starField } from "./regolith";
+
+import { createRegolithTextures } from "../../lib/regolithTexture";
 
 type Props = { terrain: Terrain; store: SnapshotStore; exaggeration: number; targetRadiusM: number; padRadiusM: number; overview: boolean;
   /** Visual size multiplier for the vehicle model only (physics and contact are unchanged). */
@@ -58,6 +60,12 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     scene.add(sun, sun.target);
 
     const disposables: { dispose: () => void }[] = [];
+    const dust = createRegolithTextures(24, true);
+    dust.map.repeat.set(1, 1); dust.normalMap.repeat.set(1, 1);
+    dust.map.anisotropy = dust.normalMap.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
+    const surfaceMaterial = new THREE.MeshStandardMaterial({map: dust.map, normalMap: dust.normalMap,
+      normalScale: new THREE.Vector2(.85, .85), color: 0x858585, roughness: .97, metalness: 0});
+    disposables.push(dust, surfaceMaterial);
     if (terrain.grid) {
       // Terrain mesh: sampled from terrain.heightAt — the SAME surface the physics uses — on a 4× finer grid,
       // so the bilinear facets of the 80 m DEM are drawn smoothly without inventing new relief.
@@ -70,7 +78,7 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
       const geometry = new THREE.BufferGeometry();
       const positions = new Float32Array(fine * fine * 3), colors = new Float32Array(fine * fine * 3), uvs = new Float32Array(fine * fine * 2);
       const index: number[] = [];
-      const tile = 110;   // metres per texture repeat
+      const tile = 24;   // metres per texture repeat
       const albedo = macroAlbedo();
       for (let r = 0; r < fine; r++) for (let c = 0; c < fine; c++) {
         const x = -half + c * step, y = -half + r * step;
@@ -95,8 +103,7 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
       geometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
       geometry.setIndex(index);
       geometry.computeVertexNormals();
-      const { map, bump } = regolithTextures();
-      const ground = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ vertexColors: true, map, bumpMap: bump, bumpScale: 1.4, roughness: 0.97, metalness: 0 }));
+      const ground = new THREE.Mesh(geometry, surfaceMaterial);
       ground.receiveShadow = true;
       ground.castShadow = true;
       scene.add(ground);
@@ -118,12 +125,24 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
       const wire = new THREE.LineSegments(gridGeo, new THREE.LineBasicMaterial({ color: 0x8ebfce, transparent: true, opacity: terrain.kind === "lola" ? 0.07 : 0.04 }));
       scene.add(wire);
 
-      disposables.push(geometry, map, bump, gridGeo);
+      disposables.push(geometry, gridGeo);
     } else if (terrainModel) {
       // Team Blender terrain: glTF axes are (x east, y up, z −north) = this scene's axes. Shift by the target's
       // datum height so z = 0 at the target, and apply the same visual exaggeration as everything else.
       terrainModel.position.set(0, -(terrain.targetDatumHeightM ?? 0) * exaggeration, 0);
       terrainModel.scale.set(1, exaggeration, 1);
+      terrainModel.traverse(object => {
+        if (!(object instanceof THREE.Mesh)) return;
+        const positions = object.geometry.getAttribute('position');
+        const uv = new Float32Array(positions.count * 2);
+        for (let i = 0; i < positions.count; i++) {
+          uv[i * 2] = positions.getX(i) / 24;
+          uv[i * 2 + 1] = -positions.getZ(i) / 24;
+        }
+        object.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+        object.material = surfaceMaterial;
+        object.castShadow = object.receiveShadow = true;
+      });
       scene.add(terrainModel);
       // Outline of the supported simulation square.
       const h = terrain.halfSizeM, pts: THREE.Vector3[] = [];
@@ -138,6 +157,32 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
       scene.add(outline);
       disposables.push(outline.geometry);
     }
+
+    // Decorative fragments only: excluded from the simulation contact surface.
+    const rockGeometry = new THREE.IcosahedronGeometry(1, 1);
+    const rockPositions = rockGeometry.getAttribute('position');
+    for (let i = 0; i < rockPositions.count; i++) {
+      const x = rockPositions.getX(i), y = rockPositions.getY(i), z = rockPositions.getZ(i);
+      const f = .85 + .16 * Math.sin(x * 9 + y * 7 + z * 5);
+      rockPositions.setXYZ(i, x * f, y * f, z * f);
+    }
+    rockGeometry.computeVertexNormals();
+    const rocks = new THREE.InstancedMesh(rockGeometry, surfaceMaterial, 3500);
+    let seed = 19690720, used = 0;
+    const random = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
+    const transform = new THREE.Object3D();
+    for (let i = 0; i < 3500; i++) {
+      const x = (random() - .5) * 1200, y = (random() - .5) * 1200;
+      const h = terrain.heightAt(x, y);
+      if (!Number.isFinite(h) || Math.hypot(x, y) < targetRadiusM + 5) continue;
+      const size = .08 + Math.pow(random(), 4) * 2.2;
+      transform.position.copy(toThree([x, y, h]));
+      transform.rotation.set(random() * .5, random() * Math.PI * 2, random() * .4);
+      transform.scale.set(size, size * .65, size * (.7 + random() * .7));
+      transform.updateMatrix(); rocks.setMatrixAt(used++, transform.matrix);
+    }
+    rocks.count = used; rocks.castShadow = rocks.receiveShadow = true;
+    scene.add(rocks); disposables.push(rockGeometry);
 
     // Target area ring, draped by sampling terrain heights around the circle.
     const ringPts: THREE.Vector3[] = [];
@@ -288,3 +333,4 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
   }, [terrain, store, exaggeration, targetRadiusM, padRadiusM, landerScale, terrainModel, vehicleModelUrl, onVehicleStatus]);
   return <div ref={host} className="sim-scene" aria-label="3D view of the simulated descent. Drag to orbit, scroll to zoom." role="img" />;
 }
+
