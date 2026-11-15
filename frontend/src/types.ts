@@ -8,6 +8,9 @@ export type LandingSite = {
 };
 
 export type Mission = {
+  explorationEpoch?: string;
+  explorationNote?: string;
+  explorationContext?: {latitude: number; longitude: number};
   id: string;
   name: string;
   provider: string;

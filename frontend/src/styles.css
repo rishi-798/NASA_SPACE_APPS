@@ -2464,3 +2464,19 @@ a {
 @keyframes loading-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
 @keyframes loading-in { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .loading-ring, .loading-bar::after, .loading-screen { animation: none; } }
+
+.mission-row-with-action { border-bottom:1px solid var(--line); }
+.mission-explore-link { display:inline-flex; align-items:center; gap:.5rem; color:var(--accent); padding:.7rem 0 1rem; font-size:.8rem; }
+.mission-explore-link svg { width:16px; }
+
+.psr-map-note {position:absolute;bottom:80px;left:22px;max-width:310px;padding:10px;background:#08151de6;color:#b6e7ed;font-size:11px;line-height:1.5;pointer-events:none;z-index:3}
+.psr-context {padding:20px;border:1px solid #42757c;background:#11252c;margin-top:12px;font-size:13px;line-height:1.6}
+.psr-context h3 {margin:0 0 8px;color:#9ce5ef}.psr-context dl {margin:16px 0}.psr-context dt {font-weight:600;margin-top:12px}.psr-context dd {margin:4px 0;color:var(--muted)}
+.mission-dossier {margin:auto;position:fixed;inset:0;width:min(1100px,96vw);height:90vh;max-height:94vh;background:#101b24;color:#edf4f8;border:1px solid #58757e;padding:20px}
+.mission-dossier::backdrop {background:#000b}.mission-dossier[open] {display:flex;flex-direction:column;gap:12px}.mission-dossier iframe {flex:1;width:100%;min-height:250px;border:0;background:white}.dossier-toolbar {display:flex;align-items:center;gap:12px;flex-wrap:wrap}.dossier-toolbar h2 {margin-right:auto;font-size:20px}.dossier-toolbar button {padding:10px 14px;background:#253d47;color:white;border:1px solid #668c96}.dossier-toolbar button:disabled {opacity:.5}.dossier-button {cursor:pointer;padding:12px 16px}
+@media(max-width:600px){.psr-map-note{bottom:100px;max-width:230px;left:12px}.moon-guide-controls{flex-wrap:wrap;max-width:90%}.mission-dossier{padding:12px}}
+@media(max-width:600px){
+  .moon-explorer-3d .moon-guide-controls {top:6rem;left:1rem;right:1rem;max-width:none;flex-wrap:nowrap}
+  .moon-explorer-3d .moon-guide-controls button:first-child {flex:1;font-size:9px;letter-spacing:0}
+  .moon-site-picker {top:9rem}
+}

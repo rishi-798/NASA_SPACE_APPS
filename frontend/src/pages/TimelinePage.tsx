@@ -112,7 +112,7 @@ export function TimelinePage() {
               </p>
               <p className="trip-note">{m.scheduleNote}</p>
               <p>Last verified <time dateTime={m.lastVerified}>{m.lastVerified}</time></p>
-              {missionExplorerUrl(m) && <Link to={missionExplorerUrl(m)!} aria-label={`Explore ${m.name} landing area`}>Explore landing area <ArrowRight /></Link>}
+              {missionExplorerUrl(m) && <Link to={missionExplorerUrl(m)!} aria-label={`Explore ${m.name} on Moon`}>{m.missionType === "surface" && m.status !== "Cancelled" ? "Explore on Moon" : "Explore lunar context"} <ArrowRight /></Link>}
               <a className="source-link" href={m.source} target="_blank" rel="noreferrer">Mission source</a>
             </article>
           ))}

@@ -143,3 +143,39 @@ def test_mismatched_data_is_rejected(upstream, change):
     if change == 'duplicate': body['data'].append(body['data'][0])
     response.json.return_value = body
     assert TestClient(app).get(URL).status_code == 502
+
+
+def test_optional_cloud_cover_and_bounded_values(upstream):
+    _, response = upstream
+    content = payload()
+    content['data'].append({'parameter': 'total_cloud_cover:p', 'coordinates': [{
+        'lat': SITE['latitude'], 'lon': SITE['longitude'],
+        'dates': [{'date': weather._iso(START + timedelta(hours=i)), 'value': 35 if i else 101} for i in range(25)]}]})
+    response.json.return_value = content
+    result = TestClient(app).get(URL + '?include_cloud=true').json()
+    assert result['samples'][0]['cloud_cover_pct'] is None
+    assert result['samples'][1]['cloud_cover_pct'] == 35
+    assert result['partial'] is True
+
+
+def test_cloud_subscription_denial_falls_back_to_core_forecast(upstream):
+    get, response = upstream
+    denied = MagicMock()
+    denied.status_code = 403
+    denied.__enter__.return_value = denied
+    get.side_effect = [denied, response]
+    result = TestClient(app).get(URL + '?include_cloud=true')
+    assert result.status_code == 200
+    assert result.json()['samples'][0]['cloud_cover_pct'] is None
+    assert get.call_count == 2
+    assert 'total_cloud_cover:p' in get.call_args_list[0].args[0]
+    assert 'total_cloud_cover:p' not in get.call_args_list[1].args[0]
+
+
+def test_alternating_parameter_sets_do_not_bypass_hourly_cache(upstream):
+    get, _ = upstream
+    client = TestClient(app)
+    for _ in range(3):
+        assert client.get(URL).status_code == 200
+        assert client.get(URL + '?include_cloud=true').status_code == 200
+    assert get.call_count == 2

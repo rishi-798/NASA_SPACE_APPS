@@ -40,6 +40,7 @@ from backend.viewer_config20261114 import router as viewer_config_router
 from backend.weather.meteomatics import router as weather_router
 from backend.volatiles_api import router as volatiles_router
 from backend.power_api import router as power_router
+from backend.mission_briefing import router as briefing_router
 from backend.dossier_api import router as dossier_router
 from backend.traverse_api import router as traverse_router
 from backend.thermal_api import router as thermal_router
@@ -73,6 +74,7 @@ app.include_router(dossier_router)
 app.include_router(traverse_router)
 app.include_router(thermal_router)
 app.include_router(telemetry_router)
+app.include_router(briefing_router)
 app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=6)
 app.add_middleware(
     CORSMiddleware,

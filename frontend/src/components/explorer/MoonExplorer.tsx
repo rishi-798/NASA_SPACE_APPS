@@ -7,13 +7,15 @@ import { featuredMoonSites, moonMapSites } from "../../data/moonMapSites";
 
 type MoonExplorerProps = {
   observationTime: string | null;
+  focusOnMount?: boolean;
   selectedSite: LandingSite;
   pickedLocation: MoonLocation | null;
   onLocationSelect: (location: MoonLocation | null) => void;
   onSiteSelect: (id: string) => void;
 };
 
-export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, onSiteSelect, observationTime }: MoonExplorerProps) {
+export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, onSiteSelect, observationTime, focusOnMount }: MoonExplorerProps) {
+  const [showPsr, setShowPsr] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
   const [showAxis, setShowAxis] = useState(false);
   const controlsRef = useRef<MoonControls | null>(null);
@@ -37,6 +39,8 @@ export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, o
           selectedLocation={selectedLocation}
           showGrid={showGrid}
           showAxis={showAxis}
+          showPsr={showPsr}
+          focusOnMount={focusOnMount}
           controlsRef={controlsRef}
           observationTime={observationTime}
         />
@@ -50,6 +54,10 @@ export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, o
       </div>
 
       <div className="moon-guide-controls" aria-label="Lunar map guides">
+        <button type="button" aria-pressed={showPsr} onClick={() => {
+          setShowPsr(value => !value);
+          if (!showPsr) controlsRef.current?.setView("south");
+        }}>Show Cold Traps &amp; Water Ice (PSRs)</button>
         <button
           type="button"
           aria-pressed={showGrid}
@@ -65,6 +73,8 @@ export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, o
           AXIS
         </button>
       </div>
+
+      {showPsr && <p className="psr-map-note">Cyan: six crater reference areas containing known cold traps. Approximate footprints, not mapped permanent shadow or ice deposits. Click an area for context.</p>}
 
       <select
         className="moon-site-picker"

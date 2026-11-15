@@ -28,7 +28,11 @@
     "sources": [
       "https://www.nasa.gov/missions/lro/nasas-lro-images-intuitive-machines-odysseus-lander/",
       "https://www.nasa.gov/missions/artemis/clps/six-nasa-instruments-will-fly-to-moon-on-intuitive-machines-lander/"
-    ]
+    ],
+    "latitude": -80.13,
+    "longitude": 1.44,
+    "explorationEpoch": "2024-02-22T00:00:00Z",
+    "explorationNote": "Landing date at 00:00 UTC as a date-only reference; not a verified touchdown time."
   },
   {
     "id": "im-2",
@@ -56,7 +60,11 @@
     "sources": [
       "https://www.nasa.gov/missions/artemis/nasas-lunar-drill-technology-passes-tests-on-the-moon/",
       "https://pds.nasa.gov/ds-view/pds/viewContext.jsp?identifier=urn:nasa:pds:context:instrument_host:spacecraft.clps_to_prime1_athena&version=1.0"
-    ]
+    ],
+    "latitude": -84.79,
+    "longitude": 29.2,
+    "explorationEpoch": "2025-03-06T00:00:00Z",
+    "explorationNote": "Landing date at 00:00 UTC as a date-only reference; not a verified touchdown time."
   },
   {
     "id": "blue-ghost-1",
@@ -93,7 +101,9 @@
     "sources": [
       "https://www.nasa.gov/news-release/nasa-science-continues-after-fireflys-first-moon-mission-concludes/",
       "https://www.nasa.gov/news-release/liftoff-nasa-sends-science-tech-to-moon-on-firefly-spacex-flight/"
-    ]
+    ],
+    "explorationEpoch": "2025-03-02T00:00:00Z",
+    "explorationNote": "Landing date at 00:00 UTC as a date-only reference; not a verified touchdown time."
   },
   {
     "id": "griffin-1",
@@ -121,7 +131,9 @@
     "sources": [
       "https://www.nasa.gov/event/clps-flight-astrobotics-griffin-mission-one/",
       "https://science.nasa.gov/photojournal/voyager-technologies-griffin-1-completes-environmental-testing-at-nasa-jpl/"
-    ]
+    ],
+    "explorationEpoch": "2026-11-14T12:00:00Z",
+    "explorationNote": "Illustrative observation epoch; the published schedule has no exact landing UTC."
   },
   {
     "id": "im-3",
@@ -151,7 +163,9 @@
     "sources": [
       "https://www.nasa.gov/event/clps-flight-intuitive-machines-im-3/",
       "https://www.nasa.gov/commercial-lunar-payload-services/clps-providers/"
-    ]
+    ],
+    "explorationEpoch": "2026-11-14T12:00:00Z",
+    "explorationNote": "Illustrative observation epoch; the published schedule has no exact landing UTC."
   },
   {
     "id": "artemis-2",
@@ -178,7 +192,13 @@
     "scheduleNote": "Historical mission dates; no lunar landing.",
     "sources": [
       "https://www.nasa.gov/news-release/nasa-welcomes-record-setting-artemis-ii-moonfarers-back-to-earth/"
-    ]
+    ],
+    "explorationEpoch": "2026-11-14T12:00:00Z",
+    "explorationNote": "Lunar context only. This mission has no lunar surface landing; this point and epoch are illustrative.",
+    "explorationContext": {
+      "latitude": 0.0,
+      "longitude": 0.0
+    }
   },
   {
     "id": "artemis-3",
@@ -204,7 +224,13 @@
     "scheduleNote": "Future dates are targets and may change.",
     "sources": [
       "https://www.nasa.gov/missions/artemis/nasas-artemis-iii-mission-to-test-future-moon-lander-operations/"
-    ]
+    ],
+    "explorationEpoch": "2026-11-14T12:00:00Z",
+    "explorationNote": "Lunar context only. This mission has no lunar surface landing; this point and epoch are illustrative.",
+    "explorationContext": {
+      "latitude": -89.0,
+      "longitude": 0.0
+    }
   },
   {
     "id": "apex-1",
@@ -234,6 +260,8 @@
     "sources": [
       "https://www.ispace-inc.com/2026/07/15/ispace-u-s-update-on-contract-with-draper/",
       "https://www.nasa.gov/wp-content/uploads/2026/04/fiscal-year-2027-full-budget-request.pdf"
-    ]
+    ],
+    "explorationEpoch": "2026-11-14T12:00:00Z",
+    "explorationNote": "Historical target area only; this task order is cancelled. Observation epoch is illustrative."
   }
 ]

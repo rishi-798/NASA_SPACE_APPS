@@ -1,5 +1,11 @@
 # CLPS Lunar Browser & Mission Architect
 
+[Hosted Render demo](https://brahmos-lunar-browser.onrender.com) · [30-second pitch & seven-slide outline](docs/SUBMISSION_PITCH.md) · [Source repository](https://github.com/rishi-798/NASA_SPACE_APPS)
+
+Mission cards and timeline entries open Explorer at the chosen coordinates and reference epoch. Explorer includes six sourced polar crater reference areas (not exact PSR masks), and both Explorer and Trip can open a printable Flight Readiness Dossier with visibility charts, available horizon data, and kernel SHA-256 audit. In the print dialog choose **Save as PDF**. Trip additionally supplies pad, launcher, optional liftoff UTC, and available Meteomatics weather including optional cloud cover. These are planning aids, not flight certification.
+
+Hosted deployments can lag `main`; backend weather requires server-side credentials. See [weather setup](docs/METEOMATICS.md) for weather configuration.
+
 For the updated analysis API, methodology, setup, and validation, see [Analysis documentation](docs/ANALYSIS.md).
 ### NASA Space Apps Challenge
 

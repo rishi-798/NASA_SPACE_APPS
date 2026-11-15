@@ -16,7 +16,7 @@ import { LocalSurfacePane } from "../components/explorer/LocalSurfacePane";
 import { HorizonContainer } from "../components/visualization/HorizonContainer";
 import { VisibilityTimeline } from "../components/visualization/VisibilityTimeline";
 import { landingSites } from "../data/landingSites";
-import { explorerDestination } from "../lib/missionNavigation";
+import { explorerDestination, missionRangeInput } from "../lib/missionNavigation";
 import { ApiError, getAnalysis, getComparison } from "../lib/api";
 import type { MoonLocation } from "../MoonMap";
 import { checkRange, type RangeInput } from "../lib/analysisRange";
@@ -49,7 +49,7 @@ function ExplorerWorkspace() {
   const initialSite = landingSites.find((site) => site.id === destination.siteId) ?? firstSite;
 
   const [selectedId, setSelectedId] = useState(initialSite.id);
-  const [input, setInput] = useState<RangeInput>(DEFAULT_INPUT);
+  const [input, setInput] = useState<RangeInput>(() => missionRangeInput(destination.time, DEFAULT_INPUT));
   const [analysisState, setAnalysisState] = useState<AnalysisState>("idle");
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [pickedLocation, setPickedLocation] = useState<MoonLocation | null>(destination.location);
@@ -131,7 +131,7 @@ function ExplorerWorkspace() {
     setPickedLocation(null);
     setSelectedId(siteId);
     resetAnalysis();
-  }, [resetAnalysis]);
+  }, [resetAnalysis, setSelectedId]);
 
   function changeInput(patch: Partial<RangeInput>) {
     setInput((current) => ({ ...current, ...patch }));
@@ -196,9 +196,11 @@ function ExplorerWorkspace() {
         </dl>
       </header>
 
+      {searchParams.get("context") && <p className="trip-notice" role="note">{searchParams.get("context")?.slice(0, 500)}</p>}
       <div className="explorer-grid">
         <div className="explorer-visual" data-reveal>
           <MoonExplorer
+            focusOnMount={Boolean(destination.siteId || destination.location)}
             observationTime={sceneTime}
             selectedSite={selectedSite}
             pickedLocation={pickedLocation}
@@ -228,6 +230,7 @@ function ExplorerWorkspace() {
             conditions={active}
             state={analysisState}
             observationTime={requestedStart}
+            dossierRange={result ? {start: result.summary.start, end: result.summary.end, stepMinutes: result.summary.step_minutes} : undefined}
             sampleLabel={result ? `Sample ${playback.index + 1} of ${playback.count}` : undefined}
             errorMessage={errorMessage}
             terrain={result?.terrain ?? null}

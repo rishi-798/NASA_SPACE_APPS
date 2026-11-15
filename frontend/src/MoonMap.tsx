@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import {
   BoundingSphere,
+  PolygonHierarchy,
+  ArcType,
   Axis,
   Cartesian2,
   Cartesian3,
@@ -11,6 +13,7 @@ import {
   Color,
   ConstantPositionProperty,
   DirectionalLight,
+  DistanceDisplayCondition,
   HeadingPitchRange,
   HeightReference,
   HorizontalOrigin,
@@ -33,6 +36,9 @@ import { createMoonGuides, lunarPosition, MOON, RADIUS } from "./moonGuides";
 import { featuredMoonSites, moonMapSites, MOON_TERRAIN_ASSET_ID } from "./data/moonMapSites";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import { getMoonIonToken } from "./lib/viewerConfig";
+
+import psrData from "../../data/psr_reference_craters.json";
+import { craterOutline } from "./lib/psr";
 
 const VIEWS = {
   near: [10, -25],
@@ -60,6 +66,8 @@ interface MoonMapProps {
   selectedLocation: MoonLocation | null;
   showGrid: boolean;
   showAxis: boolean;
+  showPsr?: boolean;
+  focusOnMount?: boolean;
   observationTime?: string | null;
   controlsRef: RefObject<MoonControls | null>;
 }
@@ -69,6 +77,7 @@ interface SceneState {
   guides: ReturnType<typeof createMoonGuides>;
   point: Entity;
   light: DirectionalLight;
+  psr: Entity[];
 }
 
 export function MoonMap({
@@ -77,11 +86,14 @@ export function MoonMap({
   selectedLocation,
   showGrid,
   showAxis,
+  showPsr = false,
+  focusOnMount = false,
   controlsRef,
   observationTime = "2026-10-03T18:00:00Z",
 }: MoonMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<SceneState | null>(null);
+  const initialLocation = useRef(focusOnMount ? selectedLocation : null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [lightingNote, setLightingNote] = useState("Calculating sunlight…");
   const [referenceOnly, setReferenceOnly] = useState(false);
@@ -156,12 +168,24 @@ export function MoonMap({
         disableDepthTestDistance: 100000,
       },
     });
-    sceneRef.current = { viewer, guides, point, light };
+    const psr = psrData.craters.map(crater => viewer.entities.add({
+      id: `psr:${crater.name}`, name: `${crater.name} reference area (not a PSR boundary)`, show: false,
+      polygon: {
+        hierarchy: new PolygonHierarchy(craterOutline(crater).map(p => lunarPosition(p.longitude, p.latitude, 6000))),
+        perPositionHeight: true, arcType: ArcType.NONE,
+        material: Color.CYAN.withAlpha(0.24), outline: true, outlineColor: Color.CYAN.withAlpha(0.7),
+      },
+      position: lunarPosition(crater.longitude, crater.latitude, 6500),
+      label: {text: crater.name, distanceDisplayCondition: new DistanceDisplayCondition(0, 2000000), font: "12px sans-serif", fillColor: Color.CYAN,
+        style: LabelStyle.FILL_AND_OUTLINE, outlineWidth: 3, outlineColor: Color.BLACK,
+        disableDepthTestDistance: 100000},
+    }));
+    sceneRef.current = { viewer, guides, point, light, psr };
 
     const setView = (name: ViewName = "near", animate = true) => {
       const [longitude, latitude] = VIEWS[name] ?? VIEWS.near;
       const options = {
-        destination: lunarPosition(longitude, latitude, 5400000),
+        destination: lunarPosition(longitude, latitude, name === "south" ? 800000 : 5400000),
         orientation: {
           heading: 0,
           pitch: -CesiumMath.PI_OVER_TWO,
@@ -259,6 +283,11 @@ export function MoonMap({
       },
     };
     setView("near", false);
+    if (initialLocation.current) {
+      viewer.camera.setView({destination: lunarPosition(initialLocation.current.longitude, initialLocation.current.latitude, 120000),
+        orientation: {heading: 0, pitch: -CesiumMath.PI_OVER_TWO, roll: 0}});
+      viewer.scene.requestRender();
+    }
 
     let terrainReady = false;
     let usingReference = false;
@@ -278,6 +307,11 @@ export function MoonMap({
       const id = picked?.id?.id;
       if (typeof id === "string" && id.startsWith("landing:")) {
         flyToSite(id.slice("landing:".length));
+        return;
+      }
+      if (typeof id === "string" && id.startsWith("psr:")) {
+        const crater = psrData.craters.find(c => c.name === id.slice(4));
+        if (crater) onLocationSelect({latitude: crater.latitude, longitude: crater.longitude, name: crater.name});
         return;
       }
       // Read the rendered terrain depth, so a crater click uses its actual surface.
@@ -412,9 +446,10 @@ export function MoonMap({
     const scene = sceneRef.current;
     if (!scene) return;
     scene.guides.grid.forEach((entity) => { entity.show = showGrid; });
+    scene.psr.forEach(entity => { entity.show = showPsr; });
     scene.guides.axis.forEach((entity) => { entity.show = showAxis; });
     scene.viewer.scene.requestRender();
-  }, [showGrid, showAxis]);
+  }, [showGrid, showAxis, showPsr, controlsRef, onLocationSelect, onSiteSelect]);
 
   useEffect(() => {
     const scene = sceneRef.current;

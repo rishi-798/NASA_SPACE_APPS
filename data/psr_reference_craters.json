@@ -1,0 +1,91 @@
+{
+  "kind": "approximate_crater_reference_footprints",
+  "note": "Circular reference areas from USGS Gazetteer centre and diameter. These are NOT mapped PSR boundaries or measurements of ice abundance or temperature.",
+  "thermalSource": "https://doi.org/10.1073/pnas.1802345115",
+  "craters": [
+    {
+      "name": "Shackleton",
+      "latitude": -89.67,
+      "longitude": 129.78,
+      "diameterKm": 20.92,
+      "source": "https://planetarynames.wr.usgs.gov/Feature/5450",
+      "referenceBounds": {
+        "north": -89.32505,
+        "south": -90,
+        "west": -180,
+        "east": 180,
+        "crossesAntimeridian": false
+      }
+    },
+    {
+      "name": "Faustini",
+      "latitude": -87.18,
+      "longitude": 84.31,
+      "diameterKm": 42.48,
+      "source": "https://planetarynames.wr.usgs.gov/Feature/1919",
+      "referenceBounds": {
+        "north": -86.47955,
+        "south": -87.88045,
+        "west": 69.92237,
+        "east": 98.69763,
+        "crossesAntimeridian": false
+      }
+    },
+    {
+      "name": "Shoemaker",
+      "latitude": -88.14,
+      "longitude": 45.91,
+      "diameterKm": 51.82,
+      "source": "https://planetarynames.wr.usgs.gov/Feature/5494",
+      "referenceBounds": {
+        "north": -87.28554,
+        "south": -88.99446,
+        "west": 18.55843,
+        "east": 73.26157,
+        "crossesAntimeridian": false
+      }
+    },
+    {
+      "name": "Haworth",
+      "latitude": -86.9,
+      "longitude": -4.0,
+      "diameterKm": 35.0,
+      "source": "https://planetarynames.wr.usgs.gov/Feature/14502",
+      "referenceBounds": {
+        "north": -86.32289,
+        "south": -87.47711,
+        "west": -14.73421,
+        "east": 6.73421,
+        "crossesAntimeridian": false
+      }
+    },
+    {
+      "name": "Cabeus",
+      "latitude": -85.33,
+      "longitude": -42.13,
+      "diameterKm": 100.58,
+      "source": "https://planetarynames.wr.usgs.gov/Feature/953",
+      "referenceBounds": {
+        "north": -83.67154,
+        "south": -86.98846,
+        "west": -62.9525,
+        "east": -21.3075,
+        "crossesAntimeridian": false
+      }
+    },
+    {
+      "name": "de Gerlache",
+      "latitude": -88.48,
+      "longitude": -88.34,
+      "diameterKm": 32.71,
+      "source": "https://planetarynames.wr.usgs.gov/Feature/1439",
+      "referenceBounds": {
+        "north": -87.94065,
+        "south": -89.01935,
+        "west": -109.12573,
+        "east": -67.55427,
+        "crossesAntimeridian": false
+      }
+    }
+  ]
+}

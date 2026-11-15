@@ -1,15 +1,12 @@
 import {
-  ArrowUpRight,
   BatteryCharging,
   Broadcast,
-  Drop,
-  FileText,
   Mountains,
   SunHorizon,
   Warning,
 } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
-import { getPowerAssessment, getVolatilesAssessment } from "../../lib/api";
+import { getPowerAssessment } from "../../lib/api";
 import { formatAzimuth, formatSignedDegree, formatUtcDisplay } from "../../lib/format";
 import type {
   AnalysisState,
@@ -17,8 +14,9 @@ import type {
   PowerAssessment,
   TerrainStatus,
   VisibilityResponse,
-  VolatilesAssessment,
 } from "../../types";
+import { PsrContext } from "./PsrContext";
+import { MissionDossierModal } from "../trip/MissionDossierModal";
 import { StatusIndicator } from "../ui/StatusIndicator";
 
 type ConditionsPanelProps = {
@@ -34,6 +32,8 @@ type ConditionsPanelProps = {
   siteId?: string | null;
   latitude?: number;
   longitude?: number;
+  showDossier?: boolean;
+  dossierRange?: {start: string; end: string; stepMinutes: number};
 };
 
 const TERRAIN_LABELS: Record<string, string> = {
@@ -91,13 +91,13 @@ export function ConditionsPanel({
   siteId,
   latitude,
   longitude,
+  showDossier = true,
+  dossierRange,
 }: ConditionsPanelProps) {
   const observed = conditions?.time ?? observationTime;
-  const assessmentKey = JSON.stringify([siteId, latitude, longitude, observed]);
-  const [powerResponse, setPower] = useState<{ key: string; data: PowerAssessment | null } | null>(null);
-  const [volatilesResponse, setVolatiles] = useState<{ key: string; data: VolatilesAssessment | null } | null>(null);
-  const power = conditions && state === "success" && powerResponse?.key === assessmentKey ? powerResponse.data : null;
-  const volatiles = conditions && state === "success" && volatilesResponse?.key === assessmentKey ? volatilesResponse.data : null;
+  const powerKey = `${latitude ?? conditions?.latitude}/${longitude ?? conditions?.longitude}/${conditions?.time}/${state}`;
+  const [powerResult, setPowerResult] = useState<{key: string; value: PowerAssessment | null} | null>(null);
+  const power = powerResult?.key === powerKey ? powerResult.value : null;
 
   const terrainClear = !!conditions && conditions.sun.visible && conditions.earth.visible;
   const hasTerrain = terrain ? terrain.mode === "terrain_profile" : conditions?.sun.terrain_horizon !== undefined;
@@ -112,8 +112,8 @@ export function ConditionsPanel({
       return;
     }
     const controller = new AbortController();
-    const targetLat = latitude ?? (conditions as unknown as { site?: { latitude?: number } })?.site?.latitude;
-    const targetLon = longitude ?? (conditions as unknown as { site?: { longitude?: number } })?.site?.longitude;
+    const targetLat = latitude ?? conditions.latitude;
+    const targetLon = longitude ?? conditions.longitude;
 
     if (targetLat !== undefined && targetLon !== undefined) {
       getPowerAssessment(
@@ -123,29 +123,18 @@ export function ConditionsPanel({
         controller.signal,
       )
         .then((res) => {
-          if (!controller.signal.aborted) setPower({ key: assessmentKey, data: res });
+          if (!controller.signal.aborted) setPowerResult({key: powerKey, value: res});
         })
         .catch(() => {
-          if (!controller.signal.aborted) setPower({ key: assessmentKey, data: null });
+          if (!controller.signal.aborted) setPowerResult({key: powerKey, value: null});
         });
 
-      getVolatilesAssessment(targetLat, targetLon, controller.signal)
-        .then((res) => {
-          if (!controller.signal.aborted) setVolatiles({ key: assessmentKey, data: res });
-        })
-        .catch(() => {
-          if (!controller.signal.aborted) setVolatiles({ key: assessmentKey, data: null });
-        });
+
     }
 
     return () => controller.abort();
-  }, [conditions, state, siteId, latitude, longitude, assessmentKey]);
+  }, [conditions, state, siteId, latitude, longitude, powerKey]);
 
-  const dossierUrl = siteId && siteId !== "custom"
-    ? `/api/mission/dossier/html?site_id=${encodeURIComponent(siteId)}${observed ? `&start=${encodeURIComponent(observed)}` : ""}`
-    : (latitude !== undefined && longitude !== undefined)
-      ? `/api/mission/dossier/html?lat=${latitude}&lon=${longitude}${observed ? `&start=${encodeURIComponent(observed)}` : ""}`
-      : null;
 
   return (
     <section className="conditions" aria-labelledby="conditions-title" aria-busy={state === "loading"}>
@@ -237,47 +226,11 @@ export function ConditionsPanel({
           </dl>
         </article>
 
-        <article className="telemetry-row telemetry-volatiles">
-          <div className="telemetry-name">
-            <Drop weight="light" aria-hidden="true" />
-            <div>
-              <p>Volatiles / Cold Traps</p>
-              <span>{volatiles ? `${volatiles.nearest_cold_trap.name} · ${volatiles.nearest_cold_trap.distance_km.toFixed(1)} km` : "Polar ice prospect"}</span>
-            </div>
-          </div>
-          <StatusIndicator
-            visible={volatiles ? (volatiles.nearest_cold_trap.water_ice_confirmed || volatiles.volatile_potential_score > 40) : false}
-            pending={!volatiles}
-            label={!volatiles ? "CALCULATING" : volatiles.nearest_cold_trap.water_ice_confirmed ? "ICE CONFIRMED" : volatiles.classification.toUpperCase()}
-          />
-          <dl className="telemetry-values">
-            <div>
-              <dt>Thermal Regime</dt>
-              <dd aria-label={volatiles ? undefined : "Not calculated"}>{volatiles ? volatiles.thermal_regime : "--"}</dd>
-            </div>
-            <div>
-              <dt>1 m Drill Regolith</dt>
-              <dd aria-label={volatiles ? undefined : "Not calculated"}>{volatiles ? volatiles.ice_stability.drilling_feasibility : "--"}</dd>
-            </div>
-          </dl>
-        </article>
+        <PsrContext latitude={latitude ?? conditions?.latitude} longitude={longitude ?? conditions?.longitude} />
       </div>
-
-      {conditions && dossierUrl && (
-        <div className="conditions-dossier-action">
-          <a
-            href={dossierUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="dossier-button"
-            title="Open aerospace-grade Flight Readiness Review document with SPICE verification and LOLA horizon raytrace"
-          >
-            <FileText weight="bold" aria-hidden="true" />
-            <span>Flight Readiness Review Dossier</span>
-            <ArrowUpRight weight="bold" aria-hidden="true" />
-          </a>
-        </div>
-      )}
+      {showDossier && conditions && observed && <div className="conditions-dossier-action">
+        <MissionDossierModal latitude={latitude ?? conditions.latitude} longitude={longitude ?? conditions.longitude} siteId={siteId} start={dossierRange?.start ?? observationTime ?? observed} end={dossierRange?.end} stepMinutes={dossierRange?.stepMinutes} />
+      </div>}
 
       <div className="data-provenance">
         <span className={`mode-dot ${conditions ? "mode-live" : "mode-preview"}`} />

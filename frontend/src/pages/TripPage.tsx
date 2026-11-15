@@ -1,8 +1,9 @@
-import { ArrowLeft, ArrowRight, ArrowUpRight, Check, CheckCircle, FileText, GlobeHemisphereWest, RocketLaunch } from "@phosphor-icons/react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Check, CheckCircle, GlobeHemisphereWest, RocketLaunch } from "@phosphor-icons/react";
 import { lazy, Suspense, useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { MoonMap, type MoonControls, type MoonLocation } from "../MoonMap";
 import { ConditionsPanel } from "../components/explorer/ConditionsPanel";
+import { MissionDossierModal } from "../components/trip/MissionDossierModal";
 import { LaunchWeatherPanel } from "../components/trip/LaunchWeatherPanel";
 import { TerrainContext } from "../components/explorer/TerrainContext";
 import { useTerrainCatalogue } from "../components/explorer/useTerrainCatalogue";
@@ -44,6 +45,7 @@ export function TripPage() {
     try { saved = localStorage.getItem(STORAGE_KEY); } catch { /* Private mode may disable storage. */ }
     return restoreMission(saved, launchSites.map((site) => site.id), rockets.map((rocket) => rocket.id));
   });
+  const [liftoffUtc, setLiftoffUtc] = useState("");
   const [query, setQuery] = useState("");
   const [destinationQuery, setDestinationQuery] = useState("");
   const [coordinateText, setCoordinateText] = useState("");
@@ -145,6 +147,7 @@ export function TripPage() {
             <span>{site.country}{site.historical ? " / historical" : ""}</span><strong>{site.name}</strong><small>{site.pad}</small></button>)}</div>
           {!filteredDepartures.length && <p role="status">No matching launch sites. Try a country or spaceport name.</p>}
           {departure && <div className="trip-selected"><strong>{departure.name} / {departure.pad}</strong><p>{departure.latitude.toFixed(2)}°, {departure.longitude.toFixed(2)}°</p><a href={departure.source} target="_blank" rel="noreferrer">Spaceport reference <ArrowUpRight /></a></div>}
+          <label className="trip-field">Optional liftoff date and time (UTC)<input type="datetime-local" value={liftoffUtc} onChange={event => setLiftoffUtc(event.target.value)} /></label>
           {departure && <LaunchWeatherPanel key={departure.id} siteId={departure.id} />}
           <p className="trip-note">Pins are approximate prototype locations, not surveyed pad coordinates. Compatibility here is a catalogue association, not a launch approval.</p>
           <button className="trip-primary" disabled={!departure} onClick={() => go("rocket")}>Depart from here <ArrowRight /></button>
@@ -175,13 +178,15 @@ export function TripPage() {
             {mission.stage === "landing" ? <label className="trip-field">Observation date and time (UTC)<input type="datetime-local" value={mission.utcTime.slice(0, 16)} onChange={(event) => { if (event.target.value) dispatch({ type: "time", time: `${event.target.value}:00Z` }); }} /></label> : <p>{mission.utcTime}</p>}
             <p className="trip-note">Chosen coordinate is retained exactly. Terrain source frames and the ephemeris frame have alignment uncertainty; a single point height is not a landing-safety claim.</p>
             {mission.error && <p role="alert" className="trip-error">{mission.error}</p>}
-            {mission.stage === "landing" ? <><button className="trip-secondary" disabled={currentPreview?.state === "loading"} onClick={() => void analyze(false)}>{currentPreview?.state === "loading" ? "Analyzing..." : currentPreview?.state === "error" ? "Retry analysis" : "Analyze landing"}</button><button className="trip-primary" disabled={!currentPreview?.result} onClick={() => void analyze(true)}>Plan this landing <ArrowRight /></button><button className="trip-secondary" onClick={() => go("moon")}>Change landing point</button></> : <><p className="trip-note">Flight duration, launch window, fuel and delta-v are pending a trajectory solver. No generic top-speed estimate is used.</p><a href={`/api/mission/dossier/html?lat=${landing.latitude}&lon=${landing.longitude}&start=${mission.utcTime}&hours=24`} target="_blank" rel="noreferrer" className="trip-primary" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", textDecoration: "none" }}><FileText weight="bold" /> Download FRR Mission Dossier <ArrowUpRight weight="bold" /></a><button className="trip-secondary" onClick={() => go("earth")}>Edit departure</button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button><button className="trip-primary" onClick={() => go("moon")}>Explore landing site <ArrowRight /></button></>}
+            {mission.stage === "landing" ? <><button className="trip-secondary" disabled={currentPreview?.state === "loading"} onClick={() => void analyze(false)}>{currentPreview?.state === "loading" ? "Analyzing..." : currentPreview?.state === "error" ? "Retry analysis" : "Analyze landing"}</button><button className="trip-primary" disabled={!currentPreview?.result} onClick={() => void analyze(true)}>Plan this landing <ArrowRight /></button><button className="trip-secondary" onClick={() => go("moon")}>Change landing point</button></> : <><p className="trip-note">Flight duration, launch window, fuel and delta-v are pending a trajectory solver. No generic top-speed estimate is used.</p><button className="trip-secondary" onClick={() => go("earth")}>Edit departure</button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button><button className="trip-primary" onClick={() => go("moon")}>Explore landing site <ArrowRight /></button></>}
+            {analysis && <MissionDossierModal latitude={landing.latitude} longitude={landing.longitude} start={mission.utcTime}
+              launchSiteId={departure?.id} launchVehicle={rocket?.name} liftoffUtc={liftoffUtc ? `${liftoffUtc}:00Z` : undefined} missionName={landing.name} />}
             <TerrainContext latitude={landing.latitude} longitude={landing.longitude} catalogue={catalogue.state} onRetry={catalogue.retry} terrain={analysis?.terrain ?? null} horizon={analysis?.horizon ?? null} />
           </aside></div>
-        <div className="trip-analysis"><ConditionsPanel conditions={analysis?.conditions ?? null} state={mission.stage === "reveal" ? "success" : currentPreview?.state ?? "idle"} observationTime={mission.utcTime} errorMessage={currentPreview?.error} terrain={analysis?.terrain ?? null} siteId={landing.destinationId} latitude={landing.latitude} longitude={landing.longitude} />
+        <div className="trip-analysis"><ConditionsPanel showDossier={false} conditions={analysis?.conditions ?? null} state={mission.stage === "reveal" ? "success" : currentPreview?.state ?? "idle"} observationTime={mission.utcTime} errorMessage={currentPreview?.error} terrain={analysis?.terrain ?? null} siteId={landing.destinationId} latitude={landing.latitude} longitude={landing.longitude} />
           <div><HorizonContainer data={analysis?.conditions ?? null} profile={analysis?.horizon ?? null} /><VisibilityTimeline data={analysis?.conditions ?? null} summary={analysis?.summary ?? null} sampleCount={analysis?.samples.length ?? 0} /></div></div>
       </>}
     </>}
-    <footer className="trip-footer"><p>Exploration prototype. Geometric visibility is not a communications link budget or landing certification.</p><button onClick={() => { active.current?.abort(); dispatch({ type: "reset" }); }}>Start a new trip</button></footer>
+    <footer className="trip-footer"><p>Exploration prototype. Geometric visibility is not a communications link budget or landing certification.</p><button onClick={() => { active.current?.abort(); dispatch({ type: "reset" }); setLiftoffUtc(""); }}>Start a new trip</button></footer>
   </article>;
 }

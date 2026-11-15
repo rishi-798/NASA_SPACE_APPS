@@ -42,7 +42,7 @@ export function MissionsPage() {
             <span>Status</span>
           </div>
           {missions.map((m) => (
-            <button
+            <div key={m.id} className="mission-row-with-action"><button
               className={`mission-row${m.id === selected.id ? " mission-row-selected" : ""}`}
               key={m.id}
               type="button"
@@ -58,6 +58,8 @@ export function MissionsPage() {
               </span>
               <ArrowRight aria-hidden="true" />
             </button>
+            {missionExplorerUrl(m) && <Link className="mission-explore-link" to={missionExplorerUrl(m)!} aria-label={`Explore ${m.name} on Moon`}>{m.missionType === 'surface' && m.status !== 'Cancelled' ? 'Explore on Moon' : 'Explore lunar context'} <ArrowUpRight /></Link>}
+            </div>
           ))}
         </section>
 
@@ -111,7 +113,7 @@ export function MissionsPage() {
 
           <div className="mission-actions" style={{ marginTop: "28px" }}>
             {explorerUrl ? <Link className="primary-text-link" to={explorerUrl}>
-              Explore landing area <ArrowRight />
+              Explore on Moon <ArrowRight />
             </Link> : <p className="trip-note">{selected.status === "Cancelled" ? "Task order ended; no active landing destination." : selected.missionType !== "surface" ? "No lunar surface landing is part of this mission." : "Landing coordinates are not available."}</p>}
             {selected.sources.map((source, index) => <a key={source} className="source-link" href={source} target="_blank" rel="noreferrer">
               {index === 0 ? "Mission source" : `Supporting source ${index}`} <ArrowUpRight />
