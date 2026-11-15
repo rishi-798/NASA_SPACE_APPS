@@ -30,7 +30,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
   const mesh = hit.object, positions = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
   if (!positions || !indices) return previous;
   const makeRockGeometry = () => {
-    const source = new THREE.IcosahedronGeometry(1, enriched ? 3 : 2);
+    const source = new THREE.IcosahedronGeometry(1, 2);
     source.deleteAttribute('normal');
     source.deleteAttribute('uv');
     const geometry = mergeVertices(source);
@@ -41,7 +41,8 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
       const irregularity = .85 + .16 * Math.sin(x * 3.7 + y * 5.3 + z * 4.1)
         + .08 * Math.sin(x * 8.1 - y * 6.4 + z * 7.3)
         + .035 * Math.sin(x * 18.1 + y * 13.4 - z * 16.3);
-      vertex.setXYZ(i, x * irregularity, y * irregularity, z * irregularity);
+      const cut = enriched ? Math.min(1, .83 / Math.max(.001, Math.abs(x + .24 * y)), .88 / Math.max(.001, Math.abs(y - .17 * z))) : 1;
+      vertex.setXYZ(i, x * irregularity * cut, y * irregularity * cut, z * irregularity * cut);
     }
     geometry.computeVertexNormals();
     const rockUv = new Float32Array(vertex.count * 2);
@@ -53,14 +54,14 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
     return geometry;
   };
   const rocks = previous ?? new THREE.InstancedMesh(makeRockGeometry(),
-    new THREE.MeshStandardMaterial({ color: 0x41413f, roughness: 1, metalness: 0 }), capacity);
+    new THREE.MeshStandardMaterial({ color: enriched ? 0xb8b6b0 : 0x41413f, roughness: .94, metalness: 0, flatShading: enriched }), capacity);
   if (!previous && enriched) {
     const grit = createRegolithTextures(24, true);
     const material = rocks.material as THREE.MeshStandardMaterial;
     material.map = grit.map;
     material.normalMap = grit.normalMap;
     grit.map.repeat.set(1, 1); grit.normalMap.repeat.set(1, 1);
-    material.normalScale.set(.7, .7);
+    material.normalScale.set(.25, .25);
   }
   if (!previous) { rocks.castShadow = true; rocks.receiveShadow = true; rocks.frustumCulled = false; scene.add(rocks); }
   const transform = new THREE.Object3D();
@@ -90,7 +91,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
       const slot = count < capacity ? count++ : Math.floor(random() * candidates);
       if (slot >= capacity) continue;
       transform.position.copy(point);
-      transform.position.z += lunarDetailHeight(point.x, point.y, hit.point);
+      transform.position.z += lunarDetailHeight(point.x, point.y, hit.point, enriched);
       transform.quaternion.setFromUnitVectors(up, normal);
       transform.quaternion.multiply(spin.setFromAxisAngle(up, random() * Math.PI * 2));
       // Many small fragments and occasional larger rocks, mostly buried in dust.
@@ -533,7 +534,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         if (detail) { scene.remove(detail); detail.geometry.dispose(); detail = null; }
         detailAnchor.copy(hit.point);
         detailSource = hit.object instanceof THREE.Mesh ? hit.object : null;
-        const geometry = buildLunarSurfaceDetail(hit);
+        const geometry = buildLunarSurfaceDetail(hit, detailedRegions.has(region.id));
         if (geometry && detailSource) {
           detail = new THREE.Mesh(geometry, detailSource.material);
           detail.castShadow = true; detail.receiveShadow = true;
@@ -553,8 +554,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           focusSun();
           const sunElev = data.sun.elevation_deg;
           if (sunElev > 0) {
-            sunLight.intensity = Math.max(1.8, 3.2 * Math.sin(THREE.MathUtils.degToRad(Math.min(90, Math.max(20, sunElev * 2.5)))));
-          } else if (sunElev > -6) {
+            sunLight.intensity = 3.2;
+          } else if (!detailedRegions.has(region.id) && sunElev > -6) {
             sunLight.intensity = 1.0 * (1 - Math.abs(sunElev) / 6);
           } else {
             sunLight.intensity = 0.0;
@@ -565,11 +566,13 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           earthLight.position.copy(center).addScaledVector(earthDir, lightDistance);
           const earthElev = data.earth.elevation_deg;
           const earthIllum = Math.max(0.18, data.earth.illuminated_fraction);
-          earthLight.intensity = earthElev > -10 ? (0.24 + earthIllum * 0.45) : 0.08;
+          earthLight.intensity = detailedRegions.has(region.id)
+            ? (earthElev > 0 ? .12 * data.earth.illuminated_fraction : 0)
+            : (earthElev > -10 ? (0.24 + earthIllum * 0.45) : 0.08);
           earthMaterial.uniforms.sunDirection!.value.set(...data.earth.sun_direction_local_z_up);
         } else {
-          sunLight.intensity = 2.4;
-          earthLight.intensity = 0.35;
+          sunLight.intensity = detailedRegions.has(region.id) ? 0 : 2.4;
+          earthLight.intensity = detailedRegions.has(region.id) ? 0 : .35;
         }
         value.inspect(inspectActive);
         render();

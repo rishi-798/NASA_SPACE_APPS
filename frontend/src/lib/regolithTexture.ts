@@ -86,19 +86,19 @@ export function createRegolithTextures(extent: number, enriched = false): Regoli
       const idx = y * size + x;
 
       // Multi-octave isotropic fractal regolith noise (uniform grain, no directional ripples)
-      let h = periodicNoise(x * 0.05, y * 0.05, 16) * 0.35;
-      h += periodicNoise(x * 0.12, y * 0.12, 32) * 0.20;
-      h += periodicNoise(x * 0.28, y * 0.28, 64) * 0.10;
-      h += periodicNoise(x * 0.65, y * 0.65, 128) * 0.05;
+      let h = periodicNoise(x * 4 / size, y * 4 / size, 4) * 0.35;
+      h += periodicNoise(x * 16 / size, y * 16 / size, 16) * 0.20;
+      h += periodicNoise(x * 64 / size, y * 64 / size, 64) * 0.10;
+      h += periodicNoise(x * 128 / size, y * 128 / size, 128) * 0.05;
 
       // Fine powdery dust grain
-      const dust = (lcg() - 0.5) * (enriched ? .18 : .04);
+      const dust = (lcg() - 0.5) * (enriched ? .025 : .04);
       h += dust;
 
       heights[idx] = h;
 
-      // Apollo-consistent soft matte charcoal gray (mean ~132, 0.12 reflectance)
-      let tone = 132 + Math.round(h * (enriched ? 76 : 32) + dust * 40);
+      // Illustrative muted gray; no measured reflectance claim.
+      let tone = 132 + Math.round(h * (enriched ? 42 : 32) + dust * 18);
       tone = Math.max(90, Math.min(185, tone));
 
       const pIdx = idx * 4;
@@ -134,7 +134,7 @@ export function createRegolithTextures(extent: number, enriched = false): Regoli
   // Compute subtle tangent-space normal map using seamless Sobel filter
   const normData = normCtx.createImageData(size, size);
   const nData = normData.data;
-  const strength = enriched ? 2.4 : 0.45; // Subtle powdery micro-slope gradient
+  const strength = enriched ? 1.0 : 0.45; // Subtle powdery micro-slope gradient
 
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
