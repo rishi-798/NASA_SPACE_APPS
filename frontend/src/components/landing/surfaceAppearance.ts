@@ -19,7 +19,7 @@ export function landingSurfaceMaterial() {
   for (const texture of [dust.map, fines.map, normal]) texture.anisotropy = 8;
   const material = new THREE.MeshStandardMaterial({
     map: dust.map, normalMap: normal, normalScale: new THREE.Vector2(.5, .5),
-    bumpMap: fines.map, bumpScale: .16, roughness: 1, metalness: 0, vertexColors: true,
+    bumpMap: fines.map, bumpScale: .16, roughness: 1, metalness: 0, vertexColors: false,
   });
   material.onBeforeCompile = shader => {
     shader.fragmentShader = shader.fragmentShader.replace("#include <map_fragment>",

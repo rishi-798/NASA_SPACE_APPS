@@ -39,7 +39,7 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     scene.background = new THREE.Color(0x000000);
     scene.add(starField());
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
     const camera = new THREE.PerspectiveCamera(50, 1, 0.5, 40000);
@@ -57,7 +57,7 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     Object.assign(sun.shadow.camera, { left: -180, right: 180, top: 180, bottom: -180, near: 100, far: 9000 });
     sun.shadow.camera.updateProjectionMatrix();
     sun.shadow.bias = -0.00002;
-    sun.shadow.normalBias = .035;
+    sun.shadow.normalBias = .15;
     scene.add(sun, sun.target);
 
     const disposables: { dispose: () => void }[] = [];
