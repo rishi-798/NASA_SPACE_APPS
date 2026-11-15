@@ -28,7 +28,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
   const pickRef = useRef(onPick);
   const [state, setState] = useState('Loading measured terrain…');
   const [lighting, setLighting] = useState('Calculating SPICE sky…');
-  const [inspection, setInspection] = useState(false);
+  const [inspection, setInspection] = useState(true);
   const [loaded, setLoaded] = useState(0);
   const [mode, setMode] = useState<CameraMode>('orbit');
   const [onMesh, setOnMesh] = useState(false);
@@ -59,7 +59,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     const light = new THREE.DirectionalLight(0xffffff, 0);
     light.castShadow = true; light.shadow.mapSize.set(2048, 2048);
     light.shadow.bias = -.0001; light.shadow.normalBias = .05;
-    const fill = new THREE.AmbientLight(0xffffff, .015);
+    const fill = new THREE.AmbientLight(0xffffff, 1.0);
     scene.add(light, light.target, fill);
     const marker = new THREE.Mesh(new THREE.SphereGeometry(1, 12, 8), new THREE.MeshBasicMaterial({ color: 0x76ffd0 }));
     marker.visible = false; scene.add(marker);
@@ -86,6 +86,19 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     const value: Runtime = {
       terrain: null, inverse, marker, up: new THREE.Vector3(0, 0, 1), mode: 'orbit',
       setMode(next) {
+        if (next === 'eye' && !value.selectedPoint) {
+          if (value.terrain) {
+            const b = new THREE.Box3().setFromObject(value.terrain);
+            const c = b.getCenter(new THREE.Vector3());
+            const h = new THREE.Raycaster(new THREE.Vector3(c.x, c.y, 100000), new THREE.Vector3(0, 0, -1)).intersectObject(value.terrain, true)[0];
+            if (h) {
+              value.selectedPoint = h.point.clone();
+              value.up.set(0, 0, 1);
+              value.marker.position.copy(h.point);
+              setOnMesh(true);
+            }
+          }
+        }
         if (next === 'eye' && !value.selectedPoint) return false;
         if (next === value.mode) { render(); return true; }
         if (next === 'eye') { savedPosition.copy(camera.position); savedTarget.copy(controls.target); }
@@ -111,7 +124,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         }
         render();
       },
-      inspect(on) { fill.intensity = on ? 1.2 : .015; render(); },
+      inspect(on) { fill.intensity = on ? 1.0 : .08; render(); },
     };
     runtime.current = value;
     function render() {
@@ -163,26 +176,76 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       terrain.updateMatrixWorld(true); value.terrain = terrain; scene.add(terrain);
       const box = new THREE.Box3().setFromObject(terrain), size = box.getSize(new THREE.Vector3());
       box.getCenter(center); extent = Math.max(size.x, size.y);
-      let regolithTextures: RegolithTextures | null = null;
-      try {
-        regolithTextures = createRegolithTextures(extent);
-        terrain.traverse(child => {
-          if (child instanceof THREE.Mesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-            if (child.material) {
-              const mat = child.material as THREE.MeshStandardMaterial;
-              mat.map = regolithTextures!.map;
-              mat.normalMap = regolithTextures!.normalMap;
-              mat.normalScale = new THREE.Vector2(0.9, 0.9);
-              mat.roughness = 0.94;
-              mat.metalness = 0.0;
-              mat.needsUpdate = true;
-            }
+      terrain.traverse(child => {
+        if (!(child instanceof THREE.Mesh)) return;
+        child.castShadow = true;
+        child.receiveShadow = true;
+        const positions = child.geometry.getAttribute('position');
+        if (positions && !child.geometry.getAttribute('uv')) {
+          const uv = new Float32Array(positions.count * 2);
+          for (let i = 0; i < positions.count; i++) {
+            uv[i * 2] = positions.getX(i) / 64;
+            uv[i * 2 + 1] = (region.gltf_up === 'Y' ? -positions.getZ(i) : positions.getY(i)) / 64;
           }
-        });
-      } catch {
-        terrain.traverse(child => { if (child instanceof THREE.Mesh) { child.castShadow = true; child.receiveShadow = true; } });
+          child.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+        }
+      });
+      const texLoader = new THREE.TextureLoader();
+      texLoader.load(
+        `${import.meta.env.BASE_URL}terrain/lunar-detail-color.png`,
+        colTex => {
+          if (cancelled) { colTex.dispose(); return; }
+          colTex.wrapS = colTex.wrapT = THREE.RepeatWrapping;
+          colTex.colorSpace = THREE.SRGBColorSpace;
+          colTex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+          texLoader.load(
+            `${import.meta.env.BASE_URL}terrain/lunar-detail-normal.png`,
+            normTex => {
+              if (cancelled) { normTex.dispose(); return; }
+              normTex.wrapS = normTex.wrapT = THREE.RepeatWrapping;
+              normTex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+              terrain.traverse(child => {
+                if (child instanceof THREE.Mesh && child.material) {
+                  const mat = child.material as THREE.MeshStandardMaterial;
+                  mat.map = colTex;
+                  mat.color.set(0xffffff);
+                  mat.normalMap = normTex;
+                  mat.normalScale = new THREE.Vector2(1.5, 1.5);
+                  mat.roughness = 0.90;
+                  mat.metalness = 0.0;
+                  mat.needsUpdate = true;
+                }
+              });
+              render();
+            }
+          );
+        },
+        undefined,
+        () => {
+          try {
+            const regolithTextures = createRegolithTextures(extent);
+            terrain.traverse(child => {
+              if (child instanceof THREE.Mesh && child.material) {
+                const mat = child.material as THREE.MeshStandardMaterial;
+                mat.map = regolithTextures.map;
+                mat.normalMap = regolithTextures.normalMap;
+                mat.normalScale = new THREE.Vector2(0.9, 0.9);
+                mat.roughness = 0.94;
+                mat.metalness = 0.0;
+                mat.needsUpdate = true;
+              }
+            });
+            render();
+          } catch { /* ignore fallback error */ }
+        }
+      );
+      const centerRay = new THREE.Raycaster(new THREE.Vector3(center.x, center.y, 100000), new THREE.Vector3(0, 0, -1));
+      const centerHits = centerRay.intersectObject(terrain, true);
+      if (centerHits.length > 0) {
+        value.selectedPoint = centerHits[0].point.clone();
+        value.up.set(0, 0, 1);
+        value.marker.position.copy(centerHits[0].point);
+        setOnMesh(true);
       }
       skyDistance = Math.max(100000, extent * 4); lightDistance = Math.max(50000, size.length() * 2);
       controls.target.copy(center); controls.maxDistance = extent * 3;
