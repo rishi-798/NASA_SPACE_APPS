@@ -14,7 +14,7 @@ import "./asteroid-game.css";
 if ("serviceWorker" in navigator && import.meta.env.PROD) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/sw.js")
+      .register("/sw.js", {updateViaCache: "none"})
       .then((reg) => {
         console.log("CLPS Lunar ServiceWorker registered:", reg.scope);
       })
