@@ -7,10 +7,12 @@ No Earth EPSG CRS, smoothing, synthetic displacement or blind overlap averaging.
 import json
 import math
 import os
+import requests
 from pathlib import Path
 import sqlite3
 from functools import lru_cache
 from contextlib import closing
+from terrain import streaming
 
 from terrain.grid_scheme import RADIUS_M, coordinates, describe, identify, site04_id
 
@@ -37,6 +39,8 @@ def manifest():
 
 
 def source_ready(source):
+    if streaming.ready(source, dataset_root()):
+        return True
     path=dataset_root()/source['path']
     return path.exists() and (not source.get('expected_bytes') or path.stat().st_size == source['expected_bytes'])
 
@@ -72,8 +76,11 @@ def sample_source(source, latitude, longitude):
         # Southern tile edges belong to this tile; their nearest centre is its last row.
         row=min(15359,math.floor((source['north']-latitude)*512))
         col=math.floor((lon-west)*512)
-        data=np.memmap(root/source['path'],dtype='<f4',mode='r',shape=(15360,23040))
-        z=float(data[row,col])*1000
+        if source.get('cloud_path') and streaming.ready(source, root):
+            z=float(streaming.read_pixel(source,root,row,col))*1000
+        else:
+            data=np.memmap(root/source['path'],dtype='<f4',mode='r',shape=(15360,23040))
+            z=float(data[row,col])*1000
         spacing=math.pi*RADIUS_M/180/512
         pixel_latitude=source['north']-(row+.5)/512
         return _sample(z,source,row,col,spacing*math.cos(math.radians(pixel_latitude)),spacing)
@@ -87,16 +94,20 @@ def sample_source(source, latitude, longitude):
         row=math.floor(15520-y/60)
         if not (0<=row<31040 and 0<=col<31040):
             return None
-        data=np.memmap(root/source['path'],dtype='<f4',mode='r',shape=(31040,31040))
+        if source.get('cloud_path') and streaming.ready(source, root):
+            height=float(streaming.read_pixel(source,root,row,col))
+        else:
+            data=np.memmap(root/source['path'],dtype='<f4',mode='r',shape=(31040,31040))
+            height=float(data[row,col])
         ground_spacing=60*(1+math.sin(math.radians(abs(latitude))))/2
-        result=_sample(float(data[row,col])*1000,source,row,col,ground_spacing,ground_spacing)
+        result=_sample(height*1000,source,row,col,ground_spacing,ground_spacing)
         if result:
             result['projected_sample_spacing_m']=60
         return result
     if kind == 'lola-global-tiff':
         import rasterio
         from rasterio.windows import Window
-        with rasterio.open(root/source['path']) as image:
+        with rasterio.open(streaming.raster_path(source,root)) as image:
             col=min(image.width-1,math.floor((longitude+180)/360*image.width))
             row=min(image.height-1,math.floor((90-latitude)/180*image.height))
             z=float(image.read(1,window=Window(col,row,1,1))[0,0])*1000
@@ -106,7 +117,14 @@ def sample_source(source, latitude, longitude):
     if kind == 'geotiff-metres':
         import rasterio
         from rasterio.windows import Window
-        projector,affine,width,height=_geotiff_info(str(root/source['path']))
+        metadata=source.get('cloud_metadata')
+        if metadata:
+            from affine import Affine
+            projector=_mission_transform(metadata['crs_wkt'])
+            affine=Affine(*metadata['affine'])
+            width,height=metadata['width'],metadata['height']
+        else:
+            projector,affine,width,height=_geotiff_info(streaming.raster_path(source,root))
         x,y=projector.transform(longitude,latitude)
         if not (math.isfinite(x) and math.isfinite(y)):
             return None
@@ -114,7 +132,7 @@ def sample_source(source, latitude, longitude):
         col,row=math.floor(col_float),math.floor(row_float)
         if not (0<=row<height and 0<=col<width):
             return None
-        with rasterio.open(root/source['path']) as image:
+        with rasterio.open(streaming.raster_path(source,root)) as image:
             # Derive the lunar geographic CRS from the source; never use Earth's EPSG:4326.
             z=image.read(1,window=Window(col,row,1,1),masked=True)[0,0]
             if np.ma.is_masked(z):
@@ -122,7 +140,9 @@ def sample_source(source, latitude, longitude):
             result=_sample(float(z),source,row,col,abs(image.transform.a),abs(image.transform.e))
         if result and source['id']=='SITE04-5M':
             for field,path in [('height_uncertainty_rms_m','Site04_final_adj_5mpp_toterr.tif'),('lola_shot_count','Site04_final_adj_5mpp_ldec.tif')]:
-                with rasterio.open(root/path) as quality:
+                quality_path=source.get('cloud_quality',{}).get(field)
+                quality_source={'path':path, 'cloud_path':quality_path} if quality_path else {'path':path}
+                with rasterio.open(streaming.raster_path(quality_source,root)) as quality:
                     value=quality.read(1,window=Window(col,row,1,1),masked=True)[0,0]
                     result[field]=float(value) if not np.ma.is_masked(value) and np.isfinite(value) else None
         return result
@@ -134,9 +154,13 @@ def sample_source(source, latitude, longitude):
         col=math.floor((longitude%360-315)*512)-(center_col-12)
         if not (0<=row<21 and 0<=col<25):
             return None
-        data=np.load(root/source['path'],mmap_mode='r')
+        if source.get('cloud_path') and streaming.ready(source, root):
+            height=float(streaming.read_pixel(source,root,row,col))
+        else:
+            data=np.load(root/source['path'],mmap_mode='r')
+            height=float(data[20-row,col])
         spacing=math.pi*RADIUS_M/180/512
-        return _sample(float(data[20-row,col]),source,row,col,spacing*math.cos(math.radians(latitude)),spacing)
+        return _sample(height,source,row,col,spacing*math.cos(math.radians(latitude)),spacing)
     raise ValueError('Unknown source format: '+kind)
 
 
@@ -155,7 +179,10 @@ def elevation(latitude,longitude):
     for source in sorted(data['sources'],key=lambda item:item.get('priority',9999)):
         if source.get('role') != 'elevation' or not source_ready(source):
             continue
-        result=sample_source(source,latitude,longitude)
+        try:
+            result=sample_source(source,latitude,longitude)
+        except (OSError, requests.RequestException) as exc:
+            raise TerrainUnavailable('Terrain source could not be read: '+source['id']) from exc
         if result is not None:
             return result
     raise TerrainUnavailable('No downloaded valid elevation source covers this point')
@@ -164,6 +191,16 @@ def elevation(latitude,longitude):
 def _catalogue_row(grid_id):
     path=dataset_root()/'moon-grid-index.sqlite'
     if not path.exists():
+        if streaming.base_url():
+            geometry=describe(grid_id) if grid_id.startswith('MOON-') else None
+            shard=geometry['parent_grid_id'].split('-C')[0] if geometry else 'local'
+            try:
+                rows=streaming.index_shard(shard)
+                if rows and grid_id in rows:
+                    return rows[grid_id]
+            except (OSError, ValueError, requests.RequestException) as exc:
+                raise TerrainUnavailable('Remote grid catalogue is unavailable') from exc
+            raise ValueError('Unknown grid ID')
         raise TerrainUnavailable('Moon grid index has not been built')
     with closing(sqlite3.connect(f'file:{path.as_posix()}?mode=ro',uri=True)) as connection:
         row=connection.execute('SELECT record_json FROM grids WHERE grid_id=?',(grid_id,)).fetchone()
@@ -216,6 +253,12 @@ def catalogue_selection(latitude,longitude):
     # File presence is checked locally; upstream 'downloaded' flags are ignored.
     sources=data.get('sources',[])
     elevation_sources=[s for s in sources if s.get('role')=='elevation']
+    point_terrain = None
+    point_note = None
+    try:
+        point_terrain = elevation(latitude, longitude)
+    except TerrainUnavailable as exc:
+        point_note = str(exc)
     return {'latitude':latitude,'longitude':longitude,'grid_id':grid_id,
             'global_child_grid_id':cell['grid_id'],'global_parent_grid_id':cell['parent_grid_id'],
             'bounds':cell['bounds'],'blender_object_name':grid_id,
@@ -227,10 +270,11 @@ def catalogue_selection(latitude,longitude):
                 'native_elevation_min_m','native_elevation_max_m','native_elevation_mean_m',
                 'native_statistics_spacing_m','native_statistics_source_ids','native_statistics_scope',
                 'height_uncertainty_rms_m_median','height_uncertainty_rms_m_p95')},
-            'point_elevation_m':None,'scene_available':False,
+            'point_elevation_m':point_terrain['elevation_m'] if point_terrain else None,
+            'point_terrain':point_terrain,'point_elevation_note':point_note,'scene_available':False,
             'local_elevation_files':sum(source_ready(s) for s in elevation_sources),
             'expected_elevation_files':len(elevation_sources),
-            'note':'Catalogue summaries only. No point height, local mesh or landing-safety claim.'}
+            'note':'Regional summaries and original-pixel point heights are separate. No local mesh or landing-safety claim.'}
 
 
 def lookup(latitude,longitude):
