@@ -148,7 +148,8 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
           float cloudShadow=texture2D(cloudMask,cloudUv).g*smoothstep(.02,.15,solarDot);
           diffuseColor.rgb*=1.-cloudShadow*.32;`);
         shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
-          roughnessFactor=mix(clamp(0.92-elevation*0.35,0.62,0.96),.14,ocean);
+          roughnessFactor=mix(clamp(0.92-elevation*0.35,0.62,0.96),.14,ocean);`);
+        shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>', `#include <metalnessmap_fragment>
           metalnessFactor=ocean*0.06;`);
         shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
           vec3 worldNormal=normalize(inverseTransformDirection(normal,viewMatrix));
