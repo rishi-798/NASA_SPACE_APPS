@@ -137,6 +137,104 @@ function makePin(color: number, radius = 0.075) {
   return pin;
 }
 
+function createSpacecraftMesh(): THREE.Group {
+  const root = new THREE.Group();
+  root.name = "Translunar Crew Vehicle";
+
+  // Command Module (Capsule cone pointing along +Y)
+  const cmGeo = new THREE.ConeGeometry(0.075, 0.14, 20);
+  const cmMat = new THREE.MeshStandardMaterial({
+    color: 0xf3f4f6,
+    metalness: 0.35,
+    roughness: 0.28,
+    emissive: 0x0a101d,
+    emissiveIntensity: 0.2,
+  });
+  const cm = new THREE.Mesh(cmGeo, cmMat);
+  cm.position.set(0, 0.10, 0);
+  cm.castShadow = true;
+  root.add(cm);
+
+  // Heat Shield
+  const shieldGeo = new THREE.CylinderGeometry(0.075, 0.076, 0.02, 20);
+  const shieldMat = new THREE.MeshStandardMaterial({ color: 0x27201c, metalness: 0.7, roughness: 0.4 });
+  const shield = new THREE.Mesh(shieldGeo, shieldMat);
+  shield.position.set(0, 0.02, 0);
+  root.add(shield);
+
+  // Service Module Cylinder
+  const smGeo = new THREE.CylinderGeometry(0.072, 0.072, 0.13, 20);
+  const smMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.45, roughness: 0.32 });
+  const sm = new THREE.Mesh(smGeo, smMat);
+  sm.position.set(0, -0.055, 0);
+  sm.castShadow = true;
+  root.add(sm);
+
+  // 4 Solar Array Wings (Orion X-wing geometry)
+  const wingGeo = new THREE.BoxGeometry(0.24, 0.005, 0.055);
+  const wingMat = new THREE.MeshStandardMaterial({
+    color: 0x0f294a,
+    emissive: 0x051326,
+    metalness: 0.85,
+    roughness: 0.2,
+  });
+  const wingAngles = [Math.PI / 4, 3 * Math.PI / 4, 5 * Math.PI / 4, 7 * Math.PI / 4];
+  wingAngles.forEach((angle) => {
+    const wing = new THREE.Mesh(wingGeo, wingMat);
+    wing.position.set(Math.cos(angle) * 0.15, -0.06, Math.sin(angle) * 0.15);
+    wing.rotation.y = -angle;
+    wing.castShadow = true;
+    root.add(wing);
+  });
+
+  // Main Engine Bell
+  const bellGeo = new THREE.CylinderGeometry(0.018, 0.042, 0.045, 16);
+  const bellMat = new THREE.MeshStandardMaterial({ color: 0x18181b, metalness: 0.9, roughness: 0.25 });
+  const bell = new THREE.Mesh(bellGeo, bellMat);
+  bell.position.set(0, -0.14, 0);
+  root.add(bell);
+
+  // Thrust Flame Plume Group (pointing backward along -Y)
+  const flameGroup = new THREE.Group();
+  flameGroup.position.set(0, -0.16, 0);
+
+  // Outer plume (cyan ion / hypergolic glow)
+  const outerPlumeGeo = new THREE.ConeGeometry(0.046, 0.22, 16);
+  outerPlumeGeo.rotateZ(Math.PI);
+  outerPlumeGeo.translate(0, -0.11, 0);
+  const outerPlumeMat = new THREE.MeshBasicMaterial({
+    color: 0x38bdf8,
+    transparent: true,
+    opacity: 0.82,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    toneMapped: false,
+  });
+  const outerPlume = new THREE.Mesh(outerPlumeGeo, outerPlumeMat);
+  flameGroup.add(outerPlume);
+
+  // Inner core flame (hot orange-white core)
+  const innerPlumeGeo = new THREE.ConeGeometry(0.022, 0.14, 14);
+  innerPlumeGeo.rotateZ(Math.PI);
+  innerPlumeGeo.translate(0, -0.07, 0);
+  const innerPlumeMat = new THREE.MeshBasicMaterial({
+    color: 0xfef08a,
+    transparent: true,
+    opacity: 0.95,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    toneMapped: false,
+  });
+  const innerPlume = new THREE.Mesh(innerPlumeGeo, innerPlumeMat);
+  flameGroup.add(innerPlume);
+
+  root.add(flameGroup);
+  root.userData.flame = flameGroup;
+
+  root.scale.setScalar(0.9);
+  return root;
+}
+
 function nearestSampleIndex(samples: VisibilitySample[] | undefined, time?: string) {
   if (!samples?.length || !time) return 0;
   const target = Date.parse(time);
@@ -234,7 +332,7 @@ export function SpaceScene({
 
     let transferPath: THREE.CubicBezierCurve3 | undefined;
     let transferLine: THREE.Line | undefined;
-    let vehicle: THREE.Mesh | undefined;
+    let vehicle: THREE.Object3D | undefined;
     let sunVisualPosition: THREE.Vector3 | undefined;
     const moonCenter = new THREE.Vector3(0, 0, 0);
     const moonRadius = 0.72;
@@ -246,13 +344,43 @@ export function SpaceScene({
     const getEarthDirection = () => bodyDirection(currentEarth(), landing);
 
     if (modelUrl) {
-      scene.add(new THREE.HemisphereLight(0xdceaff, 0x242323, 1.45));
-      const light = new THREE.DirectionalLight(0xffffff, 3.1);
-      light.position.set(-5, 8, 6);
-      scene.add(light);
-      camera.position.set(6, 2, 9);
+      scene.add(createStarPoints());
+
+      // Aerospace studio 3-point lighting
+      scene.add(new THREE.HemisphereLight(0x8cb8eb, 0x121722, 1.4));
+      const keyLight = new THREE.DirectionalLight(0xfffaee, 3.6);
+      keyLight.position.set(-6, 9, 7);
+      keyLight.castShadow = true;
+      scene.add(keyLight);
+
+      const fillLight = new THREE.DirectionalLight(0x60a5fa, 1.8);
+      fillLight.position.set(7, 3, -4);
+      scene.add(fillLight);
+
+      const rimLight = new THREE.DirectionalLight(0xf97316, 2.5);
+      rimLight.position.set(2, -4, -8);
+      scene.add(rimLight);
+
+      // Launch Platform / Holographic Staging Pedestal
+      const ringGeo = new THREE.RingGeometry(1.6, 1.75, 64);
+      ringGeo.rotateX(-Math.PI / 2);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.45 });
+      const stagingRing = new THREE.Mesh(ringGeo, ringMat);
+      stagingRing.position.set(0, -3.5, 0);
+      scene.add(stagingRing);
+
+      const gridHelper = new THREE.GridHelper(8, 16, 0x1e3a5f, 0x0c1524);
+      gridHelper.position.set(0, -3.51, 0);
+      scene.add(gridHelper);
+
+      camera.position.set(6.5, 2.2, 9.5);
       controls.minDistance = 4;
       controls.maxDistance = 20;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 1.0;
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.045;
+
       const decoder = new DRACOLoader().setDecoderPath("/draco/");
       new GLTFLoader().setDRACOLoader(decoder).load(modelUrl, (asset) => {
         if (disposed) { disposeObjects(asset.scene); return; }
@@ -265,7 +393,25 @@ export function SpaceScene({
         model.scale.setScalar(7 / bounds.getSize(new THREE.Vector3()).y);
         bounds = new THREE.Box3().setFromObject(model);
         model.position.sub(bounds.getCenter(new THREE.Vector3()));
-        model.traverse((object) => { if (object instanceof THREE.Mesh) { object.castShadow = true; object.receiveShadow = true; } });
+        model.traverse((object) => {
+          if (object instanceof THREE.Mesh) {
+            object.castShadow = true;
+            object.receiveShadow = true;
+            const mats = Array.isArray(object.material) ? object.material : [object.material];
+            mats.forEach((m) => {
+              if (m instanceof THREE.MeshStandardMaterial) {
+                m.roughness = Math.min(m.roughness, 0.45);
+                m.metalness = Math.max(m.metalness, 0.25);
+                m.envMapIntensity = 0.8;
+                if (/engine|nozzle|exhaust|bell/i.test(object.name) || /engine|nozzle/i.test(m.name)) {
+                  m.color.setHex(0x28282b);
+                  m.metalness = 0.85;
+                  m.roughness = 0.25;
+                }
+              }
+            });
+          }
+        });
         scene.add(model);
         markResourceReady();
       }, undefined, markResourceFailed);
@@ -438,7 +584,7 @@ export function SpaceScene({
       transferLine.computeLineDistances();
       transferLine.renderOrder = 1;
       scene.add(transferLine);
-      vehicle = new THREE.Mesh(new THREE.SphereGeometry(0.055, 16, 12), new THREE.MeshBasicMaterial({ color: 0xfff1d5, toneMapped: false }));
+      vehicle = createSpacecraftMesh();
       scene.add(vehicle);
     }
 
@@ -500,8 +646,36 @@ export function SpaceScene({
       applyEphemeris();
       controls.update();
       if (vehicle && transferPath) {
-        const progress = Math.min(1, (performance.now() - started) / 5200);
-        vehicle.position.copy(transferPath.getPoint(reduceMotion ? 1 : progress));
+        const elapsed = (performance.now() - started) / 1000;
+        const cycleDuration = 9.0;
+        const transitDuration = 7.5;
+        const cycleTime = elapsed % cycleDuration;
+        const progress = reduceMotion ? 1.0 : Math.min(1.0, cycleTime / transitDuration);
+
+        const currentPos = transferPath.getPoint(progress);
+        vehicle.position.copy(currentPos);
+
+        // Orient spacecraft forward along the trajectory tangent
+        const tangentProgress = Math.min(0.999, Math.max(0.001, progress));
+        const tangent = transferPath.getTangent(tangentProgress).normalize();
+        const defaultForward = new THREE.Vector3(0, 1, 0);
+        vehicle.quaternion.setFromUnitVectors(defaultForward, tangent);
+
+        // Dynamic thrust flame pulse
+        const flame = vehicle.userData.flame as THREE.Object3D | undefined;
+        if (flame) {
+          if (progress >= 1.0) {
+            flame.scale.set(0, 0, 0); // Cut engines on lunar orbital capture
+          } else {
+            const flicker = 1.0 + Math.sin(elapsed * 28.0) * 0.16 + Math.cos(elapsed * 42.0) * 0.12;
+            flame.scale.set(flicker, 0.85 + flicker * 0.35, flicker);
+          }
+        }
+
+        // Animate dashed trajectory line (marching particles toward Moon)
+        if (transferLine && transferLine.material instanceof THREE.LineDashedMaterial) {
+          transferLine.material.dashOffset -= 0.006;
+        }
       }
       renderer.render(scene, camera);
     });

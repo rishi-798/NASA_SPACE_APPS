@@ -115,3 +115,45 @@ def test_mission_dossier_html():
     assert "Flight Readiness Review" in res.text
     assert "Athena" in res.text
     assert "window.print()" in res.text
+
+
+def test_mission_dossier_custom_coordinates_with_3d_model():
+    # Apollo 12 coordinates (-3.0128, -23.4219)
+    res = client.get(
+        "/api/mission/dossier?lat=-3.0128&lon=-23.4219&start=2026-10-12T00:00:00Z&end=2026-10-12T06:00:00Z"
+    )
+    assert res.status_code == 200
+    data = res.json()
+    assert data["mission_overview"]["coordinates"]["latitude_deg"] == -3.0128
+    assert data["measured_3d_terrain"]["model_available"] is True
+    assert data["measured_3d_terrain"]["model_id"] == "apollo-12"
+    assert data["measured_3d_terrain"]["model_url"] == "/api/terrain/models/apollo-12/glb"
+
+
+def test_mission_dossier_html_custom_coordinates():
+    res = client.get(
+        "/api/mission/dossier/html?lat=-3.0128&lon=-23.4219&start=2026-10-12T00:00:00Z&end=2026-10-12T06:00:00Z"
+    )
+    assert res.status_code == 200
+    assert "text/html" in res.headers["content-type"]
+    assert "Selected map coordinate" in res.text
+
+
+def test_solar_power_validation_errors():
+    # Negative capacity
+    res1 = client.get("/api/analysis/power?site_id=athena-im2&battery_capacity_wh=-10")
+    assert res1.status_code == 422
+
+    # Negative area
+    res2 = client.get("/api/analysis/power?site_id=athena-im2&solar_array_area_m2=-1")
+    assert res2.status_code == 422
+
+    # Invalid orientation
+    res3 = client.get("/api/analysis/power?site_id=athena-im2&array_orientation=spherical")
+    assert res3.status_code == 422
+
+
+def test_volatiles_validation_errors():
+    res = client.get("/api/terrain/volatiles?lat=95.0&lon=0.0")
+    assert res.status_code == 422
+

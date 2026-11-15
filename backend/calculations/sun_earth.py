@@ -148,18 +148,63 @@ def calculate_visibility_window(
     if (end_time - start_time) // step + 1 > MAX_WINDOW_SAMPLES:
         raise ValueError(f"window exceeds {MAX_WINDOW_SAMPLES} samples")
 
-    samples = []
+    # Pre-generate regular timestamps
+    timestamps = []
     current = start_time
     while current <= end_time:
-        result = calculate_visibility(latitude, longitude, current.isoformat())
-        samples.append(
-            {
-                "time": result["time"],
-                "sun": result["sun"],
-                "earth": result["earth"],
-            }
-        )
+        timestamps.append(current)
         if end_time - current < step:
             break
         current += step
+
+    samples = []
+    with SPICE_LOCK:
+        load_spice_kernels()
+        try:
+            _, radii = spiceypy.bodvrd("MOON", "RADII", 3)
+            equatorial_radius = float(radii[0])
+            flattening = (equatorial_radius - float(radii[2])) / equatorial_radius
+            site_fixed = spiceypy.georec(
+                math.radians(longitude), math.radians(latitude), 0.0, equatorial_radius, flattening
+            )
+
+            for dt in timestamps:
+                output_time = dt.isoformat().replace("+00:00", "Z")
+                et = spiceypy.utc2et(output_time)
+                fixed_to_j2000 = spiceypy.pxform(MOON_FRAME, "J2000", et)
+                j2000_to_fixed = spiceypy.pxform("J2000", MOON_FRAME, et)
+                site_j2000 = fixed_to_j2000 @ site_fixed
+
+                bodies = {}
+                for name, target in (("sun", "SUN"), ("earth", "EARTH")):
+                    moon_to_body, _light_time_seconds = spiceypy.spkpos(
+                        target, et, "J2000", "NONE", "MOON"
+                    )
+                    distance_km = float(np.linalg.norm(moon_to_body))
+                    body_from_site_fixed = j2000_to_fixed @ (moon_to_body - site_j2000)
+                    moon_center_to_body_fixed = j2000_to_fixed @ moon_to_body
+                    azimuth, elevation = _local_angles(body_from_site_fixed, latitude, longitude)
+                    bodies[name] = {
+                        "azimuth": azimuth,
+                        "elevation": elevation,
+                        "visible": elevation > 0,
+                        "distance_km": float(distance_km),
+                        "moon_fixed_position_km": [
+                            float(component) for component in moon_center_to_body_fixed
+                        ],
+                    }
+
+                samples.append(
+                    {
+                        "time": output_time,
+                        "sun": bodies["sun"],
+                        "earth": bodies["earth"],
+                    }
+                )
+        except SpiceyError as exc:
+            log.error("SPICE window calculation failed (%s, %s): %s", latitude, longitude, exc)
+            raise SpiceCalculationError(
+                f"SPICE could not calculate the Sun/Earth position ({spice_code(exc)})."
+            ) from exc
+
     return samples

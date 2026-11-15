@@ -39,6 +39,20 @@ def calculate_solar_power_and_battery(
     initial_soc_pct: float = 95.0,
 ) -> Dict[str, Any]:
     """Pure calculation function for solar power generation and battery energy balance."""
+    # Validate power parameters
+    if battery_capacity_wh is None or battery_capacity_wh <= 0.0:
+        raise HTTPException(status_code=422, detail="battery_capacity_wh must be a positive number")
+    if solar_array_area_m2 is None or solar_array_area_m2 <= 0.0:
+        raise HTTPException(status_code=422, detail="solar_array_area_m2 must be a positive number")
+    if cell_efficiency is None or not (0.0 < cell_efficiency <= 1.0):
+        raise HTTPException(status_code=422, detail="cell_efficiency must be greater than 0 and at most 1.0")
+    if initial_soc_pct is None or not (0.0 <= initial_soc_pct <= 100.0):
+        raise HTTPException(status_code=422, detail="initial_soc_pct must be between 0.0 and 100.0")
+    if base_power_load_w is None or base_power_load_w < 0.0:
+        raise HTTPException(status_code=422, detail="base_power_load_w cannot be negative")
+    if array_orientation not in ("vertical", "horizontal", "cylindrical"):
+        raise HTTPException(status_code=422, detail=f"array_orientation must be one of 'vertical', 'horizontal', 'cylindrical', got '{array_orientation}'")
+
     # Resolve coordinates
     if site_id:
         try:

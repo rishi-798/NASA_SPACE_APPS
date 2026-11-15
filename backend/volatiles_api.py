@@ -185,6 +185,11 @@ def evaluate_volatiles_at_coordinate(
 
     and water ice stability for any target lunar coordinate.
     """
+    if not math.isfinite(lat) or not (-90.0 <= lat <= 90.0):
+        raise HTTPException(status_code=422, detail="lat must be a finite float between -90.0 and 90.0")
+    if not math.isfinite(lon) or not (-180.0 <= lon <= 180.0):
+        raise HTTPException(status_code=422, detail="lon must be a finite float between -180.0 and 180.0")
+
     nearest_trap = None
     min_dist_km = float("inf")
     nearest_bearing = 0.0

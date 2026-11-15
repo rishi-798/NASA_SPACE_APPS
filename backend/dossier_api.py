@@ -24,22 +24,36 @@ from backend.spice_kernels import kernel_provenance, kernel_status
 router = APIRouter(prefix="/api/mission", tags=["dossier"])
 
 
-@router.get("/dossier")
-def generate_mission_dossier(
-    site_id: Optional[str] = Query(None, description="Pre-configured landing site ID (e.g. athena-im2)"),
-    lat: Optional[float] = Query(None, ge=-90.0, le=90.0, description="Lunar latitude"),
-    lon: Optional[float] = Query(None, ge=-180.0, le=180.0, description="Lunar longitude"),
-    start: Optional[str] = Query(None, description="Mission window start UTC"),
-    end: Optional[str] = Query(None, description="Mission window end UTC"),
-    step_minutes: int = Query(30, ge=5, le=120, description="Analysis step minutes"),
-):
-    """Generate comprehensive Flight Readiness Review (FRR) dossier in JSON format."""
+def build_mission_dossier(
+    site_id: Optional[str] = None,
+    lat: Optional[float] = None,
+    lon: Optional[float] = None,
+    start: Optional[str] = None,
+    end: Optional[str] = None,
+    step_minutes: int = 30,
+) -> dict:
+    """Core calculation function for Flight Readiness Review (FRR) mission dossier."""
+    # Disambiguate site vs coordinates
+    if lat is not None and lon is not None:
+        effective_site_id = None
+        target_lat = float(lat)
+        target_lon = float(lon)
+    elif site_id:
+        effective_site_id = site_id
+        target_lat = None
+        target_lon = None
+    else:
+        # Default fallback to Athena IM-2
+        effective_site_id = "athena-im2"
+        target_lat = None
+        target_lon = None
+
     # Run SPICE visibility analysis
     try:
         analysis_data = build_analysis(
-            site_id=site_id,
-            lat=lat,
-            lon=lon,
+            site_id=effective_site_id,
+            lat=target_lat,
+            lon=target_lon,
             start=start,
             end=end,
             step_minutes=step_minutes,
@@ -57,9 +71,9 @@ def generate_mission_dossier(
 
     # Run Power assessment
     power_data = calculate_solar_power_and_battery(
-        site_id=site_id,
-        lat=target_lat if not site_id else None,
-        lon=target_lon if not site_id else None,
+        site_id=effective_site_id,
+        lat=target_lat if not effective_site_id else None,
+        lon=target_lon if not effective_site_id else None,
         start=start,
         end=end,
         step_minutes=step_minutes,
@@ -92,8 +106,9 @@ def generate_mission_dossier(
         "power_and_energy_summary": power_data["summary"],
         "measured_3d_terrain": {
             "model_available": matched_model is not None,
-            "model_id": matched_model.get("id") or matched_model.get("model_id") if matched_model else None,
-            "model_url": matched_model.get("model_url") if matched_model else None,
+            "model_id": matched_model.get("id") if matched_model else None,
+            "model_name": matched_model.get("name") if matched_model else None,
+            "model_url": matched_model.get("glb_url") if matched_model else None,
             "preview_url": matched_model.get("preview_url") if matched_model else None,
         },
         "provenance_and_verification": {
@@ -114,9 +129,29 @@ def generate_mission_dossier(
     }
 
 
+@router.get("/dossier")
+def generate_mission_dossier(
+    site_id: Optional[str] = Query(None, description="Pre-configured landing site ID (e.g. athena-im2)"),
+    lat: Optional[float] = Query(None, ge=-90.0, le=90.0, description="Lunar latitude"),
+    lon: Optional[float] = Query(None, ge=-180.0, le=180.0, description="Lunar longitude"),
+    start: Optional[str] = Query(None, description="Mission window start UTC"),
+    end: Optional[str] = Query(None, description="Mission window end UTC"),
+    step_minutes: int = Query(30, ge=5, le=120, description="Analysis step minutes"),
+):
+    """Generate comprehensive Flight Readiness Review (FRR) dossier in JSON format."""
+    return build_mission_dossier(
+        site_id=site_id,
+        lat=lat,
+        lon=lon,
+        start=start,
+        end=end,
+        step_minutes=step_minutes,
+    )
+
+
 @router.get("/dossier/html", response_class=HTMLResponse)
 def generate_mission_dossier_html(
-    site_id: Optional[str] = Query("athena-im2"),
+    site_id: Optional[str] = Query(None),
     lat: Optional[float] = Query(None),
     lon: Optional[float] = Query(None),
     start: Optional[str] = Query(None),
@@ -124,7 +159,7 @@ def generate_mission_dossier_html(
     step_minutes: int = Query(30),
 ):
     """Render a print-ready, high-fidelity NASA Flight Readiness Review HTML report for browser printing/PDF export."""
-    data = generate_mission_dossier(
+    data = build_mission_dossier(
         site_id=site_id,
         lat=lat,
         lon=lon,
