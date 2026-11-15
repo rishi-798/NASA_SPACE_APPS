@@ -56,8 +56,8 @@ body { min-width: 0; }
 .hero-shade { position: absolute; z-index: -2; inset: 0; background: linear-gradient(90deg, rgb(4 5 7 / .3), transparent 75%), linear-gradient(0deg, #08090c, transparent 22%); }
 .hero-copy { padding: clamp(180px, 23vh, 240px) var(--page-x) 80px; max-width: 1600px; margin: auto; }
 .hero-copy .eyebrow { margin-bottom: 28px; color: #dededc; }
-.hero-copy h1 { margin: 0; font-size: clamp(80px, 10.4vw, 168px); font-weight: 520; letter-spacing: -.055em; line-height: .9; }
-.hero-copy h1 span { color: #e7e7e5; }
+.hero-copy h1 { margin: 0; font-size: clamp(80px, 10.4vw, 168px); font-weight: 520; letter-spacing: -.035em; line-height: .95; }
+.hero-copy h1 span { color: #94959f; }
 .hero-description { max-width: 340px; margin: 36px 0 25px; color: #bcbec4; font-size: 17px; font-weight: 350; line-height: 1.55; }
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 28px; }
 .orbit-button { display: inline-flex; width: max-content; max-width: 100%; align-items: center; gap: 36px; padding: 7px 7px 7px 24px; min-height: 54px; border-radius: 100px; background: var(--text); color: #16171a; font-size: 14px; font-weight: 500; transition: background 180ms ease, transform 180ms ease; }

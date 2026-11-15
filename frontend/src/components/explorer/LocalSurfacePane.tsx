@@ -153,6 +153,31 @@ function SurfaceSession(props: {
           aria-valuetext={`${time} (${minutes} minutes from window start)`}
           onChange={event => setClock({start: props.observationTime, minutes: Number(event.target.value)})}
         />
+        <div className="surface-time-presets" style={{ display: "flex", gap: "6px", marginTop: "6px", alignItems: "center" }}>
+          {[0, 360, 720, 1080, 1440].map(m => (
+            <button
+              key={m}
+              type="button"
+              className={`surface-preset-btn ${minutes === m ? "active" : ""}`}
+              style={{
+                background: minutes === m ? "var(--accent)" : "rgba(255,255,255,0.06)",
+                color: minutes === m ? "#151619" : "var(--muted)",
+                border: "1px solid var(--line)",
+                borderRadius: "4px",
+                padding: "2px 8px",
+                fontSize: "10px",
+                cursor: "pointer",
+                fontFamily: "var(--mono)"
+              }}
+              onClick={() => setClock({ start: props.observationTime, minutes: m })}
+            >
+              +{m / 60}h
+            </button>
+          ))}
+          <span style={{ fontSize: "10px", color: "var(--quiet)", marginLeft: "auto" }}>
+            24h planning slice of 708.7h synodic lunar day
+          </span>
+        </div>
       </div>
       <Viewer {...props} observationTime={time} />
     </div>

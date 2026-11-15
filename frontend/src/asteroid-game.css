@@ -323,6 +323,12 @@
   touch-action: none;
 }
 
+@media (pointer: fine) and (min-width: 768px) {
+  .touch-controls-bar {
+    display: none;
+  }
+}
+
 .touch-btn {
   background: #1e293b;
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -337,7 +343,7 @@
   cursor: pointer;
   user-select: none;
   touch-action: none;
-  transition: background 0.1s;
+  transition: background 0.1s, transform 0.1s, box-shadow 0.1s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -345,6 +351,8 @@
 
 .touch-btn:active {
   background: #334155;
+  transform: scale(0.94);
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
 }
 
 .touch-btn-thrust {
