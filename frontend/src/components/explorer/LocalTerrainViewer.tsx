@@ -73,6 +73,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
     scene.add(rocks);
   }
   const batches = rocks.children as THREE.InstancedMesh[];
+  batches.forEach(batch => { if (!batch.geometry.boundingBox) batch.geometry.computeBoundingBox(); });
   const samplesBySlot: { matrix: THREE.Matrix4; shade: number; scale: number }[] = [];
   const transform = new THREE.Object3D();
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), point = new THREE.Vector3();
@@ -121,6 +122,12 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
       ? sample.scale >= .18 ? slot % scans.length : scans.length + slot % (variants - scans.length)
       : slot % variants;
     const batch = batches[variant]!;
+    // Keep most of each stone above the regolith, with its lower portion embedded.
+    const lift = enriched ? -.65 * batch.geometry.boundingBox!.min.z : 0;
+    const elements = sample.matrix.elements;
+    elements[12] += elements[8] * lift;
+    elements[13] += elements[9] * lift;
+    elements[14] += elements[10] * lift;
     batch.setMatrixAt(batch.count, sample.matrix);
     tint.setRGB(sample.shade, sample.shade, sample.shade * .98);
     batch.setColorAt(batch.count++, tint);
@@ -659,7 +666,12 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         const bounds = geometry.boundingBox!, middle = bounds.getCenter(new THREE.Vector3());
         const span = bounds.getSize(new THREE.Vector3());
         geometry.translate(-middle.x,-middle.y,-middle.z);
-        geometry.scale(2 / Math.max(span.x,span.y,span.z),2 / Math.max(span.x,span.y,span.z),2 / Math.max(span.x,span.y,span.z));
+        const normalize = 2 / Math.max(span.x,span.y,span.z);
+        // Selected scans are thin fragments. Broaden their vertical relief for the
+        // illustrative boulder layer instead of further flattening them at placement.
+        const verticalRelief = Math.max(1, .55 * Math.max(span.x,span.y) / Math.max(.001,span.z));
+        geometry.scale(normalize,normalize,normalize * verticalRelief);
+        geometry.computeBoundingBox();
         const material = (source.material as THREE.MeshStandardMaterial).clone();
         material.color.set(0xffffff); material.metalness = 0;
         dispose(gltf.scene);
