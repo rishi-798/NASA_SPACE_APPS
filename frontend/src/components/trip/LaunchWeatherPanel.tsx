@@ -17,7 +17,7 @@ export function LaunchWeatherPanel({ siteId }: { siteId: string }) {
     active.current?.abort();
     const controller = new AbortController();
     active.current = controller;
-    const timeout = window.setTimeout(() => controller.abort('timeout'), 20000);
+    const timeout = window.setTimeout(() => controller.abort('timeout'), 35000);
     setLoading(true); setError(''); setWeather(null);
     try {
       const result = await getLaunchWeather(siteId, controller.signal);
@@ -43,13 +43,14 @@ export function LaunchWeatherPanel({ siteId }: { siteId: string }) {
       <dl className="trip-stat-list">
         <div><dt>Temperature at 2 m</dt><dd>{reading(first.temperature_c, '°C')}</dd></div>
         <div><dt>Wind speed at 10 m</dt><dd>{reading(first.wind_speed_ms, 'm/s')}</dd></div>
+        <div><dt>Cloud cover</dt><dd>{reading(first.cloud_cover_pct ?? null, '%')}</dd></div>
         <div><dt>Preceding hour’s precipitation</dt><dd>{reading(first.precipitation_mm, 'mm')}</dd></div>
       </dl>
       <p className="trip-note">First hourly forecast: {formatTime(first.time)} UTC. {weather.partial && 'Some readings are unavailable.'}</p>
       <details><summary>View hourly forecast</summary>
         <div className="launch-weather-table" tabIndex={0} role="region" aria-label="Hourly forecast table, scroll horizontally">
-          <table><caption>Earth weather forecast · all times UTC</caption><thead><tr><th scope="col">UTC</th><th scope="col">°C</th><th scope="col">Wind m/s</th><th scope="col">Rain/snow water equivalent mm / 1 h</th></tr></thead>
-            <tbody>{weather.samples.map(sample => <tr key={sample.time}><th scope="row"><time dateTime={sample.time}>{formatTime(sample.time)}</time></th><td>{reading(sample.temperature_c, '')}</td><td>{reading(sample.wind_speed_ms, '')}</td><td>{reading(sample.precipitation_mm, '')}</td></tr>)}</tbody>
+          <table><caption>Earth weather forecast · all times UTC</caption><thead><tr><th scope="col">UTC</th><th scope="col">°C</th><th scope="col">Wind m/s</th><th scope="col">Cloud %</th><th scope="col">Rain/snow water equivalent mm / 1 h</th></tr></thead>
+            <tbody>{weather.samples.map(sample => <tr key={sample.time}><th scope="row"><time dateTime={sample.time}>{formatTime(sample.time)}</time></th><td>{reading(sample.temperature_c, '')}</td><td>{reading(sample.wind_speed_ms, '')}</td><td>{reading(sample.cloud_cover_pct ?? null, '')}</td><td>{reading(sample.precipitation_mm, '')}</td></tr>)}</tbody>
           </table>
         </div>
       </details>
