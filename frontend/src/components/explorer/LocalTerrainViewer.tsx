@@ -87,81 +87,6 @@ function createSunVisual() {
   return { group, core, glow };
 }
 
-function createPedestal(box: THREE.Box3, extent: number) {
-  const group = new THREE.Group();
-  const size = box.getSize(new THREE.Vector3());
-  const center = box.getCenter(new THREE.Vector3());
-  const baseDepth = Math.max(25, extent * 0.06);
-  const baseGeom = new THREE.BoxGeometry(size.x * 1.015, size.y * 1.015, baseDepth);
-  const baseMat = new THREE.MeshStandardMaterial({
-    color: 0x12151c,
-    roughness: 0.45,
-    metalness: 0.65,
-  });
-  const base = new THREE.Mesh(baseGeom, baseMat);
-  base.position.set(center.x, center.y, box.min.z - baseDepth / 2);
-  base.receiveShadow = true;
-  group.add(base);
-
-  const wireGeom = new THREE.EdgesGeometry(baseGeom);
-  const wireMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.4 });
-  const wire = new THREE.LineSegments(wireGeom, wireMat);
-  wire.position.copy(base.position);
-  group.add(wire);
-  return group;
-}
-
-function createHorizonApron(box: THREE.Box3, extent: number) {
-  const center = box.getCenter(new THREE.Vector3());
-  const size = box.getSize(new THREE.Vector3());
-  const rInner = extent * 0.49;
-  const rOuter = Math.max(extent * 6, 28000);
-  const segments = 64;
-  const rings = 12;
-  const geo = new THREE.BufferGeometry();
-  const pos: number[] = [];
-  const uvs: number[] = [];
-  const indices: number[] = [];
-
-  for (let ring = 0; ring <= rings; ring++) {
-    const t = ring / rings;
-    const r = rInner + (rOuter - rInner) * Math.pow(t, 1.8);
-    const curveDrop = -Math.pow(r - rInner, 2) / (2 * 1737400);
-    const z = box.min.z + curveDrop;
-    for (let seg = 0; seg <= segments; seg++) {
-      const angle = (seg / segments) * Math.PI * 2;
-      const px = center.x + r * Math.cos(angle);
-      const py = center.y + r * Math.sin(angle);
-      pos.push(px, py, z);
-      uvs.push((px - box.min.x) / (size.x || 1), (py - box.min.y) / (size.y || 1));
-    }
-  }
-
-  for (let ring = 0; ring < rings; ring++) {
-    for (let seg = 0; seg < segments; seg++) {
-      const a = ring * (segments + 1) + seg;
-      const b = a + 1;
-      const c = (ring + 1) * (segments + 1) + seg;
-      const d = c + 1;
-      indices.push(a, b, c, b, d, c);
-    }
-  }
-
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
-  geo.setIndex(indices);
-  geo.computeVertexNormals();
-
-  const mat = new THREE.MeshStandardMaterial({
-    color: 0x94989e,
-    roughness: 0.98,
-    metalness: 0.0,
-  });
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.receiveShadow = true;
-  return mesh;
-}
-
 export default function LocalTerrainViewer({ region, latitude, longitude, observationTime, onPick }: {
   region: TerrainRegion; latitude: number; longitude: number; observationTime: string;
   onPick: (point: MoonLocation) => void;
@@ -214,13 +139,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     // Earthshine directional light
     const earthLight = new THREE.DirectionalLight(0x8cb5df, 0);
 
-    // Sculpting relief inspection lights (Key + Rim)
-    const inspectKey = new THREE.DirectionalLight(0xf2f5fa, 0);
-    const inspectRim = new THREE.DirectionalLight(0xd4e2f2, 0);
-
-    // Low baseline ambient (deep space contrast)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.04);
-    scene.add(sunLight, sunLight.target, earthLight, earthLight.target, inspectKey, inspectRim, ambientLight);
+    // Baseline ambient light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
+    scene.add(sunLight, sunLight.target, earthLight, earthLight.target, ambientLight);
 
     const marker = new THREE.Mesh(new THREE.SphereGeometry(1, 14, 10), new THREE.MeshBasicMaterial({ color: 0x76ffd0 }));
     marker.visible = false; scene.add(marker);
@@ -250,8 +171,6 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     let sky: Lighting | null = null, yaw = 0, pitch = 0;
     const center = new THREE.Vector3();
     const savedPosition = new THREE.Vector3(), savedTarget = new THREE.Vector3();
-    let pedestal: THREE.Group | null = null;
-    let horizonApron: THREE.Mesh | null = null;
     let starfield: THREE.Points | null = null;
     let inspectActive = true;
 
@@ -277,8 +196,6 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         value.mode = next;
         controls.enabled = next === 'orbit';
         marker.visible = next === 'orbit' && !!value.selectedPoint;
-        if (pedestal) pedestal.visible = next === 'orbit';
-        if (horizonApron) horizonApron.visible = next === 'eye';
         if (next === 'orbit') {
           camera.up.set(0, 0, 1);
           camera.position.copy(savedPosition);
@@ -328,21 +245,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       },
       inspect(on) {
         inspectActive = on;
-        if (on) {
-          inspectKey.position.set(center.x + extent * 0.7, center.y - extent * 0.6, center.z + extent * 0.42);
-          inspectKey.target.position.copy(center);
-          inspectKey.intensity = 1.35;
-
-          inspectRim.position.set(center.x - extent * 0.7, center.y + extent * 0.6, center.z + extent * 0.28);
-          inspectRim.target.position.copy(center);
-          inspectRim.intensity = 0.5;
-
-          ambientLight.intensity = 0.18;
-        } else {
-          inspectKey.intensity = 0.0;
-          inspectRim.intensity = 0.0;
-          ambientLight.intensity = 0.04;
-        }
+        ambientLight.intensity = on ? 0.28 : 0.04;
         render();
       },
     };
@@ -414,15 +317,6 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       box.getCenter(center);
       extent = Math.max(size.x, size.y);
 
-      // Add architectural museum pedestal and infinite curved horizon apron
-      pedestal = createPedestal(box, extent);
-      pedestal.visible = value.mode === 'orbit';
-      scene.add(pedestal);
-
-      horizonApron = createHorizonApron(box, extent);
-      horizonApron.visible = value.mode === 'eye';
-      scene.add(horizonApron);
-
       // Add high-resolution stellar cosmos
       skyDistance = Math.max(100000, extent * 5);
       lightDistance = Math.max(50000, size.length() * 2);
@@ -467,9 +361,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
                     map: colTex,
                     color: new THREE.Color(0xa2a5aa),
                     normalMap: normTex,
-                    normalScale: new THREE.Vector2(2.0, 2.0),
-                    roughness: 0.92,
-                    metalness: 0.02,
+                    normalScale: new THREE.Vector2(0.45, 0.45),
+                    roughness: 0.95,
+                    metalness: 0.0,
                   });
                   child.material = mat;
                   mat.needsUpdate = true;
@@ -487,24 +381,16 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
               if (child instanceof THREE.Mesh && child.material) {
                 const mat = new THREE.MeshStandardMaterial({
                   map: regolithTextures.map,
-                  color: new THREE.Color(0xb0b4ba),
+                  color: new THREE.Color(0xa2a5aa),
                   normalMap: regolithTextures.normalMap,
-                  normalScale: new THREE.Vector2(0.65, 0.65),
-                  roughness: 0.98,
+                  normalScale: new THREE.Vector2(0.45, 0.45),
+                  roughness: 0.95,
                   metalness: 0.0,
                 });
                 child.material = mat;
                 mat.needsUpdate = true;
               }
             });
-            if (horizonApron) {
-              horizonApron.material = new THREE.MeshStandardMaterial({
-                map: regolithTextures.map,
-                color: new THREE.Color(0xa2a6ac),
-                roughness: 0.98,
-                metalness: 0.0,
-              });
-            }
             render();
           } catch { /* fallback */ }
         }
@@ -665,7 +551,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     <p role="status">{state}</p><p role="status">{lighting}</p>
     <label><input type="checkbox" checked={inspection} onChange={e => setInspection(e.target.checked)} /> Topographic relief light (illustrative, +1.2 lux)</label>
     <p>{region.source_id} · {region.source_spacing_m.toFixed(1)} m source sampling · 1:1 scale. Horizon and shadows are limited to this exported patch.</p>
-    <p style={{ fontSize: '0.82rem', color: '#8ec5fc', marginTop: '0.35rem' }}>Surface: Real-time 60 FPS PBR regolith with Blender Cycles baked normal relief, astronomical starfield, and SPICE ephemeris lighting.</p>
+    <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginTop: '0.35rem' }}>Source elevation: 1:1 SLDEM2015 topography · Solar &amp; Earth ephemeris from NAIF SPICE DE440</p>
     {region.source_mismatch && <p>The elevation API uses a different, higher-resolution source here; this context mesh is not a blend of both datasets.</p>}
     {region.appearance_note && <p>{region.appearance_note}</p>}
   </div>;

@@ -25,7 +25,6 @@ export function AppShell() {
           <nav aria-label="Footer navigation">
             <Link to="/trip">Plan a trip</Link>
             <Link to="/explorer">Explorer <ArrowUpRight aria-hidden="true" /></Link>
-            <Link to="/presentation">Pitch Deck</Link>
             <Link to="/missions">Missions</Link>
             <Link to="/timeline">Timeline</Link>
             <Link to="/about">About</Link>

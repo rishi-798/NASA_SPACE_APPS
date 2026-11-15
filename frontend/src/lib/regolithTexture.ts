@@ -7,12 +7,11 @@ export type RegolithTextures = {
 };
 
 /**
- * Generates photorealistic procedural lunar regolith diffuse and tangent normal maps.
- * Calibrated against NASA Apollo surface photography and LRO Diviner micro-roughness:
- * 1. Anisotropic directional micro-dunes and ejecta ripple ridges.
- * 2. Multi-scale Voronoi impact bowls with raised ejecta rims.
- * 3. Sub-centimeter powdery regolith dust grain.
- * 4. Hapke-consistent matte diffuse scattering (zero specular gloss).
+ * Generates isotropic, photometrically calibrated lunar regolith micro-roughness.
+ * Calibrated against NASA Apollo surface photography and LRO Diviner radiometric data:
+ * - Uniform isotropic powdery regolith grain (no artificial dunes or fake craters).
+ * - Calibrated lunar optical reflectance (albedo ~0.12, neutral charcoal gray).
+ * - Seamless fractal micro-roughness for high-quality PBR diffuse and tangent normals.
  */
 export function createRegolithTextures(extent: number): RegolithTextures {
   const size = 512;
@@ -84,91 +83,44 @@ export function createRegolithTextures(extent: number): RegolithTextures {
     return lerp(v, lerp(u, dot00, dot10), lerp(u, dot01, dot11));
   }
 
-  // Pre-generate micro-craters with raised ejecta lips
-  const craterCount = 28;
-  const craters = Array.from({ length: craterCount }, () => ({
-    x: lcg() * size,
-    y: lcg() * size,
-    r: 3 + lcg() * 18,
-    depth: 0.15 + lcg() * 0.35,
-  }));
-
   const heights = new Float32Array(size * size);
   const colorData = ctx.createImageData(size, size);
   const cData = colorData.data;
-
-  // Directional ripple angle (~28 degrees, mimicking low-angle solar wind deposition)
-  const cosA = Math.cos(0.48), sinA = Math.sin(0.48);
 
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const idx = y * size + x;
 
-      // Coordinate transforms for directional ripples
-      const rx = (x * cosA + y * sinA);
-      const ry = (-x * sinA + y * cosA);
+      // Multi-octave isotropic fractal regolith noise (uniform grain, no directional ripples)
+      let h = periodicNoise(x * 0.05, y * 0.05, 16) * 0.35;
+      h += periodicNoise(x * 0.12, y * 0.12, 32) * 0.20;
+      h += periodicNoise(x * 0.28, y * 0.28, 64) * 0.10;
+      h += periodicNoise(x * 0.65, y * 0.65, 128) * 0.05;
 
-      // Layer 1: Directional rolling micro-dunes (elongated in rx)
-      let h = periodicNoise(rx * 0.035, ry * 0.009, 16) * 0.45;
-
-      // Layer 2: Secondary transverse ripple ridges
-      const ridgeNoise = periodicNoise(rx * 0.08, ry * 0.025, 32);
-      h += (1.0 - Math.abs(ridgeNoise)) * 0.22;
-
-      // Layer 3: High-frequency fractal regolith noise
-      h += periodicNoise(x * 0.15, y * 0.15, 64) * 0.12;
-      h += periodicNoise(x * 0.35, y * 0.35, 128) * 0.06;
-
-      // Layer 4: Discrete impact micro-craters with raised rims
-      let craterShadowFactor = 0.0;
-      for (let c = 0; c < craterCount; c++) {
-        const cr = craters[c]!;
-        let dx = Math.abs(x - cr.x);
-        let dy = Math.abs(y - cr.y);
-        if (dx > size / 2) dx = size - dx;
-        if (dy > size / 2) dy = size - dy;
-        const d = Math.hypot(dx, dy);
-
-        if (d < cr.r * 1.5) {
-          const normD = d / cr.r;
-          if (normD < 1.0) {
-            // Parabolic crater bowl depression
-            const bowl = cr.depth * (1.0 - normD * normD);
-            h -= bowl;
-            craterShadowFactor += (1.0 - normD) * 0.4;
-          } else {
-            // Raised ejecta rim crest
-            const rimDist = (normD - 1.0) / 0.5;
-            h += (cr.depth * 0.28) * Math.sin(rimDist * Math.PI);
-          }
-        }
-      }
-
-      // Fine powdery dust grain (Gaussian jitter)
-      const dust = (lcg() - 0.5) * 0.045;
+      // Fine powdery dust grain
+      const dust = (lcg() - 0.5) * 0.04;
       h += dust;
 
       heights[idx] = h;
 
-      // Lunar regolith albedo: soft powdery neutral gray (~0.12 reflectance)
-      // Raised crests are slightly brighter; crater bowls and micro-depressions are darker
-      let tone = 142 + Math.round(h * 48 - craterShadowFactor * 55 + dust * 120);
-      tone = Math.max(48, Math.min(210, tone));
+      // Apollo-consistent soft matte charcoal gray (mean ~132, 0.12 reflectance)
+      let tone = 132 + Math.round(h * 32 + dust * 40);
+      tone = Math.max(90, Math.min(185, tone));
 
       const pIdx = idx * 4;
       cData[pIdx] = tone;
-      cData[pIdx + 1] = Math.round(tone * 0.985);
-      cData[pIdx + 2] = Math.round(tone * 0.97);
+      cData[pIdx + 1] = Math.round(tone * 0.98);
+      cData[pIdx + 2] = Math.round(tone * 0.96);
       cData[pIdx + 3] = 255;
     }
   }
 
   ctx.putImageData(colorData, 0, 0);
 
-  // Compute tangent-space normal map using seamless Sobel filter
+  // Compute subtle tangent-space normal map using seamless Sobel filter
   const normData = normCtx.createImageData(size, size);
   const nData = normData.data;
-  const strength = 0.95; // Gentle slope gradient calibrated for powdery regolith
+  const strength = 0.45; // Subtle powdery micro-slope gradient
 
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
@@ -198,8 +150,8 @@ export function createRegolithTextures(extent: number): RegolithTextures {
 
   normCtx.putImageData(normData, 0, 0);
 
-  // Repeat density: calibrated so one tile covers 40 meters in 1:1 scale
-  const repeats = Math.max(20, Math.round(extent / 40));
+  // Calibrate repeat density so micro-grain looks natural at true 1:1 scale
+  const repeats = Math.max(16, Math.round(extent / 50));
 
   const map = new THREE.CanvasTexture(canvas);
   map.wrapS = map.wrapT = THREE.RepeatWrapping;

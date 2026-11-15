@@ -7,7 +7,6 @@ const links = [
   { to: "/trip", label: "Plan a trip (optional)" },
   { to: "/missions", label: "Missions" },
   { to: "/timeline", label: "Timeline" },
-  { to: "/presentation", label: "Pitch Deck" },
   { to: "/about", label: "About" },
   { to: "/discover", label: "Discover" },
 ];
