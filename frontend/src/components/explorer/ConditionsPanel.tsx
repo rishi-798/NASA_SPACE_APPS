@@ -1,11 +1,24 @@
 import {
+  ArrowUpRight,
+  BatteryCharging,
   Broadcast,
+  Drop,
+  FileText,
   Mountains,
   SunHorizon,
   Warning,
 } from "@phosphor-icons/react";
+import { useEffect, useState } from "react";
+import { getPowerAssessment, getVolatilesAssessment } from "../../lib/api";
 import { formatAzimuth, formatSignedDegree, formatUtcDisplay } from "../../lib/format";
-import type { AnalysisState, CelestialPosition, TerrainStatus, VisibilityResponse } from "../../types";
+import type {
+  AnalysisState,
+  CelestialPosition,
+  PowerAssessment,
+  TerrainStatus,
+  VisibilityResponse,
+  VolatilesAssessment,
+} from "../../types";
 import { StatusIndicator } from "../ui/StatusIndicator";
 
 type ConditionsPanelProps = {
@@ -15,6 +28,9 @@ type ConditionsPanelProps = {
   errorMessage?: string;
   /** Backend terrain status for this analysis (mode, status, explanation). */
   terrain?: TerrainStatus | null;
+  siteId?: string | null;
+  latitude?: number;
+  longitude?: number;
 };
 
 const TERRAIN_LABELS: Record<string, string> = {
@@ -68,7 +84,13 @@ export function ConditionsPanel({
   observationTime,
   errorMessage,
   terrain,
+  siteId,
+  latitude,
+  longitude,
 }: ConditionsPanelProps) {
+  const [power, setPower] = useState<PowerAssessment | null>(null);
+  const [volatiles, setVolatiles] = useState<VolatilesAssessment | null>(null);
+
   const terrainClear = !!conditions && conditions.sun.visible && conditions.earth.visible;
   const hasTerrain = terrain ? terrain.mode === "terrain_profile" : conditions?.sun.terrain_horizon !== undefined;
   const terrainLabel = state === "loading"
@@ -77,6 +99,48 @@ export function ConditionsPanel({
       : terrain ? TERRAIN_LABELS[terrain.status] ?? terrain.mode
         : hasTerrain ? "LOLA horizon · 2 m observer" : "No terrain profile · flat horizon";
   const observed = conditions?.time ?? observationTime;
+
+  useEffect(() => {
+    if (!conditions || state !== "success") {
+      setPower(null);
+      setVolatiles(null);
+      return;
+    }
+    const controller = new AbortController();
+    const targetLat = latitude ?? (conditions as unknown as { site?: { latitude?: number } })?.site?.latitude;
+    const targetLon = longitude ?? (conditions as unknown as { site?: { longitude?: number } })?.site?.longitude;
+
+    if (targetLat !== undefined && targetLon !== undefined) {
+      getPowerAssessment(
+        siteId && siteId !== "custom" ? siteId : null,
+        { latitude: targetLat, longitude: targetLon },
+        conditions.time,
+        controller.signal,
+      )
+        .then((res) => {
+          if (!controller.signal.aborted) setPower(res);
+        })
+        .catch(() => {
+          if (!controller.signal.aborted) setPower(null);
+        });
+
+      getVolatilesAssessment(targetLat, targetLon, controller.signal)
+        .then((res) => {
+          if (!controller.signal.aborted) setVolatiles(res);
+        })
+        .catch(() => {
+          if (!controller.signal.aborted) setVolatiles(null);
+        });
+    }
+
+    return () => controller.abort();
+  }, [conditions, state, siteId, latitude, longitude]);
+
+  const dossierUrl = siteId && siteId !== "custom"
+    ? `/api/mission/dossier/html?site_id=${encodeURIComponent(siteId)}${observed ? `&start=${encodeURIComponent(observed)}` : ""}`
+    : (latitude !== undefined && longitude !== undefined)
+      ? `/api/mission/dossier/html?lat=${latitude}&lon=${longitude}${observed ? `&start=${encodeURIComponent(observed)}` : ""}`
+      : null;
 
   return (
     <section className="conditions" aria-labelledby="conditions-title" aria-busy={state === "loading"}>
@@ -140,7 +204,73 @@ export function ConditionsPanel({
             label={!conditions ? "AWAITING ANALYSIS" : !hasTerrain ? "FLAT HORIZON" : undefined}
           />
         </article>
+
+        <article className="telemetry-row telemetry-power">
+          <div className="telemetry-name">
+            <BatteryCharging weight="light" aria-hidden="true" />
+            <div>
+              <p>Solar Power & Battery</p>
+              <span>{power ? (power.summary.power_survivable ? "Surviving buffer" : "Freeze risk") : "Photovoltaic buffer"}</span>
+            </div>
+          </div>
+          <StatusIndicator
+            visible={power?.summary.power_survivable ?? false}
+            pending={!power}
+            label={!power ? "CALCULATING" : power.summary.power_survivable ? "NOMINAL" : "DEPLETION RISK"}
+          />
+          <dl className="telemetry-values">
+            <div>
+              <dt>Peak Generation</dt>
+              <dd aria-label={power ? undefined : "Not calculated"}>{power ? `${power.summary.peak_generation_w.toFixed(0)} W` : "--"}</dd>
+            </div>
+            <div>
+              <dt>Min Battery SoC</dt>
+              <dd aria-label={power ? undefined : "Not calculated"}>{power ? `${power.summary.minimum_battery_soc_pct.toFixed(0)}%` : "--"}</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article className="telemetry-row telemetry-volatiles">
+          <div className="telemetry-name">
+            <Drop weight="light" aria-hidden="true" />
+            <div>
+              <p>Volatiles / Cold Traps</p>
+              <span>{volatiles ? `${volatiles.nearest_cold_trap.name} · ${volatiles.nearest_cold_trap.distance_km.toFixed(1)} km` : "Polar ice prospect"}</span>
+            </div>
+          </div>
+          <StatusIndicator
+            visible={volatiles ? (volatiles.nearest_cold_trap.water_ice_confirmed || volatiles.volatile_potential_score > 40) : false}
+            pending={!volatiles}
+            label={!volatiles ? "CALCULATING" : volatiles.nearest_cold_trap.water_ice_confirmed ? "ICE CONFIRMED" : volatiles.classification.toUpperCase()}
+          />
+          <dl className="telemetry-values">
+            <div>
+              <dt>Thermal Regime</dt>
+              <dd aria-label={volatiles ? undefined : "Not calculated"}>{volatiles ? volatiles.thermal_regime : "--"}</dd>
+            </div>
+            <div>
+              <dt>1 m Drill Regolith</dt>
+              <dd aria-label={volatiles ? undefined : "Not calculated"}>{volatiles ? volatiles.ice_stability.drilling_feasibility : "--"}</dd>
+            </div>
+          </dl>
+        </article>
       </div>
+
+      {conditions && dossierUrl && (
+        <div className="conditions-dossier-action">
+          <a
+            href={dossierUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="dossier-button"
+            title="Open aerospace-grade Flight Readiness Review document with SPICE verification and LOLA horizon raytrace"
+          >
+            <FileText weight="bold" aria-hidden="true" />
+            <span>Flight Readiness Review Dossier</span>
+            <ArrowUpRight weight="bold" aria-hidden="true" />
+          </a>
+        </div>
+      )}
 
       <div className="data-provenance">
         <span className={`mode-dot ${conditions ? "mode-live" : "mode-preview"}`} />

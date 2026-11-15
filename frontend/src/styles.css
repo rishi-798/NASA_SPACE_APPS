@@ -927,6 +927,51 @@ a {
   color: var(--earth);
 }
 
+.telemetry-power .telemetry-name > svg {
+  color: #f59e0b;
+}
+
+.telemetry-volatiles .telemetry-name > svg {
+  color: #38bdf8;
+}
+
+.conditions-dossier-action {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.dossier-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--foreground);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-sizing: border-box;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.dossier-button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--muted);
+  color: #ffffff;
+}
+
+.dossier-button svg {
+  font-size: 0.95rem;
+}
+
 .telemetry-name p {
   margin: 0;
   font-size: 0.86rem;

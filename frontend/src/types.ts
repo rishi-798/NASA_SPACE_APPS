@@ -150,3 +150,54 @@ export type ComparisonResult = {
   table: ComparisonRow[];
   comparison_notes: string[];
 };
+
+export type PowerAssessment = {
+  site: { name: string; latitude: number; longitude: number; terrain_mode: string };
+  mission_window: { start: string; end: string; step_minutes: number; duration_hours: number };
+  payload_configuration: {
+    solar_array_area_m2: number;
+    cell_efficiency_pct: number;
+    array_orientation: string;
+    base_power_load_w: number;
+    battery_capacity_wh: number;
+    initial_soc_pct: number;
+  };
+  summary: {
+    total_energy_generated_kwh: number;
+    total_energy_consumed_kwh: number;
+    net_energy_balance_kwh: number;
+    peak_generation_w: number;
+    minimum_battery_soc_pct: number;
+    final_battery_soc_pct: number;
+    power_survivable: boolean;
+    assessment: string;
+  };
+};
+
+export type VolatilesAssessment = {
+  coordinates: { lat: number; lon: number };
+  is_polar_region: boolean;
+  volatile_potential_score: number;
+  classification: string;
+  thermal_regime: string;
+  estimated_diurnal_range_k: { min_k: number; max_k: number };
+  ice_stability: {
+    regime: string;
+    estimated_depth_to_ice_table_m: number | null;
+    drilling_feasibility: string;
+  };
+  nearest_cold_trap: {
+    id: string;
+    name: string;
+    distance_km: number;
+    distance_m: number;
+    azimuth_deg: number;
+    crater_diameter_km: number;
+    crater_depth_km: number;
+    psr_area_km2: number;
+    min_measured_temperature_k: number;
+    water_ice_confirmed: boolean;
+    confirmation_source: string;
+  };
+  scientific_disclaimer: string;
+};

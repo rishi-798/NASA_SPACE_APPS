@@ -1,5 +1,5 @@
 import type { MoonLocation } from "../MoonMap";
-import type { AnalysisBundle, AnalysisResult, ComparisonResult, VisibilityResponse } from "../types";
+import type { AnalysisBundle, AnalysisResult, ComparisonResult, PowerAssessment, VisibilityResponse, VolatilesAssessment } from "../types";
 import { analysisQuery, analysisWindow, toAnalysisResult } from "./analysisWindow";
 import { comparisonQuery, validateComparison } from "./comparison";
 
@@ -93,4 +93,38 @@ export async function getComparison(time: string, signal: AbortSignal): Promise<
   } catch (error) {
     throw new ApiError(error instanceof Error ? error.message : "The comparison returned invalid data.");
   }
+}
+
+/** Photovoltaic power and battery energy budget (GET /api/analysis/power). */
+export async function getPowerAssessment(
+  siteId: string | null,
+  location: MoonLocation | null,
+  time: string,
+  signal?: AbortSignal,
+): Promise<PowerAssessment> {
+  const params = new URLSearchParams();
+  if (siteId && siteId !== "custom") {
+    params.set("site_id", siteId);
+  } else if (location) {
+    params.set("lat", String(location.latitude));
+    params.set("lon", String(location.longitude));
+  }
+  const window = analysisWindow(time);
+  params.set("start", window.start);
+  params.set("end", window.end);
+  params.set("step_minutes", "30");
+  return request<PowerAssessment>(`/api/analysis/power?${params}`, signal);
+}
+
+/** Lunar polar volatiles and cold trap proximity (GET /api/terrain/volatiles). */
+export async function getVolatilesAssessment(
+  latitude: number,
+  longitude: number,
+  signal?: AbortSignal,
+): Promise<VolatilesAssessment> {
+  const params = new URLSearchParams({
+    lat: String(latitude),
+    lon: String(longitude),
+  });
+  return request<VolatilesAssessment>(`/api/terrain/volatiles?${params}`, signal);
 }

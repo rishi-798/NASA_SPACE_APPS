@@ -157,3 +157,25 @@ def test_volatiles_validation_errors():
     res = client.get("/api/terrain/volatiles?lat=95.0&lon=0.0")
     assert res.status_code == 422
 
+
+def test_solar_power_south_polar_on_demand_terrain(monkeypatch, tmp_path):
+    # With on-demand terrain enabled, verifies terrain_profile routing in solar power engine
+    from tests.test_terrain import make_dem
+    from backend.terrain import on_demand
+    dem = tmp_path / "synthetic-lola.tif"
+    make_dem(dem, ridges=[(90, 1000, 200)])
+    monkeypatch.setenv("TERRAIN_ON_DEMAND", "1")
+    monkeypatch.setenv("LOLA_80S_DEM_PATH", str(dem))
+    monkeypatch.setattr(on_demand, "SETTINGS", {"max_distance_m": 2500.0, "azimuth_step": 10.0, "observer_height_m": 0.0, "min_distance_m": 150.0})
+
+    res = client.get(
+        "/api/analysis/power?lat=-84.79&lon=29.20&start=2026-11-15T00:00:00Z&end=2026-11-16T00:00:00Z&step_minutes=60"
+    )
+    assert res.status_code == 200
+    data = res.json()
+    assert data["site"]["latitude"] == -84.79
+    assert data["site"]["terrain_mode"] == "terrain_profile"
+    assert "summary" in data
+    assert "total_energy_generated_kwh" in data["summary"]
+
+

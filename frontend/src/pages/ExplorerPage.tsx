@@ -209,6 +209,9 @@ function ExplorerWorkspace() {
             observationTime={date && time ? timestamp(date, time) : null}
             errorMessage={errorMessage}
             terrain={result?.terrain ?? null}
+            siteId={pickedLocation ? undefined : selectedSite.id}
+            latitude={location.latitude}
+            longitude={location.longitude}
           />
           <TerrainContext latitude={location.latitude} longitude={location.longitude} />
         </aside>

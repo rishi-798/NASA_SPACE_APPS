@@ -79,8 +79,15 @@ def calculate_solar_power_and_battery(
     # Calculate SPICE geometric visibility and sun elevation angles
     samples = calculate_visibility_window(target_lat, target_lon, rng["start"], rng["end"], step_minutes)
 
-    # Resolve terrain horizon if available
-    profile, terrain_info = resolve_horizon(site, allow_flat_fallback=True)
+    # Resolve terrain horizon if available (using on-demand LOLA DEM for custom south-polar points)
+    if site_id is None and lat is not None and lat < -60.0:
+        try:
+            from backend.analysis import _custom_terrain
+            profile, terrain_info = _custom_terrain({"latitude": target_lat, "longitude": target_lon, "kind": "custom"}, allow_flat_fallback=True)
+        except Exception:
+            profile, terrain_info = resolve_horizon(site, allow_flat_fallback=True)
+    else:
+        profile, terrain_info = resolve_horizon(site, allow_flat_fallback=True)
 
     dt_hours = step_minutes / 60.0
     current_soc_wh = float(battery_capacity_wh) * (float(initial_soc_pct) / 100.0)
