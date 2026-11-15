@@ -26,11 +26,11 @@ type Runtime = {
 
 function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THREE.Intersection, enriched = false, scans: THREE.Mesh[] = []) {
   if (!(hit.object instanceof THREE.Mesh) || hit.faceIndex == null) return previous;
-  const capacity = enriched ? 7500 : 1800;
+  const capacity = enriched ? 30000 : 1800;
   const mesh = hit.object, positions = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
   if (!positions || !indices) return previous;
   const makeRockGeometry = (variant: number) => {
-    const source = new THREE.IcosahedronGeometry(1, 2);
+    const source = new THREE.IcosahedronGeometry(1, enriched ? (variant >= 5 ? 0 : 1) : 2);
     source.deleteAttribute('normal');
     source.deleteAttribute('uv');
     const geometry = mergeVertices(source);
@@ -65,6 +65,12 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
         map: grit?.map, normalMap: grit?.normalMap,
         normalScale: new THREE.Vector2(.25, .25), flatShading: enriched,
       });
+      if (enriched) {
+        material.onBeforeCompile = shader => {
+          shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\n diffuseColor.rgb = vec3(dot(diffuseColor.rgb,vec3(.2126,.7152,.0722)));');
+        };
+        material.customProgramCacheKey = () => 'lunar-neutral-fragments-v1';
+      }
       const stones = new THREE.InstancedMesh(template ? template.geometry.clone() : makeRockGeometry(variant), material, capacity);
       stones.castShadow = stones.receiveShadow = true;
       stones.frustumCulled = false;
@@ -92,12 +98,13 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
     const area = normal.length() / 2;
     normal.normalize();
     if (normal.z < 0) normal.negate();
-    const samples = Math.min(enriched ? 600 : 120, Math.max(1, Math.ceil(area * (enriched ? .65 : .09))));
+    const samples = Math.min(enriched ? 24000 : 120, Math.max(1, Math.ceil(area * (enriched ? 12 : .09))));
     for (let i = 0; i < samples; i++) {
       const u = Math.sqrt(random()), v = random();
       point.copy(a).multiplyScalar(1-u).addScaledVector(b, u*(1-v)).addScaledVector(c, u*v);
       const distance = point.distanceToSquared(hit.point);
       if (distance > 4900 || distance < 4) continue;
+      if (enriched && random() > .08 + .92 * Math.exp(-distance / 500)) continue;
       candidates++;
       const slot = count < capacity ? count++ : Math.floor(random() * candidates);
       if (slot >= capacity) continue;
@@ -108,7 +115,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
       // Many small fragments and occasional larger rocks, mostly buried in dust.
       const sizeRoll = random();
       const scale = enriched
-        ? (sizeRoll < .90 ? .012 + Math.pow(random(), 3) * .13 : sizeRoll < .99 ? .18 + random() * .40 : .65 + random() * .65)
+        ? (sizeRoll < .70 ? .012 + Math.pow(random(), 2) * .045 : sizeRoll < .985 ? .025 + random() * .065 : sizeRoll < .999 ? .09 + random() * .11 : .20 + random() * .20)
         : .035 + Math.pow(random(), 3) * .42;
       transform.scale.set(scale, scale * (.65 + random() * .7), scale * (enriched && scans.length ? .75 + random() * .45 : .35 + random() * .38));
       transform.updateMatrix();
@@ -119,7 +126,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
   samplesBySlot.forEach((sample, slot) => {
     // Reserve photographed geometry for visible stones; fine gravel uses cheaper fragments.
     const variant = scans.length && enriched
-      ? sample.scale >= .18 ? slot % scans.length : scans.length + slot % (variants - scans.length)
+      ? sample.scale >= .09 ? slot % scans.length : scans.length + slot % (variants - scans.length)
       : slot % variants;
     const batch = batches[variant]!;
     // Keep most of each stone above the regolith, with its lower portion embedded.
@@ -367,7 +374,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     catch { queueMicrotask(() => setState('WebGL could not start. Try another browser.')); return; }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.setClearColor(0x010204);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = detailedRegions.has(region.id) ? 1.35 : 2.6;
@@ -389,9 +396,11 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     const inverse = world.clone().invert();
 
     // Primary astronomical Sun
-    const sunLight = new THREE.DirectionalLight(0xfffaec, 0);
-    sunLight.castShadow = true; sunLight.shadow.mapSize.set(2048, 2048);
-    sunLight.shadow.bias = -0.00012; sunLight.shadow.normalBias = 0.05;
+    const sunLight = new THREE.DirectionalLight(detailedRegions.has(region.id) ? 0xffffff : 0xfffaec, 0);
+    sunLight.castShadow = true;
+    const shadowResolution = detailedRegions.has(region.id) ? 4096 : 2048;
+    sunLight.shadow.mapSize.set(shadowResolution, shadowResolution);
+    sunLight.shadow.bias = -0.000002; sunLight.shadow.normalBias = 0.05;
 
     // Earthshine directional light
     const earthLight = new THREE.DirectionalLight(0x8cb5df, 0);
@@ -595,11 +604,12 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       const target = value.mode === 'eye' && value.selectedPoint ? value.selectedPoint : center;
       sunLight.target.position.copy(target);
       sunLight.position.copy(target).addScaledVector(new THREE.Vector3(...sky.sun.directional_vector_local_z_up), lightDistance);
-      const radius = value.mode === 'eye' ? 160 : Math.max(1200, extent * 1.35);
+      const radius = value.mode === 'eye' ? 80 : Math.max(1200, extent * 1.35);
       const shadow = sunLight.shadow.camera;
       shadow.left = shadow.bottom = -radius; shadow.right = shadow.top = radius;
-      shadow.near = 10; shadow.far = lightDistance + radius * 3.0;
-      sunLight.shadow.normalBias = value.mode === 'eye' ? .015 : .08;
+      const depthSpan = Math.max(1000, radius * 3);
+      shadow.near = Math.max(10, lightDistance - depthSpan); shadow.far = lightDistance + depthSpan;
+      sunLight.shadow.normalBias = value.mode === 'eye' ? .003 : .08;
       shadow.updateProjectionMatrix();
     }
 
