@@ -523,6 +523,37 @@ export function SpaceScene({
     scene.add(earthGroup);
     const earthAtmosphere = createAtmosphere(earthRadius * 1.025);
     earthGroup.add(earthAtmosphere);
+
+    // Van Allen Radiation Belts surrounding Earth (Inner proton belt & Outer electron belt)
+    const vanAllenGroup = new THREE.Group();
+    vanAllenGroup.name = "Van Allen Radiation Belts";
+    vanAllenGroup.rotation.z = THREE.MathUtils.degToRad(11.5); // Earth magnetic dipole tilt
+    const innerBeltGeom = new THREE.TorusGeometry(earthRadius * 1.45, earthRadius * 0.18, 16, 48);
+    const innerBeltMat = new THREE.MeshBasicMaterial({
+      color: 0x8b5cf6,
+      transparent: true,
+      opacity: 0.18,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const innerBelt = new THREE.Mesh(innerBeltGeom, innerBeltMat);
+    innerBelt.rotation.x = Math.PI / 2;
+    vanAllenGroup.add(innerBelt);
+
+    const outerBeltGeom = new THREE.TorusGeometry(earthRadius * 2.25, earthRadius * 0.35, 16, 48);
+    const outerBeltMat = new THREE.MeshBasicMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.12,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const outerBelt = new THREE.Mesh(outerBeltGeom, outerBeltMat);
+    outerBelt.rotation.x = Math.PI / 2;
+    vanAllenGroup.add(outerBelt);
+    earthGroup.add(vanAllenGroup);
     const departurePin = makePin(0xff8955, 0.058);
     departurePin.position.copy(globePoint(departure?.latitude ?? 0, departure?.longitude ?? 0, earthRadius + 0.03));
     earthGroup.add(departurePin);
@@ -707,6 +738,22 @@ export function SpaceScene({
       <div className="trip-space-data" aria-live="polite">
         <span><i className="trip-space-sun-dot" />SUN · {sunDistance}</span>
         <span>EARTH–MOON · {earthDistance}</span>
+      </div>
+      <div className="trip-astrodynamics-hud" style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "0.4rem 0.8rem",
+        marginTop: "0.35rem",
+        padding: "0.3rem 0.6rem",
+        fontSize: "0.74rem",
+        background: "rgba(15, 23, 42, 0.7)",
+        borderRadius: "6px",
+        border: "1px solid rgba(56, 189, 248, 0.22)",
+        backdropFilter: "blur(6px)",
+      }}>
+        <span style={{ color: "#38bdf8" }}>⚡ Van Allen Belts: Crossed T+4h (Inner 6k km, Outer 60k km)</span>
+        <span style={{ color: "#c084fc" }}>📐 TLI Lead Angle: ~110° Hohmann Intercept</span>
+        <span style={{ color: "#34d399" }}>🚀 Lunar Gravity: g = 1.62 m/s² (16.6% Earth)</span>
       </div>
       {samples && samples.length > 1 && <div className="trip-space-timeline">
         <button type="button" onClick={() => setPlaying((value) => !value)} aria-label={playing ? "Pause lighting timeline" : "Play lighting timeline"}>
