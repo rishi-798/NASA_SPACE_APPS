@@ -445,7 +445,6 @@ export function SpaceScene({
     let transferPath: THREE.CubicBezierCurve3 | undefined;
     let transferLine: THREE.Line | undefined;
     let vehicle: THREE.Object3D | undefined;
-    let sunVisualPosition: THREE.Vector3 | undefined;
     const moonCenter = new THREE.Vector3(0, 0, 0);
     const moonRadius = 0.72;
     const earthRadius = moonRadius * 6371 / MOON_RADIUS_KM;
@@ -478,11 +477,11 @@ export function SpaceScene({
       ringGeo.rotateX(-Math.PI / 2);
       const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.45 });
       const stagingRing = new THREE.Mesh(ringGeo, ringMat);
-      stagingRing.position.set(0, -3.5, 0);
+      stagingRing.position.set(0, -2.9, 0);
       scene.add(stagingRing);
 
       const gridHelper = new THREE.GridHelper(8, 16, 0x1e3a5f, 0x0c1524);
-      gridHelper.position.set(0, -3.51, 0);
+      gridHelper.position.set(0, -2.91, 0);
       scene.add(gridHelper);
 
       camera.position.set(6.5, 2.2, 9.5);
@@ -509,7 +508,7 @@ export function SpaceScene({
         if (size.z > size.y && size.z > size.x) model.rotateX(-Math.PI / 2);
         else if (size.x > size.y) model.rotateZ(Math.PI / 2);
         bounds = new THREE.Box3().setFromObject(model);
-        model.scale.setScalar(7 / bounds.getSize(new THREE.Vector3()).y);
+        model.scale.setScalar(5.8 / bounds.getSize(new THREE.Vector3()).y);
         bounds = new THREE.Box3().setFromObject(model);
         model.position.sub(bounds.getCenter(new THREE.Vector3()));
         model.traverse((object) => {
@@ -589,7 +588,6 @@ export function SpaceScene({
     const initialSunDirection = getSunDirection();
     const initialEarthDirection = getEarthDirection();
     const earthCenter = initialEarthDirection.clone().multiplyScalar(EARTH_MOON_VIEW_DISTANCE);
-    sunVisualPosition = initialSunDirection.clone().multiplyScalar(SUN_VIEW_DISTANCE);
     const targetEarthCenter = earthCenter.clone();
     const currentEarthCenter = earthCenter.clone();
     const targetSunDirection = initialSunDirection.clone();
@@ -619,7 +617,7 @@ export function SpaceScene({
       const to = moonCenter.clone().add(landingPoint);
       const chord = to.clone().sub(from);
       const chordLen = chord.length();
-      let transferPlaneNormal = chord.clone().cross(viewNormal).normalize();
+      const transferPlaneNormal = chord.clone().cross(viewNormal).normalize();
       if (transferPlaneNormal.lengthSq() < 0.1) transferPlaneNormal.set(0, 1, 0);
       const arcHeight = chordLen * 0.14;
       const controlA = from.clone().lerp(to, 0.32).addScaledVector(transferPlaneNormal, arcHeight);
@@ -673,7 +671,7 @@ export function SpaceScene({
 
     const sunRoot = new THREE.Group();
     sunRoot.name = "Visible Sun - true apparent diameter";
-    sunVisualPosition = initialSunDirection.clone().multiplyScalar(SUN_VIEW_DISTANCE);
+    const sunVisualPosition = initialSunDirection.clone().multiplyScalar(SUN_VIEW_DISTANCE);
     sunRoot.position.copy(sunVisualPosition);
     scene.add(sunRoot);
     scene.add(createSunGlow());
@@ -810,11 +808,11 @@ export function SpaceScene({
           const cycleTime = elapsed % cycleDuration;
           const phase = cycleTime / cycleDuration; // 0.0 to 1.0
 
-          let vehiclePos = new THREE.Vector3();
-          let forwardTangent = new THREE.Vector3(0, 1, 0);
-          let vehicleOpacity = 1.0;
-          let isThrusting = true;
-          let flameIntensity = 1.0;
+          let vehiclePos: THREE.Vector3;
+          let forwardTangent: THREE.Vector3;
+          let vehicleOpacity: number;
+          let isThrusting: boolean;
+          let flameIntensity: number;
 
           if (phase < 0.74) {
             // PHASE 1: Translunar Injection & Coast (Earth to Moon)
