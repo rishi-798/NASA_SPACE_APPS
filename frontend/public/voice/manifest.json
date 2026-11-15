@@ -1,0 +1,1274 @@
+{
+ "lines": {
+  "en": {
+   "online": {
+    "file": "en/online.m4a",
+    "hash": "365610afb74d7b92",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "departure": {
+    "file": "en/departure.m4a",
+    "hash": "382a1bf6c8fba3cd",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "rocket": {
+    "file": "en/rocket.m4a",
+    "hash": "1a8d469ff6e015b3",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "destination": {
+    "file": "en/destination.m4a",
+    "hash": "77098adcee625081",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "observation": {
+    "file": "en/observation.m4a",
+    "hash": "6ee921b661c83fdf",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "explorer": {
+    "file": "en/explorer.m4a",
+    "hash": "150ad2c6b27d3776",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "analysis_start": {
+    "file": "en/analysis_start.m4a",
+    "hash": "374e21de1440980e",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "analysis_done": {
+    "file": "en/analysis_done.m4a",
+    "hash": "9a1de9d91884953f",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "trip_done": {
+    "file": "en/trip_done.m4a",
+    "hash": "b8c96fb369c90c69",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "analysis_failed": {
+    "file": "en/analysis_failed.m4a",
+    "hash": "dbd507e4d81ec06f",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "compare_start": {
+    "file": "en/compare_start.m4a",
+    "hash": "23d5c0a549dc4099",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "compare_done": {
+    "file": "en/compare_done.m4a",
+    "hash": "8d799e3898d77712",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "compare_failed": {
+    "file": "en/compare_failed.m4a",
+    "hash": "6f8b2f92e24b01b9",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "mission_record": {
+    "file": "en/mission_record.m4a",
+    "hash": "5624d05f22c74475",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "site_athena": {
+    "file": "en/site_athena.m4a",
+    "hash": "8e1adac1ce7d2280",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "site_odysseus": {
+    "file": "en/site_odysseus.m4a",
+    "hash": "90b1d7340a46dad1",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "site_custom": {
+    "file": "en/site_custom.m4a",
+    "hash": "b05be6f5577d7ce5",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "earth_visible_terrain": {
+    "file": "en/earth_visible_terrain.m4a",
+    "hash": "d182e9987d70f82b",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "earth_above_flat": {
+    "file": "en/earth_above_flat.m4a",
+    "hash": "03e274fc64e8723c",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "earth_blocked_terrain": {
+    "file": "en/earth_blocked_terrain.m4a",
+    "hash": "dbda54223bf6910f",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "earth_below_horizon": {
+    "file": "en/earth_below_horizon.m4a",
+    "hash": "e4d5c7fd8e916718",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "earth_not_visible": {
+    "file": "en/earth_not_visible.m4a",
+    "hash": "0251129ef51eff7f",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "earth_below_flat": {
+    "file": "en/earth_below_flat.m4a",
+    "hash": "f8fa39a1933551e3",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "sun_visible_terrain": {
+    "file": "en/sun_visible_terrain.m4a",
+    "hash": "c5c2703f20f24307",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "sun_above_flat": {
+    "file": "en/sun_above_flat.m4a",
+    "hash": "053e982940a43e48",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "sun_blocked_terrain": {
+    "file": "en/sun_blocked_terrain.m4a",
+    "hash": "b2e828619ef5b43f",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "sun_below_horizon": {
+    "file": "en/sun_below_horizon.m4a",
+    "hash": "53b9f62e2293ce08",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "sun_not_visible": {
+    "file": "en/sun_not_visible.m4a",
+    "hash": "2a9d226038b04e88",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "sun_below_flat": {
+    "file": "en/sun_below_flat.m4a",
+    "hash": "de0bf743df91c029",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "terrain_included": {
+    "file": "en/terrain_included.m4a",
+    "hash": "e60cc990f7dd113a",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "res_80": {
+    "file": "en/res_80.m4a",
+    "hash": "12b7f49be7bb2be4",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "res_generic": {
+    "file": "en/res_generic.m4a",
+    "hash": "314fa3a8238844a1",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "flat_not_included": {
+    "file": "en/flat_not_included.m4a",
+    "hash": "362155153fba7559",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "degraded": {
+    "file": "en/degraded.m4a",
+    "hash": "60c4936785df34a4",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "horizon_unknown": {
+    "file": "en/horizon_unknown.m4a",
+    "hash": "e8d00302c68d617c",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   },
+   "not_power": {
+    "file": "en/not_power.m4a",
+    "hash": "a6c46db751c5b8a2",
+    "engine": "say",
+    "voice": "Samantha",
+    "placeholder": true
+   }
+  },
+  "es": {
+   "online": {
+    "file": "es/online.m4a",
+    "hash": "854b2736bfe3c972",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "departure": {
+    "file": "es/departure.m4a",
+    "hash": "b93d8dab0a8117aa",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "rocket": {
+    "file": "es/rocket.m4a",
+    "hash": "a494523a17e086d2",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "destination": {
+    "file": "es/destination.m4a",
+    "hash": "9c3141c433f2e060",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "observation": {
+    "file": "es/observation.m4a",
+    "hash": "bcac65863a99e45d",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "explorer": {
+    "file": "es/explorer.m4a",
+    "hash": "d8812a8603a19d39",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "analysis_start": {
+    "file": "es/analysis_start.m4a",
+    "hash": "d196a2e2b60b31b1",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "analysis_done": {
+    "file": "es/analysis_done.m4a",
+    "hash": "8ebcd008e5770f76",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "trip_done": {
+    "file": "es/trip_done.m4a",
+    "hash": "2fc2084f25644337",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "analysis_failed": {
+    "file": "es/analysis_failed.m4a",
+    "hash": "c20f87b8bb399446",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "compare_start": {
+    "file": "es/compare_start.m4a",
+    "hash": "ed1c5c5eb790a01c",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "compare_done": {
+    "file": "es/compare_done.m4a",
+    "hash": "ad701d91e03df9eb",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "compare_failed": {
+    "file": "es/compare_failed.m4a",
+    "hash": "fb313d8dd3344c6b",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "mission_record": {
+    "file": "es/mission_record.m4a",
+    "hash": "418bafe792221b6b",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "site_athena": {
+    "file": "es/site_athena.m4a",
+    "hash": "8969e301ac3724e5",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "site_odysseus": {
+    "file": "es/site_odysseus.m4a",
+    "hash": "3d6748ca2dd6b510",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "site_custom": {
+    "file": "es/site_custom.m4a",
+    "hash": "7dac3c4aaad944fc",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "earth_visible_terrain": {
+    "file": "es/earth_visible_terrain.m4a",
+    "hash": "5a57a5f010db3931",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "earth_above_flat": {
+    "file": "es/earth_above_flat.m4a",
+    "hash": "824d864e11e94002",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "earth_blocked_terrain": {
+    "file": "es/earth_blocked_terrain.m4a",
+    "hash": "9b96ce30f8da0551",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "earth_below_horizon": {
+    "file": "es/earth_below_horizon.m4a",
+    "hash": "f279ef91fde96a95",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "earth_not_visible": {
+    "file": "es/earth_not_visible.m4a",
+    "hash": "ff99c758146d56d3",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "earth_below_flat": {
+    "file": "es/earth_below_flat.m4a",
+    "hash": "442c9cd5d67c5469",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "sun_visible_terrain": {
+    "file": "es/sun_visible_terrain.m4a",
+    "hash": "e72355f0b976ff61",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "sun_above_flat": {
+    "file": "es/sun_above_flat.m4a",
+    "hash": "39f733d637c4cf56",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "sun_blocked_terrain": {
+    "file": "es/sun_blocked_terrain.m4a",
+    "hash": "5c3d5c3fe8092995",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "sun_below_horizon": {
+    "file": "es/sun_below_horizon.m4a",
+    "hash": "8134b7977f4cd7a4",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "sun_not_visible": {
+    "file": "es/sun_not_visible.m4a",
+    "hash": "4e204b7b32adeac3",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "sun_below_flat": {
+    "file": "es/sun_below_flat.m4a",
+    "hash": "ec5a8d1a53a9c8d2",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "terrain_included": {
+    "file": "es/terrain_included.m4a",
+    "hash": "e0cc50a28639eada",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "res_80": {
+    "file": "es/res_80.m4a",
+    "hash": "fceb2246d2b0e4c5",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "res_generic": {
+    "file": "es/res_generic.m4a",
+    "hash": "4d9c5039d73f68d2",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "flat_not_included": {
+    "file": "es/flat_not_included.m4a",
+    "hash": "0e70d3a75da85106",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "degraded": {
+    "file": "es/degraded.m4a",
+    "hash": "58cb2aefeff96cba",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "horizon_unknown": {
+    "file": "es/horizon_unknown.m4a",
+    "hash": "7b41af5151cec81f",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   },
+   "not_power": {
+    "file": "es/not_power.m4a",
+    "hash": "c3a93c9d04691497",
+    "engine": "say",
+    "voice": "Paulina",
+    "placeholder": true
+   }
+  },
+  "fr": {
+   "online": {
+    "file": "fr/online.m4a",
+    "hash": "577ed2e4b2504a7a",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "departure": {
+    "file": "fr/departure.m4a",
+    "hash": "6eedfaadb5a7ffef",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "rocket": {
+    "file": "fr/rocket.m4a",
+    "hash": "8f75e92d06f13afc",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "destination": {
+    "file": "fr/destination.m4a",
+    "hash": "fcea8fb140e3c3ee",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "observation": {
+    "file": "fr/observation.m4a",
+    "hash": "0b526485240501bf",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "explorer": {
+    "file": "fr/explorer.m4a",
+    "hash": "444656353c05b646",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "analysis_start": {
+    "file": "fr/analysis_start.m4a",
+    "hash": "4a3573a4d10ae66f",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "analysis_done": {
+    "file": "fr/analysis_done.m4a",
+    "hash": "9ffb9cae97ec3e76",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "trip_done": {
+    "file": "fr/trip_done.m4a",
+    "hash": "e99575e0f9954a42",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "analysis_failed": {
+    "file": "fr/analysis_failed.m4a",
+    "hash": "9a800c68f93c1fd3",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "compare_start": {
+    "file": "fr/compare_start.m4a",
+    "hash": "6b118063438d0ec8",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "compare_done": {
+    "file": "fr/compare_done.m4a",
+    "hash": "be7a0917fe648772",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "compare_failed": {
+    "file": "fr/compare_failed.m4a",
+    "hash": "6d1bff1bd8bad80a",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "mission_record": {
+    "file": "fr/mission_record.m4a",
+    "hash": "2bdc1af7c3bed530",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "site_athena": {
+    "file": "fr/site_athena.m4a",
+    "hash": "c82e93ca54bd24e8",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "site_odysseus": {
+    "file": "fr/site_odysseus.m4a",
+    "hash": "35ba440875311775",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "site_custom": {
+    "file": "fr/site_custom.m4a",
+    "hash": "9c4dbc1a2bc312b2",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "earth_visible_terrain": {
+    "file": "fr/earth_visible_terrain.m4a",
+    "hash": "ed9218ef39a76cd9",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "earth_above_flat": {
+    "file": "fr/earth_above_flat.m4a",
+    "hash": "22c461a77a37e1e5",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "earth_blocked_terrain": {
+    "file": "fr/earth_blocked_terrain.m4a",
+    "hash": "8d9723582504c338",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "earth_below_horizon": {
+    "file": "fr/earth_below_horizon.m4a",
+    "hash": "80103a4ac98858a8",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "earth_not_visible": {
+    "file": "fr/earth_not_visible.m4a",
+    "hash": "7f6f75a99bb07da6",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "earth_below_flat": {
+    "file": "fr/earth_below_flat.m4a",
+    "hash": "e2104cdea4f446ef",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "sun_visible_terrain": {
+    "file": "fr/sun_visible_terrain.m4a",
+    "hash": "8d8905ad92c76229",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "sun_above_flat": {
+    "file": "fr/sun_above_flat.m4a",
+    "hash": "e4251c9626264290",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "sun_blocked_terrain": {
+    "file": "fr/sun_blocked_terrain.m4a",
+    "hash": "c1793f20a598d4a2",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "sun_below_horizon": {
+    "file": "fr/sun_below_horizon.m4a",
+    "hash": "7c2a69c44e5914e6",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "sun_not_visible": {
+    "file": "fr/sun_not_visible.m4a",
+    "hash": "3e3bd9fd99b265fc",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "sun_below_flat": {
+    "file": "fr/sun_below_flat.m4a",
+    "hash": "b25802fa86ff5341",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "terrain_included": {
+    "file": "fr/terrain_included.m4a",
+    "hash": "c2de58f7538eb5ce",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "res_80": {
+    "file": "fr/res_80.m4a",
+    "hash": "3f2bac6dea9199d5",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "res_generic": {
+    "file": "fr/res_generic.m4a",
+    "hash": "83486800701d44db",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "flat_not_included": {
+    "file": "fr/flat_not_included.m4a",
+    "hash": "da43750a48cad33a",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "degraded": {
+    "file": "fr/degraded.m4a",
+    "hash": "28ae02e2c9fe3bf9",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "horizon_unknown": {
+    "file": "fr/horizon_unknown.m4a",
+    "hash": "0ef52e7912989408",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   },
+   "not_power": {
+    "file": "fr/not_power.m4a",
+    "hash": "465bb64f5823a689",
+    "engine": "say",
+    "voice": "Thomas",
+    "placeholder": true
+   }
+  },
+  "hi": {
+   "online": {
+    "file": "hi/online.m4a",
+    "hash": "7baf7572a17b243d",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "departure": {
+    "file": "hi/departure.m4a",
+    "hash": "0a02fabff1fbdafe",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "rocket": {
+    "file": "hi/rocket.m4a",
+    "hash": "d418bc7d7f2d6ecb",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "destination": {
+    "file": "hi/destination.m4a",
+    "hash": "d05ee68dbd9a9919",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "observation": {
+    "file": "hi/observation.m4a",
+    "hash": "bd4838a6e2909549",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "explorer": {
+    "file": "hi/explorer.m4a",
+    "hash": "82470069a6c98e11",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "analysis_start": {
+    "file": "hi/analysis_start.m4a",
+    "hash": "a1fbcd962fbd4564",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "analysis_done": {
+    "file": "hi/analysis_done.m4a",
+    "hash": "20563a55033d4bf4",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "trip_done": {
+    "file": "hi/trip_done.m4a",
+    "hash": "0e21ced2d7732443",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "analysis_failed": {
+    "file": "hi/analysis_failed.m4a",
+    "hash": "7db6b676e2c2b704",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "compare_start": {
+    "file": "hi/compare_start.m4a",
+    "hash": "d7f29d8123410d37",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "compare_done": {
+    "file": "hi/compare_done.m4a",
+    "hash": "87b86b7db1ba22be",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "compare_failed": {
+    "file": "hi/compare_failed.m4a",
+    "hash": "85878d375bbeaafd",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "mission_record": {
+    "file": "hi/mission_record.m4a",
+    "hash": "e3b3d1f094edb049",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "site_athena": {
+    "file": "hi/site_athena.m4a",
+    "hash": "785ba3fe0d21f144",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "site_odysseus": {
+    "file": "hi/site_odysseus.m4a",
+    "hash": "2b9016efad0c80db",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "site_custom": {
+    "file": "hi/site_custom.m4a",
+    "hash": "90c7faa8849ff8fd",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "earth_visible_terrain": {
+    "file": "hi/earth_visible_terrain.m4a",
+    "hash": "cc8d759f393be36d",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "earth_above_flat": {
+    "file": "hi/earth_above_flat.m4a",
+    "hash": "9752c93f910e57d8",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "earth_blocked_terrain": {
+    "file": "hi/earth_blocked_terrain.m4a",
+    "hash": "579390249fa0f7d2",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "earth_below_horizon": {
+    "file": "hi/earth_below_horizon.m4a",
+    "hash": "47e9f72563fec9ca",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "earth_not_visible": {
+    "file": "hi/earth_not_visible.m4a",
+    "hash": "ab86b7688fe52cad",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "earth_below_flat": {
+    "file": "hi/earth_below_flat.m4a",
+    "hash": "f4f2a4292d251ebd",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "sun_visible_terrain": {
+    "file": "hi/sun_visible_terrain.m4a",
+    "hash": "fc8330e892b3040b",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "sun_above_flat": {
+    "file": "hi/sun_above_flat.m4a",
+    "hash": "42cda835fe29d71c",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "sun_blocked_terrain": {
+    "file": "hi/sun_blocked_terrain.m4a",
+    "hash": "52556d38bb3cb5ce",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "sun_below_horizon": {
+    "file": "hi/sun_below_horizon.m4a",
+    "hash": "791c09e97ddb2b07",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "sun_not_visible": {
+    "file": "hi/sun_not_visible.m4a",
+    "hash": "04983dfd2c1487ae",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "sun_below_flat": {
+    "file": "hi/sun_below_flat.m4a",
+    "hash": "0024a1e77bb1a91f",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "terrain_included": {
+    "file": "hi/terrain_included.m4a",
+    "hash": "de6c5f09912128c6",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "res_80": {
+    "file": "hi/res_80.m4a",
+    "hash": "1b6289ff58c3c01c",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "res_generic": {
+    "file": "hi/res_generic.m4a",
+    "hash": "7769c98ae5a4155a",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "flat_not_included": {
+    "file": "hi/flat_not_included.m4a",
+    "hash": "f0017f90afa33d2f",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "degraded": {
+    "file": "hi/degraded.m4a",
+    "hash": "21a981adab524fd8",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "horizon_unknown": {
+    "file": "hi/horizon_unknown.m4a",
+    "hash": "08f75c21a63df5b2",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   },
+   "not_power": {
+    "file": "hi/not_power.m4a",
+    "hash": "665fe403c7a4ff3f",
+    "engine": "say",
+    "voice": "Lekha",
+    "placeholder": true
+   }
+  },
+  "zh": {
+   "online": {
+    "file": "zh/online.m4a",
+    "hash": "e2dc1ca5159da8d9",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "departure": {
+    "file": "zh/departure.m4a",
+    "hash": "0e6dbda1b89f0098",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "rocket": {
+    "file": "zh/rocket.m4a",
+    "hash": "962174d4d82bbd2c",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "destination": {
+    "file": "zh/destination.m4a",
+    "hash": "beb1374c04de1855",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "observation": {
+    "file": "zh/observation.m4a",
+    "hash": "21f47693465d89f8",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "explorer": {
+    "file": "zh/explorer.m4a",
+    "hash": "1d31271c6a7a4c48",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "analysis_start": {
+    "file": "zh/analysis_start.m4a",
+    "hash": "81c14a8845d6cdfa",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "analysis_done": {
+    "file": "zh/analysis_done.m4a",
+    "hash": "7955030a8346e359",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "trip_done": {
+    "file": "zh/trip_done.m4a",
+    "hash": "2ef73689ce7a92a0",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "analysis_failed": {
+    "file": "zh/analysis_failed.m4a",
+    "hash": "3b23c8b00c61853e",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "compare_start": {
+    "file": "zh/compare_start.m4a",
+    "hash": "35357358394b6a13",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "compare_done": {
+    "file": "zh/compare_done.m4a",
+    "hash": "95a8e07700b5a056",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "compare_failed": {
+    "file": "zh/compare_failed.m4a",
+    "hash": "fc99f08959dfaca5",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "mission_record": {
+    "file": "zh/mission_record.m4a",
+    "hash": "2692e8adeb7d3654",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "site_athena": {
+    "file": "zh/site_athena.m4a",
+    "hash": "ad4f5a7edbf12476",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "site_odysseus": {
+    "file": "zh/site_odysseus.m4a",
+    "hash": "b46fe36df9a14ff0",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "site_custom": {
+    "file": "zh/site_custom.m4a",
+    "hash": "94fc215e70ba3554",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "earth_visible_terrain": {
+    "file": "zh/earth_visible_terrain.m4a",
+    "hash": "a29441ade3cb64cd",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "earth_above_flat": {
+    "file": "zh/earth_above_flat.m4a",
+    "hash": "a0d1ab856da456dd",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "earth_blocked_terrain": {
+    "file": "zh/earth_blocked_terrain.m4a",
+    "hash": "7877ece6e04ddee1",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "earth_below_horizon": {
+    "file": "zh/earth_below_horizon.m4a",
+    "hash": "38e072b4993ecd8e",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "earth_not_visible": {
+    "file": "zh/earth_not_visible.m4a",
+    "hash": "5ae02717a5e0d138",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "earth_below_flat": {
+    "file": "zh/earth_below_flat.m4a",
+    "hash": "348e7f63b9e9f834",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "sun_visible_terrain": {
+    "file": "zh/sun_visible_terrain.m4a",
+    "hash": "72a13278c52bb568",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "sun_above_flat": {
+    "file": "zh/sun_above_flat.m4a",
+    "hash": "1cddb0c34c23acfc",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "sun_blocked_terrain": {
+    "file": "zh/sun_blocked_terrain.m4a",
+    "hash": "53c1dd9a06e68257",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "sun_below_horizon": {
+    "file": "zh/sun_below_horizon.m4a",
+    "hash": "ea2dfaf52bb97489",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "sun_not_visible": {
+    "file": "zh/sun_not_visible.m4a",
+    "hash": "4815f664754ecb5a",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "sun_below_flat": {
+    "file": "zh/sun_below_flat.m4a",
+    "hash": "c8fe3f7dcf2d36dd",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "terrain_included": {
+    "file": "zh/terrain_included.m4a",
+    "hash": "f3adfe6034769a0b",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "res_80": {
+    "file": "zh/res_80.m4a",
+    "hash": "22c1a1b639d08387",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "res_generic": {
+    "file": "zh/res_generic.m4a",
+    "hash": "7d0545e4b13a0b13",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "flat_not_included": {
+    "file": "zh/flat_not_included.m4a",
+    "hash": "f0744033af139645",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "degraded": {
+    "file": "zh/degraded.m4a",
+    "hash": "3c7736791a33d6c7",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "horizon_unknown": {
+    "file": "zh/horizon_unknown.m4a",
+    "hash": "2acf44dab816a017",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   },
+   "not_power": {
+    "file": "zh/not_power.m4a",
+    "hash": "e764e3a062fd59fa",
+    "engine": "say",
+    "voice": "Tingting",
+    "placeholder": true
+   }
+  }
+ }
+}

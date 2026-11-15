@@ -329,6 +329,44 @@ Which tree is served: whichever directory uvicorn runs in. The review preview on
   Timeline show only sourced records (`data/missionEvents.ts`: four dated events for two missions, each linked);
   other fields say "No verified record".
 
+### Mission Control voice guide (optional)
+- **Off by default.** Nothing is spoken until the user presses **Enable mission control** (bottom right). Enabling
+  is not remembered across reloads, so every session starts silent.
+- **Speech engine:** the browser's built-in Web Speech API (`speechSynthesis`). No new dependency, network call or API
+  key. One manager (`lib/voiceGuide.ts`) owns all speech: one utterance at a time, and each new line cancels the
+  previous one. Every prompt has a key, so rerenders never repeat it. The voice is an English system voice (Samantha,
+  Google US English, Aria/Jenny, Daniel… when installed), at normal rate and pitch, with no effects or background audio.
+- **Prompts** (`PROMPTS` in `lib/explainResult.ts`) follow real events only:
+  - trip stages: departure, rocket, destination, observation time, mission record
+  - Explorer intro
+  - analysis or comparison started, complete or failed, announced from the request handlers when the event happens
+  - playback and scrubbing are never narrated
+- **Explain this result** (Surface outlook panel, on both pages): a deterministic template built from the displayed
+  sample only:
+  - site and UTC time
+  - Sun and Earth, from the backend's `visible` flag, plus `flat_visible` in terrain mode for "above the flat horizon,
+    but blocked by the local terrain"
+  - terrain mode
+  - one limitation, plus the visibility-is-not-power/communications/landing line
+  Elevation is never used to decide visibility, and nothing is called safe. Clicking it pauses playback. Moving to
+  another sample, changing inputs or getting a new result cancels the explanation.
+- **Controls:** Replay, Mute (captions continue), Turn off. Captions show exactly the spoken text, and a signal icon
+  shows when the guide is speaking. Leaving the page stops speech. With the guide off, Explain still shows the
+  explanation as a caption, without speech. Without speech support the dock says "Captions only: voice unavailable"
+  and works the same, and a speech error shows "Voice playback failed. Captions continue."
+- **Demo:**
+  1. Open `/trip` → Enable mission control ("Select your departure location").
+  2. Depart → Choose rocket → Review landing point (one short prompt per stage).
+  3. Analyze landing ("Calculating…", then "Analysis complete…") → Explain this result.
+  4. In `/explorer`: Analyze → scrub to a sample → Explain this result (it names that sample's UTC time) → Mute → Replay → Turn off.
+- **Limitations:**
+  - Voice quality and availability depend on the operating system's installed voices. Some browsers load voices
+    late, and the first line may use the default voice.
+  - Explanations are English-only templates.
+  - There is no microphone input or voice commands. That is a later extension.
+  - Browser checks used a recording stand-in for `speechSynthesis` (headless Chromium has no audible voices), so
+    actual audio was not listened to in this verification.
+
 ## Sources and credits
 - SPICE toolkit and kernels: NASA/JPL NAIF, https://naif.jpl.nasa.gov. SpiceyPy (A. Annex et al.).
 - LOLA DEM `LDEM_80S_80MPP_ADJ`: NASA GSFC PGDA, https://pgda.gsfc.nasa.gov/products/90.
@@ -342,8 +380,9 @@ Which tree is served: whichever directory uvicorn runs in. The review preview on
 `pytest -q` gives **179 passed, 3 skipped**. The skips are the external Moon catalogue (`data/lunar`) and two opt-in
 data checks. `RUN_NETWORK_TESTS=1 pytest -k "real_pgda or partial"` regenerates Athena from the LOLA DEM (exact
 match required) and checks the Odysseus terrain numbers. They use the local DEM copy when present.
-Frontend unit tests: `cd frontend && npm test` gives **40 passed** (time sync and playback, range validation, interval
-matching, window finder, stale-request gate, terrain consistency, mission state, comparison). The backend suite covers:
+Frontend unit tests: `cd frontend && npm test` gives **55 passed** (time sync and playback, range validation, interval
+matching, window finder, stale-request gate, terrain consistency, loading screen timing, voice guide and result
+explanations, mission state, comparison). The backend suite covers:
 - JPL Horizons and `azlcpo` reference cases
 - zenith and nadir checks
 - terrain and flat modes, and terrain blocking a positive-elevation Sun

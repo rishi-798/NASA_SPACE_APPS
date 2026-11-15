@@ -28,3 +28,10 @@ test('restarting during the hold keeps one continuous screen', () => {
   const h = harness(); h.gate.set(true); h.advance(400); h.gate.set(false); h.advance(500); h.gate.set(true); h.advance(5000);
   assert.deepEqual(h.log, [[350, true]]);
 });
+test('dismiss closes early only after loading has finished', () => {
+  const h = harness(); h.gate.set(true); h.advance(400);
+  h.gate.dismiss(); assert.deepEqual(h.log, [[350, true]]);          // still loading: ignored
+  h.gate.set(false); h.advance(100); h.gate.dismiss();
+  assert.deepEqual(h.log, [[350, true], [500, false]]);
+  h.advance(5000); assert.equal(h.log.length, 2);                      // pending hide timer was cancelled
+});

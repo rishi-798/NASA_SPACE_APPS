@@ -2,6 +2,8 @@ import { ArrowUpRight } from "@phosphor-icons/react";
 import { useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Navigation } from "../navigation/Navigation";
+import { MissionControlDock } from "../voice/MissionControlDock";
+import { VoiceGuideProvider } from "../voice/VoiceGuideProvider";
 
 export function AppShell() {
   const { pathname } = useLocation();
@@ -11,6 +13,7 @@ export function AppShell() {
     document.title = `${name} | CLPS Lunar Browser`;
   }, [pathname]);
   return (
+    <VoiceGuideProvider>
     <div className={`app-shell${pathname === "/" ? " app-shell-home" : ""}`}>
       <a className="skip-link" href="#main-content">
         Skip to content
@@ -35,6 +38,8 @@ export function AppShell() {
           <span>NOT AN OFFICIAL NASA PRODUCT</span>
         </div>
       </footer>
+      <MissionControlDock />
     </div>
+    </VoiceGuideProvider>
   );
 }

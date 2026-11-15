@@ -5,6 +5,8 @@ import { useSearchParams } from "react-router-dom";
 import { ConditionsPanel } from "../components/explorer/ConditionsPanel";
 import { LoadingScreen } from "../components/ui/LoadingScreen";
 import { useLoadingScreen } from "../components/ui/useLoadingScreen";
+import { useAnnounce, useCancelOnLeave, useVoiceGuide } from "../components/voice/voiceContext";
+import { explainResult, PROMPTS } from "../lib/explainResult";
 import { PlaybackControls } from "../components/explorer/PlaybackControls";
 import { SiteComparison } from "../components/explorer/SiteComparison";
 import { WindowFinder } from "../components/explorer/WindowFinder";
@@ -63,6 +65,8 @@ function ExplorerWorkspace() {
   const analysisGate = useRef(createRequestGate());
   const comparisonGate = useRef(createRequestGate());
 
+  const [activeView, setActiveView] = useState<"surface" | "globe">("surface");
+  const [telemetryTab, setTelemetryTab] = useState<"timeline" | "observer" | "windows" | "compare">("timeline");
   const selectedSite = landingSites.find((site) => site.id === selectedId) ?? firstSite;
   const location = pickedLocation ?? selectedSite;
   const check = useMemo(() => checkRange(input), [input]);
@@ -70,6 +74,12 @@ function ExplorerWorkspace() {
   // The one authoritative sample: everything below reads `active`, nothing keeps its own time.
   const active = useMemo(() => (result ? conditionsAt(result, playback.index) : null), [result, playback.index]);
   const catalogue = useTerrainCatalogue(location.latitude, location.longitude);
+  const { guide } = useVoiceGuide();
+  const eventSerial = useRef(0);
+  useAnnounce("stage", "explorer:intro", PROMPTS.explorer);
+  useCancelOnLeave();
+  // An explanation describes one sample of one result: drop it when either changes.
+  useEffect(() => { guide.cancel("explain"); }, [guide, result, playback.index]);
 
   useEffect(() => {
     const analysis = analysisGate.current, compareGate = comparisonGate.current;
@@ -141,6 +151,8 @@ function ExplorerWorkspace() {
   async function compare() {
     if (!check.ok) return;
     const ticket = comparisonGate.current.begin();
+    const event = ++eventSerial.current;
+    guide.say("analysis", `compare:start:${event}`, PROMPTS.compareStart);
     setComparisonState("loading");
     setComparison(null);
     setComparisonError(undefined);
@@ -149,17 +161,21 @@ function ExplorerWorkspace() {
       if (!ticket.current()) return;
       setComparison(response);
       setComparisonState("success");
+      guide.say("analysis", `compare:done:${event}`, PROMPTS.compareDone);
     } catch (error) {
       if (!ticket.current()) return;
       setComparison(null);
       setComparisonState("error");
       setComparisonError(error instanceof ApiError ? error.message : "An unexpected comparison error occurred.");
+      guide.say("analysis", `compare:fail:${event}`, PROMPTS.compareFailed);
     }
   }
 
   async function analyze() {
     if (!check.ok) return;
     const ticket = analysisGate.current.begin();
+    const event = ++eventSerial.current;
+    guide.say("analysis", `analysis:start:${event}`, PROMPTS.analysisStart);
     dispatchPlayback({ type: "load", count: 0 });
     setAnalysisState("loading");
     setResult(null);
@@ -170,20 +186,31 @@ function ExplorerWorkspace() {
       setResult(response);
       dispatchPlayback({ type: "load", count: response.samples.length });
       setAnalysisState("success");
+      guide.say("analysis", `analysis:done:${event}`, PROMPTS.analysisDone);
     } catch (error) {
       if (!ticket.current()) return;
       setResult(null);
       setAnalysisState("error");
       setErrorMessage(error instanceof ApiError ? error.message : "An unexpected analysis error occurred.");
+      guide.say("analysis", `analysis:fail:${event}`, PROMPTS.analysisFailed);
     }
   }
 
+  function explain() {
+    if (!result || !active) return;
+    dispatchPlayback({ type: "pause" });           // the explanation is about the sample on screen now
+    const siteName = pickedLocation
+      ? `The selected point at ${formatCoordinate(location.latitude, "lat")}, ${formatCoordinate(location.longitude, "lon")}`
+      : selectedSite.name;
+    guide.say("explain", `explain:${active.time}`, explainResult({ siteId: pickedLocation ? null : selectedSite.id, siteName, conditions: active, terrain: result.terrain }), { force: true, explicit: true });
+  }
+
   const sceneTime = active?.time ?? requestedStart;
-  const showLoading = useLoadingScreen(analysisState === "loading" || comparisonState === "loading");
+  const loadingScreen = useLoadingScreen(analysisState === "loading" || comparisonState === "loading");
 
   return (
     <article ref={root} className="explorer-page">
-      <LoadingScreen visible={showLoading} message={comparisonState === "loading" ? "Comparing both sites" : undefined} />
+      <LoadingScreen visible={loadingScreen.visible} ready={loadingScreen.ready} onDismiss={loadingScreen.dismiss} message={comparisonState === "loading" ? "Comparing both sites" : undefined} />
       <header className="explorer-context" data-reveal>
         <div>
           <p className="eyebrow">Lunar surface operations</p>
@@ -197,21 +224,73 @@ function ExplorerWorkspace() {
       </header>
 
       {searchParams.get("context") && <p className="trip-notice" role="note">{searchParams.get("context")?.slice(0, 500)}</p>}
+
+      {/* Primary Mode Selector: 3D Surface View vs 3D Orbit Map */}
+      <div className="explorer-mode-bar" data-reveal>
+        <div className="explorer-mode-pills" role="tablist" aria-label="Visual Explorer Mode">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === "surface"}
+            className={`explorer-mode-btn ${activeView === "surface" ? "active" : ""}`}
+            onClick={() => setActiveView("surface")}
+          >
+            🏔️ 3D Surface View (1:1 Topography)
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === "globe"}
+            className={`explorer-mode-btn ${activeView === "globe" ? "active" : ""}`}
+            onClick={() => setActiveView("globe")}
+          >
+            🌐 Global 3D Moon Orbit (Cesium)
+          </button>
+        </div>
+        <div className="explorer-mode-badge">
+          {activeView === "surface" ? "SLDEM2015 High-Resolution Mesh" : "NASA / USGS Lunar Basemap"}
+        </div>
+      </div>
+
       <div className="explorer-grid">
         <div className="explorer-visual" data-reveal>
-          <MoonExplorer
-            focusOnMount={Boolean(destination.siteId || destination.location)}
-            observationTime={sceneTime}
-            selectedSite={selectedSite}
-            pickedLocation={pickedLocation}
-            onLocationSelect={pickLocation}
-            onSiteSelect={selectSite}
-          />
-          {result && active && <PlaybackControls playback={playback} activeTime={active.time} requestedStart={result.summary.start}
-            speed={speed} onSpeed={setSpeed} dispatch={dispatchPlayback} />}
-          <TerrainContext latitude={location.latitude} longitude={location.longitude}
-            catalogue={catalogue.state} onRetry={catalogue.retry}
-            terrain={result?.terrain ?? null} horizon={result?.horizon ?? null} />
+          {activeView === "surface" ? (
+            <LocalSurfacePane
+              latitude={location.latitude}
+              longitude={location.longitude}
+              observationTime={sceneTime ?? `${DEFAULT_INPUT.startDate}T${DEFAULT_INPUT.startTime}:00Z`}
+              onPick={pickLocation}
+            />
+          ) : (
+            <>
+              <MoonExplorer
+                focusOnMount={Boolean(destination.siteId || destination.location)}
+                observationTime={sceneTime}
+                selectedSite={selectedSite}
+                pickedLocation={pickedLocation}
+                onLocationSelect={pickLocation}
+                onSiteSelect={selectSite}
+              />
+              {result && active && (
+                <PlaybackControls
+                  playback={playback}
+                  activeTime={active.time}
+                  requestedStart={result.summary.start}
+                  speed={speed}
+                  onSpeed={setSpeed}
+                  dispatch={dispatchPlayback}
+                />
+              )}
+              <TerrainContext
+                latitude={location.latitude}
+                longitude={location.longitude}
+                catalogue={catalogue.state}
+                onRetry={catalogue.retry}
+                terrain={result?.terrain ?? null}
+                horizon={result?.horizon ?? null}
+              />
+            </>
+          )}
         </div>
         <aside className="explorer-sidebar" data-reveal>
           <ExplorerControls
@@ -237,22 +316,68 @@ function ExplorerWorkspace() {
             siteId={pickedLocation ? undefined : selectedSite.id}
             latitude={location.latitude}
             longitude={location.longitude}
+            onExplain={explain}
           />
         </aside>
       </div>
 
-      <LocalSurfacePane latitude={location.latitude} longitude={location.longitude}
-        observationTime={sceneTime ?? `${DEFAULT_INPUT.startDate}T${DEFAULT_INPUT.startTime}:00Z`} onPick={pickLocation} />
+      {/* Condensed Mission Telemetry & Analysis Dock */}
+      <section className="telemetry-tabs-container" data-reveal aria-label="Mission Telemetry and Analysis">
+        <div className="telemetry-tabs-nav" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={telemetryTab === "timeline"}
+            className={`telemetry-tab-btn ${telemetryTab === "timeline" ? "active" : ""}`}
+            onClick={() => setTelemetryTab("timeline")}
+          >
+            ☀️ Solar &amp; Earth Visibility Timeline
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={telemetryTab === "observer"}
+            className={`telemetry-tab-btn ${telemetryTab === "observer" ? "active" : ""}`}
+            onClick={() => setTelemetryTab("observer")}
+          >
+            📐 Sky Observer Plane
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={telemetryTab === "windows"}
+            className={`telemetry-tab-btn ${telemetryTab === "windows" ? "active" : ""}`}
+            onClick={() => setTelemetryTab("windows")}
+          >
+            ⏱️ Illumination Windows
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={telemetryTab === "compare"}
+            className={`telemetry-tab-btn ${telemetryTab === "compare" ? "active" : ""}`}
+            onClick={() => setTelemetryTab("compare")}
+          >
+            ⚖️ Site Comparison
+          </button>
+        </div>
 
-      <div className="analysis-grid" data-reveal>
-        <HorizonContainer data={active} profile={result?.horizon ?? null} />
-        <VisibilityTimeline data={active} summary={result?.summary ?? null} sampleCount={result?.samples.length ?? 0} />
-      </div>
-
-      <WindowFinder result={result} activeIndex={playback.index} onSelect={(index) => dispatchPlayback({ type: "seek", index })} />
-
-      <SiteComparison result={comparison} state={comparisonState} errorMessage={comparisonError}
-        onCompare={compare} disabled={!check.ok} />
+        <div className="telemetry-tab-panel">
+          {telemetryTab === "timeline" && (
+            <VisibilityTimeline data={active} summary={result?.summary ?? null} sampleCount={result?.samples.length ?? 0} />
+          )}
+          {telemetryTab === "observer" && (
+            <HorizonContainer data={active} profile={result?.horizon ?? null} />
+          )}
+          {telemetryTab === "windows" && (
+            <WindowFinder result={result} activeIndex={playback.index} onSelect={(index) => dispatchPlayback({ type: "seek", index })} />
+          )}
+          {telemetryTab === "compare" && (
+            <SiteComparison result={comparison} state={comparisonState} errorMessage={comparisonError}
+              onCompare={compare} disabled={!check.ok} />
+          )}
+        </div>
+      </section>
     </article>
   );
 }
