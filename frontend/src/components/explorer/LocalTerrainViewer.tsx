@@ -481,7 +481,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       const useFallbackTextures = () => {
         if (cancelled) return;
         try {
-          const regolithTextures = createRegolithTextures(extent);
+          const regolithTextures = createRegolithTextures(extent, detailedRegions.has(region.id));
           terrainTextures.add(regolithTextures.map);
           terrainTextures.add(regolithTextures.normalMap);
           regolithTextures.map.repeat.set(extent / 24, extent / 24);
@@ -502,7 +502,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           render();
         } catch { /* Retain the model's original material if canvas textures are unavailable. */ }
       };
-      texLoader.load(
+      if (detailedRegions.has(region.id)) useFallbackTextures();
+      else texLoader.load(
         `${import.meta.env.BASE_URL}terrain/lunar-detail-color.png`,
         colTex => {
           if (cancelled) { colTex.dispose(); return; }
