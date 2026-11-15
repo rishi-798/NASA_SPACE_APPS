@@ -2,17 +2,18 @@ import { Crosshair, Plus, Selection, Subtract } from "@phosphor-icons/react";
 import { useRef, useState } from "react";
 import { MoonMap, type MoonControls, type MoonLocation } from "../../MoonMap";
 import { formatCoordinate } from "../../lib/format";
-import type { LandingSite } from "../../types";
+import type { LandingSite, VisibilityResponse } from "../../types";
 import { featuredMoonSites, moonMapSites } from "../../data/moonMapSites";
 
 type MoonExplorerProps = {
+  conditions: VisibilityResponse | null;
   selectedSite: LandingSite;
   pickedLocation: MoonLocation | null;
   onLocationSelect: (location: MoonLocation | null) => void;
   onSiteSelect: (id: string) => void;
 };
 
-export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, onSiteSelect }: MoonExplorerProps) {
+export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, onSiteSelect, conditions }: MoonExplorerProps) {
   const [showGrid, setShowGrid] = useState(false);
   const [showAxis, setShowAxis] = useState(false);
   const controlsRef = useRef<MoonControls | null>(null);
@@ -30,6 +31,7 @@ export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, o
 
       <div className="moon-stage moon-stage-3d" data-moon-stage>
         <MoonMap
+          conditions={conditions}
           onLocationSelect={onLocationSelect}
           onSiteSelect={onSiteSelect}
           selectedLocation={selectedLocation}
@@ -99,6 +101,13 @@ export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, o
         >
           <Crosshair />
         </button>
+      </div>
+
+      <div className="scene-observation">
+        {conditions ? <><time dateTime={conditions.time}>{conditions.time.slice(0, 16).replace("T", " ")} UTC</time>
+          <span className="scene-sun">☀ Sun {conditions.sun.elevation.toFixed(1)}° el · {conditions.sun.azimuth.toFixed(1)}° az · {conditions.sun.visible ? "visible" : "hidden"}</span>
+          <span className="scene-earth">◉ Earth {conditions.earth.elevation.toFixed(1)}° el · {conditions.earth.azimuth.toFixed(1)}° az · {conditions.earth.visible ? "visible" : "hidden"}</span>
+          <small>Lighting follows calculated Sun direction. Visual shading is illustrative.</small></> : <small>Exploration lighting · Analyze to follow the calculated Sun.</small>}
       </div>
 
       <div className="moon-footnote">

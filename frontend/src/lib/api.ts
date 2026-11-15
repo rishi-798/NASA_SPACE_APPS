@@ -1,5 +1,5 @@
 import type { MoonLocation } from "../MoonMap";
-import type { AnalysisResult, HorizonProfile, MissionSummary, VisibilityResponse, VisibilitySample } from "../types";
+import type { AnalysisRange, AnalysisResult, VisibilityResponse } from "../types";
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
 
@@ -54,32 +54,18 @@ export function getSiteVisibility(
 }
 
 export async function getAnalysis(
-  siteId: string,
-  location: MoonLocation | null,
-  time: string,
-  date: string,
-  signal: AbortSignal,
+  siteId: string, location: MoonLocation | null, range: AnalysisRange, signal: AbortSignal,
 ): Promise<AnalysisResult> {
-  const start = `${date}T00:00:00Z`;
-  const end = new Date(new Date(start).getTime() + 86400000).toISOString();
-  const range = new URLSearchParams({ start, end, step_minutes: "30" });
-  const coordinates = location
-    ? new URLSearchParams({ lat: String(location.latitude), lon: String(location.longitude) })
-    : null;
-  const base = `/api/sites/${encodeURIComponent(siteId)}`;
-  const [conditions, samples, summary, horizon] = await Promise.all([
-    coordinates
-      ? request<VisibilityResponse>(`/api/visibility?${coordinates}&time=${encodeURIComponent(time)}`, signal)
-      : getSiteVisibility(siteId, time, signal),
-    request<VisibilitySample[]>(
-      coordinates ? `/api/visibility/window?${coordinates}&${range}` : `${base}/visibility/window?${range}`, signal,
-    ),
-    request<MissionSummary>(
-      coordinates ? `/api/summary?${coordinates}&${range}` : `${base}/summary?${range}`, signal,
-    ),
-    coordinates ? Promise.resolve(null) : request<HorizonProfile | null>(`${base}/horizon`, signal),
-  ]);
-  return {
-    conditions, samples, summary, horizon,
-  };
+  const params = new URLSearchParams({ start: range.start, end: range.end, step_minutes: String(range.stepMinutes) });
+  if (location) { params.set("lat", String(location.latitude)); params.set("lon", String(location.longitude)); }
+  else params.set("site_id", siteId);
+  const result = await request<AnalysisResult>(`/api/analysis?${params}`, signal);
+  if (result.schema_version !== 1 || !Array.isArray(result.samples) || !result.samples.length || !result.summary || !result.provenance) {
+    throw new ApiError("The calculation returned incomplete data. No results are displayed.");
+  }
+  if (result.samples.some((sample, i) =>
+    !Number.isFinite(Date.parse(sample.time)) || (i > 0 && Date.parse(sample.time) <= Date.parse(result.samples[i - 1]!.time)) ||
+    [sample.sun, sample.earth].some(body => !body || !Number.isFinite(body.azimuth) || !Number.isFinite(body.elevation) || typeof body.visible !== "boolean")
+  )) throw new ApiError("The calculation returned invalid samples. Please retry.");
+  return result;
 }

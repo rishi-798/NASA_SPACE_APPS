@@ -53,11 +53,22 @@ export type HorizonProfile = {
   azimuth_step: number;
   observer_height_m: number;
   horizon: number[];
+  source_frame: string;
+  pixel_resolution_m: number;
+  max_distance_m: number;
+  min_distance_m: number;
 };
 
+export type AnalysisRange = { start: string; end: string; stepMinutes: number };
 export type AnalysisResult = {
-  conditions: VisibilityResponse;
+  schema_version: 1;
+  site: { id: string | null; name: string; latitude: number; longitude: number; source: string | null };
   samples: VisibilitySample[];
   summary: MissionSummary;
   horizon: HorizonProfile | null;
+  provenance: {
+    engine: string; kernels: string[]; frame: string; coordinates: string; geometry: string;
+    visibility_rule: string; horizon_mode: string; sampling: string;
+    limitations: string[]; sources: string[]; sample_values: boolean;
+  };
 };

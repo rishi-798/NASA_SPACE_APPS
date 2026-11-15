@@ -12,7 +12,7 @@ from backend.calculations.sun_earth import (
 )
 from backend.landing_sites import get_landing_site, load_landing_sites
 from backend.mission_summary import summarize_window
-from backend.spice_kernels import KernelError
+from backend.spice_kernels import KernelError, KERNEL_FILES
 from backend.terrain.horizon import HorizonError, apply_horizon, load_profile
 from backend.frontend import SPAStaticFiles, DIST_DIR
 
@@ -181,6 +181,62 @@ def coordinate_summary(
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except KernelError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except SpiceCalculationError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@app.get("/api/analysis")
+def analysis(
+    start: str = Query(...), end: str = Query(...),
+    step_minutes: int = Query(30, ge=1), site_id: str | None = None,
+    lat: float | None = Query(None, ge=-90, le=90),
+    lon: float | None = Query(None, ge=-180, le=180),
+):
+    """Presentation bundle: existing geometry, horizon and summary, one sample set."""
+    try:
+        if parse_utc_time(end) <= parse_utc_time(start):
+            raise ValueError("end must be after start")
+        if site_id is not None:
+            if lat is not None or lon is not None:
+                raise ValueError("choose a site or coordinates, not both")
+            site = get_landing_site(site_id)
+            profile = load_profile(site)
+        else:
+            if lat is None or lon is None:
+                raise ValueError("choose a site or provide lat and lon")
+            site = {"id": None, "name": "Selected map coordinate", "latitude": lat,
+                    "longitude": lon, "source": None}
+            profile = None
+        samples = calculate_visibility_window(site["latitude"], site["longitude"], start, end, step_minutes)
+        samples = [apply_horizon(sample, profile) for sample in samples]
+        summary = summarize_window(site_id, samples, start, end, step_minutes)
+        return {
+            "schema_version": 1, "site": site, "samples": samples,
+            "summary": summary, "horizon": profile,
+            "provenance": {
+                "engine": "Existing Suhas / NAIF SPICE calculations",
+                "kernels": list(KERNEL_FILES), "frame": "MOON_ME (MOON_ME_DE440_ME421)",
+                "coordinates": "Degrees; east-positive longitude; spherical lunar latitude",
+                "geometry": "Geometric target-center positions; no light-time or aberration correction. Observer at 0 m on the SPICE reference ellipsoid.",
+                "visibility_rule": "Target center elevation above the local horizon; no disc-edge or radio-link test.",
+                "horizon_mode": "LOLA terrain" if profile else "Flat horizon — terrain unavailable",
+                "sampling": "Each sample holds until the next step or range end. No crossing refinement; short windows may be missed. The end sample has zero duration.",
+                "limitations": [
+                    "Visibility does not prove adequate power, a working communications link, or a safe landing.",
+                    "Landing slope, roughness, hazards and descent are not assessed.",
+                    "Cesium terrain is visual context, not the elevation source used in this calculation.",
+                    "Athena uses a 2 m terrain observer and DE421 DEM with DE440 geometry; rounded coordinates and frame uncertainty apply. Its profile excludes terrain within 160 m and beyond 40 km.",
+                ],
+                "sources": ["https://naif.jpl.nasa.gov/naif/", "https://pgda.gsfc.nasa.gov/products/90"],
+                "sample_values": False,
+            },
+        }
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="landing site not found") from exc
+    except (HorizonError, KernelError) as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     except SpiceCalculationError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 

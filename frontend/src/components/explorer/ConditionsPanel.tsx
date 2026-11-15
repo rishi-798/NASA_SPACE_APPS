@@ -1,6 +1,5 @@
 import {
   Broadcast,
-  Mountains,
   SunHorizon,
   Warning,
 } from "@phosphor-icons/react";
@@ -55,7 +54,6 @@ export function ConditionsPanel({
   observationTime,
   errorMessage,
 }: ConditionsPanelProps) {
-  const terrainClear = !!conditions && conditions.sun.visible && conditions.earth.visible;
   const hasTerrain = conditions?.sun.terrain_horizon !== undefined;
   const observed = conditions?.time ?? observationTime;
 
@@ -93,24 +91,11 @@ export function ConditionsPanel({
         />
         <TelemetryRow
           kind="earth"
-          title="Earth / Comms"
+          title="Earth visibility"
           subtitle="Line of sight"
           data={conditions?.earth}
         />
-        <article className="terrain-row">
-          <div className="telemetry-name">
-            <Mountains weight="light" aria-hidden="true" />
-            <div>
-              <p>Terrain</p>
-              <span>{!conditions ? "Awaiting horizon analysis" : hasTerrain ? "LOLA horizon · 2 m observer" : "No terrain profile · flat horizon"}</span>
-            </div>
-          </div>
-          <StatusIndicator
-            visible={terrainClear}
-            pending={!conditions || !hasTerrain}
-            label={!conditions ? "AWAITING ANALYSIS" : !hasTerrain ? "FLAT HORIZON" : undefined}
-          />
-        </article>
+        <p className="analysis-note">{!conditions ? "No calculated results yet." : hasTerrain ? "LOLA terrain horizon applied. Visibility uses the target center." : "FLAT HORIZON · Terrain data unavailable. Terrain obstruction is not assessed."}</p>
       </div>
 
       <div className="data-provenance">

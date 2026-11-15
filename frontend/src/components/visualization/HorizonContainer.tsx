@@ -27,7 +27,7 @@ export function HorizonContainer({ data, profile }: HorizonContainerProps) {
           <p className="eyebrow">Local horizon</p>
           <h2 id="horizon-title">Observer plane</h2>
         </div>
-        <p>{!data ? "Awaiting analysis" : profile ? "LOLA terrain · 0.5° azimuth bins" : "Flat horizon · no terrain profile"}</p>
+        <p>{!data ? "Awaiting analysis" : profile ? "LOLA terrain horizon" : "Flat horizon · no terrain profile"}</p>
       </div>
 
       <div className="horizon-instrument">
@@ -65,7 +65,7 @@ export function HorizonContainer({ data, profile }: HorizonContainerProps) {
           OBSERVER
         </div>
       </div>
-      {profile && <p className="analysis-note"><a href={profile.source} target="_blank" rel="noreferrer">Terrain source</a> · 2 m assumed observer height. Site/frame uncertainty applies.</p>}
+      {profile && <p className="analysis-note"><a href={profile.source} target="_blank" rel="noreferrer">Terrain source</a> · {profile.observer_height_m} m assumed observer height. Site/frame uncertainty applies.</p>}
       {data && <p className="analysis-note">Plot range −10° to +20°; out-of-range markers are pinned to the edge. Visibility means line of sight, not radio-link quality.</p>}
     </section>
   );

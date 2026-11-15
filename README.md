@@ -1,4 +1,12 @@
-# NASA-APP
+# NASA Space Apps
+
+## CLPS Moon Browser
+
+The Explorer now supports an adjustable UTC range, synchronized sample playback,
+Sun/Earth horizon views, visibility timelines and Athena/Odysseus comparison.
+Start with one UTC day, review parameters, then press **Analyze conditions**.
+See [setup, data contract and 90-second demo](docs/clps-browser.md).
+
 
 A cinematic space-project website combining the visual direction of the three
 requested Aura references, with this project's own content throughout. The new
@@ -54,8 +62,9 @@ comma-separated list of your frontend origins on the backend.
   the coordinate API. Changing inputs cancels old requests and clears old results.
 - Athena's horizon chart displays Suhas's 720-bin LOLA profile and its terrain-aware
   visibility. Odysseus and arbitrary map coordinates use a labeled flat horizon.
-- The 24-hour outlook displays real visibility intervals, percentages and longest
-  darkness/Earth blackout from 30-minute SPICE samples, for the selected UTC day.
+- The selected-range outlook displays real intervals, percentages and longest
+  dark/Earth-hidden periods with an adjustable sample step. Playback and comparison
+  share the same analysis interval.
 - No fabricated telemetry is shown before analysis or on API failure.
 - Mission archive/chronology still reflect the supplied mission data; they are
   separate from the Explorer's computed visibility timeline.

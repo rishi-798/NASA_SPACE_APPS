@@ -12,6 +12,9 @@ import {
   HorizontalOrigin,
   IonResource,
   LabelStyle,
+  JulianDate,
+  Matrix4,
+  Transforms,
   Math as CesiumMath,
   NearFarScalar,
   ScreenSpaceEventHandler,
@@ -22,6 +25,7 @@ import {
 } from "cesium";
 import { createMoonGuides, lunarPosition, MOON } from "./moonGuides";
 import { featuredMoonSites, moonMapSites, MOON_TERRAIN_ASSET_ID } from "./data/moonMapSites";
+import type { VisibilityResponse } from "./types";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 
 const VIEWS = {
@@ -45,6 +49,7 @@ export interface MoonControls {
 }
 
 interface MoonMapProps {
+  conditions: VisibilityResponse | null;
   onLocationSelect: (location: MoonLocation) => void;
   onSiteSelect: (id: string) => void;
   selectedLocation: MoonLocation | null;
@@ -57,9 +62,11 @@ interface SceneState {
   viewer: Viewer;
   guides: ReturnType<typeof createMoonGuides>;
   point: Entity;
+  solarDirection: Cartesian3 | null;
 }
 
 export function MoonMap({
+  conditions,
   onLocationSelect,
   onSiteSelect,
   selectedLocation,
@@ -106,6 +113,8 @@ export function MoonMap({
 
     viewer.scene.backgroundColor = Color.fromCssColorString("#0a1014");
     viewer.scene.fog.enabled = false;
+    if (viewer.scene.sun) viewer.scene.sun.show = false;
+    if (viewer.scene.moon) viewer.scene.moon.show = false;
     viewer.resolutionScale = Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
     viewer.scene.postProcessStages.fxaa.enabled = true;
 
@@ -116,6 +125,10 @@ export function MoonMap({
     viewer.scene.light = light;
 
     const removeLightListener = viewer.scene.preRender.addEventListener(() => {
+      if (sceneRef.current?.solarDirection) {
+        Cartesian3.clone(sceneRef.current.solarDirection, light.direction);
+        return;
+      }
       const direction = Cartesian3.clone(viewer.camera.directionWC);
       Cartesian3.add(
         direction,
@@ -148,7 +161,7 @@ export function MoonMap({
         disableDepthTestDistance: 100000,
       },
     });
-    sceneRef.current = { viewer, guides, point };
+    sceneRef.current = { viewer, guides, point, solarDirection: null };
 
     const setView = (name: ViewName = "near", animate = true) => {
       const [longitude, latitude] = VIEWS[name] ?? VIEWS.near;
@@ -354,6 +367,23 @@ export function MoonMap({
     }
     scene.viewer.scene.requestRender();
   }, [selectedLocation]);
+
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    if (conditions) {
+      // Presentation transform only: the backend's azimuth/elevation is authoritative.
+      // Cesium light points toward the surface, opposite the observer-to-Sun vector.
+      const az = CesiumMath.toRadians(conditions.sun.azimuth);
+      const el = CesiumMath.toRadians(conditions.sun.elevation);
+      const local = new Cartesian3(Math.cos(el) * Math.sin(az), Math.cos(el) * Math.cos(az), Math.sin(el));
+      const frame = Transforms.eastNorthUpToFixedFrame(lunarPosition(conditions.longitude, conditions.latitude), MOON);
+      const world = Matrix4.multiplyByPointAsVector(frame, local, new Cartesian3());
+      scene.solarDirection = Cartesian3.negate(Cartesian3.normalize(world, world), world);
+      scene.viewer.clock.currentTime = JulianDate.fromIso8601(conditions.time);
+    } else scene.solarDirection = null;
+    scene.viewer.scene.requestRender();
+  }, [conditions]);
 
   return (
     <>

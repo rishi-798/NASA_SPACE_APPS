@@ -2260,3 +2260,63 @@ a {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* CLPS observation workflow */
+.explorer-context h1 { max-width: 720px; }
+.explorer-context .analysis-note { margin-bottom: 0; }
+.playback-panel, .site-comparison, .analysis-details { padding: clamp(1.25rem, 3vw, 2.75rem); border-bottom: 1px solid var(--line); }
+.playback-panel { background: linear-gradient(110deg, #11211f, #0b1118 75%); }
+.playback-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.playback-heading h2 { margin: .3rem 0 1rem; font-size: 1.6rem; }
+.playback-time { font: 500 .85rem var(--mono); color: #a2ecd3; }
+.playback-controls { display: flex; align-items: center; gap: .7rem; margin-top: 1rem; }
+.playback-controls button, .playback-controls select { min-height: 44px; border: 1px solid #3b5753; border-radius: 6px; background: #152626; color: #e1f3ed; padding: .6rem .9rem; cursor: pointer; }
+.playback-controls button:first-child { min-width: 85px; background: #a2ecd3; color: #10241e; font-weight: 600; }
+.playback-controls button:disabled { opacity: .4; cursor: default; }
+.playback-controls input { flex: 1; min-width: 70px; accent-color: #a2ecd3; cursor: pointer; }
+.playback-controls label { display: flex; align-items: center; gap: .7rem; font-size: .8rem; }
+.playback-bounds { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1rem; font: .65rem var(--mono); color: #adbcbf; }
+.interpretation-note { padding: 1rem clamp(1.25rem, 3vw, 2.75rem); border-bottom: 1px solid var(--line); color: #becacb; font-size: .85rem; line-height: 1.6; background: #151b1f; }
+.interpretation-note strong { color: #f1c185; margin-right: .4rem; }
+.scene-observation { position: absolute; bottom: 5rem; right: 1.5rem; max-width: 325px; pointer-events: none; display: grid; gap: .55rem; padding: 1rem; border: 1px solid #ffffff1a; background: #081016e8; border-radius: 8px; font: .65rem var(--mono); z-index: 2; }
+.scene-observation time { color: #dce5e9; }
+.scene-observation small { color: #9cabb3; line-height: 1.6; }
+.scene-sun { color: #f3ca7e; } .scene-earth { color: #9bcaff; }
+.range-error { color: #ffd09c; font-size: .85rem; }
+.timeline-both-line { background: #a2ecd3; }
+.summary-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+.summary-metrics > div { padding: 1rem; border: 1px solid var(--line); border-radius: 6px; display: grid; gap: .6rem; }
+.summary-metrics span { font-size: .75rem; color: #aebec2; }
+.summary-metrics strong { font: 500 1.7rem var(--mono); }
+.summary-metrics small { font-size: .8rem; color: #aebec2; }
+.window-details summary, .analysis-details summary { padding: .75rem 0; cursor: pointer; font-weight: 500; }
+.window-details { font-size: .8rem; line-height: 1.8; }
+.window-details h3 { font: .65rem var(--mono); color: #a2ecd3; margin-top: 1rem; }
+.window-details ul { padding-left: 1rem; max-height: 250px; overflow: auto; }
+.analysis-details { line-height: 1.8; color: #b5c4c9; font-size: .85rem; overflow-wrap: anywhere; }
+.source-links { display: flex; flex-wrap: wrap; gap: 1.2rem; color: #a2ecd3; }
+.comparison-scroll { overflow-x: auto; }
+.site-comparison table { width: 100%; border-collapse: collapse; text-align: left; font-size: .85rem; }
+.site-comparison caption { text-align: left; color: #92a5ad; padding: .5rem 0 1rem; font-size: .75rem; }
+.site-comparison td, .site-comparison th { padding: 1.3rem 1rem; border-bottom: 1px solid var(--line); }
+.site-comparison thead th { color: #9badb5; font-size: .72rem; font-weight: 400; }
+.site-comparison td { font-family: var(--mono); color: #cee5de; }
+.site-comparison small { display: block; color: #9badb5; font-weight: 400; margin-top: .5rem; }
+.configuration .instrument-field-wide { padding: 1rem 0; }
+.analysis-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.timeline-axis { margin: 0 3.5rem .75rem 5.85rem; font-size: .55rem; gap: .3rem; }
+.timeline-row { grid-template-columns: 5rem minmax(80px, 1fr) 3rem; }
+.analysis-note { line-height: 1.7; }
+@media (max-width: 1100px) { .analysis-grid { grid-template-columns: 1fr; } .horizon-panel { border-right: 0; border-bottom: 1px solid var(--line); } }
+@media (max-width: 620px) {
+  .playback-controls { flex-wrap: wrap; gap: .4rem; }
+  .playback-controls label { width: 100%; margin-top: .5rem; }
+  .playback-bounds { font-size: .55rem; }
+  .scene-observation { right: 1rem; bottom: 5rem; max-width: 235px; font-size: .58rem; }
+  .summary-metrics { gap: .5rem; }
+  .summary-metrics > div { padding: .75rem; }
+  .site-comparison table { min-width: 650px; }
+}
+@media (min-width: 981px) {
+  .explorer-visual .moon-explorer-3d { height: 100%; }
+}
