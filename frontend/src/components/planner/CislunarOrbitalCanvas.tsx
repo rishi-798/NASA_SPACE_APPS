@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import type { MissionPhase } from "./missionPhaseData";
@@ -191,7 +191,6 @@ function createSpacecraftMesh() {
 
 export function CislunarOrbitalCanvas({
   activePhaseId,
-  simMetSeconds,
   telemetry,
   cameraPreset,
   onCameraPresetChange,

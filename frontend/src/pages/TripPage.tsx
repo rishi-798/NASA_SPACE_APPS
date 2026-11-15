@@ -55,7 +55,7 @@ export function TripPage() {
   const [liftoffUtc, setLiftoffUtc] = useState("");
   const [parkingAltitudeText,setParkingAltitudeText] = useState(String(mission.parkingAltitudeKm));
   const transferInput={departureUtc:mission.transferDepartureUtcTime,arrivalUtc:mission.utcTime,parkingAltitudeKm:parkingAltitudeText.trim()?Number(parkingAltitudeText):NaN};
-  const transfer=useTransferCalculation(transferInput);
+  const transfer=useTransferCalculation(transferInput,mission.stage==="landing"||mission.stage==="reveal");
   const changeParkingAltitude=(value:string)=>{setParkingAltitudeText(value);const altitude=Number(value);if(value.trim()&&Number.isFinite(altitude)&&altitude>=160&&altitude<=2000)dispatch({type:"parking-altitude",altitude});};
   const [tripMoonView, setTripMoonView] = useState<"globe" | "surface">("globe");
   const [query, setQuery] = useState("");
@@ -273,7 +273,7 @@ export function TripPage() {
           <button className="trip-primary" disabled={!landing} onClick={() => go("landing")}>Review landing point <ArrowRight /></button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button></aside></div>}
       {(mission.stage === "landing" || mission.stage === "reveal") && landing && <>
         <div className="trip-layout">
-          <div className="trip-visual trip-mission-visual"><Suspense fallback={sceneLoading}><SpaceScene key={transfer.key} transfer={transfer.data} /></Suspense>
+          <div className="trip-visual trip-mission-visual"><Suspense fallback={sceneLoading}><SpaceScene key={`${transfer.key}:${mission.stage}`} transfer={transfer.data} /></Suspense>
             {transfer.loading && <p className="trip-scene-message" role="status">Calculating the mission flight…</p>}</div>
           <aside className="trip-panel"><TransferPlanner input={transferInput} altitudeText={parkingAltitudeText} calculation={transfer}
             onDeparture={time=>dispatch({type:"transfer-departure",time})} onArrival={time=>dispatch({type:"time",time})}

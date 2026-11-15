@@ -13,5 +13,19 @@ export function transferFrame(data:TransferResult,cursor:number):TransferSample 
     moon_position_km:vector('moon_position_km'),moon_velocity_km_s:vector('moon_velocity_km_s'),sun_direction:vector('sun_direction')};
 }
 export function advanceTransferCursor(cursor:number,deltaSeconds:number,count:number,durationSeconds=35) {
-  return clampTransferCursor(cursor+Math.max(0,Math.min(deltaSeconds,.1))*(count-1)/durationSeconds,count);
+  // Ease the display clock near departure/arrival so both bodies remain visible longer.
+  // UTC and every physical state still come from the same resulting sample cursor.
+  const fraction=clampTransferCursor(cursor,count)/(count-1);
+  const clock=Math.acos(1-2*fraction)/Math.PI;
+  const next=Math.min(1,clock+Math.max(0,Math.min(deltaSeconds,.1))/durationSeconds);
+  return clampTransferCursor((1-Math.cos(Math.PI*next))*.5*(count-1),count);
+}
+
+/** Arrival uses the solved endpoint, never an extra surface/capture animation. */
+export function transferProgress(data:TransferResult,cursor:number) {
+  const frame=transferFrame(data,cursor);
+  const progress=clampTransferCursor(cursor,data.samples.length)/(data.samples.length-1);
+  const moonRangeKm=Math.hypot(...frame.spacecraft_position_km.map((v,i)=>v-frame.moon_position_km[i]!));
+  const phase=progress>=1?'Lunar arrival reached':progress>=.8?'Lunar approach':progress<.035?'Earth departure':'Translunar coast';
+  return {progress,moonRangeKm,lunarAltitudeKm:moonRangeKm-data.constants.moon_radius_km,phase};
 }

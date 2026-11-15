@@ -157,3 +157,13 @@
 .mission-animation-timeline {display:flex;gap:12px;align-items:center;margin:10px 0}.mission-animation-timeline input {flex:1;min-width:0;accent-color:#ffa16b}.mission-animation-controls output {font:10px var(--mono);color:#b8e9e0}.mission-animation-controls p {font-size:9px;line-height:1.5;color:#abb9c9;margin:9px 0 0}
 @media(max-width:1100px){.trip-mission-visual {position:relative;top:auto}}
 @media(max-width:600px){.trip-mission-visual,.trip-mission-visual .calculated-mission-animation,.trip-mission-empty {height:580px;min-height:580px}.trip-mission-empty {padding:25px}.mission-animation-controls {left:10px;right:10px;bottom:10px;padding:10px}.calculated-mission-animation .trip-space-data {top:58px}}
+
+.mission-animation-controls button[aria-pressed=true] {border-color:#ffb87b;background:#4d3225;color:#fff0e2}
+.mission-flight-progress {display:flex;justify-content:space-between;align-items:center;margin:14px 2px 0;color:#a6b7ca;font:8px var(--mono);letter-spacing:.1em}
+.mission-flight-progress strong {font-size:13px;color:#ffbf8b}
+.mission-arrival-card {position:absolute;z-index:2;top:104px;left:22px;max-width:340px;right:22px;padding:16px 18px;border:1px solid #9ce1c955;border-radius:14px;background:#081c22e8;backdrop-filter:blur(12px)}
+.mission-arrival-card>span {font:8px var(--mono);letter-spacing:.13em;color:#a2ecd3}.mission-arrival-card strong {display:block;font-size:24px;font-weight:500;margin:9px 0}.mission-arrival-card p {font-size:11px;line-height:1.6;color:#bed2d8;margin:0}
+@media(max-width:600px){.mission-arrival-card {top:120px;left:12px;right:12px;padding:12px}.mission-arrival-card strong {font-size:21px}.mission-animation-controls p {font-size:8px}}
+
+.calculated-mission-animation .trip-space-canvas {bottom:205px}
+@media(max-width:600px){.calculated-mission-animation .trip-space-canvas {bottom:220px}.mission-arrival-card {top:auto;bottom:230px;padding:10px 12px}.mission-arrival-card>span {font-size:7px}.mission-arrival-card strong {font-size:17px;margin:5px 0}.mission-arrival-card p {font-size:9px;line-height:1.4}}

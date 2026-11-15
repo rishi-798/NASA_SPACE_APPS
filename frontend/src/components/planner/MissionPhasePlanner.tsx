@@ -58,8 +58,8 @@ export function MissionPhasePlanner() {
     }
     const currentDeltaV = prevDeltaV + p.deltaVBudgetMS * progress;
 
-    let distEarthKm = 0;
-    let distMoonKm = 384400;
+    let distEarthKm: number;
+    let distMoonKm: number;
     if (p.id === "ascent" || p.id === "parking") {
       distEarthKm = 6371 + alt;
       distMoonKm = 384400 - alt;

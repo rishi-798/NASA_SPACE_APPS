@@ -6,7 +6,7 @@ Mission cards and timeline entries open Explorer at the chosen coordinates and r
 
 Hosted deployments can lag `main`; backend weather requires server-side credentials. See [weather setup](docs/METEOMATICS.md) for weather configuration.
 
-The Trip Planner includes a [date-based preliminary Earth–Moon transfer](docs/TRANSLUNAR_TRANSFER.md): separate injection departure/arrival dates, a bounded Lambert solver, SPICE propagation and a scrubbable flight path integrated into the main rocket/Earth/Moon animation. Its arrival reference is 10,000 km above the Moon; rocket feasibility, capture and descent are not solved.
+The Trip Planner includes a [date-based preliminary Earth–Moon transfer](docs/TRANSLUNAR_TRANSFER.md): separate injection departure/arrival dates, a bounded Lambert solver, SPICE propagation and a scrubbable flight path integrated into the main rocket/Earth/Moon animation. Its arrival reference is 1,000 km above the Moon; rocket feasibility, capture and descent are not solved.
 
 For the updated analysis API, methodology, setup, and validation, see [Analysis documentation](docs/ANALYSIS.md).
 ### NASA Space Apps Challenge
