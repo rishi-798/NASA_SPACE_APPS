@@ -92,36 +92,66 @@ export function TerrainContext({ latitude, longitude, catalogue, onRetry, terrai
     <h4>4 · Visual terrain model</h4>
     <p className="terrain-note"><strong>Cesium Moon (integrated):</strong> NASA/USGS imagery and terrain for orientation and lighting only. It is not used in the visibility calculation.</p>
       {modelInfo?.model_available ? (
-        <div className="terrain-model-card" style={{ marginTop: '0.75rem', padding: '0.75rem', background: 'rgba(56, 189, 248, 0.08)', borderRadius: '6px', border: '1px solid rgba(56, 189, 248, 0.25)' }}>
+        <div className="terrain-model-card" style={{ marginTop: '0.75rem', padding: '0.85rem', background: 'rgba(10, 16, 26, 0.75)', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.35)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#38bdf8' }}>✓ 3D Measured Mesh Available</span>
+            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: '#38bdf8', boxShadow: '0 0 8px #38bdf8' }} />
+              1:1 MEASURED 3D TOPOGRAPHY
+            </span>
             {modelInfo.model_url && (
-              <a href={modelInfo.model_url} target="_blank" rel="noreferrer" style={{ fontSize: '0.75rem', color: '#93c5fd', textDecoration: 'underline' }}>
-                Download GLB
+              <a href={modelInfo.model_url} target="_blank" rel="noreferrer" style={{ fontSize: '0.75rem', color: '#93c5fd', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                Download GLB ↗
               </a>
             )}
           </div>
-          <p style={{ margin: '0.35rem 0 0', fontSize: '0.8rem', color: '#cbd5e1' }}>{modelInfo.note}</p>
+          <p style={{ margin: '0.4rem 0 0', fontSize: '0.78rem', color: '#94a3b8' }}>{modelInfo.note}</p>
           {modelInfo.preview_url && (
             <div
               className="terrain-preview-wrapper"
               onClick={onOpenSurface}
-              style={{ position: 'relative', marginTop: '0.5rem', cursor: onOpenSurface ? 'pointer' : 'default', borderRadius: '4px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.15)' }}
-              title={onOpenSurface ? "Click to view full 3D surface in main window" : undefined}
+              style={{
+                position: 'relative',
+                marginTop: '0.6rem',
+                cursor: onOpenSurface ? 'pointer' : 'default',
+                borderRadius: '6px',
+                overflow: 'hidden',
+                border: '1px solid rgba(56, 189, 248, 0.25)',
+                background: 'radial-gradient(circle at 50% 50%, #151d2c 0%, #06090e 100%)',
+              }}
+              title={onOpenSurface ? "Click to launch epic aerial flyover in main view" : undefined}
             >
+              {/* Tactical Corner Reticles */}
+              <div style={{ position: 'absolute', top: '6px', left: '8px', color: '#38bdf8', fontSize: '0.75rem', fontFamily: 'monospace', pointerEvents: 'none', zIndex: 2 }}>⌜</div>
+              <div style={{ position: 'absolute', top: '6px', right: '8px', color: '#38bdf8', fontSize: '0.75rem', fontFamily: 'monospace', pointerEvents: 'none', zIndex: 2 }}>⌝</div>
+              <div style={{ position: 'absolute', bottom: '6px', left: '8px', color: '#38bdf8', fontSize: '0.75rem', fontFamily: 'monospace', pointerEvents: 'none', zIndex: 2 }}>⌞</div>
+              <div style={{ position: 'absolute', bottom: '6px', right: '8px', color: '#38bdf8', fontSize: '0.75rem', fontFamily: 'monospace', pointerEvents: 'none', zIndex: 2 }}>⌟</div>
+
+              {/* Tactical Header Overlay */}
+              <div style={{ position: 'absolute', top: '6px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', fontFamily: 'monospace', color: '#38bdf8', opacity: 0.9, pointerEvents: 'none', zIndex: 2 }}>
+                <span>RECONNAISSANCE PASS</span>
+                <span>NAIF SPICE LIGHTING</span>
+              </div>
+
               <img
-                src={`${modelInfo.preview_url}${modelInfo.preview_url.includes('?') ? '&' : '?'}v=2`}
+                src={`${modelInfo.preview_url}${modelInfo.preview_url.includes('?') ? '&' : '?'}v=3`}
                 alt="Scientific terrain render preview"
-                style={{ width: '100%', height: 'auto', display: 'block' }}
+                style={{ width: '100%', height: 'auto', display: 'block', opacity: 0.92, filter: 'contrast(1.08)' }}
               />
+
+              {/* Tactical Footer Overlay */}
+              <div style={{ position: 'absolute', bottom: '6px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', fontFamily: 'monospace', color: '#94a3b8', background: 'rgba(5, 8, 14, 0.7)', padding: '2px 6px', borderRadius: '3px', pointerEvents: 'none', zIndex: 2 }}>
+                <span>LAT {latitude.toFixed(2)}° · LON {longitude.toFixed(2)}°</span>
+                <span>1:1 LOCAL DTM</span>
+              </div>
+
               {onOpenSurface && (
                 <div
-                  style={{ position: 'absolute', inset: 0, background: 'rgba(15, 23, 42, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s' }}
+                  style={{ position: 'absolute', inset: 0, background: 'rgba(6, 12, 22, 0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s', zIndex: 3 }}
                   onMouseEnter={e => e.currentTarget.style.opacity = '1'}
                   onMouseLeave={e => e.currentTarget.style.opacity = '0'}
                 >
-                  <span style={{ background: '#0284c7', color: '#fff', padding: '0.35rem 0.75rem', borderRadius: '4px', fontSize: '0.78rem', fontWeight: 600 }}>
-                    🔍 View Full 3D Surface
+                  <span style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', color: '#fff', padding: '0.45rem 0.9rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600, boxShadow: '0 0 15px rgba(2, 132, 199, 0.5)' }}>
+                    🚁 Launch Epic Aerial Flyover
                   </span>
                 </div>
               )}
@@ -132,23 +162,26 @@ export function TerrainContext({ latitude, longitude, catalogue, onRetry, terrai
               type="button"
               onClick={onOpenSurface}
               style={{
-                marginTop: '0.6rem',
+                marginTop: '0.75rem',
                 width: '100%',
-                padding: '0.55rem 0.75rem',
-                background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
-                color: '#ffffff',
-                border: '1px solid rgba(56, 189, 248, 0.4)',
+                padding: '0.65rem 0.85rem',
+                background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.22) 0%, rgba(2, 132, 199, 0.42) 100%)',
+                color: '#38bdf8',
+                border: '1px solid rgba(56, 189, 248, 0.45)',
                 borderRadius: '6px',
                 fontSize: '0.82rem',
                 fontWeight: 600,
+                letterSpacing: '0.03em',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '0.4rem',
+                gap: '0.45rem',
+                boxShadow: '0 4px 14px rgba(2, 132, 199, 0.16)',
+                transition: 'all 0.2s ease',
               }}
             >
-              🏔️ View High-Res 3D Terrain in Main View
+              🚁 Launch Epic Aerial 3D Flyover
             </button>
           )}
         </div>

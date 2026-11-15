@@ -19,11 +19,11 @@ router = APIRouter(prefix='/api/transfer', tags=['preliminary transfer'])
 EARTH_MU = 398600.435507
 EARTH_RADIUS_KM = 6378.1363
 MOON_RADIUS_KM = 1737.4
-ARRIVAL_ALTITUDE_KM = 10000.0
+ARRIVAL_ALTITUDE_KM = 1000.0
 SAMPLE_COUNT = 257
 LIMITATIONS = [
     'Earth-centered two-body approximation: lunar and Solar perturbing gravity are omitted.',
-    'Arrival is an Earth-facing reference point 10,000 km above the mean lunar radius, not capture, orbit insertion or landing.',
+    f'Arrival is an Earth-facing reference point {ARRIVAL_ALTITUDE_KM:,.0f} km above the mean lunar radius, not capture, orbit insertion or landing.',
     'Circular parking orbit lies in the Moon orbital plane at arrival. Its departure phase is freely selected from a finite candidate set; launch-site accessibility and ascent are not solved.',
     'Injection is an instantaneous vector burn from that assumed circular orbit. Finite burns, fuel, staging and selected vehicle capability are not assessed.',
     'A converged numerical solution and small endpoint error do not establish real-world mission feasibility or physical prediction accuracy.',

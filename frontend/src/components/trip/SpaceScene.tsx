@@ -5,9 +5,9 @@ import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import type {TransferResult} from '../../lib/transfer';
 import {MissionFlightAnimation} from './MissionFlightAnimation';
-import {createStarPoints,disposeObjects} from './spaceVisuals';
+import {createStarPoints,disposeObjects,prepareRocketModel} from './spaceVisuals';
 
-type Props={modelUrl?:string;modelName?:string;modelCredit?:string;transfer?:TransferResult};
+type Props={mission?:boolean;modelUrl?:string;modelName?:string;modelCredit?:string;transfer?:TransferResult};
 function RocketModelViewer({modelUrl,modelName,modelCredit}:{modelUrl:string;modelName?:string;modelCredit?:string}) {
   const hostRef=useRef<HTMLDivElement>(null);
   const [ready,setReady]=useState(false);
@@ -70,21 +70,7 @@ function RocketModelViewer({modelUrl,modelName,modelCredit}:{modelUrl:string;mod
     new GLTFLoader().setDRACOLoader(decoder).load(modelUrl, (asset) => {
       if (disposed) { disposeObjects(asset.scene); return; }
       const model = asset.scene;
-      if (/\/ares-i-[ab]\.glb$/.test(modelUrl)) {
-        // These NASA exports contain four duplicate meshes outside the rotated rocket root.
-        // They distort the bounds and push the actual vehicle out of the frame.
-        for (const child of [...model.children]) {
-          if (child instanceof THREE.Mesh) model.remove(child);
-        }
-      }
-      let bounds = new THREE.Box3().setFromObject(model);
-      const size = bounds.getSize(new THREE.Vector3());
-      if (size.z > size.y && size.z > size.x) model.rotateX(-Math.PI / 2);
-      else if (size.x > size.y) model.rotateZ(Math.PI / 2);
-      bounds = new THREE.Box3().setFromObject(model);
-      model.scale.setScalar(5.8 / bounds.getSize(new THREE.Vector3()).y);
-      bounds = new THREE.Box3().setFromObject(model);
-      model.position.sub(bounds.getCenter(new THREE.Vector3()));
+      prepareRocketModel(model,modelUrl,5.8);
       model.traverse((object) => {
         if (object instanceof THREE.Mesh) {
           object.castShadow = true;
@@ -114,7 +100,7 @@ function RocketModelViewer({modelUrl,modelName,modelCredit}:{modelUrl:string;mod
 
 /** One calculated mission animation; the gallery retains the original model studio. */
 export function SpaceScene(props:Props) {
-  if(props.transfer)return <MissionFlightAnimation data={props.transfer}/>;
-  if(props.modelUrl)return <RocketModelViewer modelUrl={props.modelUrl} modelName={props.modelName} modelCredit={props.modelCredit}/>;
+  if(props.transfer)return <MissionFlightAnimation data={props.transfer} modelUrl={props.modelUrl} modelName={props.modelName} modelCredit={props.modelCredit}/>;
+  if(props.modelUrl&&!props.mission)return <RocketModelViewer modelUrl={props.modelUrl} modelName={props.modelName} modelCredit={props.modelCredit}/>;
   return <div className="trip-mission-empty" role="status"><h2>Your calculated mission flight</h2><p>Choose departure and arrival times, then calculate the transfer to animate the rocket and Moon.</p><p>No illustrative flight is substituted while the calculation is unavailable.</p></div>;
 }

@@ -133,7 +133,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
 }
 
 function createStarfield(skyRadius: number) {
-  const count = 3200;
+  const count = 3600;
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
   let seed = 12345;
@@ -148,7 +148,9 @@ function createStarfield(skyRadius: number) {
   for (let i = 0; i < count; i++) {
     const u = rnd(), v = rnd();
     const theta = u * 2 * Math.PI;
-    const phi = Math.acos(2 * v - 1);
+    // CRITICAL: Stars exist strictly in the upper celestial hemisphere (z > 0 above the lunar horizon).
+    // No stars can EVER be positioned below the horizon or under the ground!
+    const phi = Math.acos(Math.max(0.04, 0.04 + 0.94 * v));
     const r = skyRadius * (0.92 + rnd() * 0.12);
     positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
     positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
@@ -200,50 +202,72 @@ function createSunVisual() {
   return { group, core, glow };
 }
 
-function buildLunarHorizonSkirt(center: THREE.Vector3, extent: number, box: THREE.Box3, isSquare = false) {
-  const diag = Math.hypot(box.max.x - box.min.x, box.max.y - box.min.y);
-  const innerRadius = isSquare ? diag * 0.495 : extent * 0.46;
-  const outerRadius = Math.max(innerRadius * 15, extent * 20, 95000);
-  const radialRings = 52;
-  const angularSegments = 100;
+function buildSeamlessContinuousLandscape(center: THREE.Vector3, extent: number, box: THREE.Box3, isSquare = false) {
+  const hx = Math.max(1, (box.max.x - box.min.x) * 0.5);
+  const hy = Math.max(1, (box.max.y - box.min.y) * 0.5);
+  const diag = Math.hypot(hx, hy);
+  const circRadius = extent * 0.495;
+  const outerRadius = Math.max(extent * 25, 380000); // 380 km expansive horizon
+  const radialRings = 72;
+  const angularSegments = 144;
   const vertexCount = (radialRings + 1) * (angularSegments + 1);
   const positions = new Float32Array(vertexCount * 3);
   const uvs = new Float32Array(vertexCount * 2);
   const indices: number[] = [];
 
-  const baseZ = box.min.z + (box.max.z - box.min.z) * 0.18;
+  const baseZ = box.min.z + (box.max.z - box.min.z) * 0.05;
   const moonRadius = 1737400; // Physical radius of the Moon in meters
+
+  // Computes perimeter radius for any angle
+  const getPerimeterRadius = (cosA: number, sinA: number) => {
+    if (!isSquare) return circRadius;
+    const absCos = Math.max(0.0001, Math.abs(cosA));
+    const absSin = Math.max(0.0001, Math.abs(sinA));
+    return Math.min(hx / absCos, hy / absSin);
+  };
 
   let vIdx = 0;
   for (let r = 0; r <= radialRings; r++) {
     const frac = r / radialRings;
-    const t = Math.pow(frac, 1.35);
-    const radius = innerRadius + (outerRadius - innerRadius) * t;
-    const distFromEdge = radius - innerRadius;
-    const curvatureDrop = (distFromEdge * distFromEdge) / (2 * moonRadius);
-    const blendRelief = Math.min(1.0, Math.pow(frac, 0.7));
+    const morphCircle = Math.min(1.0, frac * 3.5);
+    const ringT = Math.pow(frac, 1.45);
 
     for (let a = 0; a <= angularSegments; a++) {
       const angle = (a / angularSegments) * Math.PI * 2;
       const cosA = Math.cos(angle);
       const sinA = Math.sin(angle);
+
+      const perimR = getPerimeterRadius(cosA, sinA);
+      const circleR = diag * 1.08 + (outerRadius - diag * 1.08) * ringT;
+      const radius = r === 0 ? perimR : perimR * (1 - morphCircle) + circleR * morphCircle;
+
+      const distFromPerim = Math.max(0, radius - perimR);
+      const curvatureDrop = (distFromPerim * distFromPerim) / (2 * moonRadius);
+      const blendRelief = Math.min(1.0, Math.pow(frac, 0.65));
+
       const x = center.x + radius * cosA;
       const y = center.y + radius * sinA;
 
-      const proceduralRelief = (
-        Math.sin(x * 0.00065 + y * 0.00045) * 35 +
-        Math.cos(x * 0.00016 - y * 0.00021) * 62 +
-        Math.sin(angle * 6 + radius * 0.0003) * 22
+      // Multi-octave natural lunar macro and micro relief
+      const macroRelief = (
+        Math.sin(x * 0.00012 + y * 0.00009) * 160 +
+        Math.cos(x * 0.000045 - y * 0.00006) * 240 +
+        Math.sin(angle * 5 + radius * 0.00008) * 85
       ) * blendRelief;
 
-      const z = baseZ - curvatureDrop + proceduralRelief;
+      const midRelief = (
+        Math.sin(x * 0.00055 + y * 0.00042) * 52 +
+        Math.cos(x * 0.00082 - y * 0.00068) * 36
+      ) * blendRelief;
+
+      const z = baseZ - curvatureDrop + macroRelief + midRelief;
 
       positions[vIdx * 3] = x;
       positions[vIdx * 3 + 1] = y;
       positions[vIdx * 3 + 2] = z;
 
-      uvs[vIdx * 2] = (x - center.x) * 0.0008;
-      uvs[vIdx * 2 + 1] = (y - center.y) * 0.0008;
+      uvs[vIdx * 2] = (x - center.x) * 0.0004;
+      uvs[vIdx * 2 + 1] = (y - center.y) * 0.0004;
 
       vIdx++;
     }
@@ -271,84 +295,32 @@ function buildLunarHorizonSkirt(center: THREE.Vector3, extent: number, box: THRE
   return geometry;
 }
 
-function buildSealingRim(center: THREE.Vector3, innerRadius: number, baseZ: number, depth: number, box?: THREE.Box3, isSquare = false) {
-  if (isSquare && box) {
-    const minX = box.min.x, maxX = box.max.x;
-    const minY = box.min.y, maxY = box.max.y;
-    const edgeSegments = 24;
-    const totalPts = edgeSegments * 4;
-    const positions = new Float32Array((totalPts + 1) * 2 * 3);
-    const uvs = new Float32Array((totalPts + 1) * 2 * 2);
-    const indices: number[] = [];
-
-    const getPerimeterPoint = (i: number) => {
-      const edge = Math.floor(i / edgeSegments);
-      const t = (i % edgeSegments) / edgeSegments;
-      if (edge === 0) return { x: minX + (maxX - minX) * t, y: minY };
-      if (edge === 1) return { x: maxX, y: minY + (maxY - minY) * t };
-      if (edge === 2) return { x: maxX - (maxX - minX) * t, y: maxY };
-      return { x: minX, y: maxY - (maxY - minY) * t };
-    };
-
-    for (let i = 0; i <= totalPts; i++) {
-      const pt = getPerimeterPoint(i % totalPts);
-      positions[i * 6] = pt.x;
-      positions[i * 6 + 1] = pt.y;
-      positions[i * 6 + 2] = baseZ;
-      uvs[i * 4] = i / totalPts;
-      uvs[i * 4 + 1] = 1;
-
-      positions[i * 6 + 3] = pt.x;
-      positions[i * 6 + 4] = pt.y;
-      positions[i * 6 + 5] = baseZ - depth;
-      uvs[i * 4 + 2] = i / totalPts;
-      uvs[i * 4 + 3] = 0;
-
-      if (i < totalPts) {
-        const t1 = i * 2, b1 = i * 2 + 1;
-        const t2 = (i + 1) * 2, b2 = (i + 1) * 2 + 1;
-        indices.push(t1, b1, t2);
-        indices.push(t2, b1, b2);
-      }
-    }
-
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
-    geometry.setIndex(indices);
-    geometry.computeVertexNormals();
-    return geometry;
-  }
-
-  const segments = 96;
-  const positions = new Float32Array((segments + 1) * 2 * 3);
-  const uvs = new Float32Array((segments + 1) * 2 * 2);
+function buildUnderCap(center: THREE.Vector3, radius: number, baseZ: number) {
+  const segments = 48;
+  const positions = new Float32Array((segments + 2) * 3);
+  const uvs = new Float32Array((segments + 2) * 2);
   const indices: number[] = [];
+
+  // Center vertex
+  positions[0] = center.x;
+  positions[1] = center.y;
+  positions[2] = baseZ - 4.0;
+  uvs[0] = 0.5;
+  uvs[1] = 0.5;
 
   for (let i = 0; i <= segments; i++) {
     const angle = (i / segments) * Math.PI * 2;
-    const x = center.x + innerRadius * Math.cos(angle);
-    const y = center.y + innerRadius * Math.sin(angle);
-
-    positions[i * 6] = x;
-    positions[i * 6 + 1] = y;
-    positions[i * 6 + 2] = baseZ;
-    uvs[i * 4] = i / segments;
-    uvs[i * 4 + 1] = 1;
-
-    positions[i * 6 + 3] = x;
-    positions[i * 6 + 4] = y;
-    positions[i * 6 + 5] = baseZ - depth;
-    uvs[i * 4 + 2] = i / segments;
-    uvs[i * 4 + 3] = 0;
+    const x = center.x + radius * Math.cos(angle);
+    const y = center.y + radius * Math.sin(angle);
+    const idx = (i + 1) * 3;
+    positions[idx] = x;
+    positions[idx + 1] = y;
+    positions[idx + 2] = baseZ - 4.0;
+    uvs[(i + 1) * 2] = 0.5 + 0.5 * Math.cos(angle);
+    uvs[(i + 1) * 2 + 1] = 0.5 + 0.5 * Math.sin(angle);
 
     if (i < segments) {
-      const t1 = i * 2;
-      const b1 = i * 2 + 1;
-      const t2 = (i + 1) * 2;
-      const b2 = (i + 1) * 2 + 1;
-      indices.push(t1, b1, t2);
-      indices.push(t2, b1, b2);
+      indices.push(0, i + 1, i + 2);
     }
   }
 
@@ -468,13 +440,13 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       const sz = b.getSize(new THREE.Vector3());
       const c = b.getCenter(new THREE.Vector3());
       const ext = Math.max(100, sz.x, sz.y);
-      const aerialAltitude = (sz.z || 50) * 0.5 + ext * 0.18;
-      camera.position.set(c.x - ext * 0.28, c.y - ext * 0.42, c.z + aerialAltitude);
-      controls.target.set(c.x + ext * 0.08, c.y + ext * 0.12, c.z + (sz.z || 50) * 0.1);
-      controls.minDistance = Math.max(10, ext * 0.05);
-      controls.maxDistance = ext * 1.8;
-      controls.maxPolarAngle = Math.PI * 0.478;
-      controls.minPolarAngle = Math.PI * 0.12;
+      const aerialAltitude = Math.max(90, (sz.z || 50) * 0.6 + ext * 0.22);
+      camera.position.set(c.x - ext * 0.32, c.y - ext * 0.48, c.z + aerialAltitude);
+      controls.target.set(c.x + ext * 0.05, c.y + ext * 0.12, c.z + (sz.z || 50) * 0.05);
+      controls.minDistance = Math.max(10, ext * 0.04);
+      controls.maxDistance = ext * 3.5;
+      controls.maxPolarAngle = Math.PI * 0.485;
+      controls.minPolarAngle = Math.PI * 0.06;
       controls.update();
     }
 
@@ -483,11 +455,12 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       const sz = b.getSize(new THREE.Vector3());
       const c = b.getCenter(new THREE.Vector3());
       const ext = Math.max(100, sz.x, sz.y);
-      camera.position.set(c.x + ext * 0.45, c.y - ext * 0.75, b.max.z + ext * 0.45);
+      const orbitAltitude = Math.max(250, (sz.z || 50) + ext * 0.95);
+      camera.position.set(c.x + ext * 0.30, c.y - ext * 0.65, c.z + orbitAltitude);
       controls.target.copy(c);
-      controls.minDistance = Math.max(10, ext * 0.08);
-      controls.maxDistance = ext * 2.2;
-      controls.maxPolarAngle = Math.PI * 0.48;
+      controls.minDistance = Math.max(15, ext * 0.08);
+      controls.maxDistance = ext * 4.8;
+      controls.maxPolarAngle = Math.PI * 0.485;
       controls.update();
     }
 
@@ -615,9 +588,10 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       const target = value.mode === 'eye' && value.selectedPoint ? value.selectedPoint : center;
       sunLight.target.position.copy(target);
       sunLight.position.copy(target).addScaledVector(new THREE.Vector3(...sky.sun.directional_vector_local_z_up), lightDistance);
-      const radius = value.mode === 'eye' ? 125 : extent * .75;
+      const radius = value.mode === 'eye' ? 160 : Math.max(1200, extent * 1.35);
       const shadow = sunLight.shadow.camera;
       shadow.left = shadow.bottom = -radius; shadow.right = shadow.top = radius;
+      shadow.near = 10; shadow.far = lightDistance + radius * 3.0;
       sunLight.shadow.normalBias = value.mode === 'eye' ? .015 : .08;
       shadow.updateProjectionMatrix();
     }
@@ -730,21 +704,22 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       starfield = createStarfield(skyDistance);
       scene.add(starfield);
 
-      // Add seamless surrounding lunar horizon landscape skirt
+      // Add expansive, seamless surrounding lunar horizon landscape and solid undercap
       const isSquare = region.model_url.toLowerCase().includes('site04') || region.model_url.toLowerCase().includes('g7');
-      const skirtGeo = buildLunarHorizonSkirt(center, extent, box, isSquare);
-      const rimGeo = buildSealingRim(center, extent * 0.465, box.min.z + (box.max.z - box.min.z) * 0.18, extent * 0.25, box, isSquare);
+      const landscapeGeo = buildSeamlessContinuousLandscape(center, extent, box, isSquare);
+      const underCapGeo = buildUnderCap(center, extent * 0.55, box.min.z + (box.max.z - box.min.z) * 0.05);
       const defaultMat = new THREE.MeshStandardMaterial({
         color: new THREE.Color(0xb0b4bc),
         roughness: 0.94,
         metalness: 0.02,
+        side: THREE.DoubleSide,
       });
-      const skirtMesh = new THREE.Mesh(skirtGeo, defaultMat);
-      skirtMesh.receiveShadow = true;
-      const rimMesh = new THREE.Mesh(rimGeo, defaultMat);
-      rimMesh.receiveShadow = true;
-      scene.add(skirtMesh);
-      scene.add(rimMesh);
+      const landscapeMesh = new THREE.Mesh(landscapeGeo, defaultMat);
+      landscapeMesh.receiveShadow = true;
+      const underCapMesh = new THREE.Mesh(underCapGeo, defaultMat);
+      underCapMesh.receiveShadow = true;
+      scene.add(landscapeMesh);
+      scene.add(underCapMesh);
 
       const isYUp = region.gltf_up === 'Y';
       const minX = box.min.x, maxX = box.max.x;
@@ -795,8 +770,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
               if (detail && detailSource === child) detail.material = child.material;
             }
           });
-          skirtMesh.material = fallbackMat;
-          rimMesh.material = fallbackMat;
+          landscapeMesh.material = fallbackMat;
+          underCapMesh.material = fallbackMat;
           render();
         } catch { /* Retain the model's original material if canvas textures are unavailable. */ }
       };
@@ -863,8 +838,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
                   mat.needsUpdate = true;
                 }
               });
-              skirtMesh.material = mat;
-              rimMesh.material = mat;
+              landscapeMesh.material = mat;
+              underCapMesh.material = mat;
               render();
             },
             undefined,
@@ -885,16 +860,17 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         setOnMesh(true);
       }
 
-      camera.far = skyDistance * 2 + extent * 5;
+      camera.near = 1.0;
+      camera.far = Math.max(1200000, skyDistance * 3);
       camera.updateProjectionMatrix();
       setAerialCamera();
 
       const shadow = sunLight.shadow.camera;
-      const radius = size.length() * 0.65;
+      const radius = Math.max(1200, size.length() * 0.95);
       shadow.left = shadow.bottom = -radius;
       shadow.right = shadow.top = radius;
       shadow.near = 10;
-      shadow.far = lightDistance + radius * 2;
+      shadow.far = lightDistance + radius * 3.0;
       shadow.updateProjectionMatrix();
 
       marker.scale.setScalar(Math.max(1, extent / 600));

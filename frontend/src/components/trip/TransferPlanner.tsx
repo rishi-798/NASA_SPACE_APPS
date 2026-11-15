@@ -7,7 +7,7 @@ export function TransferPlanner({input,altitudeText,calculation,onDeparture,onAr
   const {data,loading,error,problem,calculate}=calculation;
   return <section className="transfer-planner transfer-planner-compact" aria-labelledby="transfer-title">
     <header><p className="trip-section-label">Calculated mission animation</p><h2 id="transfer-title">Flight timing</h2>
-      <p>The rocket animation uses an Earth-gravity-only trajectory targeting the Moon’s future SPICE position. Lunar and Solar perturbations are omitted; rocket and launch-pad feasibility are not assessed.</p></header>
+      <p>The flight calculates and plays automatically when this section opens. The rocket animation uses an Earth-gravity-only trajectory targeting the Moon’s future SPICE position. Lunar and Solar perturbations are omitted; rocket and launch-pad feasibility are not assessed.</p></header>
     <div className="transfer-inputs">
       <label className="trip-field">Transfer departure (UTC)<input aria-label="Transfer departure (UTC)" type="datetime-local" disabled={frozen} value={input.departureUtc.slice(0,16)} onChange={e=>{if(e.target.value)onDeparture(`${e.target.value}:00Z`);}} /></label>
       <label className="trip-field">Lunar arrival / observation (UTC)<input aria-label="Lunar arrival / observation (UTC)" type="datetime-local" disabled={frozen} value={input.arrivalUtc.slice(0,16)} onChange={e=>{if(e.target.value)onArrival(`${e.target.value}:00Z`);}} /></label>

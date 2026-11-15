@@ -53,6 +53,9 @@ def test_real_date_targeted_transfer_and_conservation():
     data = response.json(); summary = data['summary']
     assert len(data['samples']) == 257
     assert data['arrival_target']['is_capture_or_landing'] is False
+    assert data['arrival_target']['altitude_km'] == 1000
+    arrival_range = np.linalg.norm(np.array(data['samples'][-1]['spacecraft_position_km'])-data['samples'][-1]['moon_position_km'])
+    assert abs(arrival_range-data['constants']['moon_radius_km']-1000) < .01
     assert summary['endpoint_error_km'] < .01
     assert summary['max_relative_energy_drift'] < 1e-9
     assert summary['max_relative_angular_momentum_drift'] < 1e-9

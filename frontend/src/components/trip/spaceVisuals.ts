@@ -92,102 +92,20 @@ export function createSunGlow() {
   return glow;
 }
 
-export function createSpacecraftMesh(): THREE.Group {
-  const root = new THREE.Group();
-  root.name = "Translunar Crew Vehicle";
-
-  // Command Module (Capsule cone pointing along +Y)
-  const cmGeo = new THREE.ConeGeometry(0.075, 0.14, 20);
-  const cmMat = new THREE.MeshStandardMaterial({
-    color: 0xf3f4f6,
-    metalness: 0.35,
-    roughness: 0.28,
-    emissive: 0x0a101d,
-    emissiveIntensity: 0.2,
-    transparent: true,
-  });
-  const cm = new THREE.Mesh(cmGeo, cmMat);
-  cm.position.set(0, 0.10, 0);
-  cm.castShadow = true;
-  root.add(cm);
-
-  // Heat Shield
-  const shieldGeo = new THREE.CylinderGeometry(0.075, 0.076, 0.02, 20);
-  const shieldMat = new THREE.MeshStandardMaterial({ color: 0x27201c, metalness: 0.7, roughness: 0.4, transparent: true });
-  const shield = new THREE.Mesh(shieldGeo, shieldMat);
-  shield.position.set(0, 0.02, 0);
-  root.add(shield);
-
-  // Service Module Cylinder
-  const smGeo = new THREE.CylinderGeometry(0.072, 0.072, 0.13, 20);
-  const smMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.45, roughness: 0.32, transparent: true });
-  const sm = new THREE.Mesh(smGeo, smMat);
-  sm.position.set(0, -0.055, 0);
-  sm.castShadow = true;
-  root.add(sm);
-
-  // 4 Solar Array Wings (Orion X-wing geometry)
-  const wingGeo = new THREE.BoxGeometry(0.24, 0.005, 0.055);
-  const wingMat = new THREE.MeshStandardMaterial({
-    color: 0x0f294a,
-    emissive: 0x051326,
-    metalness: 0.85,
-    roughness: 0.2,
-    transparent: true,
-  });
-  const wingAngles = [Math.PI / 4, 3 * Math.PI / 4, 5 * Math.PI / 4, 7 * Math.PI / 4];
-  wingAngles.forEach((angle) => {
-    const wing = new THREE.Mesh(wingGeo, wingMat);
-    wing.position.set(Math.cos(angle) * 0.15, -0.06, Math.sin(angle) * 0.15);
-    wing.rotation.y = -angle;
-    wing.castShadow = true;
-    root.add(wing);
-  });
-
-  // Main Engine Bell
-  const bellGeo = new THREE.CylinderGeometry(0.018, 0.042, 0.045, 16);
-  const bellMat = new THREE.MeshStandardMaterial({ color: 0x18181b, metalness: 0.9, roughness: 0.25, transparent: true });
-  const bell = new THREE.Mesh(bellGeo, bellMat);
-  bell.position.set(0, -0.14, 0);
-  root.add(bell);
-
-  // Thrust Flame Plume Group (pointing backward along -Y)
-  const flameGroup = new THREE.Group();
-  flameGroup.position.set(0, -0.16, 0);
-
-  // Outer plume (cyan ion / hypergolic glow)
-  const outerPlumeGeo = new THREE.ConeGeometry(0.046, 0.22, 16);
-  outerPlumeGeo.rotateZ(Math.PI);
-  outerPlumeGeo.translate(0, -0.11, 0);
-  const outerPlumeMat = new THREE.MeshBasicMaterial({
-    color: 0x38bdf8,
-    transparent: true,
-    opacity: 0.82,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-    toneMapped: false,
-  });
-  const outerPlume = new THREE.Mesh(outerPlumeGeo, outerPlumeMat);
-  flameGroup.add(outerPlume);
-
-  // Inner core flame (hot orange-white core)
-  const innerPlumeGeo = new THREE.ConeGeometry(0.022, 0.14, 14);
-  innerPlumeGeo.rotateZ(Math.PI);
-  innerPlumeGeo.translate(0, -0.07, 0);
-  const innerPlumeMat = new THREE.MeshBasicMaterial({
-    color: 0xfef08a,
-    transparent: true,
-    opacity: 0.95,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-    toneMapped: false,
-  });
-  const innerPlume = new THREE.Mesh(innerPlumeGeo, innerPlumeMat);
-  flameGroup.add(innerPlume);
-
-  root.add(flameGroup);
-  root.userData.flame = flameGroup;
-
-  root.scale.setScalar(0.9);
-  return root;
+/** Shared gallery/flight orientation and sizing for the exact selected catalogue asset. */
+export function prepareRocketModel(model:THREE.Object3D,url:string,height:number) {
+  if(/\/ares-i-[ab]\.glb$/.test(url)){
+    for(const child of [...model.children])if(child instanceof THREE.Mesh){model.remove(child);disposeObjects(child);}
+  }
+  let bounds=new THREE.Box3().setFromObject(model);
+  const size=bounds.getSize(new THREE.Vector3());
+  if(size.z>size.y&&size.z>size.x)model.rotateX(-Math.PI/2);
+  else if(size.x>size.y)model.rotateZ(Math.PI/2);
+  bounds=new THREE.Box3().setFromObject(model);
+  const span=bounds.getSize(new THREE.Vector3()).y;
+  if(!Number.isFinite(span)||span<=0)throw new Error('Selected model has no usable geometry.');
+  model.scale.multiplyScalar(height/span);
+  bounds=new THREE.Box3().setFromObject(model);
+  model.position.sub(bounds.getCenter(new THREE.Vector3()));
+  return model;
 }
