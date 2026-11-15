@@ -26,9 +26,9 @@ COPY terrain/ ./terrain/
 COPY data/ ./data/
 COPY metadata/ ./metadata/
 COPY scripts/prepare_cloud_runtime.py ./scripts/prepare_cloud_runtime.py
-COPY infra20261114/ ./infra20261114/
-COPY nginx.conf ./nginx.conf
+COPY infra/ ./infra/
+COPY infra/nginx.conf ./nginx.conf
 COPY --from=web /build/frontend/dist/ ./frontend/dist/
 RUN python -m scripts.prepare_cloud_runtime && python -m backend.download_kernels
 EXPOSE 8080
-CMD ["python", "/app/infra20261114/serve20261114.py"]
+CMD ["python", "/app/infra/serve.py"]

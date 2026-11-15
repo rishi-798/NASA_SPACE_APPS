@@ -1,5 +1,5 @@
 // NASA CLPS Lunar Browser - Offline Service Worker
-const CACHE_NAME = 'clps-lunar-offline-v1';
+const CACHE_NAME = 'clps-lunar-offline-v2';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -25,7 +25,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) {
+          if (key.startsWith('clps-lunar-offline-') && key !== CACHE_NAME) {
             return caches.delete(key);
           }
         })
@@ -62,7 +62,36 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Stale-while-revalidate for app assets and navigation
+  // A release marker must describe the running server, never a cached build.
+  if (url.pathname === '/build-info.json') {
+    event.respondWith(fetch(request, {cache: 'no-cache'}));
+    return;
+  }
+
+  // Always ask the server for HTML first: cached shells otherwise hide deployed UI changes.
+  // Keep previously visited routes usable when the connection is genuinely offline.
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request, {cache: 'no-cache'}).then(response => {
+        if (response.ok) {
+          const copy = response.clone();
+          event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(request, copy)));
+        }
+        return response;
+      }).catch(async () => {
+        const saved = await caches.match(request);
+        if (saved) return saved;
+        const shell = await caches.match('/index.html');
+        if (shell) return shell;
+        return new Response('Offline: this page has not been saved on this device yet.', {
+          status: 503, headers: {'Content-Type': 'text/plain; charset=utf-8'},
+        });
+      })
+    );
+    return;
+  }
+
+  // Hashed assets may use the cached copy while refreshing in the background.
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       const fetchPromise = fetch(request)
@@ -76,10 +105,6 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          // If offline and request is HTML navigation, fallback to root or cached index.html
-          if (request.mode === 'navigate') {
-            return caches.match('/index.html') || caches.match('/');
-          }
           return cachedResponse;
         });
 

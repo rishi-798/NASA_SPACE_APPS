@@ -3,7 +3,7 @@
 [![NASA Space Apps](https://img.shields.io/badge/NASA%20Space%20Apps-2026-blue.svg)](https://www.spaceappschallenge.org/)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-brightgreen.svg)](https://brahmos-lunar-browser.onrender.com)
 [![JPL NAIF SPICE](https://img.shields.io/badge/JPL%20NAIF%20SPICE-Integrated-orange.svg)](https://naif.jpl.nasa.gov/)
-[![Build & Tests](https://github.com/rishi-798/NASA_SPACE_APPS/actions/workflows/verify-2026-11-14.yml/badge.svg)](https://github.com/rishi-798/NASA_SPACE_APPS/actions/workflows/verify-2026-11-14.yml)
+[![Build & Tests](https://github.com/rishi-798/NASA_SPACE_APPS/actions/workflows/verify.yml/badge.svg)](https://github.com/rishi-798/NASA_SPACE_APPS/actions/workflows/verify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
 
 > An integrated scientific platform for NASA's **Commercial Lunar Payload Services (CLPS)** and **Artemis** programs. Combines real-time **JPL NAIF SPICE** celestial mechanics, **LOLA** topographic horizon profiling, 3D Earth–Moon orbital trajectory simulation, and high-fidelity lunar landing reconnaissance.
@@ -71,5 +71,5 @@ cd frontend && npm test
 * [Earth–Moon Trajectory & Lambert Solver](docs/TRANSLUNAR_TRANSFER.md)
 * [Meteomatics Weather Gateway](docs/METEOMATICS.md)
 * [3D Terrain Architecture & Regolith PBR](docs/LANDER_SURFACE_VIEW.md)
-* [Cloud Run & Docker Deployment](docs/CLOUD_RUN_2026-11-14.md)
+* [Cloud Run & Docker Deployment](docs/CLOUD_RUN.md)
 * [Lunar Dataset Specification](docs/MOON_DATASET.md)

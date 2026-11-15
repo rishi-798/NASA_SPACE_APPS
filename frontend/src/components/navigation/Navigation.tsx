@@ -6,6 +6,7 @@ const links = [
   { to: "/explorer", label: "Analyze a site" },
   { to: "/trip", label: "Plan a trip" },
   { to: "/planner", label: "Flight phases" },
+  { to: "/landing", label: "Landing sim" },
   { to: "/missions", label: "Missions" },
   { to: "/about", label: "About" },
   { to: "/discover", label: "Discover" },

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFile, readdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { homeMarkup } from "../frontend/.prerender/prerender.js";
@@ -18,3 +19,11 @@ html = html.replace("</head>", `<link rel="preload" href="/assets/${font}" as="f
 const destination = new URL("home.html", build);
 await writeFile(destination, html);
 console.log(`Pre-rendered lunar home page: ${fileURLToPath(destination)}`);
+
+// Public, non-secret evidence of the artifact actually deployed by the hosting service.
+const sourceCommit = process.env.RENDER_GIT_COMMIT ?? process.env.GITHUB_SHA ?? '';
+await writeFile(new URL('build-info.json', build), JSON.stringify({
+  source_commit: /^[a-f0-9]{40}$/i.test(sourceCommit) ? sourceCommit : null,
+  built_at_utc: new Date().toISOString(),
+  artifact_sha256: createHash('sha256').update(template).update(html).digest('hex'),
+}, null, 2)+'\n');

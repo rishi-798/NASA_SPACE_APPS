@@ -1,4 +1,4 @@
-name: verify lunar and discovery — 2026-11-14
+name: CI / Verification
 on: [push, pull_request]
 permissions:
   contents: read

@@ -1,4 +1,4 @@
-"""2026-11-14: start one API worker, wait for readiness, then expose nginx."""
+"""Start one API worker, wait for readiness, then expose nginx reverse proxy."""
 from pathlib import Path
 import os
 import signal
@@ -13,7 +13,7 @@ stopped = threading.Event()
 for signum in (signal.SIGTERM, signal.SIGINT):
     signal.signal(signum, lambda *_: stopped.set())
 port = int(os.environ.get('PORT', '8080'))
-configuration = Path('/tmp/nginx-20261114.conf')
+configuration = Path('/tmp/nginx.conf')
 configuration.write_text(Path('/app/nginx.conf').read_text().replace('__INGRESS_PORT__', str(port)))
 processes = [subprocess.Popen([sys.executable, '-m', 'uvicorn', 'backend.app:app',
                               '--host', '127.0.0.1', '--port', '8081', '--workers', '1'])]

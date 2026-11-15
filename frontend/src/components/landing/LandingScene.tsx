@@ -6,6 +6,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { thrustDirection, type Vec3 } from "../../sim/physics";
 import type { SnapshotStore } from "../../sim/store";
 import type { Terrain } from "../../sim/terrain";
+import { createDustEffect } from "./dustEffect";
 import { macroAlbedo, starField } from "./regolith";
 
 import { landingGravel, landingSurfaceMaterial } from "./surfaceAppearance";
@@ -225,6 +226,9 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     engineLight.position.y = -1;
     tiltGroup.add(engineLight);
     scene.add(lander);
+    // Plume–surface dust near touchdown (visual only).
+    const plumeDust = createDustEffect({ heightAt: terrain.heightAt, toThree, gravity: 1.62, scale: Math.max(1, displayHeight / 12) });
+    scene.add(plumeDust.points);
     const followOffset = new THREE.Vector3(-2.1, 1.1, 2.5).multiplyScalar(Math.max(8, displayHeight));   // keeps the model ~30% of the view
     const lookHeight = new THREE.Vector3(0, displayHeight * 0.4, 0);
 
@@ -286,6 +290,7 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
         m.position.y = -(len * flicker * widen) / 2;
       }
       engineLight.intensity = len > 0 ? (6 + 30 * s.throttle * flicker) * plumeScale : 0;
+      plumeDust.update(snap);
       void vehicle;
       if (snap.trail.length !== lastTrailLength) {
         trailGeo.setFromPoints(snap.trail.map(toThree));
@@ -308,6 +313,7 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     };
     render();
     return () => {
+      plumeDust.dispose();
       cancelledLoad = true;
       cancelAnimationFrame(frame);
       observer.disconnect();
