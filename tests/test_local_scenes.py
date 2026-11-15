@@ -10,9 +10,9 @@ from backend.local_scenes import contains, scenes
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_all_fourteen_centres_match_real_grid_handoff():
+def test_all_centres_match_real_grid_handoff():
     client = TestClient(app)
-    assert len(scenes()) == 14
+    assert len(scenes()) == 16
     for scene in scenes():
         anchor = scene['anchor']
         response = client.get('/api/terrain/local-scene', params={
@@ -53,9 +53,22 @@ def test_models_are_unmodified_and_anchors_have_correct_scale_orientation():
         lon = np.degrees(np.arctan2(origin[1], origin[0]))
         assert abs(lat-scene['anchor']['latitude']) < 1e-9
         assert abs(lon-scene['anchor']['longitude']) < 1e-9
-        if scene['id'] == 'SITE04-G7':
-            file = ROOT / 'frontend/public/terrain/SITE04-G7.glb'
+        if scene['model_url'].startswith('/terrain/'):
+            file = ROOT / 'frontend/public' / scene['model_url'].lstrip('/')
         else:
             from urllib.parse import unquote
             file = ROOT / 'outputs' / unquote(scene['model_url'].split('/')[-1])
         assert hashlib.sha256(file.read_bytes()).hexdigest() == scene['sha256']
+
+
+def test_featured_landings_use_their_own_measured_polar_meshes():
+    client = TestClient(app)
+    for latitude, longitude, expected in [
+        (-84.79, 29.2, 'REGION-ATHENA'),
+        (-80.13, 1.44, 'REGION-ODYSSEUS'),
+    ]:
+        scene = client.get('/api/terrain/local-scene', params={'lat': latitude, 'lon': longitude}).json()['scene']
+        assert scene['id'] == expected
+        assert scene['source_id'] == 'ldem_60s_60m_float'
+        assert scene['source_spacing_m'] == 60
+        assert abs(scene['height_delta_m']) < 0.001
