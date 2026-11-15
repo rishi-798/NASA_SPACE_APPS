@@ -7,6 +7,7 @@ import { useTransferCalculation } from "../lib/useTransferCalculation";
 import { TransferPlanner } from "../components/trip/TransferPlanner";
 import { MissionDossierModal } from "../components/trip/MissionDossierModal";
 import { LaunchWeatherPanel } from "../components/trip/LaunchWeatherPanel";
+import { LandingSimPage } from "./LandingSimPage";
 import { TerrainContext } from "../components/explorer/TerrainContext";
 import { LocalSurfacePane } from "../components/explorer/LocalSurfacePane";
 import { LoadingScreen } from "../components/ui/LoadingScreen";
@@ -29,7 +30,7 @@ const SpaceScene = lazy(() => import("../components/trip/SpaceScene").then((modu
 const STORAGE_KEY = "nasa-lunar-trip-v1";
 const stages: { id: TripStage; label: string }[] = [
   { id: "earth", label: "Departure" }, { id: "rocket", label: "Rocket" },
-  { id: "moon", label: "Destination" }, { id: "landing", label: "Landing" }, { id: "reveal", label: "Mission" },
+  { id: "moon", label: "Destination" }, { id: "landing", label: "Conditions" }, { id: "simulate", label: "Landing" }, { id: "reveal", label: "Overview" },
 ];
 const facts = [
   "The Moon is about 384,400 km from Earth on average.",
@@ -82,7 +83,7 @@ export function TripPage() {
   const loadingScreen = useLoadingScreen(currentPreview?.state === "loading" || mission.stage === "preparing");
   const { guide } = useVoiceGuide();
   const eventSerial = useRef(0);
-  const stagePrompt = { earth: PROMPTS.departure, rocket: PROMPTS.rocket, moon: PROMPTS.destination, landing: PROMPTS.observation, preparing: null, reveal: PROMPTS.missionRecord }[mission.stage];
+  const stagePrompt = { earth: PROMPTS.departure, rocket: PROMPTS.rocket, moon: PROMPTS.destination, landing: PROMPTS.observation, preparing: null, simulate: PROMPTS.simulate, reveal: PROMPTS.missionRecord }[mission.stage];
   // Key on the stage only: rerenders within a stage never repeat the prompt; a new stage replaces old speech.
   useAnnounce("stage", stagePrompt ? `trip:${mission.stage}` : null, stagePrompt);
   // On by default in the trip planner (after the stage is known, so it opens with the right prompt).
@@ -158,7 +159,7 @@ export function TripPage() {
     }
   }
   function go(stage: TripStage) { active.current?.abort(); dispatch({ type: "stage", stage }); }
-  const title = mission.stage === "earth" ? "Where will you leave from?" : mission.stage === "rocket" ? "Choose your ride." : mission.stage === "moon" ? "Find your place on the Moon." : mission.stage === "reveal" ? "Your mission. In context." : "Look before you land.";
+  const title = mission.stage === "earth" ? "Where will you leave from?" : mission.stage === "rocket" ? "Choose your ride." : mission.stage === "moon" ? "Find your place on the Moon." : mission.stage === "simulate" ? "Now, land it." : mission.stage === "reveal" ? "Your mission. In context." : "Look before you land.";
 
   return <article className="trip-page">
     <LoadingScreen visible={loadingScreen.visible} ready={loadingScreen.ready} onDismiss={loadingScreen.dismiss} message="Analyzing your landing site" />
@@ -254,6 +255,9 @@ export function TripPage() {
           {landing && <TerrainContext catalogue={catalogue.state} onRetry={catalogue.retry} />}
           <div className="trip-unavailable" style={{ borderLeftColor: "var(--accent)" }}><CheckCircle weight="fill" color="#a2ecd3" /><div><strong>Topographic Navigation Mode</strong><p>Calibrated coordinate projection with real-time NAIF SPICE solar lighting and Earth line-of-sight vectors.</p></div></div>
           <button className="trip-primary" disabled={!landing} onClick={() => go("landing")}>Review landing point <ArrowRight /></button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button></aside></div>}
+      {mission.stage === "simulate" && landing && <LandingSimPage key={`${landing.latitude},${landing.longitude}`}
+        landing={{ latitude: landing.latitude, longitude: landing.longitude, name: landing.name ?? "your landing point" }}
+        onBack={() => go("landing")} onContinue={() => go("reveal")} />}
       {(mission.stage === "landing" || mission.stage === "reveal") && landing && <>
         <div className="trip-layout">
           <div className="trip-visual">
@@ -285,7 +289,7 @@ export function TripPage() {
             <p className="trip-note">Surface observation reference: <time dateTime={mission.utcTime}>{mission.utcTime}</time>. This uses the arrival epoch for planning; it is not a predicted touchdown time.</p>
             <p className="trip-note">Chosen coordinate is retained exactly. Terrain source frames and the ephemeris frame have alignment uncertainty; a single point height is not a landing-safety claim.</p>
             {mission.error && <p role="alert" className="trip-error">{mission.error}</p>}
-            {mission.stage === "landing" ? <><button className="trip-secondary" disabled={currentPreview?.state === "loading"} onClick={() => void analyze(false)}>{currentPreview?.state === "loading" ? "Analyzing..." : currentPreview?.state === "error" ? "Retry analysis" : "Analyze landing"}</button><button className="trip-primary" disabled={!currentPreview?.result} onClick={() => void analyze(true)}>Plan this landing <ArrowRight /></button><button className="trip-secondary" onClick={() => go("moon")}>Change landing point</button></> : <><p className="trip-note">The mission animation uses a preliminary date-based transfer. Launch-window feasibility, selected vehicle performance, capture and descent are not validated.</p><button className="trip-secondary" onClick={() => go("landing")}>Edit mission dates</button><button className="trip-secondary" onClick={() => go("earth")}>Edit departure</button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button><button className="trip-primary" onClick={() => go("moon")}>Explore landing site <ArrowRight /></button></>}
+            {mission.stage === "landing" ? <><button className="trip-secondary" disabled={currentPreview?.state === "loading"} onClick={() => void analyze(false)}>{currentPreview?.state === "loading" ? "Analyzing..." : currentPreview?.state === "error" ? "Retry analysis" : "Analyze landing"}</button><button className="trip-primary" disabled={!currentPreview?.result} onClick={() => void analyze(true)}>Continue to landing <ArrowRight /></button><button className="trip-secondary" onClick={() => go("moon")}>Change landing point</button></> : <><p className="trip-note">The mission animation uses a preliminary date-based transfer. Launch-window feasibility, selected vehicle performance, capture and descent are not validated.</p><button className="trip-secondary" onClick={() => go("landing")}>Edit mission dates</button><button className="trip-secondary" onClick={() => go("earth")}>Edit departure</button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button><button className="trip-primary" onClick={() => go("moon")}>Explore landing site <ArrowRight /></button></>}
             {analysis && <MissionDossierModal latitude={landing.latitude} longitude={landing.longitude} start={mission.utcTime}
               launchSiteId={departure?.id} launchVehicle={rocket?.name} liftoffUtc={liftoffUtc ? `${liftoffUtc}:00Z` : undefined} missionName={landing.name} />}
             <TerrainContext catalogue={catalogue.state} onRetry={catalogue.retry} />

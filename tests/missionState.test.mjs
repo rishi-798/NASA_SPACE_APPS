@@ -23,7 +23,7 @@ test('only matching frozen request revisions can produce a reveal', () => {
   const state=missionReducer(planned(),{type:'prepare'});
   const changed=missionReducer(state,{type:'time',time:'2026-10-11T18:00:00Z'});
   assert.equal(missionReducer(changed,{type:'result',revision:state.revision,result:{}}),changed);
-  assert.equal(missionReducer(state,{type:'result',revision:state.revision,result:{conditions:{latitude:-80.123456}}}).stage,'reveal');
+  assert.equal(missionReducer(state,{type:'result',revision:state.revision,result:{conditions:{latitude:-80.123456}}}).stage,'simulate');   // step 5: landing simulation
 });
 test('any changed input invalidates scientific output', () => {
   const state=missionReducer(planned(),{type:'prepare'});
@@ -45,7 +45,7 @@ test('invalid coordinates are rejected; restoration does not replay stale analys
 });
 test('refresh starts at departure for every saved stage while retaining choices', () => {
   const state=missionReducer(planned(),{type:'time',time:'2026-10-11T18:00:00Z'});
-  for (const stage of ['earth','rocket','moon','landing','preparing','reveal']) {
+  for (const stage of ['earth','rocket','moon','landing','preparing','simulate','reveal']) {
     const restored=restoreMission(JSON.stringify({...state,stage,result:{},resultRevision:state.revision}),['earth'],['rocket']);
     assert.equal(restored.stage,'earth');
     assert.equal(restored.departureId,state.departureId);
@@ -63,7 +63,7 @@ test('plan reuses the preview result for the unchanged revision without a new re
   const state=planned();
   const result={conditions:{latitude:-80.123456}};
   const planned_=missionReducer(state,{type:'plan',revision:state.revision,result});
-  assert.equal(planned_.stage,'reveal');
+  assert.equal(planned_.stage,'simulate');
   assert.equal(planned_.result,result);
   assert.equal(planned_.resultRevision,state.revision);
 });
@@ -98,4 +98,15 @@ test('Transfer edits invalidate previously finalized mission output', () => {
     const updated=missionReducer(state,action);
     assert.equal(updated.result,null); assert.equal(updated.resultRevision,null); assert.ok(updated.revision>state.revision);
   }
+});
+test('landing simulation (step 5) then overview (step 6): only reachable with a current result', () => {
+  const state=missionReducer(planned(),{type:'prepare'});
+  assert.equal(missionReducer(state,{type:'stage',stage:'simulate'}),state);           // no result yet
+  const done=missionReducer(state,{type:'result',revision:state.revision,result:{}});
+  assert.equal(done.stage,'simulate');
+  assert.equal(missionReducer(done,{type:'stage',stage:'reveal'}).stage,'reveal');    // Continue to overview
+  assert.equal(missionReducer(done,{type:'stage',stage:'landing'}).stage,'landing');  // back to conditions
+  const changed=missionReducer(done,{type:'time',time:'2026-10-11T18:00:00Z'});
+  assert.equal(missionReducer(changed,{type:'stage',stage:'simulate'}),changed);      // stale result: blocked
+  assert.equal(missionReducer(changed,{type:'stage',stage:'reveal'}),changed);
 });

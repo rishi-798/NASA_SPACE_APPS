@@ -1,0 +1,402 @@
+{
+ "scenes": [
+  {
+   "id": "SITE04-G7",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Y",
+   "east_extent_m": [
+    -659.3140869140625,
+    659.3741455078125
+   ],
+   "north_extent_m": [
+    -659.3396606445312,
+    659.4203491210938
+   ],
+   "height_range_m": [
+    -270.7384338378906,
+    38.23050308227539
+   ],
+   "vertices": 237232,
+   "spacing_m": 5,
+   "source": "Site04_final_adj_5mpp_surf.tif",
+   "source_mismatch": false
+  },
+  {
+   "id": "REGION-APOLLO-11",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9983.052734375,
+    9952.607421875
+   ],
+   "north_extent_m": [
+    -9978.8388671875,
+    9957.9853515625
+   ],
+   "height_range_m": [
+    -2087.173583984375,
+    -1773.7884521484375
+   ],
+   "vertices": 356363,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_00n_30n_000_045_float",
+   "source_mismatch": true,
+   "curvature_median_m": -16.08246135711613,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-APOLLO-12",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9956.8857421875,
+    9958.712890625
+   ],
+   "north_extent_m": [
+    -9938.3359375,
+    9945.1044921875
+   ],
+   "height_range_m": [
+    -1657.9940185546875,
+    -1370.745849609375
+   ],
+   "vertices": 356632,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_30s_00s_315_360_float",
+   "source_mismatch": false,
+   "curvature_median_m": -20.84224843978882,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-APOLLO-14",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9974.955078125,
+    9930.91015625
+   ],
+   "north_extent_m": [
+    -9932.7373046875,
+    9956.302734375
+   ],
+   "height_range_m": [
+    -1308.2694091796875,
+    -814.7584228515625
+   ],
+   "vertices": 356660,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_30s_00s_315_360_float",
+   "source_mismatch": true,
+   "curvature_median_m": -19.614660978317147,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-APOLLO-15",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9973.8583984375,
+    9948.2041015625
+   ],
+   "north_extent_m": [
+    -9969.376953125,
+    9981.31640625
+   ],
+   "height_range_m": [
+    -2250.12890625,
+    457.239990234375
+   ],
+   "vertices": 396949,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_00n_30n_000_045_float",
+   "source_mismatch": true,
+   "curvature_median_m": -15.798027992248763,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-APOLLO-16",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9949.787109375,
+    9942.990234375
+   ],
+   "north_extent_m": [
+    -9958.88671875,
+    9945.3271484375
+   ],
+   "height_range_m": [
+    -214.68887329101562,
+    573.1932373046875
+   ],
+   "vertices": 359880,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_30s_00s_000_045_float",
+   "source_mismatch": false,
+   "curvature_median_m": -20.76707176119092,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-APOLLO-17",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9988.326171875,
+    9944.4833984375
+   ],
+   "north_extent_m": [
+    -9954.64453125,
+    9982.177734375
+   ],
+   "height_range_m": [
+    -2948.074951171875,
+    -778.6302490234375
+   ],
+   "vertices": 379770,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_00n_30n_000_045_float",
+   "source_mismatch": false,
+   "curvature_median_m": -20.756832122802734,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-LUNA-21",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9951.5830078125,
+    9931.5400390625
+   ],
+   "north_extent_m": [
+    -9947.134765625,
+    9981.9189453125
+   ],
+   "height_range_m": [
+    -2840.57958984375,
+    -2439.534423828125
+   ],
+   "vertices": 396889,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_00n_30n_000_045_float",
+   "source_mismatch": false,
+   "curvature_median_m": -21.480781555175327,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-LUNOKHOD-1",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9994.5751953125,
+    9919.41796875
+   ],
+   "north_extent_m": [
+    -9922.703125,
+    9948.861328125
+   ],
+   "height_range_m": [
+    -2571.107666015625,
+    -2422.654296875
+   ],
+   "vertices": 454620,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_30n_60n_315_360_float",
+   "source_mismatch": true,
+   "curvature_median_m": -20.84607982635498,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-LUNOKHOD-2",
+   "checksum_ok": true,
+   "frame_error": 5.551115123125783e-17,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9989.69140625,
+    9925.671875
+   ],
+   "north_extent_m": [
+    -9977.818359375,
+    9955.486328125
+   ],
+   "height_range_m": [
+    -2889.448974609375,
+    -1210.8935546875
+   ],
+   "vertices": 396160,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_00n_30n_000_045_float",
+   "source_mismatch": true,
+   "curvature_median_m": -26.532351016998405,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-SURVEYOR-1",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9960.73046875,
+    9958.828125
+   ],
+   "north_extent_m": [
+    -9971.767578125,
+    9965.5986328125
+   ],
+   "height_range_m": [
+    -2028.086669921875,
+    -1782.3427734375
+   ],
+   "vertices": 356683,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_30s_00s_315_360_float",
+   "source_mismatch": false,
+   "curvature_median_m": -20.74981212615944,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-SURVEYOR-5",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9993.595703125,
+    9935.9580078125
+   ],
+   "north_extent_m": [
+    -9968.796875,
+    9966.927734375
+   ],
+   "height_range_m": [
+    -2225.468505859375,
+    -1928.278076171875
+   ],
+   "vertices": 356466,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_00n_30n_000_045_float",
+   "source_mismatch": false,
+   "curvature_median_m": -20.866943359374773,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-SURVEYOR-6",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9981.7392578125,
+    9967.75390625
+   ],
+   "north_extent_m": [
+    -9962.5283203125,
+    9986.9375
+   ],
+   "height_range_m": [
+    -943.8802490234375,
+    -708.7398681640625
+   ],
+   "vertices": 355932,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_00n_30n_315_360_float",
+   "source_mismatch": false,
+   "curvature_median_m": -20.78855109214777,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-SURVEYOR-7",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Z",
+   "east_extent_m": [
+    -9974.6845703125,
+    9931.62109375
+   ],
+   "north_extent_m": [
+    -9961.353515625,
+    9945.4873046875
+   ],
+   "height_range_m": [
+    -93.9810791015625,
+    710.787841796875
+   ],
+   "vertices": 471154,
+   "spacing_m": 59.225293797166955,
+   "source": "sldem2015_512_60s_30s_315_360_float",
+   "source_mismatch": false,
+   "curvature_median_m": -20.779191076755524,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-ATHENA",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Y",
+   "east_extent_m": [
+    -9990.8017578125,
+    9994.3173828125
+   ],
+   "north_extent_m": [
+    -9997.3408203125,
+    9996.20703125
+   ],
+   "height_range_m": [
+    4580.33349609375,
+    5501.8857421875
+   ],
+   "vertices": 87101,
+   "spacing_m": 60,
+   "source": "ldem_60s_60m_float",
+   "source_mismatch": false,
+   "curvature_median_m": -21.013959320748654,
+   "curvature_expected_m": -20.792563600782778
+  },
+  {
+   "id": "REGION-ODYSSEUS",
+   "checksum_ok": true,
+   "frame_error": 0.0,
+   "frame_ok": true,
+   "layout": "Y",
+   "east_extent_m": [
+    -9985.18359375,
+    9969.806640625
+   ],
+   "north_extent_m": [
+    -9998.2880859375,
+    9996.3974609375
+   ],
+   "height_range_m": [
+    1904.4334716796875,
+    2940.056640625
+   ],
+   "vertices": 88328,
+   "spacing_m": 60,
+   "source": "ldem_60s_60m_float",
+   "source_mismatch": false,
+   "curvature_median_m": -20.287785430291933,
+   "curvature_expected_m": -20.792563600782778
+  }
+ ]
+}

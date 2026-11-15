@@ -89,7 +89,7 @@ export function gridTerrain(patch: TerrainPatch, siteName: string): Terrain {
  * z is reported relative to the mesh surface under the target.
  */
 export function meshTerrain(east: Float32Array | number[], north: Float32Array | number[], up: Float32Array | number[], triangles: Uint32Array | number[],
-  meta: { siteName: string; source: string; sourceSpacingM: number; halfSizeM?: number; notes?: string[] }): Terrain {
+  meta: { siteName: string; source: string; sourceSpacingM: number; sourceLabel?: string; halfSizeM?: number; notes?: string[] }): Terrain {
   const halfSizeM = meta.halfSizeM ?? 2000;
   const reach = halfSizeM + 300;                 // index only triangles that can matter for the supported area
   const cell = 100, cells = Math.ceil((2 * reach) / cell);
@@ -134,7 +134,7 @@ export function meshTerrain(east: Float32Array | number[], north: Float32Array |
   let missing = 0;
   for (let y = -halfSizeM; y <= halfSizeM; y += 100) for (let x = -halfSizeM; x <= halfSizeM; x += 100) if (!Number.isFinite(heightAt(x, y))) missing++;
   return {
-    kind: "blender", label: `Real terrain: ${meta.siteName} (team Blender model, LOLA ${s} m)`, halfSizeM, heightAt, slopeAt,
+    kind: "blender", label: `Real terrain: ${meta.siteName} (team Blender model, ${meta.sourceLabel ?? `${s} m`})`, halfSizeM, heightAt, slopeAt,
     targetDatumHeightM: h0, source: meta.source, sampleSpacingM: s, missingCells: missing,
     notes: meta.notes ?? [],
   };

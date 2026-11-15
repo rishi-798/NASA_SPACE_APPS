@@ -2,9 +2,9 @@ import { DownloadSimple, Pause, Play, ArrowCounterClockwise, Warning, Robot, Gam
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { LandingScene } from "../components/landing/LandingScene";
 import { loadBlenderTerrain } from "../components/landing/blenderTerrain";
+import { hostedRemotely, sceneForLanding, sizeMb, TERRAIN_SCENES } from "../sim/terrainScenes";
 import type * as THREE from "three";
 import { SimCharts } from "../components/landing/SimCharts";
-import { landingSites } from "../data/landingSites";
 import { assistedInput } from "../sim/autopilot";
 import { DEFAULT_INITIAL, DEFAULT_SETTINGS, DEMO_LIMITS, G0, ILLUSTRATIVE_LANDER, MOON_G, initialState, massFlow, validateConfig,
   type InitialConditions, type Input, type Limits, type VehicleConfig } from "../sim/physics";
@@ -13,7 +13,17 @@ import { createSnapshotStore, type SimPhase } from "../sim/store";
 import { gridTerrain, syntheticPlane, type Terrain, type TerrainPatch } from "../sim/terrain";
 import "../components/landing/landing.css";
 
-type Scenario = "synthetic" | "athena-im2" | "odysseus-im1" | "athena-im2:dem80" | "odysseus-im1:dem80";
+/** Where the terrain comes from: a team measured-terrain model at this point, the LOLA 80 m grid, or a synthetic plane. */
+type Scenario = "synthetic" | "scene" | "dem80";
+
+/** The landing point chosen in the trip planner. The simulator is embedded as the trip's landing step. */
+export type SimLanding = { latitude: number; longitude: number; name: string };
+const DEM80_LATITUDE_LIMIT = -80.1;   // the LOLA 80 m grid covers poleward of about 80° S
+function initialScenario(landing: SimLanding): { scenario: Scenario; note: string | null } {
+  if (sceneForLanding(landing.latitude, landing.longitude)) return { scenario: "scene", note: null };
+  if (landing.latitude <= DEM80_LATITUDE_LIMIT) return { scenario: "dem80", note: null };
+  return { scenario: "synthetic", note: `Measured terrain is not available at ${landing.name}: the team's terrain models cover ${TERRAIN_SCENES.length} specific sites, and the LOLA elevation grid covers south of 80° S. You are on a synthetic training surface, not your chosen point.` };
+}
 
 /** VISUAL ONLY: the NASA Saturn V model is drawn at the simulated position. It never affects the physics. */
 const VISUAL_MODEL = { name: "Saturn V", url: "/saturn-v.glb", credit: "NASA 3D Resources" } as const;
@@ -30,9 +40,11 @@ function NumberField({ label, unit, value, onChange, step = 1, min, max, hint }:
   </label>;
 }
 
-export function LandingSimPage() {
+export function LandingSimPage({ landing, onContinue, onBack }: { landing: SimLanding; onContinue?: () => void; onBack?: () => void }) {
   // ---------------------------------------------------------------- preflight configuration
-  const [scenario, setScenario] = useState<Scenario>("synthetic");
+  const [entry] = useState(() => initialScenario(landing));
+  const scene = useMemo(() => sceneForLanding(landing.latitude, landing.longitude), [landing.latitude, landing.longitude]);
+  const [scenario, setScenario] = useState<Scenario>(entry.scenario);
   const [slopeDeg, setSlopeDeg] = useState(0);
   const [slopeAzimuth, setSlopeAzimuth] = useState(90);
   const [vehicle, setVehicle] = useState<VehicleConfig>(ILLUSTRATIVE_LANDER);
@@ -45,21 +57,19 @@ export function LandingSimPage() {
 
   useEffect(() => {
     if (scenario === "synthetic") return;
-    const [siteId, variant] = scenario.split(":") as [string, string | undefined];
-    const site = landingSites.find((s) => s.id === siteId)!;
     const controller = new AbortController();
     const fail = (e: unknown) => { if (!controller.signal.aborted) setPatch({ scenario, error: e instanceof Error ? e.message : "Terrain unavailable." }); };
-    if (variant === "dem80") {
+    if (scenario === "dem80") {
       const base = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
-      fetch(`${base}/api/sim/terrain?lat=${site.latitude}&lon=${site.longitude}&half_size_m=2000`, { signal: controller.signal })
+      fetch(`${base}/api/sim/terrain?lat=${landing.latitude}&lon=${landing.longitude}&half_size_m=2000`, { signal: controller.signal })
         .then(async (r) => { const body = await r.json(); if (!r.ok) throw new Error(body?.detail ?? `Terrain service returned ${r.status}.`); return body as TerrainPatch; })
-        .then((p) => setPatch({ scenario, terrain: gridTerrain(p, site.mission) }))
+        .then((p) => setPatch({ scenario, terrain: gridTerrain(p, landing.name) }))
         .catch(fail);
-    } else {
-      loadBlenderTerrain(siteId, site.mission, controller.signal).then(({ terrain, model }) => setPatch({ scenario, terrain, model })).catch(fail);
+    } else if (scene) {
+      loadBlenderTerrain(scene, landing.name, controller.signal).then(({ terrain, model }) => setPatch({ scenario, terrain, model })).catch(fail);
     }
     return () => controller.abort();
-  }, [scenario]);
+  }, [scenario, landing, scene]);
 
   const synthetic = useMemo(() => { try { return syntheticPlane(slopeDeg, slopeAzimuth); } catch { return null; } }, [slopeDeg, slopeAzimuth]);
   const currentPatch = patch?.scenario === scenario ? patch : null;
@@ -229,7 +239,7 @@ export function LandingSimPage() {
   };
 
   const exportRun = (rec: RunRecord) => {
-    const blob = new Blob([JSON.stringify({ ...rec, model: MODEL_SUMMARY, notice: rec.terrainKind === "synthetic" ? "SYNTHETIC TRAINING SCENARIO: not a real lunar site." : `${rec.terrainLabel}: regional slope only.` }, null, 1)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify({ ...rec, model: modelSummary(terrain?.halfSizeM ?? null), notice: rec.terrainKind === "synthetic" ? "SYNTHETIC TRAINING SCENARIO: not a real lunar site." : `${rec.terrainLabel}: regional slope only.` }, null, 1)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `landing-sim-run-${rec.id}${rec.terrainKind === "synthetic" ? "-SYNTHETIC" : ""}.json`;
@@ -243,15 +253,16 @@ export function LandingSimPage() {
   const running = phase === "running" || phase === "paused";
   const lockedConfig = running || phase === "replay";
 
-  return <article className="sim-page">
+  return <article className="sim-page sim-embedded">
     <header className="sim-header">
       <div>
         <p className="eyebrow">Educational prototype · not a validated flight simulator</p>
-        <h1>Lunar landing simulation</h1>
-        <p className="sim-lede">Final descent over a 4 km square: lunar gravity, lander mass, thrust, fuel and terrain. 3-D point-mass motion with a simplified thrust-direction model.</p>
+        <h2 className="sim-embedded-title">Descent over {landing.name}</h2>
+        <p className="sim-lede">Final descent over a small square of terrain ({terrain ? `${(2 * terrain.halfSizeM) / 1000} km` : "up to 4 km"} across): lunar gravity, lander mass, thrust, fuel and terrain. 3-D point-mass motion with a simplified thrust-direction model.</p>
       </div>
-      <p className="sim-timebase"><strong>Simulation time (T+)</strong> counts from the start of the descent. It is not linked to the UTC observation timeline in the Explorer.</p>
+      <p className="sim-timebase"><strong>Simulation time (T+)</strong> counts from the start of the descent. It is not linked to the UTC observation time chosen in the previous step.</p>
     </header>
+    {entry.note && <div className="sim-alert" role="status"><Warning aria-hidden="true" /> {entry.note}</div>}
 
     <div className="sim-layout">
       {/* ------------------------------------------------ preflight */}
@@ -261,10 +272,8 @@ export function LandingSimPage() {
           <label className="sim-field sim-field-wide"><span>Terrain</span>
             <select value={scenario} onChange={(e) => setScenario(e.target.value as Scenario)}>
               <option value="synthetic">Synthetic training scenario</option>
-              <option value="athena-im2">Real terrain: Athena (team Blender model, LOLA 60 m)</option>
-              <option value="odysseus-im1">Real terrain: Odysseus (team Blender model, LOLA 60 m)</option>
-              <option value="athena-im2:dem80">Real terrain: Athena (LOLA 80 m grid)</option>
-              <option value="odysseus-im1:dem80">Real terrain: Odysseus (LOLA 80 m grid)</option>
+              {scene && <option value="scene">Real terrain: {landing.name} (team model, {scene.source_id.startsWith("sldem") ? "SLDEM2015" : scene.source_id.startsWith("ldem") ? "LOLA" : "measured DEM"} {Math.round(scene.source_spacing_m)} m, ≈{sizeMb(scene)} MB)</option>}
+              {landing.latitude <= DEM80_LATITUDE_LIMIT && <option value="dem80">Real terrain: {landing.name} (LOLA 80 m grid)</option>}
             </select>
           </label>
           {scenario === "synthetic" && <div className="sim-grid2">
@@ -272,9 +281,9 @@ export function LandingSimPage() {
             <NumberField label="Downhill toward" unit="° az" value={slopeAzimuth} onChange={setSlopeAzimuth} min={0} max={360} step={15} />
           </div>}
           {terrainError && <div className="sim-alert" role="alert"><Warning aria-hidden="true" /> {terrainError}
-            {scenario !== "synthetic" && !scenario.endsWith(":dem80") && <button type="button" onClick={() => setScenario(`${scenario}:dem80` as Scenario)}>Use the LOLA 80 m grid for this site instead</button>}
+            {scenario === "scene" && landing.latitude <= DEM80_LATITUDE_LIMIT && <button type="button" onClick={() => setScenario("dem80")}>Use the LOLA 80 m grid for this point instead</button>}
             {scenario !== "synthetic" && <button type="button" onClick={() => setScenario("synthetic")}>Use the synthetic training scenario instead</button>}</div>}
-          {scenario !== "synthetic" && !terrain && !terrainError && <p role="status" className="analysis-note">{scenario.endsWith(":dem80") ? "Loading LOLA terrain…" : "Loading the team's Blender terrain model (≈4 MB) and building its surface…"}</p>}
+          {scenario !== "synthetic" && !terrain && !terrainError && <p role="status" className="analysis-note">{scenario === "dem80" ? "Loading LOLA terrain…" : `Loading the measured terrain model (≈${scene ? sizeMb(scene) : 0} MB${scene && hostedRemotely(scene) ? ", from the team's GitHub" : ""}) and building its surface…`}</p>}
 
           <h3>{vehicle.name} <span className="sim-tag">illustrative</span></h3>
           <div className="sim-grid2">
@@ -319,7 +328,7 @@ export function LandingSimPage() {
       <section className="sim-main" aria-label="Simulation view">
         <div className="sim-stage">
           {terrain ? <LandingScene terrain={terrain} store={store} exaggeration={exaggeration} targetRadiusM={TARGET_RADIUS_M} padRadiusM={vehicle.padRadiusM} overview={overview} landerScale={landerScale}
-            terrainModel={scenario !== "synthetic" ? currentPatch?.model ?? null : null}
+            terrainModel={scenario === "scene" ? currentPatch?.model ?? null : null}
             vehicleModelUrl={VISUAL_MODEL.url} onVehicleStatus={setVehicleStatus} />
             : <div className="sim-scene sim-scene-empty">{terrainError ?? "Loading terrain…"}</div>}
           {vehicleStatus !== "ready" && terrain && <p className="sim-model-status" role="status">{vehicleStatus === "loading" ? "Loading 3D vehicle model…" : "The 3D vehicle model could not be loaded; the simulation still runs (contact discs show the position)."}</p>}
@@ -396,7 +405,7 @@ export function LandingSimPage() {
         <div><dt>Replay check</dt><dd>{replayCheck[record.id] ? "Re-simulated from the recorded inputs: identical trajectory" : "Re-simulation differed"}</dd></div>
         <div><dt>Limits source</dt><dd>{record.limits.source}</dd></div>
       </dl>
-      {record.terrainKind !== "synthetic" && <p className="analysis-note">Slope is a regional estimate from {record.terrainKind === "blender" ? "the 60 m" : "80 m"} LOLA samples. Boulders and craters smaller than ~200 m are not resolved, so this is not a landing-hazard assessment.</p>}
+      {record.terrainKind !== "synthetic" && <p className="analysis-note">Slope is a regional estimate from {record.terrainKind === "blender" ? "the terrain model's" : "80 m LOLA"} samples. Boulders and craters smaller than a few hundred metres are not resolved, so this is not a landing-hazard assessment.</p>}
       <SimCharts samples={record.samples} cursorT={snap.source === "replay" ? snap.state.t : null} />
       {snap.source === "replay" && <label className="sim-scrub">Replay position
         <input type="range" min={0} max={record.final.t} step={0.02} value={replayT ?? 0} onChange={(e) => { store.set({ ...store.get(), phase: "ended" }); showReplayAt(record, Number(e.target.value)); }} /></label>}
@@ -426,9 +435,15 @@ export function LandingSimPage() {
       </table></div>
     </section>}
 
+    <div className="sim-step-nav">
+      {onBack && <button type="button" onClick={onBack}>Back to conditions</button>}
+      {onContinue && <button type="button" className="sim-primary" onClick={onContinue} disabled={phase === "running" || phase === "replay"}>Continue to overview</button>}
+      <small>The simulation is optional: you can continue at any time.</small>
+    </div>
+
     <section className="sim-assumptions" aria-labelledby="assumptions-title">
       <h2 id="assumptions-title">Model, assumptions and sources</h2>
-      <ul>{MODEL_SUMMARY.map((line) => <li key={line}>{line}</li>)}</ul>
+      <ul>{modelSummary(terrain?.halfSizeM ?? null).map((line) => <li key={line}>{line}</li>)}</ul>
       {terrain && <p className="analysis-note">Terrain: {terrain.label}. Source: {terrain.source}. {terrain.sampleSpacingM ? `Sample spacing ${terrain.sampleSpacingM} m; slope from a 3×3 neighbourhood (${2 * terrain.sampleSpacingM} m across). ${terrain.kind === "blender" ? "Points without mesh coverage (100 m check grid)" : "Missing cells"}: ${terrain.missingCells}.` : "Exact plane; no data gaps."} {terrain.notes.join(" ")}</p>}
     </section>
   </article>;
@@ -436,14 +451,14 @@ export function LandingSimPage() {
 
 const CHANGE_LABEL = { propellantKg: "Propellant (kg)", maxThrustN: "Max thrust (N)", dryMassKg: "Dry mass (kg)", altitudeM: "Start altitude (m)", vz: "Start vertical velocity (m/s)" } as const;
 
-const MODEL_SUMMARY = [
+const modelSummary = (halfSizeM: number | null) => [
   `3-D point-mass translation in a local flat frame centred on the target (x east, y north, z up), SI units, fixed ${DEFAULT_SETTINGS.dtS} s timestep, classical RK4.`,
   `Constant lunar gravity ${MOON_G} m/s² (NASA Moon facts), straight down. Over 3 km of altitude, real gravity changes by under 0.4%, and over the 4 km area its direction by under 0.07°. No atmosphere, so no drag.`,
   `Propellant flow ṁ = F / (Isp · g0) with g0 = ${G0} m/s², the standard-gravity convention for Isp in seconds (NASA GRC). Lunar gravity appears only in the motion.`,
   "Mass = dry mass + remaining propellant. Throttle is bounded 0–1, with a minimum non-zero setting. The engine stops at the exact moment the propellant runs out, and the lander keeps moving under gravity.",
   "Simplified attitude: the thrust direction follows the commanded tilt at a limited rate. No rotational dynamics, moments of inertia, RCS or attitude errors.",
   "Contact: four rigid footpads held level; the run stops at the first pad contact, found inside the timestep. No leg suspension, bounce, tipping, structural damage, plume–surface interaction, dust or sensor uncertainty.",
-  "Supported domain: 4 km × 4 km around the target, altitude up to 3 km, up to 600 s.",
-  "Real terrain: the team's Blender models (LOLA 60 m, checksum-verified; contact uses the drawn triangles) or LOLA LDEM_80S_80MPP_ADJ at 80 m (NASA GSFC PGDA). Both include lunar curvature and agree to within about 1 m. Slope is regional (120 m or 160 m stencil) and does not resolve footprint-scale hazards.",
+  `Supported domain: ${halfSizeM ? (2 * halfSizeM) / 1000 : 4} km × ${halfSizeM ? (2 * halfSizeM) / 1000 : 4} km around the target (smaller where a terrain model covers less), altitude up to 3 km, up to 600 s.`,
+  "Real terrain: the team's measured-terrain Blender models (LOLA 60 m near the south pole, SLDEM2015 59 m elsewhere, a 5 m DEM at G7; each checksum-verified; contact uses the drawn triangles) or the LOLA 80 m grid (NASA GSFC PGDA). All include lunar curvature. Slope is regional (two sample spacings across) and does not resolve footprint-scale hazards.",
   "Vehicle physics: an illustrative lander, not any real spacecraft. The 3D picture (NASA Saturn V) is visual only; its mass and engines are not used. Touchdown limits are demonstration settings.",
 ];

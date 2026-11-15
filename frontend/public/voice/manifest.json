@@ -252,6 +252,13 @@
     "engine": "elevenlabs",
     "voice": "EXAVITQu4vr4xnSDxMaL",
     "placeholder": false
+   },
+   "simulate": {
+    "file": "en/simulate.mp3",
+    "hash": "0474a29118296e46",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    }
   },
   "es": {

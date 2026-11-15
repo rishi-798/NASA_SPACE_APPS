@@ -386,7 +386,7 @@ Which tree is served: whichever directory uvicorn runs in. The review preview on
   - Browser checks played the real clips in headless Chrome and confirmed each one played to the end, but nobody
     listened to them.
 
-### Lunar landing simulation (`/landing`)
+### Lunar landing simulation (step 5 of Plan a trip)
 An educational final-descent model, documented in [docs/LANDING_SIM.md](LANDING_SIM.md).
 - Physics is in `frontend/src/sim/`, kept separate from rendering: fixed 0.01 s RK4 steps, with fuel exhaustion and
   terrain contact located inside each step.

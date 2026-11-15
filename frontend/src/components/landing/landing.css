@@ -92,3 +92,7 @@ kbd { padding: 0.05rem 0.35rem; border: 1px solid var(--line-strong); border-rad
 }
 .sim-model-status { position: absolute; top: 2.6rem; left: 0.7rem; margin: 0; padding: 0.3rem 0.6rem; background: rgb(5 7 10 / 0.8); color: var(--muted); font: 0.64rem var(--mono); }
 .sim-model-note { margin: 0; }
+.sim-embedded { padding: 0; max-width: none; }
+.sim-embedded-title { margin: 0.2rem 0 0.4rem; font-size: 1.4rem; font-weight: 500; }
+.sim-step-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 1rem; }
+.sim-step-nav small { color: var(--quiet); }

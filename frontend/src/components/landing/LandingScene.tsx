@@ -66,6 +66,7 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     const surfaceMaterial = new THREE.MeshStandardMaterial({map: dust.map, normalMap: dust.normalMap,
       normalScale: new THREE.Vector2(.85, .85), color: 0x858585, roughness: .97, metalness: 0});
     disposables.push(dust, surfaceMaterial);
+    let holder: THREE.Group | null = null;
     if (terrain.grid) {
       // Terrain mesh: sampled from terrain.heightAt — the SAME surface the physics uses — on a 4× finer grid,
       // so the bilinear facets of the 80 m DEM are drawn smoothly without inventing new relief.
@@ -129,21 +130,28 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     } else if (terrainModel) {
       // Team Blender terrain: glTF axes are (x east, y up, z −north) = this scene's axes. Shift by the target's
       // datum height so z = 0 at the target, and apply the same visual exaggeration as everything else.
-      terrainModel.position.set(0, -(terrain.targetDatumHeightM ?? 0) * exaggeration, 0);
-      terrainModel.scale.set(1, exaggeration, 1);
+      terrainModel.updateMatrixWorld(true);
       terrainModel.traverse(object => {
         if (!(object instanceof THREE.Mesh)) return;
         const positions = object.geometry.getAttribute('position');
         const uv = new Float32Array(positions.count * 2);
+        const point = new THREE.Vector3();
         for (let i = 0; i < positions.count; i++) {
-          uv[i * 2] = positions.getX(i) / 24;
-          uv[i * 2 + 1] = -positions.getZ(i) / 24;
+          point.fromBufferAttribute(positions, i).applyMatrix4(object.matrixWorld);
+          uv[i * 2] = point.x / 24;
+          uv[i * 2 + 1] = -point.z / 24;
         }
         object.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
         object.material = surfaceMaterial;
         object.castShadow = object.receiveShadow = true;
       });
-      scene.add(terrainModel);
+      // The wrapper carries the shift and the vertical exaggeration in this scene's axes (y = up), whatever the
+      // model's own orientation is.
+      holder = new THREE.Group();
+      holder.position.set(0, -(terrain.targetDatumHeightM ?? 0) * exaggeration, 0);
+      holder.scale.set(1, exaggeration, 1);
+      holder.add(terrainModel);
+      scene.add(holder);
       // Outline of the supported simulation square.
       const h = terrain.halfSizeM, pts: THREE.Vector3[] = [];
       const edge: [number, number][] = [];
@@ -327,7 +335,7 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
       controls.dispose();
       renderer.dispose();
       disposables.forEach((d) => d.dispose());
-      if (terrainModel) scene.remove(terrainModel);
+      if (holder) { holder.remove(terrainModel!); scene.remove(holder); }
       el.removeChild(renderer.domElement);
     };
   }, [terrain, store, exaggeration, targetRadiusM, padRadiusM, landerScale, terrainModel, vehicleModelUrl, onVehicleStatus]);

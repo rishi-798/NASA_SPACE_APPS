@@ -7,7 +7,6 @@ const ExplorerPage = lazy(() => import("./pages/ExplorerPage").then((module) => 
 const MissionsPage = lazy(() => import("./pages/MissionsPage").then((module) => ({ default: module.MissionsPage })));
 const TimelinePage = lazy(() => import("./pages/TimelinePage").then((module) => ({ default: module.TimelinePage })));
 const AboutPage = lazy(() => import("./pages/AboutPage").then((module) => ({ default: module.AboutPage })));
-const LandingSimPage = lazy(() => import("./pages/LandingSimPage").then((module) => ({ default: module.LandingSimPage })));
 const TripPage = lazy(() => import("./pages/TripPage").then((module) => ({ default: module.TripPage })));
 const DiscoverPage = lazy(() => import("./discover20261114/DiscoverPage20261114").then((module) => ({ default: module.DiscoverPage20261114 })));
 const GamePage = lazy(() => import("./pages/GamePage").then((module) => ({ default: module.GamePage })));
@@ -25,7 +24,7 @@ export function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/trip" element={<TripPage />} />
         <Route path="/discover" element={<DiscoverPage />} />
-        <Route path="/landing" element={<LandingSimPage />} />
+        <Route path="/landing" element={<Navigate replace to="/trip" />} />
         <Route path="/planner" element={<MissionPhasePlannerPage />} />
         <Route path="/phases" element={<MissionPhasePlannerPage />} />
         <Route path="/game" element={<GamePage />} />

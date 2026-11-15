@@ -230,3 +230,45 @@ test('team Blender Athena model: centre height matches LOLA, full coverage of th
   assert.equal(t.missingCells, 0);
   assert.ok(t.slopeAt(0, 0).deg < 15);
 });
+
+// ------------------------------------------------------------------ team terrain registry (all 16 scenes)
+import { TERRAIN_SCENES, sceneForLanding, rawToEnu, supportedHalfSizeM, groundDistanceM, ANCHOR_MATCH_M } from '../frontend/src/sim/terrainScenes.ts';
+
+test('registry: 16 scenes, each rotation matrix equals the exact east/north/up at its anchor', () => {
+  assert.equal(TERRAIN_SCENES.length, 16);
+  const R = 1737400;
+  for (const s of TERRAIN_SCENES) {
+    assert.ok(s.local_to_moon_fixed, s.id);
+    const la = s.anchor.latitude * Math.PI / 180, lo = s.anchor.longitude * Math.PI / 180;
+    const e = [-Math.sin(lo), Math.cos(lo), 0], n = [-Math.sin(la) * Math.cos(lo), -Math.sin(la) * Math.sin(lo), Math.cos(la)], u = [Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la)];
+    const m = s.local_to_moon_fixed;
+    [e, n, u].forEach((vec, col) => vec.forEach((v, row) => near(m[row][col], v, 2e-3, `${s.id} column ${col}`)));
+    // Every scene's frame origin is at the reference sphere, except G7 (a 5 m grid export): its origin sits at the DEM
+    // height of the anchor (R + 1,699.87 m) and its mesh heights are relative to that. The simulator always works
+    // relative to the surface under the target, so both conventions give the same z.
+    near(Math.hypot(m[0][3], m[1][3], m[2][3]), R + (s.id === 'SITE04-G7' ? 1699.87 : 0), 0.01, `${s.id} anchor radius`);
+    assert.ok(['Y', 'Z'].includes(s.gltf_up), s.id);
+    assert.match(s.sha256, /^[0-9a-f]{64}$/);
+  }
+});
+
+test('scene matching: each team landing point maps to its own scene, other points to none', () => {
+  for (const s of TERRAIN_SCENES) assert.equal(sceneForLanding(s.anchor.latitude, s.anchor.longitude).id, s.id);
+  assert.equal(sceneForLanding(0.67416, 23.47314).id, 'REGION-APOLLO-11');
+  assert.equal(sceneForLanding(-84.79, 29.2).site_id, 'athena-im2');
+  assert.equal(sceneForLanding(0.67416 + 0.01, 23.47314), null);                       // ~300 m away: not "at" the site
+  assert.equal(sceneForLanding(-45, 10), null);
+  near(groundDistanceM(0, 0, 0, 1), 1737400 * Math.PI / 180, 1e-6, 'one degree of arc');
+  assert.ok(ANCHOR_MATCH_M < 200);
+});
+
+test('axis conversion for both glTF layouts', () => {
+  assert.deepEqual(rawToEnu('Y', 10, 5000, -30), [10, 30, 5000]);   // x east, y up, z −north
+  assert.deepEqual(rawToEnu('Z', 10, 30, 5000), [10, 30, 5000]);    // x east, y north, z up
+});
+
+test('supported area shrinks to what a mesh covers (G7 is ~1.3 km wide), never above 2 km', () => {
+  assert.equal(supportedHalfSizeM(-9990, 9990, -9990, 9990), 2000);
+  assert.equal(supportedHalfSizeM(-659, 659, -659, 659), 590);       // 0.9 × 659 = 593 → 590
+  assert.equal(supportedHalfSizeM(-100, 400, -300, 300), 90);        // limited by the nearest edge
+});

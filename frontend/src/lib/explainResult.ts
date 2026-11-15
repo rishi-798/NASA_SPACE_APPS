@@ -55,5 +55,6 @@ export const PROMPTS = {
   compareStart: line("compare_start"),
   compareDone: line("compare_done"),
   compareFailed: line("compare_failed"),
+  simulate: line("simulate"),
   missionRecord: line("mission_record"),
 } as const;

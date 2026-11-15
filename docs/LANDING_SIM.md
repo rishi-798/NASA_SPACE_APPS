@@ -1,16 +1,17 @@
 # Lunar landing simulation (educational prototype)
 
-Open **Landing sim** in the app (`/landing`). This is an educational model of the **final descent** over a small
+It is **step 5, "Landing", of Plan a trip** (Departure → Rocket → Destination → Conditions → **Landing** → Overview). Old `/landing`
+links forward to the trip planner. This is an educational model of the **final descent** over a small
 area. It is **not** a validated six-degree-of-freedom spacecraft simulator, and it does not certify any landing.
 
 Code: `frontend/src/sim/` (physics, terrain, autopilot, runner; no rendering code) · scene `components/landing/` ·
-page `pages/LandingSimPage.tsx` · terrain endpoint `backend/terrain/patch.py` (`GET /api/sim/terrain`).
+page component `pages/LandingSimPage.tsx` (embedded in `TripPage`) · terrain endpoint `backend/terrain/patch.py` (`GET /api/sim/terrain`).
 
 ## Supported domain
 
 | | |
 |---|---|
-| Area | 4 km × 4 km square centred on the target (±2 km). Leaving it ends the run |
+| Area | up to 4 km × 4 km square centred on the target (±2 km), smaller where a terrain model covers less (G7: 1.18 km). Leaving it ends the run |
 | Altitude | up to 3 km above terrain |
 | Duration | up to 600 s of simulation time |
 | Phase | final descent and touchdown only (no orbit, braking burn or ascent) |
@@ -77,20 +78,41 @@ also re-simulated from its recorded inputs, and the report confirms the trajecto
 | Scenario | Source | Spacing | Slope estimate |
 |---|---|---|---|
 | **Synthetic training scenario** (flat or tilted plane) | synthetic, labelled in the UI, the report and exported file names | exact plane | the exact configured slope |
-| **Real terrain (default): Athena or Odysseus, team Blender model** | `frontend/public/terrain/REGION-*.glb` from the team repo (LOLA `ldem_60s_60m_float`, MOON_ME/DE421, 10 km radius; SHA-256 checked against `src/data/blenderTerrain.json` before use) | ~60 m triangle mesh. Contact uses the same triangles that are drawn | least-squares plane through 3×3 samples of the mesh at 60 m: **120 m across** |
-| Real terrain: Athena or Odysseus, LOLA 80 m grid | LOLA `LDEM_80S_80MPP_ADJ`, NASA GSFC PGDA (local copy, `scripts/fetch_lola_dem.py`) | 80 m (native; bilinear between samples, no added resolution) | least-squares plane through the 3×3 DEM samples around the point: **160 m across** |
+| **Real terrain (default): any of the team's 16 measured sites** | The team's Blender models (`data/local-scenes.json` in the team repo): LOLA 60 m (Athena, Odysseus), SLDEM2015 59 m (Apollo 11, 12, 14, 15, 16, 17; Luna 21; Lunokhod 1, 2; Surveyor 1, 5, 6, 7), a 5 m DEM (G7). Each file is checked against its recorded SHA-256 before use | Triangle mesh; contact uses the same triangles that are drawn | Least-squares plane through 3×3 samples of the mesh at its own spacing (**two spacings across**: 120 m, 118 m or 10 m) |
+| Real terrain, poleward of 80° S: LOLA 80 m grid | LOLA `LDEM_80S_80MPP_ADJ`, NASA GSFC PGDA (local copy, `scripts/fetch_lola_dem.py`) | 80 m (native; bilinear between samples, no added resolution) | 3×3 DEM samples: **160 m across** |
 
-**Blender terrain alignment** (`components/landing/blenderTerrain.ts`, `sim/terrain.ts → meshTerrain`):
-- glTF axes are x = east, y = height above the 1,737,400 m sphere, z = −north. The `local_to_moon_fixed` matrix in
-  the metadata confirms the frame: its columns are exactly east, north and up at each site.
-- The simulation's z = 0 is the mesh surface under the target. The model is drawn shifted by that height, with the
-  same visual exaggeration as everything else.
-- The mesh already includes lunar curvature. Against the independent 80 m DEM, the median difference stays at 0.1–0.6 m
-  out to 2.9 km, instead of growing by the 1–2 m that a curvature mismatch would add.
-- The target heights agree to about 0.2 m (Athena: 5,320.96 m mesh, 5,320.8 m DEM) and about 0.9 m (Odysseus).
-- Points without mesh coverage are reported and never filled. The surface texture and colour variation are
-  illustrative only.
+A landing point uses a measured model when it lies within 150 m of that scene's anchor (the trip's destination
+coordinates match the anchors exactly). Other points south of 80° S use the 80 m grid. Everything else gets the
+synthetic scenario with a visible notice.
 
+**The 16 scenes** (`frontend/src/data/blenderTerrain.json`): G7 (5 m, 1.3 km square); Athena and Odysseus (local files, 10 km
+radius); Apollo 11, 12, 14, 15, 16, 17, Luna 21, Lunokhod 1, 2 and Surveyor 1, 5, 6, 7 (10 km radius). The 13
+equatorial and mid-latitude models are 10–14 MB each. They are loaded on demand from the team's pinned GitHub commit
+(`raw.githubusercontent.com`, checksum-verified), not stored in this repo, so those sites need a network connection.
+
+**Alignment of the models** (`components/landing/blenderTerrain.ts`, `sim/terrain.ts → meshTerrain`,
+`sim/terrainScenes.ts`). `python -m scripts.verify_terrain_models --curvature` re-checks all of it and writes
+`docs/validation/terrain_models.json`.
+- **Layouts differ.** Athena, Odysseus and G7 are glTF Y-up (x east, y up, z −north). The other 13 are Z-up (x east,
+  y north, z up). The loader converts both to east/north/up for the physics and rotates Z-up models for drawing.
+- **Frame:** for all 16 scenes, the rotation matrix in the metadata equals the exact east/north/up directions at the
+  anchor (error < 1e-16). Anchors are at the reference sphere, except G7, whose frame origin sits at its DEM height
+  (R + 1,699.87 m) with heights relative to that. The simulator always works relative to the surface under the target.
+- **Curvature is included in every model.** At 8.5 km from each anchor, (mesh height − centre height) minus (the team's
+  terrain-lookup elevation − centre elevation) should be −d²/2R = −20.8 m if curvature is included, and 0 if not.
+  Measured: −20.8 ±1 m for 11 scenes. The other four differ by exactly the height differences the team recorded
+  between its mesh source and the lookup service's source at those sites (Apollo 11 +4.7 m, Apollo 14 +1.2 m, Apollo 15
+  +5.0 m, Lunokhod 2 −5.7 m), so curvature is present there too.
+- Against the independent LOLA 80 m grid (Athena and Odysseus): the target heights agree to about 0.2 m and 0.9 m, and
+  the median difference stays at 0.1–0.6 m out to 2.9 km.
+- **Source mismatch (team flag):** at Apollo 11, 14, 15 and Lunokhod 1, 2, the lookup service uses a higher-priority
+  local product at the centre (for example the Apollo 11 NAC DTM), which differs from the region mesh's SLDEM tile
+  by up to about 6 m. The simulator uses the mesh only, and these scenes say so in their terrain notes.
+- **Supported area:** up to 4 km square, but never more than 90% of what a model covers, so G7 supports 1.18 km. The
+  page and the events show the actual size.
+- **Candidates:** the team marks these as measured previews (`production_ready: false`), and the page repeats that.
+- Points without mesh coverage are reported and never filled. Surface texture and colour variation are illustrative
+  only.
 - Missing DEM cells are returned as `null`, drawn red, and never filled.
 - A start over missing data is refused. Flying over missing data ends the run with "terrain assessment unavailable".
 - If the 3×3 slope neighbourhood touches a gap, the slope is "not assessed".
@@ -214,3 +236,16 @@ arrow keys tilt, Z full, X cut, C centre tilt, Space start/pause).
 - Terrain finer than 80 m.
 - Guidance from orbit.
 - Terrain finer than the 60 m mesh (rocks and small craters) is not in the physics. The detail texture is cosmetic.
+
+## Where it sits in the trip
+
+- Step 4, **Conditions**: pick the observation time and analyze the chosen point.
+- Step 5, **Landing**: this simulator, opened on the landing point you chose.
+  - **Any of the team's 16 sites** (Apollo 11, 12, 14, 15, 16, 17, Athena, Odysseus, Luna 21, Lunokhod 1 and 2,
+    Surveyor 1, 5, 6, 7, and G7): that site's measured terrain model. Poleward sites also offer the LOLA 80 m grid.
+  - **A custom point south of about 80° S:** the real LOLA 80 m grid at that exact point.
+  - **Any other point:** no real terrain exists, so a clear notice appears and the **synthetic training scenario** is
+    used. It is labelled, and never silently substituted.
+  - The step is optional: **Continue to overview** works at any time, and **Back to conditions** keeps your analysis.
+- Step 6, **Overview**: the mission record.
+- Simulation time (T+) starts at 0 for each run and is separate from the UTC observation time chosen in step 4.
