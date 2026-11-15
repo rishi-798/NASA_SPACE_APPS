@@ -34,6 +34,8 @@ type ConditionsPanelProps = {
   longitude?: number;
   showDossier?: boolean;
   dossierRange?: {start: string; end: string; stepMinutes: number};
+  /** Speak/caption an explanation of the displayed sample. */
+  onExplain?: () => void;
 };
 
 const TERRAIN_LABELS: Record<string, string> = {
@@ -93,6 +95,7 @@ export function ConditionsPanel({
   longitude,
   showDossier = true,
   dossierRange,
+  onExplain,
 }: ConditionsPanelProps) {
   const observed = conditions?.time ?? observationTime;
   const powerKey = `${latitude ?? conditions?.latitude}/${longitude ?? conditions?.longitude}/${conditions?.time}/${state}`;
@@ -231,6 +234,12 @@ export function ConditionsPanel({
       {showDossier && conditions && observed && <div className="conditions-dossier-action">
         <MissionDossierModal latitude={latitude ?? conditions.latitude} longitude={longitude ?? conditions.longitude} siteId={siteId} start={dossierRange?.start ?? observationTime ?? observed} end={dossierRange?.end} stepMinutes={dossierRange?.stepMinutes} />
       </div>}
+
+      {conditions && state === "success" && onExplain && (
+        <button type="button" className="explain-button" onClick={onExplain}>
+          <Broadcast aria-hidden="true" /> Explain this result
+        </button>
+      )}
 
       <div className="data-provenance">
         <span className={`mode-dot ${conditions ? "mode-live" : "mode-preview"}`} />

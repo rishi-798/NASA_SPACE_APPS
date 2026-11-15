@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { createLoadingGate } from "../../lib/loadingGate";
 
-const LOADING_DELAY_MS = 350;
-const LOADING_MIN_SHOW_MS = 2000;
+/** Shown on every analysis (no delay) and held long enough to read a couple of facts. */
+const LOADING_DELAY_MS = 0;
+const LOADING_MIN_SHOW_MS = 5000;
 
-/** True while the loading screen should be on screen: only after a slow start, then for at least 2 s. */
-export function useLoadingScreen(loading: boolean): boolean {
+export type LoadingScreenState = { visible: boolean; ready: boolean; dismiss: () => void };
+
+/** `ready` turns true when the results have arrived but the minimum display time is still running. */
+export function useLoadingScreen(loading: boolean): LoadingScreenState {
   const [visible, setVisible] = useState(false);
   const gateRef = useRef<ReturnType<typeof createLoadingGate> | null>(null);
   useEffect(() => {
@@ -20,5 +23,5 @@ export function useLoadingScreen(loading: boolean): boolean {
     const frame = requestAnimationFrame(() => gateRef.current?.confirmShown());
     return () => cancelAnimationFrame(frame);
   }, [visible]);
-  return visible;
+  return { visible, ready: visible && !loading, dismiss: () => gateRef.current?.dismiss() };
 }

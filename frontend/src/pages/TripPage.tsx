@@ -6,6 +6,10 @@ import { ConditionsPanel } from "../components/explorer/ConditionsPanel";
 import { MissionDossierModal } from "../components/trip/MissionDossierModal";
 import { LaunchWeatherPanel } from "../components/trip/LaunchWeatherPanel";
 import { TerrainContext } from "../components/explorer/TerrainContext";
+import { LoadingScreen } from "../components/ui/LoadingScreen";
+import { useLoadingScreen } from "../components/ui/useLoadingScreen";
+import { useAnnounce, useCancelOnLeave, useVoiceGuide } from "../components/voice/voiceContext";
+import { explainResult, PROMPTS } from "../lib/explainResult";
 import { useTerrainCatalogue } from "../components/explorer/useTerrainCatalogue";
 import { pointElevation } from "../lib/terrainFacts";
 import { HorizonContainer } from "../components/visualization/HorizonContainer";
@@ -67,6 +71,15 @@ export function TripPage() {
   const allowedRockets = rockets.filter((item) => item.isNasa || showOtherLaunchers).sort((a, b) => Number(departure?.rockets.includes(b.id)) - Number(departure?.rockets.includes(a.id)));
   const filteredDepartures = launchSites.filter((site) => `${site.name} ${site.pad} ${site.country}`.toLowerCase().includes(query.toLowerCase()));
   const filteredDestinations = destinations.filter((site) => `${site.name} ${site.category}`.toLowerCase().includes(destinationQuery.toLowerCase()));
+  // "Analyze landing" (preview) and "Plan this landing" without a reusable preview both show the loading screen.
+  const loadingScreen = useLoadingScreen(currentPreview?.state === "loading" || mission.stage === "preparing");
+  const { guide } = useVoiceGuide();
+  const eventSerial = useRef(0);
+  const stagePrompt = { earth: PROMPTS.departure, rocket: PROMPTS.rocket, moon: PROMPTS.destination, landing: PROMPTS.observation, preparing: null, reveal: PROMPTS.missionRecord }[mission.stage];
+  // Key on the stage only: rerenders within a stage never repeat the prompt; a new stage replaces old speech.
+  useAnnounce("stage", stagePrompt ? `trip:${mission.stage}` : null, stagePrompt);
+  useCancelOnLeave();
+  useEffect(() => { guide.cancel("explain"); }, [guide, mission.revision, analysis]);
   const stageIndex = mission.stage === "preparing" ? 3 : stages.findIndex((stage) => stage.id === mission.stage);
   useEffect(() => {
     try {
@@ -114,6 +127,8 @@ export function TripPage() {
     const controller = new AbortController();
     active.current = controller;
     const revision = mission.revision;
+    const event = ++eventSerial.current;
+    guide.say("analysis", `trip:analysis:start:${event}`, PROMPTS.analysisStart);
     if (finalize) dispatch({ type: "prepare" });
     else setPreview({ revision, state: "loading", result: null });
     const matchedSite = landingSites.find((site) => site.latitude === landing.latitude && site.longitude === landing.longitude);
@@ -123,17 +138,21 @@ export function TripPage() {
       if (controller.signal.aborted) return;
       if (finalize) dispatch({ type: "result", revision, result });
       else setPreview({ revision, state: "success", result });
+      // A finalized plan moves to the mission record, whose stage prompt announces completion.
+      if (!finalize) guide.say("analysis", `trip:analysis:done:${event}`, PROMPTS.tripDone);
     } catch (error) {
       if (controller.signal.aborted) return;
       const message = error instanceof Error ? error.message : "Analysis unavailable. Please retry.";
       if (finalize) dispatch({ type: "error", revision, error: message });
       else setPreview({ revision, state: "error", result: null, error: message });
+      guide.say("analysis", `trip:analysis:fail:${event}`, PROMPTS.analysisFailed);
     }
   }
   function go(stage: TripStage) { active.current?.abort(); dispatch({ type: "stage", stage }); }
   const title = mission.stage === "earth" ? "Where will you leave from?" : mission.stage === "rocket" ? "Choose your ride." : mission.stage === "moon" ? "Find your place on the Moon." : mission.stage === "reveal" ? "Your mission. In context." : "Look before you land.";
 
   return <article className="trip-page">
+    <LoadingScreen visible={loadingScreen.visible} ready={loadingScreen.ready} onDismiss={loadingScreen.dismiss} message="Analyzing your landing site" />
     <div className="trip-topline"><Link to="/"><ArrowLeft /> Back to website</Link><span>TEAM BRAHMOS / MISSION PROTOTYPE</span></div>
     <nav className="trip-progress" aria-label="Trip progress">{stages.map((stage, index) => <button key={stage.id} type="button" aria-current={mission.stage === stage.id ? "step" : undefined}
       disabled={mission.stage === "preparing" || index > stageIndex} onClick={() => go(stage.id)}>{index < stageIndex ? <Check aria-hidden="true" /> : <span className="trip-step-number">{index + 1}</span>}{stage.label}</button>)}</nav>
@@ -183,7 +202,8 @@ export function TripPage() {
               launchSiteId={departure?.id} launchVehicle={rocket?.name} liftoffUtc={liftoffUtc ? `${liftoffUtc}:00Z` : undefined} missionName={landing.name} />}
             <TerrainContext latitude={landing.latitude} longitude={landing.longitude} catalogue={catalogue.state} onRetry={catalogue.retry} terrain={analysis?.terrain ?? null} horizon={analysis?.horizon ?? null} />
           </aside></div>
-        <div className="trip-analysis"><ConditionsPanel showDossier={false} conditions={analysis?.conditions ?? null} state={mission.stage === "reveal" ? "success" : currentPreview?.state ?? "idle"} observationTime={mission.utcTime} errorMessage={currentPreview?.error} terrain={analysis?.terrain ?? null} siteId={landing.destinationId} latitude={landing.latitude} longitude={landing.longitude} />
+        <div className="trip-analysis"><ConditionsPanel showDossier={false} conditions={analysis?.conditions ?? null} state={mission.stage === "reveal" ? "success" : currentPreview?.state ?? "idle"} observationTime={mission.utcTime} errorMessage={currentPreview?.error} terrain={analysis?.terrain ?? null} siteId={landing.destinationId} latitude={landing.latitude} longitude={landing.longitude}
+            onExplain={analysis && landing ? () => guide.say("explain", `trip:explain:${analysis.conditions.time}`, explainResult({ siteId: landingSites.find((site) => site.latitude === landing.latitude && site.longitude === landing.longitude)?.id ?? null, siteName: landing.name ?? "Selected point", conditions: analysis.conditions, terrain: analysis.terrain }), { force: true, explicit: true }) : undefined} />
           <div><HorizonContainer data={analysis?.conditions ?? null} profile={analysis?.horizon ?? null} /><VisibilityTimeline data={analysis?.conditions ?? null} summary={analysis?.summary ?? null} sampleCount={analysis?.samples.length ?? 0} /></div></div>
       </>}
     </>}

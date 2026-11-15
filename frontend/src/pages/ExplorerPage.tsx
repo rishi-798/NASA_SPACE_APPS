@@ -5,6 +5,8 @@ import { useSearchParams } from "react-router-dom";
 import { ConditionsPanel } from "../components/explorer/ConditionsPanel";
 import { LoadingScreen } from "../components/ui/LoadingScreen";
 import { useLoadingScreen } from "../components/ui/useLoadingScreen";
+import { useAnnounce, useCancelOnLeave, useVoiceGuide } from "../components/voice/voiceContext";
+import { explainResult, PROMPTS } from "../lib/explainResult";
 import { PlaybackControls } from "../components/explorer/PlaybackControls";
 import { SiteComparison } from "../components/explorer/SiteComparison";
 import { WindowFinder } from "../components/explorer/WindowFinder";
@@ -70,6 +72,12 @@ function ExplorerWorkspace() {
   // The one authoritative sample: everything below reads `active`, nothing keeps its own time.
   const active = useMemo(() => (result ? conditionsAt(result, playback.index) : null), [result, playback.index]);
   const catalogue = useTerrainCatalogue(location.latitude, location.longitude);
+  const { guide } = useVoiceGuide();
+  const eventSerial = useRef(0);
+  useAnnounce("stage", "explorer:intro", PROMPTS.explorer);
+  useCancelOnLeave();
+  // An explanation describes one sample of one result: drop it when either changes.
+  useEffect(() => { guide.cancel("explain"); }, [guide, result, playback.index]);
 
   useEffect(() => {
     const analysis = analysisGate.current, compareGate = comparisonGate.current;
@@ -141,6 +149,8 @@ function ExplorerWorkspace() {
   async function compare() {
     if (!check.ok) return;
     const ticket = comparisonGate.current.begin();
+    const event = ++eventSerial.current;
+    guide.say("analysis", `compare:start:${event}`, PROMPTS.compareStart);
     setComparisonState("loading");
     setComparison(null);
     setComparisonError(undefined);
@@ -149,17 +159,21 @@ function ExplorerWorkspace() {
       if (!ticket.current()) return;
       setComparison(response);
       setComparisonState("success");
+      guide.say("analysis", `compare:done:${event}`, PROMPTS.compareDone);
     } catch (error) {
       if (!ticket.current()) return;
       setComparison(null);
       setComparisonState("error");
       setComparisonError(error instanceof ApiError ? error.message : "An unexpected comparison error occurred.");
+      guide.say("analysis", `compare:fail:${event}`, PROMPTS.compareFailed);
     }
   }
 
   async function analyze() {
     if (!check.ok) return;
     const ticket = analysisGate.current.begin();
+    const event = ++eventSerial.current;
+    guide.say("analysis", `analysis:start:${event}`, PROMPTS.analysisStart);
     dispatchPlayback({ type: "load", count: 0 });
     setAnalysisState("loading");
     setResult(null);
@@ -170,20 +184,31 @@ function ExplorerWorkspace() {
       setResult(response);
       dispatchPlayback({ type: "load", count: response.samples.length });
       setAnalysisState("success");
+      guide.say("analysis", `analysis:done:${event}`, PROMPTS.analysisDone);
     } catch (error) {
       if (!ticket.current()) return;
       setResult(null);
       setAnalysisState("error");
       setErrorMessage(error instanceof ApiError ? error.message : "An unexpected analysis error occurred.");
+      guide.say("analysis", `analysis:fail:${event}`, PROMPTS.analysisFailed);
     }
   }
 
+  function explain() {
+    if (!result || !active) return;
+    dispatchPlayback({ type: "pause" });           // the explanation is about the sample on screen now
+    const siteName = pickedLocation
+      ? `The selected point at ${formatCoordinate(location.latitude, "lat")}, ${formatCoordinate(location.longitude, "lon")}`
+      : selectedSite.name;
+    guide.say("explain", `explain:${active.time}`, explainResult({ siteId: pickedLocation ? null : selectedSite.id, siteName, conditions: active, terrain: result.terrain }), { force: true, explicit: true });
+  }
+
   const sceneTime = active?.time ?? requestedStart;
-  const showLoading = useLoadingScreen(analysisState === "loading" || comparisonState === "loading");
+  const loadingScreen = useLoadingScreen(analysisState === "loading" || comparisonState === "loading");
 
   return (
     <article ref={root} className="explorer-page">
-      <LoadingScreen visible={showLoading} message={comparisonState === "loading" ? "Comparing both sites" : undefined} />
+      <LoadingScreen visible={loadingScreen.visible} ready={loadingScreen.ready} onDismiss={loadingScreen.dismiss} message={comparisonState === "loading" ? "Comparing both sites" : undefined} />
       <header className="explorer-context" data-reveal>
         <div>
           <p className="eyebrow">Lunar surface operations</p>
@@ -237,6 +262,7 @@ function ExplorerWorkspace() {
             siteId={pickedLocation ? undefined : selectedSite.id}
             latitude={location.latitude}
             longitude={location.longitude}
+            onExplain={explain}
           />
         </aside>
       </div>
