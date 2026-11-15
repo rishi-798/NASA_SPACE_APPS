@@ -337,8 +337,8 @@ function buildSeamlessContinuousLandscape(center: THREE.Vector3, extent: number,
       positions[vIdx * 3 + 1] = y;
       positions[vIdx * 3 + 2] = z;
 
-      uvs[vIdx * 2] = (x - center.x) * 0.0004;
-      uvs[vIdx * 2 + 1] = (y - center.y) * 0.0004;
+      uvs[vIdx * 2] = (x - center.x) / 240;
+      uvs[vIdx * 2 + 1] = (y - center.y) / 240;
 
       vIdx++;
     }
@@ -387,8 +387,8 @@ function buildUnderCap(center: THREE.Vector3, radius: number, baseZ: number) {
     positions[idx] = x;
     positions[idx + 1] = y;
     positions[idx + 2] = baseZ - 4.0;
-    uvs[(i + 1) * 2] = 0.5 + 0.5 * Math.cos(angle);
-    uvs[(i + 1) * 2 + 1] = 0.5 + 0.5 * Math.sin(angle);
+    uvs[(i + 1) * 2] = (x - center.x) / 240;
+    uvs[(i + 1) * 2 + 1] = (y - center.y) / 240;
 
     if (i < segments) {
       indices.push(0, i + 1, i + 2);
@@ -434,7 +434,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.setClearColor(0x010204);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = detailedRegions.has(region.id) ? 1.35 : 2.6;
+    renderer.toneMappingExposure = 1.16;
     container.appendChild(renderer.domElement);
     const canvas = renderer.domElement;
     canvas.setAttribute('aria-label', `${region.name} terrain. In eye-level mode drag or use arrow keys to look around.`);
@@ -452,19 +452,19 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     const world = new THREE.Matrix4().set(...region.local_to_moon_fixed.flat() as Parameters<THREE.Matrix4['set']>);
     const inverse = world.clone().invert();
 
-    // Primary astronomical Sun
-    const sunLight = new THREE.DirectionalLight(detailedRegions.has(region.id) ? 0xffffff : 0xfffaec, 0);
+    // Primary astronomical Sun (high-contrast raking solar illumination)
+    const sunLight = new THREE.DirectionalLight(0xfffaec, 0);
     sunLight.castShadow = true;
     const shadowResolution = detailedRegions.has(region.id) ? 4096 : 2048;
     sunLight.shadow.mapSize.set(shadowResolution, shadowResolution);
-    sunLight.shadow.bias = -0.00001; sunLight.shadow.normalBias = 0.05;
+    sunLight.shadow.bias = -0.00006; sunLight.shadow.normalBias = 0.025;
 
     // Earthshine directional light
-    const earthLight = new THREE.DirectionalLight(0x8cb5df, 0);
+    const earthLight = new THREE.DirectionalLight(0x7da4d6, 0);
 
-    // Baseline ambient light (deep space high-contrast)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.08);
-    const hemiLight = new THREE.HemisphereLight(0xdde5ed, 0x1e2430, 0.55);
+    // Baseline ambient light (deep space high-contrast - lunar vacuum has zero atmospheric fill)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.04);
+    const hemiLight = new THREE.HemisphereLight(0x1a2230, 0x030508, 0.05);
     scene.add(sunLight, sunLight.target, earthLight, earthLight.target, ambientLight, hemiLight);
 
     const marker = new THREE.Mesh(
@@ -513,9 +513,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       const sz = b.getSize(new THREE.Vector3());
       const c = b.getCenter(new THREE.Vector3());
       const ext = Math.max(100, sz.x, sz.y);
-      const aerialAltitude = Math.max(90, (sz.z || 50) * 0.6 + ext * 0.22);
-      camera.position.set(c.x - ext * 0.32, c.y - ext * 0.48, c.z + aerialAltitude);
-      controls.target.set(c.x + ext * 0.05, c.y + ext * 0.12, c.z + (sz.z || 50) * 0.05);
+      const aerialAltitude = Math.max(120, (sz.z || 50) * 0.7 + ext * 0.26);
+      camera.position.set(c.x - ext * 0.38, c.y - ext * 0.52, c.z + aerialAltitude);
+      controls.target.set(c.x + ext * 0.08, c.y + ext * 0.18, c.z + (sz.z || 50) * 0.02);
       controls.minDistance = Math.max(10, ext * 0.04);
       controls.maxDistance = ext * 3.5;
       controls.maxPolarAngle = Math.PI * 0.485;
@@ -620,12 +620,14 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       },
       setLighting(data) {
         sky = data;
+        focusSun();
         if (data) {
-          focusSun();
           const sunElev = data.sun.elevation_deg;
           if (sunElev > 0) {
-            sunLight.intensity = 3.2;
-          } else if (!detailedRegions.has(region.id) && sunElev > -6) {
+            sunLight.intensity = Math.max(2.6, 3.8 * Math.sin(THREE.MathUtils.degToRad(Math.min(90, Math.max(15, sunElev * 2.2)))));
+          } else if (inspectActive) {
+            sunLight.intensity = 3.6;
+          } else if (sunElev > -6) {
             sunLight.intensity = 1.0 * (1 - Math.abs(sunElev) / 6);
           } else {
             sunLight.intensity = 0.0;
@@ -641,32 +643,41 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             : (earthElev > -10 ? (0.24 + earthIllum * 0.45) : 0.08);
           earthMaterial.uniforms.sunDirection!.value.set(...data.earth.sun_direction_local_z_up);
         } else {
-          sunLight.intensity = detailedRegions.has(region.id) ? 0 : 2.4;
-          earthLight.intensity = detailedRegions.has(region.id) ? 0 : .35;
+          sunLight.intensity = 3.6;
+          earthLight.intensity = 0.25;
         }
         value.inspect(inspectActive);
         render();
       },
       inspect(on) {
         inspectActive = on;
-        ambientLight.intensity = on ? .95 : (detailedRegions.has(region.id) ? 0 : .45);
-        hemiLight.intensity = on ? .85 : (detailedRegions.has(region.id) ? 0 : .55);
+        focusSun();
+        const isNight = !sky || sky.sun.elevation_deg <= 0;
+        if (isNight) {
+          sunLight.intensity = on ? 3.6 : 0.0;
+        }
+        ambientLight.intensity = on ? 0.22 : 0.03;
+        hemiLight.intensity = on ? 0.18 : 0.04;
         render();
       },
     };
     runtime.current = value;
 
     function focusSun() {
-      if (!sky) return;
       const target = value.mode === 'eye' && value.selectedPoint ? value.selectedPoint : center;
       sunLight.target.position.copy(target);
-      sunLight.position.copy(target).addScaledVector(new THREE.Vector3(...sky.sun.directional_vector_local_z_up), lightDistance);
-      const radius = value.mode === 'eye' ? 80 : Math.max(1200, extent * 1.35);
+      const defaultSunDir = new THREE.Vector3(0.72, 0.52, 0.32).normalize();
+      const isNight = !sky || sky.sun.elevation_deg <= 0;
+      const sunDir = (inspectActive && isNight) || !sky
+        ? defaultSunDir
+        : new THREE.Vector3(...sky.sun.directional_vector_local_z_up);
+
+      sunLight.position.copy(target).addScaledVector(sunDir, lightDistance);
+      const radius = value.mode === 'eye' ? 160 : Math.max(1200, extent * 1.35);
       const shadow = sunLight.shadow.camera;
       shadow.left = shadow.bottom = -radius; shadow.right = shadow.top = radius;
-      const depthSpan = Math.max(1000, radius * 3);
-      shadow.near = Math.max(10, lightDistance - depthSpan); shadow.far = lightDistance + depthSpan;
-      sunLight.shadow.normalBias = value.mode === 'eye' ? .035 : .08;
+      shadow.near = 10; shadow.far = lightDistance + radius * 3.0;
+      sunLight.shadow.normalBias = value.mode === 'eye' ? .015 : .05;
       shadow.updateProjectionMatrix();
     }
 
@@ -833,8 +844,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           for (let i = 0; i < positions.count; i++) {
             const px = positions.getX(i);
             const py = isYUp ? -positions.getZ(i) : positions.getY(i);
-            uv[i * 2] = detailedRegions.has(region.id) ? px / 24 : (px - minX) / spanX;
-            uv[i * 2 + 1] = detailedRegions.has(region.id) ? py / 24 : (py - minY) / spanY;
+            uv[i * 2] = (px - center.x) / 240;
+            uv[i * 2 + 1] = (py - center.y) / 240;
           }
           child.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
         }
@@ -844,18 +855,18 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       const loadFallbackTextures = () => {
         if (cancelled) return;
         try {
-          const isDetailed = detailedRegions.has(region.id);
-          const regolithTextures = createRegolithTextures(extent, isDetailed);
+          const regolithTextures = createRegolithTextures(extent, true);
           terrainTextures.add(regolithTextures.map);
           terrainTextures.add(regolithTextures.normalMap);
-          const rep = isDetailed ? 1 : 1.6;
-          regolithTextures.map.repeat.set(rep, rep);
-          regolithTextures.normalMap.repeat.set(rep, rep);
+          regolithTextures.map.wrapS = regolithTextures.map.wrapT = THREE.RepeatWrapping;
+          regolithTextures.normalMap.wrapS = regolithTextures.normalMap.wrapT = THREE.RepeatWrapping;
+          regolithTextures.map.repeat.set(1, 1);
+          regolithTextures.normalMap.repeat.set(1, 1);
           const fallbackMat = new THREE.MeshStandardMaterial({
             map: regolithTextures.map,
-            color: new THREE.Color(0xb0b4bc),
+            color: new THREE.Color(0x6e7078),
             normalMap: regolithTextures.normalMap,
-            normalScale: new THREE.Vector2(0.85, 0.85),
+            normalScale: new THREE.Vector2(2.2, 2.2),
             roughness: 0.95,
             metalness: 0.0,
           });
@@ -938,8 +949,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           colTex.wrapS = colTex.wrapT = THREE.RepeatWrapping;
           colTex.colorSpace = THREE.SRGBColorSpace;
           colTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
-          const repeatScale = detailedRegions.has(region.id) ? extent / 24 : Math.max(8, Math.min(64, Math.round(extent / 160)));
-          colTex.repeat.set(repeatScale, repeatScale);
+          colTex.repeat.set(1, 1);
 
           texLoader.load(
             `${import.meta.env.BASE_URL}terrain/lunar-regolith-normal.png`,
@@ -948,16 +958,15 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
               terrainTextures.add(normTex);
               normTex.wrapS = normTex.wrapT = THREE.RepeatWrapping;
               normTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
-              normTex.repeat.set(repeatScale, repeatScale);
+              normTex.repeat.set(1, 1);
 
-              const normScale = detailedRegions.has(region.id) ? 0.35 : 1.8;
               const mat = new THREE.MeshStandardMaterial({
                 map: colTex,
-                color: new THREE.Color(0xd2d6dc),
+                color: new THREE.Color(0x6e7078),
                 normalMap: normTex,
-                normalScale: new THREE.Vector2(normScale, normScale),
-                roughness: 0.92,
-                metalness: 0.02,
+                normalScale: new THREE.Vector2(2.4, 2.4),
+                roughness: 0.94,
+                metalness: 0.0,
               });
               terrain.traverse(child => {
                 if (child instanceof THREE.Mesh && child.material) {

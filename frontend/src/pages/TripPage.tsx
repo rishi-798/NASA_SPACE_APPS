@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, ArrowUpRight, Check, CheckCircle, RocketLaunch } from "@phosphor-icons/react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Check, CheckCircle, GlobeHemisphereWest, RocketLaunch } from "@phosphor-icons/react";
 import { lazy, Suspense, useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { MoonMap, type MoonControls, type MoonLocation } from "../MoonMap";
@@ -273,12 +273,32 @@ export function TripPage() {
           <button className="trip-primary" disabled={!landing} onClick={() => go("landing")}>Review landing point <ArrowRight /></button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button></aside></div>}
       {(mission.stage === "landing" || mission.stage === "reveal") && landing && <>
         <div className="trip-layout">
-          <div className="trip-visual trip-mission-visual"><Suspense fallback={sceneLoading}><SpaceScene key={`${transfer.key}:${mission.stage}:${rocket?.id}`} mission transfer={transfer.data} modelUrl={rocket?.model??undefined} modelName={rocket?.name} modelCredit={rocket?.modelCredit} /></Suspense>
-            {transfer.loading && <p className="trip-scene-message" role="status">Calculating the mission flight…</p>}</div>
-          <aside className="trip-panel"><TransferPlanner input={transferInput} altitudeText={parkingAltitudeText} calculation={transfer}
-            onDeparture={time=>dispatch({type:"transfer-departure",time})} onArrival={time=>dispatch({type:"time",time})}
-            onAltitudeText={changeParkingAltitude} frozen={mission.stage==="reveal"} />
-            <p className="trip-section-label">{mission.stage === "reveal" ? "Mission record" : "Confirm your selection"}</p><h2>{landing.name}</h2><dl className="trip-stat-list"><div><dt>Departure</dt><dd>{departure?.name} / {departure?.pad}</dd></div><div><dt>Rocket</dt><dd>{rocket?.name}</dd></div><div><dt>Latitude</dt><dd>{landing.latitude.toFixed(6)}°</dd></div><div><dt>Longitude</dt><dd>{landing.longitude.toFixed(6)}° east</dd></div><div><dt>Point elevation</dt><dd>{elevation.text}{elevation.state === "unavailable" ? " (see terrain information)" : ""}</dd></div></dl>
+          <div className="trip-visual">
+            {mission.stage === "reveal" && departure ? (
+              <div className="trip-space-scene trip-space-scene-mission">
+                <Suspense fallback={sceneLoading}><SpaceScene key={`${transfer.key}:${mission.stage}:${rocket?.id}`} mission transfer={transfer.data} modelUrl={rocket?.model??undefined} modelName={rocket?.name} modelCredit={rocket?.modelCredit} /></Suspense>
+                {transfer.loading && <p className="trip-scene-message" role="status">Calculating the mission flight…</p>}
+              </div>
+            ) : (
+              <div className="trip-landing-presentation">
+                <img src="/lunar-color-map.webp" alt="NASA lunar color map. Overview only, not a detailed scene of the selected point." />
+                <GlobeHemisphereWest weight="thin" />
+                <span>Selected lunar point</span>
+                <strong>{formatCoordinate(landing.latitude, "lat")}<br />{formatCoordinate(landing.longitude, "lon")}</strong>
+                <p>{landing.name}</p>
+              </div>
+            )}
+          </div>
+          <aside className="trip-panel">
+            {mission.stage === "reveal" && (
+              <TransferPlanner input={transferInput} altitudeText={parkingAltitudeText} calculation={transfer}
+                onDeparture={time=>dispatch({type:"transfer-departure",time})} onArrival={time=>dispatch({type:"time",time})}
+                onAltitudeText={changeParkingAltitude} frozen={mission.stage==="reveal"} />
+            )}
+            <p className="trip-section-label">{mission.stage === "reveal" ? "Mission record" : "Confirm your selection"}</p>
+            <h2>{landing.name}</h2>
+            <dl className="trip-stat-list"><div><dt>Departure</dt><dd>{departure?.name} / {departure?.pad}</dd></div><div><dt>Rocket</dt><dd>{rocket?.name}</dd></div><div><dt>Latitude</dt><dd>{landing.latitude.toFixed(6)}°</dd></div><div><dt>Longitude</dt><dd>{landing.longitude.toFixed(6)}° east</dd></div><div><dt>Point elevation</dt><dd>{elevation.text}{elevation.state === "unavailable" ? " (see terrain information)" : ""}</dd></div></dl>
+            {mission.stage === "landing" ? <label className="trip-field">Observation date and time (UTC)<input type="datetime-local" value={mission.utcTime.slice(0, 16)} onChange={(event) => { if (event.target.value) dispatch({ type: "time", time: `${event.target.value}:00Z` }); }} /></label> : <p>{mission.utcTime}</p>}
             <p className="trip-note">Surface observation reference: <time dateTime={mission.utcTime}>{mission.utcTime}</time>. This uses the arrival epoch for planning; it is not a predicted touchdown time.</p>
             <p className="trip-note">Chosen coordinate is retained exactly. Terrain source frames and the ephemeris frame have alignment uncertainty; a single point height is not a landing-safety claim.</p>
             {mission.error && <p role="alert" className="trip-error">{mission.error}</p>}

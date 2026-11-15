@@ -1,5 +1,6 @@
 .terrain-context { border-top: 1px solid var(--line); padding-top: 20px; min-width: 0; font-size: 12px; color: var(--text); }
 .terrain-context h3 { margin: 0 0 14px; font-size: 18px; font-weight: 500; }
+.terrain-context h4 { margin: 18px 0 8px; font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 .terrain-context p { margin: 10px 0; line-height: 1.65; color: #b9bbc5; overflow-wrap: anywhere; }
 .terrain-context .terrain-grid-id { color: var(--text); font-family: var(--mono); font-size: 11px; }
 .terrain-context dl { display: flex; flex-direction: column; gap: 12px; margin: 18px 0; }

@@ -133,9 +133,9 @@ export function TerrainContext({ latitude, longitude, catalogue, onRetry, terrai
               </div>
 
               <img
-                src={`${modelInfo.preview_url}${modelInfo.preview_url.includes('?') ? '&' : '?'}v=3`}
+                src={`${modelInfo.preview_url}${modelInfo.preview_url.includes('?') ? '&' : '?'}v=5`}
                 alt="Scientific terrain render preview"
-                style={{ width: '100%', height: 'auto', display: 'block', opacity: 0.92, filter: 'contrast(1.08)' }}
+                style={{ width: '100%', height: 'auto', display: 'block', opacity: 0.95, filter: 'contrast(1.06)' }}
               />
 
               {/* Tactical Footer Overlay */}

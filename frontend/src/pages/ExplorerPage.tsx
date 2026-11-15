@@ -279,16 +279,6 @@ function ExplorerWorkspace() {
               />
             </div>
           )}
-
-          <TerrainContext
-            latitude={location.latitude}
-            longitude={location.longitude}
-            catalogue={catalogue.state}
-            onRetry={catalogue.retry}
-            terrain={result?.terrain ?? null}
-            horizon={result?.horizon ?? null}
-            onOpenSurface={() => setVisualMode("surface")}
-          />
         </div>
         <aside className="explorer-sidebar" data-reveal>
           <ExplorerControls
@@ -316,13 +306,17 @@ function ExplorerWorkspace() {
             longitude={location.longitude}
             onExplain={explain}
           />
+          <TerrainContext
+            latitude={location.latitude}
+            longitude={location.longitude}
+            catalogue={catalogue.state}
+            onRetry={catalogue.retry}
+            terrain={result?.terrain ?? null}
+            horizon={result?.horizon ?? null}
+            onOpenSurface={() => setVisualMode("surface")}
+          />
         </aside>
       </div>
-
-      {visualMode === "orbit" && (
-        <LocalSurfacePane latitude={location.latitude} longitude={location.longitude}
-          observationTime={sceneTime ?? `${DEFAULT_INPUT.startDate}T${DEFAULT_INPUT.startTime}:00Z`} onPick={pickLocation} />
-      )}
 
       <div className="analysis-grid" data-reveal>
         <HorizonContainer data={active} profile={result?.horizon ?? null} />
