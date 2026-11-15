@@ -8,7 +8,7 @@ export type RegolithTextures = {
 
 /** Procedural illustrative regolith; not measured reflectance or mapped craters. */
 export function createRegolithTextures(extent: number, enriched = false): RegolithTextures {
-  const size = 512;
+  const size = enriched ? 1024 : 512;
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
@@ -92,13 +92,13 @@ export function createRegolithTextures(extent: number, enriched = false): Regoli
       h += periodicNoise(x * 0.65, y * 0.65, 128) * 0.05;
 
       // Fine powdery dust grain
-      const dust = (lcg() - 0.5) * 0.04;
+      const dust = (lcg() - 0.5) * (enriched ? .18 : .04);
       h += dust;
 
       heights[idx] = h;
 
       // Apollo-consistent soft matte charcoal gray (mean ~132, 0.12 reflectance)
-      let tone = 132 + Math.round(h * 32 + dust * 40);
+      let tone = 132 + Math.round(h * (enriched ? 76 : 32) + dust * 40);
       tone = Math.max(90, Math.min(185, tone));
 
       const pIdx = idx * 4;
@@ -111,8 +111,8 @@ export function createRegolithTextures(extent: number, enriched = false): Regoli
 
   if (enriched) {
     // Seeded shallow pits and rims affect shading only, never measured vertices.
-    for (let crater = 0; crater < 70; crater++) {
-      const cx = lcg() * size, cy = lcg() * size, radius = 1.5 + lcg() * 9;
+    for (let crater = 0; crater < 450; crater++) {
+      const cx = lcg() * size, cy = lcg() * size, radius = 1.5 + Math.pow(lcg(), 2) * 24;
       for (let oy = -Math.ceil(radius * 1.5); oy <= radius * 1.5; oy++) {
         for (let ox = -Math.ceil(radius * 1.5); ox <= radius * 1.5; ox++) {
           const d = Math.hypot(ox, oy) / radius;
@@ -134,7 +134,7 @@ export function createRegolithTextures(extent: number, enriched = false): Regoli
   // Compute subtle tangent-space normal map using seamless Sobel filter
   const normData = normCtx.createImageData(size, size);
   const nData = normData.data;
-  const strength = 0.45; // Subtle powdery micro-slope gradient
+  const strength = enriched ? 2.4 : 0.45; // Subtle powdery micro-slope gradient
 
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {

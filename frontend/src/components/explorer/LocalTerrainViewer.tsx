@@ -26,6 +26,7 @@ type Runtime = {
 
 function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, hit: THREE.Intersection, enriched = false) {
   if (!(hit.object instanceof THREE.Mesh) || hit.faceIndex == null) return previous;
+  const capacity = enriched ? 7500 : 1800;
   const mesh = hit.object, positions = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
   if (!positions || !indices) return previous;
   const makeRockGeometry = () => {
@@ -46,7 +47,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
     return geometry;
   };
   const rocks = previous ?? new THREE.InstancedMesh(makeRockGeometry(),
-    new THREE.MeshStandardMaterial({ color: 0x41413f, roughness: 1, metalness: 0 }), 1800);
+    new THREE.MeshStandardMaterial({ color: 0x41413f, roughness: 1, metalness: 0 }), capacity);
   if (!previous) { rocks.castShadow = true; rocks.receiveShadow = true; rocks.frustumCulled = false; scene.add(rocks); }
   const transform = new THREE.Object3D();
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), point = new THREE.Vector3();
@@ -65,15 +66,15 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
     const area = normal.length() / 2;
     normal.normalize();
     if (normal.z < 0) normal.negate();
-    const samples = Math.min(120, Math.max(1, Math.ceil(area * .09)));
+    const samples = Math.min(enriched ? 600 : 120, Math.max(1, Math.ceil(area * (enriched ? .65 : .09))));
     for (let i = 0; i < samples; i++) {
       const u = Math.sqrt(random()), v = random();
       point.copy(a).multiplyScalar(1-u).addScaledVector(b, u*(1-v)).addScaledVector(c, u*v);
       const distance = point.distanceToSquared(hit.point);
       if (distance > 4900 || distance < 4) continue;
       candidates++;
-      const slot = count < 1800 ? count++ : Math.floor(random() * candidates);
-      if (slot >= 1800) continue;
+      const slot = count < capacity ? count++ : Math.floor(random() * candidates);
+      if (slot >= capacity) continue;
       transform.position.copy(point);
       transform.position.z += lunarDetailHeight(point.x, point.y, hit.point);
       transform.quaternion.setFromUnitVectors(up, normal);
@@ -153,7 +154,7 @@ function createSunVisual() {
   }
   const tex = new THREE.CanvasTexture(canvas);
   const glow = new THREE.Mesh(
-    new THREE.PlaneGeometry(6.2, 6.2),
+    new THREE.PlaneGeometry(9, 9),
     new THREE.MeshBasicMaterial({
       map: tex, transparent: true, blending: THREE.AdditiveBlending,
       depthWrite: false, toneMapped: false,
