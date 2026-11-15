@@ -3,12 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#05070a" />
+    <meta name="theme-color" content="#08090c" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta
       name="description"
-      content="CLPS Lunar Browser — sunlight, Earth visibility, and terrain context for lunar landing sites."
+      content="Explore the Moon in context. Rishi's interactive lunar map and Suhas's sunlight, Earth visibility, and terrain analysis, together in CLPS Lunar Browser."
     />
     <title>CLPS Lunar Browser</title>
+    <script>
+      // Only the home route needs the artwork before React is ready.
+      if (location.pathname === "/") {
+        const heroPreload = document.createElement("link");
+        heroPreload.rel = "preload";
+        heroPreload.as = "image";
+        heroPreload.href = "/lunar-hero.webp";
+        heroPreload.fetchPriority = "high";
+        document.head.appendChild(heroPreload);
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

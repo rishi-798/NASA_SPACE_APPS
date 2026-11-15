@@ -5,15 +5,14 @@ import { formatCoordinate } from "../../lib/format";
 import type { LandingSite } from "../../types";
 
 type MoonExplorerProps = {
-  sites: LandingSite[];
   selectedSite: LandingSite;
-  onSelectSite: (site: LandingSite) => void;
+  pickedLocation: MoonLocation | null;
+  onLocationSelect: (location: MoonLocation | null) => void;
 };
 
-export function MoonExplorer({ selectedSite }: MoonExplorerProps) {
+export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect }: MoonExplorerProps) {
   const [showGrid, setShowGrid] = useState(true);
   const [showAxis, setShowAxis] = useState(true);
-  const [pickedLocation, setPickedLocation] = useState<MoonLocation | null>(null);
   const controlsRef = useRef<MoonControls | null>(null);
   const selectedLocation = pickedLocation ?? {
     latitude: selectedSite.latitude,
@@ -29,7 +28,7 @@ export function MoonExplorer({ selectedSite }: MoonExplorerProps) {
 
       <div className="moon-stage moon-stage-3d" data-moon-stage>
         <MoonMap
-          onLocationSelect={setPickedLocation}
+          onLocationSelect={onLocationSelect}
           selectedLocation={selectedLocation}
           showGrid={showGrid}
           showAxis={showAxis}
@@ -72,7 +71,7 @@ export function MoonExplorer({ selectedSite }: MoonExplorerProps) {
           type="button"
           aria-label="Reset to near side"
           onClick={() => {
-            setPickedLocation(null);
+            onLocationSelect(null);
             controlsRef.current?.setView("near");
           }}
         >

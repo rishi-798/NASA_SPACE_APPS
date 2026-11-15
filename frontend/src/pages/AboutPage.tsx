@@ -13,8 +13,8 @@ export function AboutPage() {
     <article className="editorial-page about-page">
       <RouteIntro
         eyebrow="Why this exists"
-        title={<>See the Moon<br />before you land.</>}
-        description="CLPS Lunar Browser turns a landing site and UTC timestamp into an operational view of sunlight, Earth visibility, and terrain context. It is designed for fast mission trade studies—not spectacle for its own sake."
+        title={<>LOOK CLOSER.<br />GO FURTHER.</>}
+        description="CLPS Lunar Browser brings Rishi's interactive Moon map and Suhas's visibility backend together. Choose a landing site and UTC timestamp to explore sunlight, Earth visibility, and terrain context."
         side={<Link className="primary-text-link" to="/explorer">Open Explorer <ArrowRight /></Link>}
       />
 
@@ -40,8 +40,12 @@ export function AboutPage() {
         <p>
           This is an independent NASA Space Apps 2026 project and not an official NASA
           product. Lunar imagery is credited to NASA’s Scientific Visualization Studio
-          and the Lunar Reconnaissance Orbiter program. Analytical values are labeled as
-          previews unless returned by the connected backend.
+          and the Lunar Reconnaissance Orbiter program. Suhas’s backend calculates
+          geometric Sun and Earth positions using NAIF SPICE. Athena uses a LOLA terrain
+          horizon; other sites and map coordinates use a flat horizon. Daily visibility
+          windows use 30-minute samples and are not flight-certified predictions.
+          Atmospheric illustrations on the home page are AI-generated artwork, not
+          scientific imagery or photographs of the named landing sites.
         </p>
       </section>
     </article>

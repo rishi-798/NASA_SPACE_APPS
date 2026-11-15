@@ -87,6 +87,8 @@ export function MoonMap({
       });
     } catch (error) {
       console.error("Could not initialize the Moon viewer", error);
+      // This state reports failure of an external WebGL system, not derived React data.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus("error");
       return;
     }

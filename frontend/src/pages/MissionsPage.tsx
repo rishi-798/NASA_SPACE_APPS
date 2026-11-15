@@ -19,8 +19,8 @@ export function MissionsPage() {
     <article className="editorial-page missions-page">
       <RouteIntro
         eyebrow="CLPS mission archive"
-        title={<>Landing records,<br />without the noise.</>}
-        description="Browse the mission-linked landing sites already present in the repository. Full provider, payload, date, and status records will appear here when the shared mission dataset is populated."
+        title={<>THE LANDING<br />ARCHIVE.</>}
+        description="Explore Odysseus and Athena, the two lunar landing sites currently available in the project."
         side={
           <div className="dataset-readout">
             <Database aria-hidden="true" />
@@ -54,8 +54,8 @@ export function MissionsPage() {
             <div className="mission-empty-note">
               <span>ARCHIVE NOTICE</span>
               <p>
-                `data/missions.json` is currently empty. This view intentionally avoids
-                inventing provider, payload, or schedule details.
+                Mission details are still being added. Provider, payload, and schedule
+                information will appear when the mission dataset is populated.
               </p>
             </div>
           )}

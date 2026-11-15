@@ -5,26 +5,30 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 
 const cesiumSource = "node_modules/cesium/Build/Cesium";
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   define: {
     CESIUM_BASE_URL: JSON.stringify("/cesium"),
   },
   plugins: [
     react(),
     tailwindcss(),
-    viteStaticCopy({
+    ...(!isSsrBuild ? [viteStaticCopy({
       targets: [
         { src: `${cesiumSource}/Workers`, dest: "cesium", rename: { stripBase: 4 } },
         { src: `${cesiumSource}/Assets`, dest: "cesium", rename: { stripBase: 4 } },
         { src: `${cesiumSource}/Widgets`, dest: "cesium", rename: { stripBase: 4 } },
         { src: `${cesiumSource}/ThirdParty`, dest: "cesium", rename: { stripBase: 4 } },
       ],
-    }),
+    })] : []),
   ],
+  ssr: { noExternal: ["gsap", "@gsap/react"] },
   server: {
     port: 5173,
     proxy: {
-      "/api": "http://localhost:8000",
+      "/api": "http://127.0.0.1:8000",
     },
   },
-});
+  preview: {
+    proxy: { "/api": "http://127.0.0.1:8000" },
+  },
+}));

@@ -9,9 +9,9 @@ import type { AnalysisState, CelestialPosition, VisibilityResponse } from "../..
 import { StatusIndicator } from "../ui/StatusIndicator";
 
 type ConditionsPanelProps = {
-  conditions: VisibilityResponse;
+  conditions: VisibilityResponse | null;
   state: AnalysisState;
-  isPreview: boolean;
+  observationTime: string | null;
   errorMessage?: string;
 };
 
@@ -19,7 +19,7 @@ type TelemetryRowProps = {
   kind: "sun" | "earth";
   title: string;
   subtitle: string;
-  data: CelestialPosition;
+  data?: CelestialPosition;
 };
 
 function TelemetryRow({ kind, title, subtitle, data }: TelemetryRowProps) {
@@ -34,15 +34,15 @@ function TelemetryRow({ kind, title, subtitle, data }: TelemetryRowProps) {
           <span>{subtitle}</span>
         </div>
       </div>
-      <StatusIndicator visible={data.visible} />
+      <StatusIndicator visible={data?.visible ?? false} pending={!data} />
       <dl className="telemetry-values">
         <div>
           <dt>Elevation</dt>
-          <dd>{formatSignedDegree(data.elevation)}</dd>
+          <dd aria-label={data ? undefined : "Not calculated"}>{data ? formatSignedDegree(data.elevation) : "--"}</dd>
         </div>
         <div>
           <dt>Azimuth</dt>
-          <dd>{formatAzimuth(data.azimuth)}</dd>
+          <dd aria-label={data ? undefined : "Not calculated"}>{data ? formatAzimuth(data.azimuth) : "--"}</dd>
         </div>
       </dl>
     </article>
@@ -52,10 +52,12 @@ function TelemetryRow({ kind, title, subtitle, data }: TelemetryRowProps) {
 export function ConditionsPanel({
   conditions,
   state,
-  isPreview,
+  observationTime,
   errorMessage,
 }: ConditionsPanelProps) {
-  const terrainClear = conditions.sun.visible && conditions.earth.visible;
+  const terrainClear = !!conditions && conditions.sun.visible && conditions.earth.visible;
+  const hasTerrain = conditions?.sun.terrain_horizon !== undefined;
+  const observed = conditions?.time ?? observationTime;
 
   return (
     <section className="conditions" aria-labelledby="conditions-title" aria-busy={state === "loading"}>
@@ -69,15 +71,15 @@ export function ConditionsPanel({
 
       <div className="conditions-time">
         <span>OBSERVATION</span>
-        <time dateTime={conditions.time}>{formatUtcDisplay(conditions.time)}</time>
+        {observed ? <time dateTime={observed}>{formatUtcDisplay(observed)}</time> : <span>Choose a date and time</span>}
       </div>
 
       {state === "error" && (
         <div className="service-notice" role="status">
           <Warning weight="fill" aria-hidden="true" />
           <div>
-            <strong>Backend unavailable</strong>
-            <p>{errorMessage} Showing the interface preview below.</p>
+            <strong>Analysis unavailable</strong>
+            <p>{errorMessage}</p>
           </div>
         </div>
       )}
@@ -87,36 +89,36 @@ export function ConditionsPanel({
           kind="sun"
           title="Sunlight"
           subtitle="Solar vector"
-          data={conditions.sun}
+          data={conditions?.sun}
         />
         <TelemetryRow
           kind="earth"
           title="Earth / Comms"
           subtitle="Line of sight"
-          data={conditions.earth}
+          data={conditions?.earth}
         />
         <article className="terrain-row">
           <div className="telemetry-name">
             <Mountains weight="light" aria-hidden="true" />
             <div>
               <p>Terrain</p>
-              <span>Horizon profile</span>
+              <span>{!conditions ? "Awaiting horizon analysis" : hasTerrain ? "LOLA horizon · 2 m observer" : "No terrain profile · flat horizon"}</span>
             </div>
           </div>
           <StatusIndicator
             visible={terrainClear}
-            pending={conditions.sun.terrain_horizon === undefined}
-            label={conditions.sun.terrain_horizon === undefined ? "PROFILE PENDING" : undefined}
+            pending={!conditions || !hasTerrain}
+            label={!conditions ? "AWAITING ANALYSIS" : !hasTerrain ? "FLAT HORIZON" : undefined}
           />
         </article>
       </div>
 
       <div className="data-provenance">
-        <span className={`mode-dot ${isPreview ? "mode-preview" : "mode-live"}`} />
+        <span className={`mode-dot ${conditions ? "mode-live" : "mode-preview"}`} />
         <span>
-          {isPreview
-            ? "INTERFACE PREVIEW · VALUES ARE ILLUSTRATIVE"
-            : "LIVE BACKEND RESPONSE · GEOMETRIC POSITION"}
+          {conditions
+            ? "SUHAS / SPICE · GEOMETRIC POSITION"
+            : state === "loading" ? "CALCULATING WITH SPICE" : "SELECT PARAMETERS · ANALYZE CONDITIONS"}
         </span>
       </div>
     </section>

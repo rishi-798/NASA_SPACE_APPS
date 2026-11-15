@@ -49,8 +49,8 @@ export function TimelinePage() {
     <article ref={root} className="editorial-page timeline-page">
       <RouteIntro
         eyebrow="Mission chronology"
-        title={<>A lunar program<br />measured in arrivals.</>}
-        description="The chronology is wired for dated mission records without fabricating an archive. Today it shows the framework and the two mission-linked landing sites available in the repository."
+        title={<>LUNAR<br />CHRONOLOGY.</>}
+        description="Dated mission records have not been imported yet. Explore the available mission-linked landing sites below while the chronology takes shape."
         side={<span className="archive-status"><CalendarDots /> {missionRecordCount} dated events loaded</span>}
       />
 

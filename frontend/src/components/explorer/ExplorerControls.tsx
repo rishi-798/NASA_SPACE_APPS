@@ -7,6 +7,7 @@ type ExplorerControlsProps = {
   date: string;
   time: string;
   loading: boolean;
+  customLocation: boolean;
   onSiteChange: (siteId: string) => void;
   onDateChange: (value: string) => void;
   onTimeChange: (value: string) => void;
@@ -19,6 +20,7 @@ export function ExplorerControls({
   date,
   time,
   loading,
+  customLocation,
   onSiteChange,
   onDateChange,
   onTimeChange,
@@ -40,6 +42,7 @@ export function ExplorerControls({
             <MapPin aria-hidden="true" /> Landing site
           </span>
           <select value={selectedId} onChange={(event) => onSiteChange(event.target.value)}>
+            {customLocation && <option value="custom">Selected map coordinate (flat horizon)</option>}
             {sites.map((site) => (
               <option key={site.id} value={site.id}>
                 {site.name}
@@ -54,6 +57,7 @@ export function ExplorerControls({
           </span>
           <input
             type="date"
+            required
             value={date}
             onChange={(event) => onDateChange(event.target.value)}
           />
@@ -65,13 +69,14 @@ export function ExplorerControls({
           </span>
           <input
             type="time"
+            required
             value={time}
             onChange={(event) => onTimeChange(event.target.value)}
           />
         </label>
       </div>
 
-      <button className="analyze-button" type="button" onClick={onSubmit} disabled={loading}>
+      <button className="analyze-button" type="button" onClick={onSubmit} disabled={loading || !date || !time}>
         <span>{loading ? "CALCULATING VECTORS" : "ANALYZE CONDITIONS"}</span>
         {loading ? <span className="loading-track" aria-hidden="true" /> : <ArrowRight />}
       </button>

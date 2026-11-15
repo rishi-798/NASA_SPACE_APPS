@@ -1,6 +1,6 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ConditionsPanel } from "../components/explorer/ConditionsPanel";
 import { ExplorerControls } from "../components/explorer/ExplorerControls";
@@ -8,9 +8,10 @@ import { MoonExplorer } from "../components/explorer/MoonExplorer";
 import { HorizonContainer } from "../components/visualization/HorizonContainer";
 import { VisibilityTimeline } from "../components/visualization/VisibilityTimeline";
 import { landingSites } from "../data/landingSites";
-import { ApiError, createInterfacePreview, getSiteVisibility } from "../lib/api";
+import { ApiError, getAnalysis } from "../lib/api";
+import type { MoonLocation } from "../MoonMap";
 import { formatCoordinate } from "../lib/format";
-import type { AnalysisState, VisibilityResponse } from "../types";
+import type { AnalysisResult, AnalysisState } from "../types";
 
 function timestamp(date: string, time: string) {
   return `${date}T${time}:00Z`;
@@ -27,16 +28,16 @@ export function ExplorerPage() {
   const [date, setDate] = useState("2026-10-03");
   const [time, setTime] = useState("18:00");
   const [analysisState, setAnalysisState] = useState<AnalysisState>("idle");
-  const [liveConditions, setLiveConditions] = useState<VisibilityResponse | null>(null);
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [pickedLocation, setPickedLocation] = useState<MoonLocation | null>(null);
+  const activeRequest = useRef<AbortController | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>();
 
   const selectedSite =
     landingSites.find((site) => site.id === selectedId) ?? firstSite;
-  const preview = useMemo(
-    () => createInterfacePreview(selectedSite, timestamp(date, time)),
-    [selectedSite, date, time],
-  );
-  const conditions = liveConditions ?? preview;
+  const location = pickedLocation ?? selectedSite;
+  const conditions = result?.conditions ?? null;
+  useEffect(() => () => activeRequest.current?.abort(), []);
 
   useGSAP(
     () => {
@@ -59,27 +60,44 @@ export function ExplorerPage() {
     { scope: root },
   );
 
-  function resetAnalysis() {
+  const resetAnalysis = useCallback(() => {
+    activeRequest.current?.abort();
+    activeRequest.current = null;
     setAnalysisState("idle");
-    setLiveConditions(null);
+    setResult(null);
     setErrorMessage(undefined);
-  }
+  }, []);
+
+  const pickLocation = useCallback((value: MoonLocation | null) => {
+    setPickedLocation(value);
+    resetAnalysis();
+  }, [resetAnalysis]);
 
   function selectSite(siteId: string) {
+    if (siteId === "custom") return;
+    setPickedLocation(null);
     setSelectedId(siteId);
     resetAnalysis();
   }
 
   async function analyze() {
+    if (!date || !time) return;
+    activeRequest.current?.abort();
+    const controller = new AbortController();
+    activeRequest.current = controller;
     setAnalysisState("loading");
+    setResult(null);
     setErrorMessage(undefined);
 
     try {
-      const response = await getSiteVisibility(selectedSite.id, timestamp(date, time));
-      setLiveConditions(response);
+      const response = await getAnalysis(selectedSite.id, pickedLocation, timestamp(date, time), date, controller.signal);
+      if (controller.signal.aborted) return;
+      setResult(response);
       setAnalysisState("success");
     } catch (error) {
-      setLiveConditions(null);
+      if (controller.signal.aborted) return;
+      controller.abort();
+      setResult(null);
       setAnalysisState("error");
       setErrorMessage(
         error instanceof ApiError ? error.message : "An unexpected analysis error occurred.",
@@ -97,11 +115,11 @@ export function ExplorerPage() {
         <dl className="context-coordinates">
           <div>
             <dt>LAT</dt>
-            <dd>{formatCoordinate(selectedSite.latitude, "lat")}</dd>
+            <dd>{formatCoordinate(location.latitude, "lat")}</dd>
           </div>
           <div>
             <dt>LON</dt>
-            <dd>{formatCoordinate(selectedSite.longitude, "lon")}</dd>
+            <dd>{formatCoordinate(location.longitude, "lon")}</dd>
           </div>
           <div>
             <dt>SITES</dt>
@@ -114,15 +132,16 @@ export function ExplorerPage() {
         <div className="explorer-visual" data-reveal>
           <MoonExplorer
             key={selectedSite.id}
-            sites={landingSites}
             selectedSite={selectedSite}
-            onSelectSite={(site) => selectSite(site.id)}
+            pickedLocation={pickedLocation}
+            onLocationSelect={pickLocation}
           />
         </div>
         <aside className="explorer-sidebar" data-reveal>
           <ExplorerControls
             sites={landingSites}
-            selectedId={selectedSite.id}
+            selectedId={pickedLocation ? "custom" : selectedSite.id}
+            customLocation={!!pickedLocation}
             date={date}
             time={time}
             loading={analysisState === "loading"}
@@ -140,15 +159,15 @@ export function ExplorerPage() {
           <ConditionsPanel
             conditions={conditions}
             state={analysisState}
-            isPreview={!liveConditions}
+            observationTime={date && time ? timestamp(date, time) : null}
             errorMessage={errorMessage}
           />
         </aside>
       </div>
 
       <div className="analysis-grid" data-reveal>
-        <HorizonContainer data={conditions} />
-        <VisibilityTimeline data={conditions} />
+        <HorizonContainer data={conditions} profile={result?.horizon ?? null} />
+        <VisibilityTimeline data={conditions} summary={result?.summary ?? null} sampleCount={result?.samples.length ?? 0} />
       </div>
     </article>
   );

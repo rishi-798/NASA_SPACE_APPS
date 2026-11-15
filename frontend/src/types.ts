@@ -25,3 +25,39 @@ export type VisibilityResponse = {
 };
 
 export type AnalysisState = "idle" | "loading" | "success" | "error";
+
+export type VisibilitySample = Pick<VisibilityResponse, "time" | "sun" | "earth">;
+
+export type VisibilityInterval = { start: string; end: string };
+
+export type MissionSummary = {
+  site: string | null;
+  start: string;
+  end: string;
+  step_minutes: number;
+  sunlight_percent: number;
+  earth_visible_percent: number;
+  both_available_percent: number;
+  longest_darkness_minutes: number;
+  longest_comm_blackout_minutes: number;
+  windows: {
+    sunlight: VisibilityInterval[];
+    earth_visible: VisibilityInterval[];
+    both: VisibilityInterval[];
+  };
+};
+
+export type HorizonProfile = {
+  site_id: string;
+  source: string;
+  azimuth_step: number;
+  observer_height_m: number;
+  horizon: number[];
+};
+
+export type AnalysisResult = {
+  conditions: VisibilityResponse;
+  samples: VisibilitySample[];
+  summary: MissionSummary;
+  horizon: HorizonProfile | null;
+};

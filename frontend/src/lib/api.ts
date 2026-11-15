@@ -1,6 +1,7 @@
-import type { LandingSite, VisibilityResponse } from "../types";
+import type { MoonLocation } from "../MoonMap";
+import type { AnalysisResult, HorizonProfile, MissionSummary, VisibilityResponse, VisibilitySample } from "../types";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
+const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
 
 export class ApiError extends Error {
   constructor(
@@ -20,12 +21,18 @@ async function request<T>(path: string, signal?: AbortSignal): Promise<T> {
       headers: { Accept: "application/json" },
       signal,
     });
-  } catch {
+  } catch (error) {
+    if (signal?.aborted) throw error;
     throw new ApiError("Visibility service is currently unreachable.");
   }
 
   if (!response.ok) {
-    const detail = await response.text().catch(() => "");
+    const body = await response.json().catch(() => null) as { detail?: unknown } | null;
+    const detail = typeof body?.detail === "string"
+      ? body.detail
+      : Array.isArray(body?.detail)
+        ? body.detail.map((item: { msg?: string }) => item.msg ?? "Invalid request").join("; ")
+        : "";
     throw new ApiError(
       detail || `Visibility service returned ${response.status}.`,
       response.status,
@@ -46,16 +53,33 @@ export function getSiteVisibility(
   );
 }
 
-export function createInterfacePreview(
-  site: LandingSite,
+export async function getAnalysis(
+  siteId: string,
+  location: MoonLocation | null,
   time: string,
-): VisibilityResponse {
+  date: string,
+  signal: AbortSignal,
+): Promise<AnalysisResult> {
+  const start = `${date}T00:00:00Z`;
+  const end = new Date(new Date(start).getTime() + 86400000).toISOString();
+  const range = new URLSearchParams({ start, end, step_minutes: "30" });
+  const coordinates = location
+    ? new URLSearchParams({ lat: String(location.latitude), lon: String(location.longitude) })
+    : null;
+  const base = `/api/sites/${encodeURIComponent(siteId)}`;
+  const [conditions, samples, summary, horizon] = await Promise.all([
+    coordinates
+      ? request<VisibilityResponse>(`/api/visibility?${coordinates}&time=${encodeURIComponent(time)}`, signal)
+      : getSiteVisibility(siteId, time, signal),
+    request<VisibilitySample[]>(
+      coordinates ? `/api/visibility/window?${coordinates}&${range}` : `${base}/visibility/window?${range}`, signal,
+    ),
+    request<MissionSummary>(
+      coordinates ? `/api/summary?${coordinates}&${range}` : `${base}/summary?${range}`, signal,
+    ),
+    coordinates ? Promise.resolve(null) : request<HorizonProfile | null>(`${base}/horizon`, signal),
+  ]);
   return {
-    site: site.id,
-    latitude: site.latitude,
-    longitude: site.longitude,
-    time,
-    sun: { azimuth: 124.2, elevation: 3.7, visible: true },
-    earth: { azimuth: 241.8, elevation: 7.1, visible: true },
+    conditions, samples, summary, horizon,
   };
 }

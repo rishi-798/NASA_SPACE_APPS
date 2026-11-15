@@ -1,5 +1,5 @@
-import { List, Moon, X } from "@phosphor-icons/react";
-import { useState } from "react";
+import { ArrowUpRight, List, Moon, X } from "@phosphor-icons/react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 const links = [
@@ -12,9 +12,18 @@ const links = [
 export function Navigation() {
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [open]);
+
   return (
     <header className="topbar">
-      <NavLink className="wordmark" to="/explorer" aria-label="CLPS Lunar home">
+      <NavLink className="wordmark" to="/" aria-label="CLPS Lunar home" onClick={() => setOpen(false)}>
         <span className="wordmark-mark" aria-hidden="true">
           <Moon weight="fill" />
         </span>
@@ -37,23 +46,21 @@ export function Navigation() {
         ))}
       </nav>
 
-      <div className="project-stamp" aria-label="Project context">
-        <span>NASA SPACE APPS</span>
-        <span>2026</span>
-      </div>
+      <NavLink className="nav-explore" to="/explorer">Open Explorer <ArrowUpRight aria-hidden="true" /></NavLink>
 
       <button
         className="menu-button"
         type="button"
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
+        aria-controls="mobile-navigation"
         onClick={() => setOpen((value) => !value)}
       >
         {open ? <X /> : <List />}
       </button>
 
       {open && (
-        <nav className="mobile-nav" aria-label="Mobile navigation">
+        <nav id="mobile-navigation" className="mobile-nav" aria-label="Mobile navigation">
           {links.map((link) => (
             <NavLink
               key={link.to}
