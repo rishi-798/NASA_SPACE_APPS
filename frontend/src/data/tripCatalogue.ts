@@ -3,6 +3,13 @@ import { moonMapSites } from "./moonMapSites";
 
 export const launchSites = launchSiteRecords;
 
+const communityModels: Record<string, string> = {
+  "falcon-9": "/falcon-9-block-5.glb",
+  vulcan: "/vulcan-centaur-vc2s.glb",
+  "long-march-5": "/long-march-5-cz-5.glb",
+};
+const communitySource = "https://github.com/johnmorrisdotca/uchusen-rockets";
+
 const originalRockets = [
   { id: "saturn-v", name: "Saturn V", category: "Historical crewed lunar launcher", mission: "Apollo programme", note: "NASA's verified GLB. Historical prototype default, not an available launch service.", model: "/saturn-v.glb", source: "https://science.nasa.gov/3d-resources/saturn-v/" },
   { id: "sls", name: "SLS", category: "Heavy-lift lunar launcher", mission: "Artemis programme", note: "Model verification pending. Conceptual choice only.", model: null, source: "https://science.nasa.gov/3d-resources/space-launch-system-block-1/" },
@@ -18,15 +25,17 @@ const originalRockets = [
 export const rockets = [
   ...originalRockets.map((rocket) => ({ ...rocket,
     isNasa: ["saturn-v", "sls"].includes(rocket.id),
-    model: rocket.id === "sls" ? "/sls-block-1.glb" : rocket.model,
-    note: rocket.id === "sls" ? "Official NASA Block 1 printable geometry. Neutral display material; not a textured flight model. The detailed Blender source still needs a web export." : rocket.note,
+    model: rocket.id === "sls" ? "/sls-block-1.glb" : communityModels[rocket.id] ?? rocket.model,
+    note: rocket.id === "sls" ? "Official NASA Block 1 printable geometry. Neutral display material; not a textured flight model. The detailed Blender source still needs a web export." : communityModels[rocket.id] ? "Simplified 3D model; a catalogue selection does not establish lunar mission capability." : rocket.note,
     source: rocket.id === "sls" ? "https://science.nasa.gov/3d-resources/space-launch-system-sls-block-1/" : rocket.source,
-    modelCredit: rocket.id === "saturn-v" ? "NASA / Michael D. Carbajal" : rocket.id === "sls" ? "NASA / Marshall Space Flight Center · neutral material" : "NASA",
-    modelLabel: rocket.id === "saturn-v" ? "NASA GLB" : rocket.id === "sls" ? "NASA mesh / neutral material" : "Model pending",
+    modelCredit: rocket.id === "saturn-v" ? "NASA / Michael D. Carbajal" : rocket.id === "sls" ? "NASA / Marshall Space Flight Center · neutral material" : communityModels[rocket.id] ? "John Morris / Uchusen Rockets · MIT" : "",
+    modelLabel: rocket.id === "saturn-v" ? "NASA GLB" : rocket.id === "sls" ? "NASA mesh / neutral material" : communityModels[rocket.id] ? "Simplified 3D model" : "Model pending",
   })),
   { id: "ares-i-a", name: "Ares I · Variant A", category: "Canceled-program crew launcher", mission: "Constellation concept", note: "Official NASA model. Historical concept only: this configuration did not carry astronauts to the Moon. Not a standalone lunar mission vehicle.", model: "/ares-i-a.glb", isNasa: true, modelCredit: "NASA · Ares I variant A", modelLabel: "NASA GLB / canceled programme", source: "https://github.com/nasa/NASA-3D-Resources/tree/master/3D%20Models/Ares%201%20(A)" },
   { id: "ares-i-b", name: "Ares I · Variant B", category: "Canceled-program crew launcher", mission: "Constellation concept", note: "Official NASA model. Historical concept only: this configuration did not carry astronauts to the Moon. Not a standalone lunar mission vehicle.", model: "/ares-i-b.glb", isNasa: true, modelCredit: "NASA · Ares I variant B", modelLabel: "NASA GLB / canceled programme", source: "https://github.com/nasa/NASA-3D-Resources/tree/master/3D%20Models/Ares%201%20(B)" },
   { id: "jupiter-c", name: "Jupiter-C · Explorer 1", category: "Historical orbital launcher", mission: "Explorer 1", note: "Historical satellite launcher; this vehicle is not a lunar transport vehicle.", model: "/jupiter-c.glb", isNasa: true, modelCredit: "NASA · Explorer Jupiter-C Rocket", modelLabel: "NASA GLB / historical", source: "https://github.com/nasa/NASA-3D-Resources/tree/master/3D%20Models/Explorer%20Jupiter-C%20Rocket" },
+  { id: "ariane-6", name: "Ariane 6 · A64", category: "Orbital launcher", mission: "Ariane 6", note: "Simplified 3D model. This catalogue choice is not a lunar mission feasibility check.", model: "/ariane-6-a64.glb", isNasa: false, modelCredit: "John Morris / Uchusen Rockets · MIT", modelLabel: "Simplified 3D model", source: communitySource },
+  { id: "atlas-v", name: "Atlas V · 401", category: "Orbital launcher", mission: "Atlas V", note: "Simplified 3D model. This catalogue choice is not a lunar mission feasibility check.", model: "/atlas-v-401.glb", isNasa: false, modelCredit: "John Morris / Uchusen Rockets · MIT", modelLabel: "Simplified 3D model", source: communitySource },
 ];
 
 export const destinations = moonMapSites.map((site) => ({ ...site,

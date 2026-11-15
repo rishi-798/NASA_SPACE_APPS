@@ -696,7 +696,7 @@ export function SpaceScene({
       ? `Interactive ${modelName ?? "NASA rocket"} model. Drag to orbit and scroll to zoom.`
       : "NASA-textured Earth and Moon in a deep star field. Sunlight and the Earth position update from the selected lunar ephemeris time."} />
     {failed && <p className="trip-scene-message" role="status">A space asset could not load. The mission view remains available where possible.</p>}
-    {!ready && <p className="trip-scene-message" role="status">{modelUrl ? "Loading NASA model..." : "Loading NASA Earth, Moon and deep-space sky..."}</p>}
+    {!ready && <p className="trip-scene-message" role="status">{modelUrl ? "Loading 3D model..." : "Loading NASA Earth, Moon and deep-space sky..."}</p>}
     {!modelUrl && <>
       <div className="trip-overview-labels"><span>EARTH / {departure?.pad ?? "EARTH"}</span><span>MOON / {landing?.name ?? "SELECTED SITE"}</span></div>
       <div className="trip-space-data" aria-live="polite">
