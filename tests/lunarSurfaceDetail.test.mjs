@@ -26,6 +26,20 @@ test('detail gracefully skips an intersection without triangle data', () => {
   assert.equal(buildLunarSurfaceDetail({ object: new THREE.Object3D(), point: new THREE.Vector3() }), null);
 });
 
+test('landing detail can cover a 128 m square without changing the measured surface', () => {
+  const source = new THREE.Mesh(new THREE.PlaneGeometry(180, 180, 36, 36));
+  source.updateMatrixWorld(true);
+  const before = Array.from(source.geometry.getAttribute('position').array);
+  const hit = new THREE.Raycaster(new THREE.Vector3(0, 0, 10), new THREE.Vector3(0, 0, -1)).intersectObject(source)[0];
+  const detail = buildLunarSurfaceDetail(hit, true, 64);
+  detail.computeBoundingBox();
+  assert.ok(detail.boundingBox.max.x - detail.boundingBox.min.x >= 127);
+  assert.ok(detail.boundingBox.max.y - detail.boundingBox.min.y >= 127);
+  assert.ok(detail.getAttribute('position').count <= 150000);
+  assert.deepEqual(Array.from(source.geometry.getAttribute('position').array), before);
+  detail.dispose(); source.geometry.dispose(); source.material.dispose();
+});
+
 
 test('enriched crater skin stays bounded and deterministic and leaves measured positions intact', () => {
   const terrain = new THREE.Mesh(new THREE.PlaneGeometry(40, 40, 4, 4));

@@ -2,7 +2,7 @@ import * as THREE from "three";
 import type { Terrain } from "../../sim/terrain";
 import { scatterRocks } from "../../lib/lunarRockScatter";
 import { buildLunarSurfaceDetail } from "../../lib/lunarSurfaceDetail";
-import { buildWideDust, wideGravel } from "./wideSurface";
+import { wideGravel } from "./wideSurface";
 import { createRegolithTextures } from "../../lib/regolithTexture";
 
 /** Presentation only: shared approved powder palette; never changes contact heights. */
@@ -49,8 +49,8 @@ function closeLandingDetail(terrain: Terrain, exaggeration: number, material: TH
   const ray = new THREE.Raycaster(new THREE.Vector3(east, north, 100000), new THREE.Vector3(0, 0, -1));
   const hit = ray.intersectObject(measured)[0];
   if (hit) {
-    scatterRocks(scene, null, hit, true, [], true);
-    const skin = buildLunarSurfaceDetail(hit, true);
+    scatterRocks(scene, null, hit, true, [], true, 64);
+    const skin = buildLunarSurfaceDetail(hit, true, 64);
     if (skin) { const mesh = new THREE.Mesh(skin, material); mesh.castShadow = mesh.receiveShadow = true; scene.add(mesh); }
   }
   geometry.dispose();
@@ -81,7 +81,6 @@ export function landingGravel(terrain: Terrain, exaggeration: number, material: 
   const group = new THREE.Group();
   let close: ReturnType<typeof closeLandingDetail> | null = null;
   let wide: ReturnType<typeof wideGravel> | null = null;
-  let skin: THREE.Mesh | null = null;
   let anchorEast = Infinity, anchorNorth = Infinity;
   const update = (east: number, north: number) => {
     east = THREE.MathUtils.clamp(Math.round(east / 48) * 48, -terrain.halfSizeM + 72, terrain.halfSizeM - 72);
@@ -90,12 +89,9 @@ export function landingGravel(terrain: Terrain, exaggeration: number, material: 
     anchorEast = east; anchorNorth = north;
     if (close) { group.remove(close.group); close.dispose(); }
     if (wide) { group.remove(wide.group); wide.dispose(); }
-    if (skin) { group.remove(skin); skin.geometry.dispose(); }
     close = closeLandingDetail(terrain, exaggeration, material, east, north);
     wide = wideGravel(terrain, exaggeration, east, north);
-    skin = new THREE.Mesh(buildWideDust(terrain, exaggeration, east, north, 256, 256), material);
-    skin.castShadow = skin.receiveShadow = true;
-    group.add(skin, wide.group, close.group);
+    group.add(wide.group, close.group);
   };
-  return { group, update, dispose: () => { close?.dispose(); wide?.dispose(); skin?.geometry.dispose(); } };
+  return { group, update, dispose: () => { close?.dispose(); wide?.dispose(); } };
 }

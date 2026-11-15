@@ -11,7 +11,7 @@ function lunarDustPocket(x:number,y:number):number {
   return THREE.MathUtils.lerp(THREE.MathUtils.lerp(hash(ix,iy),hash(ix+1,iy),sx),THREE.MathUtils.lerp(hash(ix,iy+1),hash(ix+1,iy+1),sx),sy);
 }
 
-export function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THREE.Intersection, enriched = false, scans: THREE.Mesh[] = [], hero = false) {
+export function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THREE.Intersection, enriched = false, scans: THREE.Mesh[] = [], hero = false, detailRadius = enriched ? 24 : 45) {
   if (!(hit.object instanceof THREE.Mesh) || hit.faceIndex == null) return previous;
   const capacity = enriched ? 45000 : 1800;
   const mesh = hit.object, positions = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
@@ -121,7 +121,7 @@ export function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, h
         if(d>400||d<.0625) continue;
         const pocket=lunarDustPocket(point.x*.1+19,point.y*.1-7);
         if(gravelRandom()>.3+.7*pocket) continue;
-        transform.position.copy(point);transform.position.z+=lunarDetailHeight(point.x,point.y,hit.point,true);
+        transform.position.copy(point);transform.position.z+=lunarDetailHeight(point.x,point.y,hit.point,true,detailRadius);
         transform.quaternion.setFromUnitVectors(up,normal);
         transform.quaternion.multiply(spin.setFromAxisAngle(up,gravelRandom()*Math.PI*2));
         const scale=.006+gravelRandom()*.012;
@@ -144,7 +144,7 @@ export function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, h
       const slot = count < capacity ? count++ : Math.floor(random() * candidates);
       if (slot >= capacity) continue;
       transform.position.copy(point);
-      transform.position.z += lunarDetailHeight(point.x, point.y, hit.point, enriched);
+      transform.position.z += lunarDetailHeight(point.x, point.y, hit.point, enriched, detailRadius);
       transform.quaternion.setFromUnitVectors(up, normal);
       transform.quaternion.multiply(spin.setFromAxisAngle(up, random() * Math.PI * 2));
       // Many small fragments and occasional larger rocks, mostly buried in dust.
