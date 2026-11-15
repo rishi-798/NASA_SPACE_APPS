@@ -26,7 +26,7 @@ type Runtime = {
 
 function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THREE.Intersection, enriched = false, scans: THREE.Mesh[] = []) {
   if (!(hit.object instanceof THREE.Mesh) || hit.faceIndex == null) return previous;
-  const capacity = enriched ? 30000 : 1800;
+  const capacity = enriched ? 45000 : 1800;
   const mesh = hit.object, positions = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
   if (!positions || !indices) return previous;
   const makeRockGeometry = (variant: number) => {
@@ -103,7 +103,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
       const u = Math.sqrt(random()), v = random();
       point.copy(a).multiplyScalar(1-u).addScaledVector(b, u*(1-v)).addScaledVector(c, u*v);
       const distance = point.distanceToSquared(hit.point);
-      if (distance > 4900 || distance < 4) continue;
+      if (distance > 4900 || distance < (enriched ? .0625 : 4)) continue;
       if (enriched && random() > .08 + .92 * Math.exp(-distance / 500)) continue;
       candidates++;
       const slot = count < capacity ? count++ : Math.floor(random() * candidates);
@@ -115,7 +115,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
       // Many small fragments and occasional larger rocks, mostly buried in dust.
       const sizeRoll = random();
       const scale = enriched
-        ? (sizeRoll < .70 ? .012 + Math.pow(random(), 2) * .045 : sizeRoll < .985 ? .025 + random() * .065 : sizeRoll < .999 ? .09 + random() * .11 : .20 + random() * .20)
+        ? (sizeRoll < .90 ? .006 + Math.pow(random(), 2) * .018 : sizeRoll < .985 ? .025 + random() * .045 : sizeRoll < .999 ? .09 + random() * .11 : .20 + random() * .20)
         : .035 + Math.pow(random(), 3) * .42;
       transform.scale.set(scale, scale * (.65 + random() * .7), scale * (enriched && scans.length ? .75 + random() * .45 : .35 + random() * .38));
       transform.updateMatrix();
@@ -823,12 +823,23 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           }
           if (cancelled) { terrainTextures.forEach(t=>t.dispose()); return; }
           map!.colorSpace = THREE.SRGBColorSpace;
-          const material = new THREE.MeshStandardMaterial({map,normalMap,roughnessMap,roughness:1,metalness:0,normalScale:new THREE.Vector2(.65,.65)});
+          const fines=createRegolithTextures(24,true);
+          fines.map.repeat.set(6,6);fines.map.colorSpace=THREE.NoColorSpace;
+          fines.map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+          terrainTextures.add(fines.map);fines.normalMap.dispose();
+          const material = new THREE.MeshStandardMaterial({map,normalMap,roughnessMap,bumpMap:fines.map,bumpScale:.16,roughness:1,metalness:0,normalScale:new THREE.Vector2(.8,.8)});
           // Preserve texture structure but keep illustrative regolith neutral gray.
           material.onBeforeCompile = shader => {
             shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\n diffuseColor.rgb = vec3(dot(diffuseColor.rgb,vec3(.2126,.7152,.0722)));');
           };
-          material.customProgramCacheKey = () => 'lunar-neutral-regolith-v1';
+          const neutralColorCompile=material.onBeforeCompile;
+          material.onBeforeCompile=(shader,renderer)=>{
+            neutralColorCompile(shader,renderer);
+            // Chain the fine dust/pit bump after the photographed normal map,
+            // matching the tutorials' layered-bump structure.
+            shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n #ifdef USE_BUMPMAP\n normal=perturbNormalArb(-vViewPosition,normal,dHdxy_fwd(),faceDirection);\n #endif');
+          };
+          material.customProgramCacheKey = () => 'lunar-layered-regolith-v2';
           terrain.traverse(child => { if(child instanceof THREE.Mesh) child.material=material; });
           for (const context of [landscapeMesh,underCapMesh]) {
             const positions=context.geometry.getAttribute('position');
@@ -836,7 +847,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             for(let i=0;i<positions.count;i++){uv[i*2]=positions.getX(i)/24;uv[i*2+1]=positions.getY(i)/24;}
             context.geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));
             const distantMaterial=material.clone();
-            distantMaterial.normalMap=null;distantMaterial.roughnessMap=null;
+            distantMaterial.normalMap=null;distantMaterial.roughnessMap=null;distantMaterial.bumpMap=null;
             distantMaterial.onBeforeCompile=material.onBeforeCompile;
             distantMaterial.customProgramCacheKey=material.customProgramCacheKey;
             context.material=distantMaterial;
