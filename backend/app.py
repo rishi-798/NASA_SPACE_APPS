@@ -34,6 +34,7 @@ from backend.spice_kernels import kernel_provenance, kernel_status
 from backend.terrain.horizon import apply_horizon, load_profile, resolve_horizon
 from backend.terrain_api import router as terrain_router
 from backend.local_scenes import router as local_scenes_router
+from backend.terrain_models_api import router as terrain_models_router
 from backend.viewer_config20261114 import router as viewer_config_router
 from backend.weather.meteomatics import router as weather_router
 from backend.media20261114.routes20261114 import router as discovery_router
@@ -55,6 +56,7 @@ app = FastAPI(
 install_handlers(app)
 app.include_router(terrain_router)
 app.include_router(local_scenes_router)
+app.include_router(terrain_models_router)
 app.include_router(viewer_config_router)
 app.include_router(discovery_router)
 app.include_router(weather_router)

@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import "../../terrain-context.css";
 
+type ModelIdentity = {
+  model_available?: boolean;
+  model_id?: string;
+  model_url?: string;
+  preview_url?: string;
+  note?: string;
+};
+
 type Catalogue = {
   latitude: number; longitude: number; grid_id: string; global_child_grid_id: string;
   statistics_grid_id: string; statistics_scope: string; point_elevation_m: number | null;
@@ -25,11 +33,23 @@ export function TerrainContext({ latitude, longitude }: { latitude: number; long
   const key = `${latitude},${longitude}`;
   const [attempt, setAttempt] = useState(0);
   const [response, setResponse] = useState<{ key: string; data?: Catalogue; error?: string } | null>(null);
+  const [modelInfo, setModelInfo] = useState<ModelIdentity | null>(null);
   const current = response?.key === `${key}:${attempt}` ? response : null;
   useEffect(() => {
     const controller = new AbortController();
     const base = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
     const params = new URLSearchParams({ lat: String(latitude), lon: String(longitude) });
+    
+    // Check 3D model availability via identity
+    void fetch(`${base}/api/terrain/identity?${params}`, { signal: controller.signal })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((meta) => {
+        if (!controller.signal.aborted && meta) {
+          setModelInfo(meta as ModelIdentity);
+        }
+      })
+      .catch(() => {});
+
     void fetch(`${base}/api/terrain/catalogue?${params}`, { signal: controller.signal })
       .then(async (result) => {
         if (!result.ok) throw new Error("Catalogue unavailable. Check the backend and local Moon index, then retry.");
@@ -66,7 +86,24 @@ export function TerrainContext({ latitude, longitude }: { latitude: number; long
         <p>{data.local_elevation_files} / {data.expected_elevation_files} elevation files present locally. Upstream completion reports do not prove these files are installed here.</p>
         {stats.source_url && <a href={stats.source_url} target="_blank" rel="noreferrer">Elevation product reference</a>}
       </details>
-      <p>Regional ranges describe the surrounding area. Point height is sampled separately from the terrain file. Open available models in Moon surface view below.</p>
+      {modelInfo?.model_available ? (
+        <div className="terrain-model-card" style={{ marginTop: '0.75rem', padding: '0.75rem', background: 'rgba(56, 189, 248, 0.08)', borderRadius: '6px', border: '1px solid rgba(56, 189, 248, 0.25)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#38bdf8' }}>✓ 3D Measured Mesh Available</span>
+            {modelInfo.model_url && (
+              <a href={modelInfo.model_url} target="_blank" rel="noreferrer" style={{ fontSize: '0.75rem', color: '#93c5fd', textDecoration: 'underline' }}>
+                Download GLB
+              </a>
+            )}
+          </div>
+          <p style={{ margin: '0.35rem 0 0', fontSize: '0.8rem', color: '#cbd5e1' }}>{modelInfo.note}</p>
+          {modelInfo.preview_url && (
+            <img src={modelInfo.preview_url} alt="Scientific terrain render preview" style={{ marginTop: '0.5rem', width: '100%', height: 'auto', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.15)' }} />
+          )}
+        </div>
+      ) : (
+        <p>Regional ranges describe the surrounding area. Point height is sampled separately from the terrain file. Open available models in Moon surface view below.</p>
+      )}
     </> : null}
   </section>;
 }
