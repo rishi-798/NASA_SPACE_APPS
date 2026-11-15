@@ -94,7 +94,7 @@ export function createSunGlow() {
 
 /** Shared gallery/flight orientation and sizing for the exact selected catalogue asset. */
 export function prepareRocketModel(model:THREE.Object3D,url:string,height:number) {
-  if(/\/ares-i-[ab]\.glb$/.test(url)){
+  if(/\/ares-i-[ab]\.glb$/.test(url)&&model.getObjectByName('<3DSRoot>')){
     for(const child of [...model.children])if(child instanceof THREE.Mesh){model.remove(child);disposeObjects(child);}
   }
   let bounds=new THREE.Box3().setFromObject(model);

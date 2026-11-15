@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import type {TransferResult} from '../../lib/transfer';
 import {MissionFlightAnimation} from './MissionFlightAnimation';
 import {createStarPoints,disposeObjects,prepareRocketModel} from './spaceVisuals';
@@ -23,9 +24,17 @@ function RocketModelViewer({modelUrl,modelName,modelCredit}:{modelUrl:string;mod
     renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
     host.append(renderer.domElement);
     const scene=new THREE.Scene();scene.background=new THREE.Color(0x020307);
+    // A gallery reflection rig, independent of the decorative space background.
+    const room=new RoomEnvironment();
+    const pmrem=new THREE.PMREMGenerator(renderer);
+    const reflection=pmrem.fromScene(room,.04);
+    scene.environment=reflection.texture;scene.environmentIntensity=.45;
+    room.dispose();pmrem.dispose();
     const camera=new THREE.PerspectiveCamera(38,1,.05,1000);
     const controls=new OrbitControls(camera,renderer.domElement);
     const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const review=new URLSearchParams(window.location.search).get('rocketReview');
+    queueMicrotask(()=>{if(!disposed){setReady(false);setFailed(false);}});
     let disposed=false;
     const markResourceReady=()=>{if(!disposed)setReady(true);};
     const markResourceFailed=()=>{if(!disposed)setFailed(true);markResourceReady();};
@@ -61,16 +70,18 @@ function RocketModelViewer({modelUrl,modelName,modelCredit}:{modelUrl:string;mod
     camera.position.set(6.5, 2.2, 9.5);
     controls.minDistance = 4;
     controls.maxDistance = 20;
-    controls.autoRotate = !reduceMotion;
+    controls.autoRotate = !reduceMotion&&!review;
     controls.autoRotateSpeed = 1.0;
     controls.enableDamping = true;
     controls.dampingFactor = 0.045;
+    if(review==='close'){camera.position.set(2,1.7,3.2);controls.target.set(0,1.15,0);}
 
     const decoder = new DRACOLoader().setDecoderPath("/draco/");
     new GLTFLoader().setDRACOLoader(decoder).load(modelUrl, (asset) => {
       if (disposed) { disposeObjects(asset.scene); return; }
       const model = asset.scene;
-      prepareRocketModel(model,modelUrl,5.8);
+      try{prepareRocketModel(model,modelUrl,5.8);}
+      catch{disposeObjects(model);markResourceFailed();return;}
       model.traverse((object) => {
         if (object instanceof THREE.Mesh) {
           object.castShadow = true;
@@ -88,7 +99,7 @@ function RocketModelViewer({modelUrl,modelName,modelCredit}:{modelUrl:string;mod
     });
     resize.observe(host);
     renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
-    return () => { disposed = true; resize.disconnect(); renderer.setAnimationLoop(null); controls.dispose(); decoder.dispose(); disposeObjects(scene); renderer.dispose(); renderer.domElement.remove(); };
+    return () => { disposed = true; resize.disconnect(); renderer.setAnimationLoop(null); controls.dispose(); decoder.dispose(); disposeObjects(scene); reflection.dispose(); renderer.dispose(); renderer.domElement.remove(); };
   },[modelUrl]);
   return <div className="trip-space-scene trip-space-scene-model">
     <div ref={hostRef} className="trip-space-canvas" aria-label={`Interactive ${modelName??'NASA rocket'} model. Drag to orbit and scroll to zoom.`}/>
