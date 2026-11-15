@@ -24,8 +24,8 @@ type Runtime = {
   placeRocks: (hit: THREE.Intersection) => void; setRocksVisible: (on: boolean) => void;
 };
 
-// Smooth seeded pockets for the Lunokhod 1 artistic gravel layer only.
-function lunokhodDustPocket(x:number,y:number):number {
+// Smooth seeded pockets for the approved eight-region artistic gravel layer.
+function lunarDustPocket(x:number,y:number):number {
   const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
   const hash=(a:number,b:number)=>{const n=Math.sin(a*127.1+b*311.7)*43758.5453;return n-Math.floor(n);};
   const sx=fx*fx*(3-2*fx),sy=fy*fy*(3-2*fy);
@@ -140,7 +140,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
         point.copy(a).multiplyScalar(1-u).addScaledVector(b,u*(1-v)).addScaledVector(c,u*v);
         const d=point.distanceToSquared(hit.point);
         if(d>400||d<.0625) continue;
-        const pocket=lunokhodDustPocket(point.x*.1+19,point.y*.1-7);
+        const pocket=lunarDustPocket(point.x*.1+19,point.y*.1-7);
         if(gravelRandom()>.3+.7*pocket) continue;
         transform.position.copy(point);transform.position.z+=lunarDetailHeight(point.x,point.y,hit.point,true);
         transform.quaternion.setFromUnitVectors(up,normal);
@@ -158,7 +158,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
       if (distance > 4900 || distance < (enriched ? .0625 : 4)) continue;
       if (enriched) {
         let probability=.08+.92*Math.exp(-distance/500);
-        if(hero) probability*=.2+1.6*lunokhodDustPocket(point.x*.1+19,point.y*.1-7);
+        if(hero) probability*=.2+1.6*lunarDustPocket(point.x*.1+19,point.y*.1-7);
         if(random()>probability) continue;
       }
       candidates++;
@@ -599,7 +599,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       placeRocks(hit) {
         lastRockHit = hit;
         if (detailAnchor.distanceToSquared(hit.point) < .0001 && detailSource === hit.object) return;
-        rocks = scatterRocks(scene, rocks, hit, detailedRegions.has(region.id), rockScans, region.id === 'REGION-LUNOKHOD-1');
+        rocks = scatterRocks(scene, rocks, hit, detailedRegions.has(region.id), rockScans, detailedRegions.has(region.id));
         if (rocks) rocks.visible = rocksVisible;
         if (detail) { scene.remove(detail); detail.geometry.dispose(); detail = null; }
         detailAnchor.copy(hit.point);
@@ -884,7 +884,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           fines.map.repeat.set(6,6);fines.map.colorSpace=THREE.NoColorSpace;
           fines.map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
           terrainTextures.add(fines.map);fines.normalMap.dispose();
-          const hero = region.id === 'REGION-LUNOKHOD-1';
+          const hero = detailedRegions.has(region.id);
           const dust = hero ? createRegolithTextures(24,true,true) : null;
           if(dust) {
             dust.map.repeat.set(1,1);

@@ -25,7 +25,7 @@ export function lunarDetailHeight(x: number, y: number, anchor: THREE.Vector3, e
       for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
         const cx = cellX + dx, cy = cellY + dy;
         const seed = noise(cx * 31.7 + 11, cy * 27.3 - 5);
-        const threshold = spacing < 2 ? .66 : spacing < 6 ? .72 : .78;
+        const threshold = spacing < 2 ? .72 : spacing < 6 ? .79 : .86;
         const cluster = noise(cx * spacing * .035 + 71, cy * spacing * .035 - 29);
         if (seed < threshold || cluster < .33) continue;
         const px = (cx + .2 + .6 * noise(cx + 7, cy - 9)) * spacing;
