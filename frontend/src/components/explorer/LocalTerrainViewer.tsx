@@ -14,7 +14,7 @@ const detailedRegions = new Set(['REGION-APOLLO-17', 'REGION-LUNA-21', 'REGION-L
 const api = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 type SkyBody = { directional_vector_local_z_up: Vec3; angular_radius_deg: number; elevation_deg: number };
 type Lighting = { model_id: string; time: string; sun: SkyBody; earth: SkyBody & { illuminated_fraction: number; sun_direction_local_z_up: Vec3 } };
-type CameraMode = 'orbit' | 'eye';
+type CameraMode = 'aerial' | 'orbit' | 'eye';
 type Runtime = {
   terrain: THREE.Group | null; inverse: THREE.Matrix4; marker: THREE.Mesh;
   selectedPoint?: THREE.Vector3; up: THREE.Vector3;
@@ -163,6 +163,166 @@ function createSunVisual() {
   return { group, core, glow };
 }
 
+function buildLunarHorizonSkirt(center: THREE.Vector3, extent: number, box: THREE.Box3, isSquare = false) {
+  const diag = Math.hypot(box.max.x - box.min.x, box.max.y - box.min.y);
+  const innerRadius = isSquare ? diag * 0.495 : extent * 0.46;
+  const outerRadius = Math.max(innerRadius * 15, extent * 20, 95000);
+  const radialRings = 52;
+  const angularSegments = 100;
+  const vertexCount = (radialRings + 1) * (angularSegments + 1);
+  const positions = new Float32Array(vertexCount * 3);
+  const uvs = new Float32Array(vertexCount * 2);
+  const indices: number[] = [];
+
+  const baseZ = box.min.z + (box.max.z - box.min.z) * 0.18;
+  const moonRadius = 1737400; // Physical radius of the Moon in meters
+
+  let vIdx = 0;
+  for (let r = 0; r <= radialRings; r++) {
+    const frac = r / radialRings;
+    const t = Math.pow(frac, 1.35);
+    const radius = innerRadius + (outerRadius - innerRadius) * t;
+    const distFromEdge = radius - innerRadius;
+    const curvatureDrop = (distFromEdge * distFromEdge) / (2 * moonRadius);
+    const blendRelief = Math.min(1.0, Math.pow(frac, 0.7));
+
+    for (let a = 0; a <= angularSegments; a++) {
+      const angle = (a / angularSegments) * Math.PI * 2;
+      const cosA = Math.cos(angle);
+      const sinA = Math.sin(angle);
+      const x = center.x + radius * cosA;
+      const y = center.y + radius * sinA;
+
+      const proceduralRelief = (
+        Math.sin(x * 0.00065 + y * 0.00045) * 35 +
+        Math.cos(x * 0.00016 - y * 0.00021) * 62 +
+        Math.sin(angle * 6 + radius * 0.0003) * 22
+      ) * blendRelief;
+
+      const z = baseZ - curvatureDrop + proceduralRelief;
+
+      positions[vIdx * 3] = x;
+      positions[vIdx * 3 + 1] = y;
+      positions[vIdx * 3 + 2] = z;
+
+      uvs[vIdx * 2] = (x - center.x) * 0.0008;
+      uvs[vIdx * 2 + 1] = (y - center.y) * 0.0008;
+
+      vIdx++;
+    }
+  }
+
+  for (let r = 0; r < radialRings; r++) {
+    for (let a = 0; a < angularSegments; a++) {
+      const row1 = r * (angularSegments + 1);
+      const row2 = (r + 1) * (angularSegments + 1);
+      const p1 = row1 + a;
+      const p2 = row1 + a + 1;
+      const p3 = row2 + a;
+      const p4 = row2 + a + 1;
+
+      indices.push(p1, p3, p2);
+      indices.push(p2, p3, p4);
+    }
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+function buildSealingRim(center: THREE.Vector3, innerRadius: number, baseZ: number, depth: number, box?: THREE.Box3, isSquare = false) {
+  if (isSquare && box) {
+    const minX = box.min.x, maxX = box.max.x;
+    const minY = box.min.y, maxY = box.max.y;
+    const edgeSegments = 24;
+    const totalPts = edgeSegments * 4;
+    const positions = new Float32Array((totalPts + 1) * 2 * 3);
+    const uvs = new Float32Array((totalPts + 1) * 2 * 2);
+    const indices: number[] = [];
+
+    const getPerimeterPoint = (i: number) => {
+      const edge = Math.floor(i / edgeSegments);
+      const t = (i % edgeSegments) / edgeSegments;
+      if (edge === 0) return { x: minX + (maxX - minX) * t, y: minY };
+      if (edge === 1) return { x: maxX, y: minY + (maxY - minY) * t };
+      if (edge === 2) return { x: maxX - (maxX - minX) * t, y: maxY };
+      return { x: minX, y: maxY - (maxY - minY) * t };
+    };
+
+    for (let i = 0; i <= totalPts; i++) {
+      const pt = getPerimeterPoint(i % totalPts);
+      positions[i * 6] = pt.x;
+      positions[i * 6 + 1] = pt.y;
+      positions[i * 6 + 2] = baseZ;
+      uvs[i * 4] = i / totalPts;
+      uvs[i * 4 + 1] = 1;
+
+      positions[i * 6 + 3] = pt.x;
+      positions[i * 6 + 4] = pt.y;
+      positions[i * 6 + 5] = baseZ - depth;
+      uvs[i * 4 + 2] = i / totalPts;
+      uvs[i * 4 + 3] = 0;
+
+      if (i < totalPts) {
+        const t1 = i * 2, b1 = i * 2 + 1;
+        const t2 = (i + 1) * 2, b2 = (i + 1) * 2 + 1;
+        indices.push(t1, b1, t2);
+        indices.push(t2, b1, b2);
+      }
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+    geometry.setIndex(indices);
+    geometry.computeVertexNormals();
+    return geometry;
+  }
+
+  const segments = 96;
+  const positions = new Float32Array((segments + 1) * 2 * 3);
+  const uvs = new Float32Array((segments + 1) * 2 * 2);
+  const indices: number[] = [];
+
+  for (let i = 0; i <= segments; i++) {
+    const angle = (i / segments) * Math.PI * 2;
+    const x = center.x + innerRadius * Math.cos(angle);
+    const y = center.y + innerRadius * Math.sin(angle);
+
+    positions[i * 6] = x;
+    positions[i * 6 + 1] = y;
+    positions[i * 6 + 2] = baseZ;
+    uvs[i * 4] = i / segments;
+    uvs[i * 4 + 1] = 1;
+
+    positions[i * 6 + 3] = x;
+    positions[i * 6 + 4] = y;
+    positions[i * 6 + 5] = baseZ - depth;
+    uvs[i * 4 + 2] = i / segments;
+    uvs[i * 4 + 3] = 0;
+
+    if (i < segments) {
+      const t1 = i * 2;
+      const b1 = i * 2 + 1;
+      const t2 = (i + 1) * 2;
+      const b2 = (i + 1) * 2 + 1;
+      indices.push(t1, b1, t2);
+      indices.push(t2, b1, b2);
+    }
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
 export default function LocalTerrainViewer({ region, latitude, longitude, observationTime, onPick }: {
   region: TerrainRegion; latitude: number; longitude: number; observationTime: string;
   onPick: (point: MoonLocation) => void;
@@ -176,7 +336,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
   const [inspection, setInspection] = useState(true);
   const [showRocks, setShowRocks] = useState(true);
   const [loaded, setLoaded] = useState(0);
-  const [mode, setMode] = useState<CameraMode>('orbit');
+  const [mode, setMode] = useState<CameraMode>('aerial');
   const [onMesh, setOnMesh] = useState(false);
   const [camHeading, setCamHeading] = useState(0);
   const [camPitch, setCamPitch] = useState(0);
@@ -222,7 +382,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
 
     // Baseline ambient light (deep space high-contrast)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.08);
-    scene.add(sunLight, sunLight.target, earthLight, earthLight.target, ambientLight);
+    const hemiLight = new THREE.HemisphereLight(0xdde5ed, 0x1e2430, 0.55);
+    scene.add(sunLight, sunLight.target, earthLight, earthLight.target, ambientLight, hemiLight);
 
     const marker = new THREE.Mesh(
       new THREE.SphereGeometry(1, 16, 12),
@@ -263,8 +424,36 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     let detailSource: THREE.Mesh | null = null;
     const detailAnchor = new THREE.Vector3(Infinity, Infinity, Infinity);
 
+    function setAerialCamera() {
+      const b = value.terrain ? new THREE.Box3().setFromObject(value.terrain) : new THREE.Box3();
+      const sz = b.getSize(new THREE.Vector3());
+      const c = b.getCenter(new THREE.Vector3());
+      const ext = Math.max(100, sz.x, sz.y);
+      const aerialAltitude = (sz.z || 50) * 0.5 + ext * 0.18;
+      camera.position.set(c.x - ext * 0.28, c.y - ext * 0.42, c.z + aerialAltitude);
+      controls.target.set(c.x + ext * 0.08, c.y + ext * 0.12, c.z + (sz.z || 50) * 0.1);
+      controls.minDistance = Math.max(10, ext * 0.05);
+      controls.maxDistance = ext * 1.8;
+      controls.maxPolarAngle = Math.PI * 0.478;
+      controls.minPolarAngle = Math.PI * 0.12;
+      controls.update();
+    }
+
+    function setOrbitCamera() {
+      const b = value.terrain ? new THREE.Box3().setFromObject(value.terrain) : new THREE.Box3();
+      const sz = b.getSize(new THREE.Vector3());
+      const c = b.getCenter(new THREE.Vector3());
+      const ext = Math.max(100, sz.x, sz.y);
+      camera.position.set(c.x + ext * 0.45, c.y - ext * 0.75, b.max.z + ext * 0.45);
+      controls.target.copy(c);
+      controls.minDistance = Math.max(10, ext * 0.08);
+      controls.maxDistance = ext * 2.2;
+      controls.maxPolarAngle = Math.PI * 0.48;
+      controls.update();
+    }
+
     const value: Runtime = {
-      terrain: null, inverse, marker, up: new THREE.Vector3(0, 0, 1), mode: 'orbit',
+      terrain: null, inverse, marker, up: new THREE.Vector3(0, 0, 1), mode: 'aerial',
       setMode(next) {
         if (next === 'eye' && !value.selectedPoint) {
           if (value.terrain) {
@@ -291,13 +480,14 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         }
         value.mode = next;
         if (detail) detail.visible = next === 'eye' && !!value.selectedPoint && rocksVisible;
-        controls.enabled = next === 'orbit';
-        marker.visible = next === 'orbit' && !!value.selectedPoint;
-        if (next === 'orbit') {
+        controls.enabled = next !== 'eye';
+        marker.visible = next !== 'eye' && !!value.selectedPoint;
+        if (next === 'aerial') {
           camera.up.set(0, 0, 1);
-          camera.position.copy(savedPosition);
-          controls.target.copy(savedTarget);
-          controls.update();
+          setAerialCamera();
+        } else if (next === 'orbit') {
+          camera.up.set(0, 0, 1);
+          setOrbitCamera();
         }
         focusSun();
         render();
@@ -346,23 +536,33 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         sky = data;
         if (data) {
           focusSun();
-          sunLight.intensity = data.sun.elevation_deg > 0 ? 3.2 : 0.0;
+          const sunElev = data.sun.elevation_deg;
+          if (sunElev > 0) {
+            sunLight.intensity = Math.max(1.8, 3.2 * Math.sin(THREE.MathUtils.degToRad(Math.min(90, Math.max(20, sunElev * 2.5)))));
+          } else if (sunElev > -6) {
+            sunLight.intensity = 1.0 * (1 - Math.abs(sunElev) / 6);
+          } else {
+            sunLight.intensity = 0.0;
+          }
 
           const earthDir = new THREE.Vector3(...data.earth.directional_vector_local_z_up);
           earthLight.target.position.copy(center);
           earthLight.position.copy(center).addScaledVector(earthDir, lightDistance);
-          earthLight.intensity = data.earth.elevation_deg > 0 ? (0.04 + data.earth.illuminated_fraction * 0.16) : 0.0;
+          const earthElev = data.earth.elevation_deg;
+          const earthIllum = Math.max(0.18, data.earth.illuminated_fraction);
+          earthLight.intensity = earthElev > -10 ? (0.24 + earthIllum * 0.45) : 0.08;
           earthMaterial.uniforms.sunDirection!.value.set(...data.earth.sun_direction_local_z_up);
         } else {
-          sunLight.intensity = 0;
-          earthLight.intensity = 0;
+          sunLight.intensity = 2.4;
+          earthLight.intensity = 0.35;
         }
         value.inspect(inspectActive);
         render();
       },
       inspect(on) {
         inspectActive = on;
-        ambientLight.intensity = on ? 1.0 : 0.36;
+        ambientLight.intensity = on ? 0.95 : 0.45;
+        hemiLight.intensity = on ? 0.85 : 0.55;
         render();
       },
     };
@@ -390,7 +590,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         direction.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), value.up));
         camera.lookAt(camera.position.clone().add(direction));
       }
-      if (value.mode === 'orbit' && value.terrain) {
+      if (value.mode !== 'eye' && value.terrain) {
         const floor = new THREE.Raycaster(new THREE.Vector3(camera.position.x, camera.position.y, 100000), new THREE.Vector3(0, 0, -1)).intersectObject(value.terrain, true)[0];
         if (floor && camera.position.z < floor.point.z + 2) camera.position.z = floor.point.z + 2;
       }
@@ -453,6 +653,22 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       starfield = createStarfield(skyDistance);
       scene.add(starfield);
 
+      // Add seamless surrounding lunar horizon landscape skirt
+      const isSquare = region.model_url.toLowerCase().includes('site04') || region.model_url.toLowerCase().includes('g7');
+      const skirtGeo = buildLunarHorizonSkirt(center, extent, box, isSquare);
+      const rimGeo = buildSealingRim(center, extent * 0.465, box.min.z + (box.max.z - box.min.z) * 0.18, extent * 0.25, box, isSquare);
+      const defaultMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(0xb0b4bc),
+        roughness: 0.94,
+        metalness: 0.02,
+      });
+      const skirtMesh = new THREE.Mesh(skirtGeo, defaultMat);
+      skirtMesh.receiveShadow = true;
+      const rimMesh = new THREE.Mesh(rimGeo, defaultMat);
+      rimMesh.receiveShadow = true;
+      scene.add(skirtMesh);
+      scene.add(rimMesh);
+
       const isYUp = region.gltf_up === 'Y';
       const minX = box.min.x, maxX = box.max.x;
       const spanX = Math.max(1, maxX - minX);
@@ -481,24 +697,29 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       const useFallbackTextures = () => {
         if (cancelled) return;
         try {
-          const regolithTextures = createRegolithTextures(extent, detailedRegions.has(region.id));
+          const isDetailed = detailedRegions.has(region.id);
+          const regolithTextures = createRegolithTextures(extent, isDetailed);
           terrainTextures.add(regolithTextures.map);
           terrainTextures.add(regolithTextures.normalMap);
-          regolithTextures.map.repeat.set(extent / 24, extent / 24);
-          regolithTextures.normalMap.repeat.set(extent / 24, extent / 24);
+          const rep = isDetailed ? extent / 24 : 1.6;
+          regolithTextures.map.repeat.set(rep, rep);
+          regolithTextures.normalMap.repeat.set(rep, rep);
+          const fallbackMat = new THREE.MeshStandardMaterial({
+            map: regolithTextures.map,
+            color: new THREE.Color(0xb0b4bc),
+            normalMap: regolithTextures.normalMap,
+            normalScale: new THREE.Vector2(0.85, 0.85),
+            roughness: 0.95,
+            metalness: 0.0,
+          });
           terrain.traverse(child => {
             if (child instanceof THREE.Mesh && child.material) {
-              child.material = new THREE.MeshStandardMaterial({
-                map: regolithTextures.map,
-                color: new THREE.Color(0xb0b4bc),
-                normalMap: regolithTextures.normalMap,
-                normalScale: new THREE.Vector2(0.85, 0.85),
-                roughness: 0.95,
-                metalness: 0.0,
-              });
+              child.material = fallbackMat;
               if (detail && detailSource === child) detail.material = child.material;
             }
           });
+          skirtMesh.material = fallbackMat;
+          rimMesh.material = fallbackMat;
           render();
         } catch { /* Retain the model's original material if canvas textures are unavailable. */ }
       };
@@ -523,21 +744,24 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
               normTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
               normTex.repeat.set(repeatScale, repeatScale);
 
+              const normScale = detailedRegions.has(region.id) ? 0.35 : 1.8;
+              const mat = new THREE.MeshStandardMaterial({
+                map: colTex,
+                color: new THREE.Color(0xd2d6dc),
+                normalMap: normTex,
+                normalScale: new THREE.Vector2(normScale, normScale),
+                roughness: 0.92,
+                metalness: 0.02,
+              });
               terrain.traverse(child => {
                 if (child instanceof THREE.Mesh && child.material) {
-                  const mat = new THREE.MeshStandardMaterial({
-                    map: colTex,
-                    color: new THREE.Color(0xd2d6dc),
-                    normalMap: normTex,
-                    normalScale: new THREE.Vector2(detailedRegions.has(region.id) ? .35 : 1.8, detailedRegions.has(region.id) ? .35 : 1.8),
-                    roughness: 0.92,
-                    metalness: 0,
-                  });
                   child.material = mat;
                   if (detail && detailSource === child) detail.material = mat;
                   mat.needsUpdate = true;
                 }
               });
+              skirtMesh.material = mat;
+              rimMesh.material = mat;
               render();
             },
             undefined,
@@ -558,11 +782,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         setOnMesh(true);
       }
 
-      controls.target.copy(center);
-      controls.maxDistance = extent * 3.5;
-      camera.position.set(center.x + extent * 0.45, center.y - extent * 0.75, box.max.z + extent * 0.45);
       camera.far = skyDistance * 2 + extent * 5;
       camera.updateProjectionMatrix();
+      setAerialCamera();
 
       const shadow = sunLight.shadow.camera;
       const radius = size.length() * 0.65;
@@ -574,9 +796,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
 
       marker.scale.setScalar(Math.max(1, extent / 600));
       value.setLighting(sky);
-      controls.update();
       resize();
-      setState('Ready. Click mesh to set eye-level position.');
+      setState('Ready. Drag to pan aerial view or click mesh to set eye-level position.');
       setLoaded(v => v + 1);
     }).catch(error => {
       if (!cancelled) setState(error instanceof Error ? error.message : 'Could not load terrain.');
@@ -602,7 +823,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     const pick = (event: PointerEvent) => {
       const drag = down; down = null;
       if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
-      if (!drag || value.mode !== 'orbit' || !value.terrain || Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 4) return;
+      if (!drag || value.mode === 'eye' || !value.terrain || Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 4) return;
       const bounds = canvas.getBoundingClientRect(), ray = new THREE.Raycaster();
       ray.setFromCamera(new THREE.Vector2((event.clientX - bounds.left) / bounds.width * 2 - 1, -(event.clientY - bounds.top) / bounds.height * 2 + 1), camera);
       const hit = ray.intersectObject(value.terrain, true)[0];
@@ -648,8 +869,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     value.selectedPoint = hit?.point.clone(); value.up.copy(direction).negate();
     if (hit) value.placeRocks(hit); else value.setRocksVisible(false);
     if (hit) value.marker.position.copy(hit.point).addScaledVector(direction, -value.marker.scale.x);
-    value.marker.visible = !!hit && value.mode === 'orbit';
-    value.setMode(hit ? mode : 'orbit');
+    value.marker.visible = !!hit && value.mode !== 'eye';
+    value.setMode(hit ? mode : 'aerial');
     setOnMesh(!!hit); value.render();
   }, [latitude, longitude, loaded, region, mode]);
 
@@ -698,11 +919,11 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         <div className="surface-hud-modes" role="group" aria-label="Surface camera mode">
           <button
             type="button"
-            className={`hud-mode-btn ${mode === 'orbit' || !onMesh ? 'hud-mode-active' : ''}`}
-            aria-pressed={mode === 'orbit' || !onMesh}
-            onClick={() => setMode('orbit')}
+            className={`hud-mode-btn ${mode === 'aerial' ? 'hud-mode-active' : ''}`}
+            aria-pressed={mode === 'aerial'}
+            onClick={() => setMode('aerial')}
           >
-            🛰️ Orbit View
+            🚁 Epic Aerial Flyover
           </button>
           <button
             type="button"
@@ -712,6 +933,14 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             onClick={() => setMode('eye')}
           >
             👨‍🚀 Lander Eye-Level (1.8m)
+          </button>
+          <button
+            type="button"
+            className={`hud-mode-btn ${mode === 'orbit' ? 'hud-mode-active' : ''}`}
+            aria-pressed={mode === 'orbit'}
+            onClick={() => setMode('orbit')}
+          >
+            🛰️ Orbital Overview
           </button>
         </div>
 
@@ -731,9 +960,11 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
 
         <div className="surface-hud-telemetry">
           {mode === 'eye' && onMesh ? (
-            <span>🔭 Heading {camHeading.toString().padStart(3, '0')}° · Pitch {camPitch}°</span>
+            <span>🔭 Heading {camHeading.toString().padStart(3, '0')}° · Pitch {camPitch}° · Drag or use arrows to look</span>
+          ) : mode === 'aerial' ? (
+            <span>🚁 Aerial Reconnaissance · Continuous 3D lunar landscape · Drag to glide</span>
           ) : (
-            <span>🖱️ Click mesh to pick eye-level position · Drag to orbit</span>
+            <span>🛰️ Orbital Overview · 1:1 Measured Topography · Drag to orbit</span>
           )}
         </div>
       </div>

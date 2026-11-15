@@ -57,7 +57,8 @@ export interface MoonLocation {
 export interface MoonControls {
   setView: (name?: ViewName, animate?: boolean) => void;
   zoom: (direction: number) => void;
-  flyToSite: (id: string) => void;
+  flyToSite: (id: string, mode?: "aerial" | "orbit") => void;
+  setAerialView: (siteId?: string) => void;
 }
 
 interface MoonMapProps {
@@ -140,6 +141,9 @@ export function MoonMap({
     viewer.resolutionScale = Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
     viewer.scene.postProcessStages.fxaa.enabled = true;
 
+    if (viewer.scene?.globe) {
+      viewer.scene.globe.baseColor = Color.fromCssColorString("#1a202c");
+    }
     const light = new DirectionalLight({
       direction: new Cartesian3(-1, 0, 0),
       intensity: 2,
@@ -151,7 +155,7 @@ export function MoonMap({
     viewer.scene.shadowMap.darkness = 0.05;
 
     const controller = viewer.scene.screenSpaceCameraController;
-    controller.minimumZoomDistance = 50000;
+    controller.minimumZoomDistance = 100;
     controller.maximumZoomDistance = 14000000;
     controller.minimumTrackBallHeight = 0;
     controller.enableCollisionDetection = true;
@@ -201,7 +205,7 @@ export function MoonMap({
       viewer.scene.requestRender();
     };
 
-    const flyToSite = (id: string) => {
+    const flyToSite = (id: string, mode: "aerial" | "orbit" = "aerial") => {
       const site = moonMapSites.find((candidate) => candidate.id === id);
       if (!site) return;
       if ("analysisSiteId" in site && typeof site.analysisSiteId === "string") {
@@ -210,11 +214,68 @@ export function MoonMap({
         onLocationSelect({ latitude: site.latitude, longitude: site.longitude, name: site.name });
       }
       viewer.camera.cancelFlight();
+      const sitePos = lunarPosition(site.longitude, site.latitude);
+      const normal = Cartesian3.normalize(sitePos, new Cartesian3());
+      const sunDir = Cartesian3.normalize(
+        Cartesian3.add(
+          Cartesian3.multiplyByScalar(normal, 0.75, new Cartesian3()),
+          new Cartesian3(0.4, 0.3, 0.5),
+          new Cartesian3()
+        ),
+        new Cartesian3()
+      );
+      viewer.scene.light = new DirectionalLight({
+        direction: Cartesian3.negate(sunDir, new Cartesian3()),
+        intensity: 2.2,
+      });
+
+      const heading = CesiumMath.toRadians(35);
+      const pitch = mode === "orbit" ? -CesiumMath.PI_OVER_TWO : -CesiumMath.toRadians(24);
+      const range = mode === "orbit" ? 650000 : 18000;
       viewer.camera.flyToBoundingSphere(
-        new BoundingSphere(lunarPosition(site.longitude, site.latitude), 1),
+        new BoundingSphere(sitePos, 1),
         {
-          offset: new HeadingPitchRange(0, -CesiumMath.PI_OVER_TWO, 70000),
-          duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 1.8,
+          offset: new HeadingPitchRange(heading, pitch, range),
+          duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 2.0,
+        },
+      );
+      viewer.scene.requestRender();
+    };
+
+    const setAerialView = (siteId?: string) => {
+      let targetSite = siteId ? moonMapSites.find((candidate) => candidate.id === siteId) : null;
+      if (!targetSite && selectedLocation) {
+        targetSite = {
+          id: "selected-coordinate",
+          name: selectedLocation.name ?? "Selected Location",
+          latitude: selectedLocation.latitude,
+          longitude: selectedLocation.longitude,
+        };
+      }
+      if (!targetSite) targetSite = moonMapSites[0];
+      if (!targetSite) return;
+
+      viewer.camera.cancelFlight();
+      const targetPos = lunarPosition(targetSite.longitude, targetSite.latitude);
+      const normal = Cartesian3.normalize(targetPos, new Cartesian3());
+      const sunDir = Cartesian3.normalize(
+        Cartesian3.add(
+          Cartesian3.multiplyByScalar(normal, 0.75, new Cartesian3()),
+          new Cartesian3(0.4, 0.3, 0.5),
+          new Cartesian3()
+        ),
+        new Cartesian3()
+      );
+      viewer.scene.light = new DirectionalLight({
+        direction: Cartesian3.negate(sunDir, new Cartesian3()),
+        intensity: 2.2,
+      });
+
+      viewer.camera.flyToBoundingSphere(
+        new BoundingSphere(targetPos, 1),
+        {
+          offset: new HeadingPitchRange(CesiumMath.toRadians(35), -CesiumMath.toRadians(24), 18000),
+          duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 2.0,
         },
       );
       viewer.scene.requestRender();
@@ -266,6 +327,7 @@ export function MoonMap({
     controlsRef.current = {
       setView,
       flyToSite,
+      setAerialView,
       zoom: (direction) => {
         viewer.camera.cancelFlight();
         const height = viewer.camera.positionCartographic.height;

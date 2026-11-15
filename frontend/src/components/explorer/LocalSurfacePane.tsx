@@ -52,6 +52,26 @@ export function LocalSurfacePane({ latitude, longitude, observationTime, onPick,
           <h2 className="surface-heading">Lunar Surface Explorer</h2>
         </div>
         <div className="surface-header-actions">
+          {onOpenGlobal && (
+            <button
+              type="button"
+              className="surface-back-orbit-btn"
+              onClick={onOpenGlobal}
+              style={{
+                marginRight: '0.75rem',
+                padding: '0.4rem 0.75rem',
+                background: 'rgba(56, 189, 248, 0.12)',
+                border: '1px solid rgba(56, 189, 248, 0.35)',
+                borderRadius: '6px',
+                color: '#38bdf8',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              🌐 Global Moon Orbit
+            </button>
+          )}
           <label className="surface-patch-select-label">
             <span>Landing Site Patch:</span>
             <select
