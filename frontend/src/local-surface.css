@@ -11,6 +11,7 @@
 .local-terrain-canvas { width:100%; height:520px; border-radius:16px; overflow:hidden; margin-top:16px; background:#000; }
 .local-terrain-canvas canvas { width:100%; height:100%; display:block; touch-action:none; }
 @media(max-width:650px) { .local-surface { padding:16px; } .local-terrain-canvas { height:360px; } }
+@media(max-width:650px) { .local-sky-tools { flex-wrap:wrap; } .local-sky-tools span { flex-basis:100%; } }
 
 .local-view-modes { display:flex; gap:10px; flex-wrap:wrap; }
 .local-view-modes button[aria-pressed="false"] { background:#1a1c21; color:#fff; }
