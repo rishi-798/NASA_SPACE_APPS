@@ -2447,3 +2447,20 @@ a {
   .playback-buttons { gap: 0.4rem; }
   .parameter-review dl > div { grid-template-columns: 1fr; gap: 0.1rem; }
 }
+
+/* Loading screen */
+.loading-screen { position: fixed; inset: 0; z-index: 80; display: grid; place-content: center; justify-items: center; gap: 0.6rem; background: radial-gradient(circle at 50% 42%, rgb(14 19 25 / 0.94), rgb(5 7 10 / 0.97)); backdrop-filter: blur(6px); animation: loading-in 0.4s ease both; text-align: center; padding: 1rem; }
+.loading-orbit { position: relative; width: 150px; height: 150px; margin-bottom: 1rem; }
+.loading-moon { position: absolute; inset: 42px; border-radius: 50%; background: radial-gradient(circle at 32% 30%, #f1f3f4, #8b929c 55%, #2a2f37); box-shadow: 0 0 40px rgb(142 191 206 / 0.25); }
+.loading-ring { position: absolute; inset: 0; border: 1px solid var(--line-strong); border-radius: 50%; animation: loading-spin 3.2s linear infinite; }
+.loading-ring-b { inset: 14px; animation-duration: 5.4s; animation-direction: reverse; border-color: var(--line); }
+.loading-ring i { position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--sun); box-shadow: 0 0 12px var(--sun); }
+.loading-ring-b i { background: var(--earth); box-shadow: 0 0 12px var(--earth); }
+.loading-title { margin: 0; font-size: 1.05rem; letter-spacing: 0.02em; }
+.loading-sub { margin: 0; color: var(--quiet); font: 0.65rem var(--mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.loading-bar { position: relative; width: min(220px, 60vw); height: 2px; margin-top: 0.8rem; overflow: hidden; background: var(--line); }
+.loading-bar::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 40%; background: var(--accent); animation: loading-slide 1.4s ease-in-out infinite; }
+@keyframes loading-spin { to { transform: rotate(360deg); } }
+@keyframes loading-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+@keyframes loading-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .loading-ring, .loading-bar::after, .loading-screen { animation: none; } }

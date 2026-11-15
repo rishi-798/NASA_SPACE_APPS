@@ -3,6 +3,8 @@ import gsap from "gsap";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ConditionsPanel } from "../components/explorer/ConditionsPanel";
+import { LoadingScreen } from "../components/ui/LoadingScreen";
+import { useLoadingScreen } from "../components/ui/useLoadingScreen";
 import { PlaybackControls } from "../components/explorer/PlaybackControls";
 import { SiteComparison } from "../components/explorer/SiteComparison";
 import { WindowFinder } from "../components/explorer/WindowFinder";
@@ -177,9 +179,11 @@ function ExplorerWorkspace() {
   }
 
   const sceneTime = active?.time ?? requestedStart;
+  const showLoading = useLoadingScreen(analysisState === "loading" || comparisonState === "loading");
 
   return (
     <article ref={root} className="explorer-page">
+      <LoadingScreen visible={showLoading} message={comparisonState === "loading" ? "Comparing both sites" : undefined} />
       <header className="explorer-context" data-reveal>
         <div>
           <p className="eyebrow">Lunar surface operations</p>
