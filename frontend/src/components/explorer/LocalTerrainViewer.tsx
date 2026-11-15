@@ -9,7 +9,7 @@ import { eyePosition, lookDirection, type Vec3 } from '../../lib/surfaceViewMath
 import { createRegolithTextures } from '../../lib/regolithTexture';
 import { buildLunarSurfaceDetail, lunarDetailHeight } from '../../lib/lunarSurfaceDetail';
 
-const detailedRegions = new Set(['REGION-APOLLO-17', 'REGION-LUNA-21', 'REGION-LUNOKHOD-1', 'REGION-LUNOKHOD-2', 'REGION-SURVEYOR-1', 'REGION-SURVEYOR-5', 'REGION-SURVEYOR-6', 'REGION-SURVEYOR-7']);
+const detailedRegions = new Set(['SITE04-G7', 'REGION-APOLLO-11', 'REGION-APOLLO-12', 'REGION-APOLLO-14', 'REGION-APOLLO-15', 'REGION-APOLLO-16', 'REGION-ATHENA', 'REGION-ODYSSEUS', 'REGION-APOLLO-17', 'REGION-LUNA-21', 'REGION-LUNOKHOD-1', 'REGION-LUNOKHOD-2', 'REGION-SURVEYOR-1', 'REGION-SURVEYOR-5', 'REGION-SURVEYOR-6', 'REGION-SURVEYOR-7']);
 
 const api = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 type SkyBody = { directional_vector_local_z_up: Vec3; angular_radius_deg: number; elevation_deg: number };
