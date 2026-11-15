@@ -273,14 +273,102 @@ function createSunVisual() {
   return { group, core, glow };
 }
 
-function buildSeamlessContinuousLandscape(center: THREE.Vector3, extent: number, box: THREE.Box3, isSquare = false) {
+function extractBoundaryProfile(terrain: THREE.Group, center: THREE.Vector3, fallbackZ: number) {
+  const bins = new Float32Array(360);
+  const maxR = new Float32Array(360);
+  bins.fill(fallbackZ);
+  maxR.fill(0);
+
+  terrain.traverse(child => {
+    if (!(child instanceof THREE.Mesh)) return;
+    child.updateWorldMatrix(true, false);
+    const pos = child.geometry.getAttribute('position');
+    if (!pos) return;
+    const v = new THREE.Vector3();
+    for (let i = 0; i < pos.count; i++) {
+      v.fromBufferAttribute(pos, i);
+      v.applyMatrix4(child.matrixWorld);
+      // Skip vertical base skirt/box floor vertices to only capture the true top surface perimeter
+      if (v.z <= fallbackZ - 8.0) continue;
+      const dx = v.x - center.x;
+      const dy = v.y - center.y;
+      const r = Math.hypot(dx, dy);
+      if (r < 10) continue;
+      const angle = Math.atan2(dy, dx);
+      const deg = Math.floor((THREE.MathUtils.radToDeg(angle) + 360) % 360);
+      if (r > maxR[deg]) {
+        maxR[deg] = r;
+        bins[deg] = v.z;
+      }
+    }
+  });
+
+  return {
+    getZ: (angle: number) => {
+      const deg = (THREE.MathUtils.radToDeg(angle) + 360) % 360;
+      const d0 = Math.floor(deg) % 360;
+      const d1 = (d0 + 1) % 360;
+      const frac = deg - Math.floor(deg);
+      return bins[d0] * (1 - frac) + bins[d1] * frac;
+    },
+    getR: (angle: number) => {
+      const deg = (THREE.MathUtils.radToDeg(angle) + 360) % 360;
+      const d0 = Math.floor(deg) % 360;
+      const d1 = (d0 + 1) % 360;
+      const frac = deg - Math.floor(deg);
+      return maxR[d0] * (1 - frac) + maxR[d1] * frac;
+    }
+  };
+}
+
+// Procedural crater with bowl depression, central uplift peak, and raised ejecta rim
+function evalLunarCrater(px: number, py: number, cx: number, cy: number, radius: number, depth: number, rim: number) {
+  const d = Math.hypot(px - cx, py - cy) / radius;
+  if (d > 2.4) return 0;
+  if (d < 1.0) {
+    const bowl = -depth * (1.0 - Math.pow(d, 2.0));
+    const centralPeak = d < 0.22 ? (depth * 0.35) * (1.0 - d / 0.22) : 0;
+    return bowl + centralPeak;
+  }
+  const t = (d - 1.0) / 1.4;
+  return rim * Math.pow(Math.max(0, 1.0 - t), 2.2);
+}
+
+// Sinuous lunar rille (volcanic lava tube collapse canyon like Hadley Rille)
+function evalLunarRille(px: number, py: number, x0: number, y0: number, len: number, width: number, depth: number) {
+  const dx = px - x0, dy = py - y0;
+  if (dx < -1000 || dx > len + 1000) return 0;
+  const rilleY = Math.sin(dx * 0.00028) * 1600 + Math.sin(dx * 0.00085) * 520;
+  const dist = Math.abs(dy - rilleY);
+  if (dist > width) return 0;
+  const p = Math.cos((dist / width) * Math.PI * 0.5);
+  return -depth * Math.pow(p, 1.8);
+}
+
+// Towering mountain massif (e.g. Apennine Mountains / Massifs)
+function evalLunarMassif(px: number, py: number, mx: number, my: number, sx: number, sy: number, height: number) {
+  const nx = (px - mx) / sx, ny = (py - my) / sy;
+  const d2 = nx * nx + ny * ny;
+  if (d2 > 4.0) return 0;
+  const ridge = Math.exp(-d2 * 0.85);
+  const rug = Math.sin(px * 0.0004 + py * 0.0003) * 0.22 + Math.cos(px * 0.0009 - py * 0.0007) * 0.14;
+  return height * ridge * (1.0 + rug);
+}
+
+function buildSeamlessContinuousLandscape(
+  center: THREE.Vector3,
+  extent: number,
+  box: THREE.Box3,
+  regionId: string,
+  boundary?: { getZ: (a: number) => number; getR: (a: number) => number },
+  isSquare = false
+) {
   const hx = Math.max(1, (box.max.x - box.min.x) * 0.5);
   const hy = Math.max(1, (box.max.y - box.min.y) * 0.5);
-  const diag = Math.hypot(hx, hy);
   const circRadius = extent * 0.495;
-  const outerRadius = Math.max(extent * 25, 380000); // 380 km expansive horizon
-  const radialRings = 72;
-  const angularSegments = 144;
+  const outerRadius = Math.max(extent * 30, 480000); // 480 km vast curved lunar horizon
+  const radialRings = 108;
+  const angularSegments = 200;
   const vertexCount = (radialRings + 1) * (angularSegments + 1);
   const positions = new Float32Array(vertexCount * 3);
   const uvs = new Float32Array(vertexCount * 2);
@@ -289,18 +377,29 @@ function buildSeamlessContinuousLandscape(center: THREE.Vector3, extent: number,
   const baseZ = box.min.z + (box.max.z - box.min.z) * 0.05;
   const moonRadius = 1737400; // Physical radius of the Moon in meters
 
-  // Computes perimeter radius for any angle
-  const getPerimeterRadius = (cosA: number, sinA: number) => {
+  // Computes perimeter radius for any angle with a tight 1.2% tuck under the mesh edge
+  const getPerimeterRadius = (angle: number, cosA: number, sinA: number) => {
+    if (boundary) {
+      const br = boundary.getR(angle);
+      if (br > 10) return br * 0.988; // 1.2% tuck under mesh perimeter so zero crack or seam can ever appear
+    }
     if (!isSquare) return circRadius;
     const absCos = Math.max(0.0001, Math.abs(cosA));
     const absSin = Math.max(0.0001, Math.abs(sinA));
     return Math.min(hx / absCos, hy / absSin);
   };
 
+  const id = regionId.toUpperCase();
+  const isAp15 = id.includes('APOLLO-15');
+  const isG7 = id.includes('G7') || id.includes('SITE04');
+  const isAp11 = id.includes('APOLLO-11');
+  const isAp16 = id.includes('APOLLO-16');
+  const isAp17 = id.includes('APOLLO-17');
+  const isPolar = isG7 || id.includes('ODYSSEUS');
+
   let vIdx = 0;
   for (let r = 0; r <= radialRings; r++) {
     const frac = r / radialRings;
-    const morphCircle = Math.min(1.0, frac * 3.5);
     const ringT = Math.pow(frac, 1.45);
 
     for (let a = 0; a <= angularSegments; a++) {
@@ -308,30 +407,69 @@ function buildSeamlessContinuousLandscape(center: THREE.Vector3, extent: number,
       const cosA = Math.cos(angle);
       const sinA = Math.sin(angle);
 
-      const perimR = getPerimeterRadius(cosA, sinA);
-      const circleR = diag * 1.08 + (outerRadius - diag * 1.08) * ringT;
-      const radius = r === 0 ? perimR : perimR * (1 - morphCircle) + circleR * morphCircle;
+      const perimR = getPerimeterRadius(angle, cosA, sinA);
+      const bZ = boundary ? boundary.getZ(angle) : baseZ;
 
+      const radius = r === 0 ? perimR : perimR + (outerRadius - perimR) * ringT;
       const distFromPerim = Math.max(0, radius - perimR);
       const curvatureDrop = (distFromPerim * distFromPerim) / (2 * moonRadius);
-      const blendRelief = Math.min(1.0, Math.pow(frac, 0.65));
 
       const x = center.x + radius * cosA;
       const y = center.y + radius * sinA;
 
-      // Multi-octave natural lunar macro and micro relief
-      const macroRelief = (
-        Math.sin(x * 0.00012 + y * 0.00009) * 160 +
-        Math.cos(x * 0.000045 - y * 0.00006) * 240 +
-        Math.sin(angle * 5 + radius * 0.00008) * 85
+      // Smooth Hermite blend out from the boundary elevation over 18,000 meters
+      const blendT = Math.min(1.0, Math.max(0.0, distFromPerim / 18000));
+      const blendRelief = blendT * blendT * (3.0 - 2.0 * blendT);
+
+      // Multi-octave natural lunar macro and micro rolling topography
+      const macroWaves = (
+        Math.sin(x * 0.00007 + y * 0.00005) * 220 +
+        Math.cos(x * 0.00003 - y * 0.00004) * 310 +
+        Math.sin(angle * 4 + radius * 0.00006) * 110
       ) * blendRelief;
 
-      const midRelief = (
-        Math.sin(x * 0.00055 + y * 0.00042) * 52 +
-        Math.cos(x * 0.00082 - y * 0.00068) * 36
+      const midWaves = (
+        Math.sin(x * 0.00042 + y * 0.00032) * 58 +
+        Math.cos(x * 0.00072 - y * 0.00054) * 42
       ) * blendRelief;
 
-      const z = baseZ - curvatureDrop + macroRelief + midRelief;
+      // Geological feature elevation tailored for each landing spot biome
+      let siteFeatures = 0;
+      if (isAp15) {
+        // Hadley Rille winding canyon + Mount Hadley Delta mountain massif
+        siteFeatures += evalLunarRille(x, y, center.x + 800, center.y - 14000, 32000, 1400, 340);
+        siteFeatures += evalLunarMassif(x, y, center.x + 8500, center.y - 7000, 14000, 18000, 3600);
+        siteFeatures += evalLunarMassif(x, y, center.x + 16000, center.y + 5000, 18000, 24000, 4100);
+      } else if (isPolar) {
+        // High polar illuminated ridge overlooking deep permanently shadowed crater basin
+        siteFeatures += evalLunarMassif(x, y, center.x - 4500, center.y + 3500, 20000, 10000, 2200);
+        siteFeatures += evalLunarCrater(x, y, center.x + 8500, center.y - 6000, 11000, 2800, 620);
+      } else if (isAp11) {
+        // Mare Tranquillitatis swells + West Crater rim + distant Sabine crater
+        siteFeatures += evalLunarCrater(x, y, center.x + 950, center.y + 600, 210, 35, 14);
+        siteFeatures += evalLunarCrater(x, y, center.x - 16000, center.y + 9000, 7500, 1400, 320);
+      } else if (isAp16) {
+        // Descartes Highlands: Stone Mountain massif + North Ray crater
+        siteFeatures += evalLunarMassif(x, y, center.x - 2800, center.y + 3800, 7000, 7000, 1800);
+        siteFeatures += evalLunarCrater(x, y, center.x + 4800, center.y + 5800, 1200, 260, 75);
+      } else if (isAp17) {
+        // Taurus-Littrow Valley flanked by North Massif and South Massif
+        siteFeatures += evalLunarMassif(x, y, center.x - 2200, center.y + 7000, 10000, 14000, 2200);
+        siteFeatures += evalLunarMassif(x, y, center.x - 1800, center.y - 7000, 10000, 14000, 2400);
+      }
+
+      // Universal prominent impact craters distributed across the surrounding landscape
+      const universalCraters = (
+        evalLunarCrater(x, y, center.x - 28000, center.y - 32000, 8500, 1600, 380) +
+        evalLunarCrater(x, y, center.x + 42000, center.y + 24000, 12000, 2200, 480) +
+        evalLunarCrater(x, y, center.x - 65000, center.y + 55000, 18000, 3100, 720) +
+        evalLunarCrater(x, y, center.x + 95000, center.y - 85000, 24000, 3800, 890)
+      );
+
+      const geologicalRelief = (macroWaves + midWaves + siteFeatures + universalCraters) * blendRelief;
+
+      // Zero-seam continuous elevation: exactly matches boundary profile at r = 0 with ZERO vertical step
+      const z = bZ - curvatureDrop + geologicalRelief;
 
       positions[vIdx * 3] = x;
       positions[vIdx * 3 + 1] = y;
@@ -355,43 +493,6 @@ function buildSeamlessContinuousLandscape(center: THREE.Vector3, extent: number,
 
       indices.push(p1, p3, p2);
       indices.push(p2, p3, p4);
-    }
-  }
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
-  geometry.setIndex(indices);
-  geometry.computeVertexNormals();
-  return geometry;
-}
-
-function buildUnderCap(center: THREE.Vector3, radius: number, baseZ: number) {
-  const segments = 48;
-  const positions = new Float32Array((segments + 2) * 3);
-  const uvs = new Float32Array((segments + 2) * 2);
-  const indices: number[] = [];
-
-  // Center vertex
-  positions[0] = center.x;
-  positions[1] = center.y;
-  positions[2] = baseZ - 4.0;
-  uvs[0] = 0.5;
-  uvs[1] = 0.5;
-
-  for (let i = 0; i <= segments; i++) {
-    const angle = (i / segments) * Math.PI * 2;
-    const x = center.x + radius * Math.cos(angle);
-    const y = center.y + radius * Math.sin(angle);
-    const idx = (i + 1) * 3;
-    positions[idx] = x;
-    positions[idx + 1] = y;
-    positions[idx + 2] = baseZ - 4.0;
-    uvs[(i + 1) * 2] = (x - center.x) / 240;
-    uvs[(i + 1) * 2 + 1] = (y - center.y) / 240;
-
-    if (i < segments) {
-      indices.push(0, i + 1, i + 2);
     }
   }
 
@@ -513,13 +614,14 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       const sz = b.getSize(new THREE.Vector3());
       const c = b.getCenter(new THREE.Vector3());
       const ext = Math.max(100, sz.x, sz.y);
-      const aerialAltitude = Math.max(120, (sz.z || 50) * 0.7 + ext * 0.26);
-      camera.position.set(c.x - ext * 0.38, c.y - ext * 0.52, c.z + aerialAltitude);
-      controls.target.set(c.x + ext * 0.08, c.y + ext * 0.18, c.z + (sz.z || 50) * 0.02);
+      const aerialAltitude = Math.max(160, (sz.z || 50) * 0.55 + ext * 0.15);
+      // Position camera inside the terrain looking forward across the dramatic landscape
+      camera.position.set(c.x - ext * 0.30, c.y - ext * 0.45, c.z + aerialAltitude);
+      controls.target.set(c.x + ext * 0.15, c.y + ext * 0.25, c.z + (sz.z || 50) * 0.02);
       controls.minDistance = Math.max(10, ext * 0.04);
-      controls.maxDistance = ext * 3.5;
-      controls.maxPolarAngle = Math.PI * 0.485;
-      controls.minPolarAngle = Math.PI * 0.06;
+      controls.maxDistance = Math.min(32000, ext * 2.5);
+      controls.maxPolarAngle = 1.48; // ~85 deg: never below terrain
+      controls.minPolarAngle = 0.10;
       controls.update();
     }
 
@@ -528,12 +630,12 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       const sz = b.getSize(new THREE.Vector3());
       const c = b.getCenter(new THREE.Vector3());
       const ext = Math.max(100, sz.x, sz.y);
-      const orbitAltitude = Math.max(250, (sz.z || 50) + ext * 0.95);
-      camera.position.set(c.x + ext * 0.30, c.y - ext * 0.65, c.z + orbitAltitude);
-      controls.target.copy(c);
-      controls.minDistance = Math.max(15, ext * 0.08);
-      controls.maxDistance = ext * 4.8;
-      controls.maxPolarAngle = Math.PI * 0.485;
+      const orbitAltitude = Math.max(1600, (sz.z || 50) + ext * 0.75);
+      camera.position.set(c.x + ext * 0.35, c.y - ext * 0.65, c.z + orbitAltitude);
+      controls.target.set(c.x, c.y + ext * 0.15, c.z);
+      controls.minDistance = Math.max(15, ext * 0.06);
+      controls.maxDistance = Math.min(48000, ext * 3.5);
+      controls.maxPolarAngle = 1.48;
       controls.update();
     }
 
@@ -794,22 +896,27 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       starfield = createStarfield(skyDistance);
       scene.add(starfield);
 
-      // Add expansive, seamless surrounding lunar horizon landscape and solid undercap
+      // Add expansive, seamless surrounding lunar horizon landscape
+      const boundary = extractBoundaryProfile(terrain, center, box.min.z + (box.max.z - box.min.z) * 0.05);
       const isSquare = region.model_url.toLowerCase().includes('site04') || region.model_url.toLowerCase().includes('g7');
-      const landscapeGeo = buildSeamlessContinuousLandscape(center, extent, box, isSquare);
-      const underCapGeo = buildUnderCap(center, extent * 0.55, box.min.z + (box.max.z - box.min.z) * 0.05);
+      const landscapeGeo = buildSeamlessContinuousLandscape(center, extent, box, region.id, boundary, isSquare);
       const defaultMat = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(0xb0b4bc),
+        color: new THREE.Color(0x6e7078),
         roughness: 0.94,
-        metalness: 0.02,
-        side: THREE.DoubleSide,
+        metalness: 0.0,
       });
       const landscapeMesh = new THREE.Mesh(landscapeGeo, defaultMat);
       landscapeMesh.receiveShadow = true;
-      const underCapMesh = new THREE.Mesh(underCapGeo, defaultMat);
-      underCapMesh.receiveShadow = true;
       scene.add(landscapeMesh);
-      scene.add(underCapMesh);
+
+      // Add full underlying planetary lunar sphere tangent at baseZ so the Moon extends endlessly in all directions
+      const moonRadius = 1737400;
+      const baseZ = box.min.z + (box.max.z - box.min.z) * 0.05;
+      const moonSphereGeo = new THREE.SphereGeometry(moonRadius, 128, 96);
+      const moonSphereMesh = new THREE.Mesh(moonSphereGeo, defaultMat);
+      moonSphereMesh.position.set(center.x, center.y, baseZ - moonRadius);
+      moonSphereMesh.receiveShadow = true;
+      scene.add(moonSphereMesh);
 
       const isYUp = region.gltf_up === 'Y';
       const minX = box.min.x, maxX = box.max.x;
@@ -877,7 +984,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             }
           });
           landscapeMesh.material = fallbackMat;
-          underCapMesh.material = fallbackMat;
+          moonSphereMesh.material = fallbackMat;
           render();
         } catch { /* Retain the model's original material if canvas textures are unavailable. */ }
       };
@@ -925,17 +1032,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           }
           material.customProgramCacheKey = () => hero ? 'lunokhod1-layered-dust-v1' : 'lunar-layered-regolith-v2';
           terrain.traverse(child => { if(child instanceof THREE.Mesh) child.material=material; });
-          for (const context of [landscapeMesh,underCapMesh]) {
-            const positions=context.geometry.getAttribute('position');
-            const uv=new Float32Array(positions.count*2);
-            for(let i=0;i<positions.count;i++){uv[i*2]=positions.getX(i)/24;uv[i*2+1]=positions.getY(i)/24;}
-            context.geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));
-            const distantMaterial=material.clone();
-            distantMaterial.normalMap=null;distantMaterial.roughnessMap=null;distantMaterial.bumpMap=null;
-            distantMaterial.onBeforeCompile=material.onBeforeCompile;
-            distantMaterial.customProgramCacheKey=material.customProgramCacheKey;
-            context.material=distantMaterial;
-          }
+          landscapeMesh.material = material;
+          moonSphereMesh.material = material;
           if(detail) detail.material=material;
           render();
           if(hero) canvas.dataset.lunokhodMaterial="dust-pass";
@@ -976,7 +1074,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
                 }
               });
               landscapeMesh.material = mat;
-              underCapMesh.material = mat;
+              moonSphereMesh.material = mat;
               render();
             },
             undefined,

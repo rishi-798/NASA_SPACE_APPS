@@ -128,12 +128,12 @@ export function TerrainContext({ latitude, longitude, catalogue, onRetry, terrai
 
               {/* Tactical Header Overlay */}
               <div style={{ position: 'absolute', top: '6px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', fontFamily: 'monospace', color: '#38bdf8', opacity: 0.9, pointerEvents: 'none', zIndex: 2 }}>
-                <span>RECONNAISSANCE PASS</span>
+                <span>CONTINUOUS HORIZON</span>
                 <span>NAIF SPICE LIGHTING</span>
               </div>
 
               <img
-                src={`${modelInfo.preview_url}${modelInfo.preview_url.includes('?') ? '&' : '?'}v=5`}
+                src={`${modelInfo.preview_url}${modelInfo.preview_url.includes('?') ? '&' : '?'}v=10`}
                 alt="Scientific terrain render preview"
                 style={{ width: '100%', height: 'auto', display: 'block', opacity: 0.95, filter: 'contrast(1.06)' }}
               />
@@ -141,7 +141,7 @@ export function TerrainContext({ latitude, longitude, catalogue, onRetry, terrai
               {/* Tactical Footer Overlay */}
               <div style={{ position: 'absolute', bottom: '6px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', fontFamily: 'monospace', color: '#94a3b8', background: 'rgba(5, 8, 14, 0.7)', padding: '2px 6px', borderRadius: '3px', pointerEvents: 'none', zIndex: 2 }}>
                 <span>LAT {latitude.toFixed(2)}° · LON {longitude.toFixed(2)}°</span>
-                <span>1:1 LOCAL DTM</span>
+                <span>1:1 ENDLESS DTM</span>
               </div>
 
               {onOpenSurface && (
@@ -151,7 +151,7 @@ export function TerrainContext({ latitude, longitude, catalogue, onRetry, terrai
                   onMouseLeave={e => e.currentTarget.style.opacity = '0'}
                 >
                   <span style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', color: '#fff', padding: '0.45rem 0.9rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600, boxShadow: '0 0 15px rgba(2, 132, 199, 0.5)' }}>
-                    🚁 Launch Epic Aerial Flyover
+                    🚁 Launch Endless 3D Lunar Surface
                   </span>
                 </div>
               )}
@@ -181,7 +181,7 @@ export function TerrainContext({ latitude, longitude, catalogue, onRetry, terrai
                 transition: 'all 0.2s ease',
               }}
             >
-              🚁 Launch Epic Aerial 3D Flyover
+              🚁 Launch Endless 3D Lunar Surface
             </button>
           )}
         </div>

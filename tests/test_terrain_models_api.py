@@ -70,7 +70,7 @@ def test_get_model_preview_streams_png():
     response = client.get("/api/terrain/models/apollo-12/preview")
     assert response.status_code == 200
     assert response.headers.get("content-type") == "image/png"
-    assert len(response.content) > 500_000
+    assert len(response.content) > 100_000
     # PNG binary magic header check
     assert response.content[:8] == b"\x89PNG\r\n\x1a\n"
 

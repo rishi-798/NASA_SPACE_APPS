@@ -48,7 +48,7 @@ export function LocalSurfacePane({ latitude, longitude, observationTime, onPick,
     <section className="local-surface" aria-label="Moon surface view">
       <div className="local-surface-header">
         <div>
-          <span className="surface-badge">3D Measured Topography</span>
+          <span className="surface-badge">1:1 Endless Lunar Topography</span>
           <h2 className="surface-heading">Lunar Surface Explorer</h2>
         </div>
         <div className="surface-header-actions">
