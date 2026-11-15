@@ -168,7 +168,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
   const [state, setState] = useState('Loading measured terrain…');
   const [lighting, setLighting] = useState('Calculating SPICE sky…');
   const [skyReady, setSkyReady] = useState(false);
-  const [inspection, setInspection] = useState(false);
+  const [inspection, setInspection] = useState(true);
   const [showRocks, setShowRocks] = useState(true);
   const [loaded, setLoaded] = useState(0);
   const [mode, setMode] = useState<CameraMode>('orbit');
@@ -251,7 +251,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     const center = new THREE.Vector3();
     const savedPosition = new THREE.Vector3(), savedTarget = new THREE.Vector3();
     let starfield: THREE.Points | null = null;
-    let inspectActive = false;
+    let inspectActive = true;
     let rocks: THREE.InstancedMesh | null = null;
     let rocksVisible = true;
     let detail: THREE.Mesh | null = null;
@@ -357,7 +357,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       },
       inspect(on) {
         inspectActive = on;
-        ambientLight.intensity = on ? 0.22 : 0.08;
+        ambientLight.intensity = on ? 1.0 : 0.08;
         render();
       },
     };
@@ -739,7 +739,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
 
       <label><input type="checkbox" checked={showRocks} onChange={e => setShowRocks(e.target.checked)} /> Illustrative rocks and fine relief</label>
       <p>Nearby rocks and fine surface relief are illustrative. Selected coordinates use the measured terrain.</p>
-      <p role="status">{mode === 'eye' && state.startsWith('Measured terrain ready') ? 'Eye-level view · 1.8 m above the selected point' : state}</p>
+      <p role="status">{mode === 'eye' && state.startsWith('Ready.') ? 'Eye-level view · 1.8 m above the selected point' : state}</p>
       <label><input type="checkbox" checked={inspection} onChange={e => setInspection(e.target.checked)} /> Topographic relief light (illustrative)</label>
       {/* Sleek Bottom Metadata & Ephemeris Strip */}
       <div className="surface-footer-strip">
