@@ -109,7 +109,11 @@ export function TerrainContext({ latitude, longitude, catalogue, onRetry, terrai
               style={{ position: 'relative', marginTop: '0.5rem', cursor: onOpenSurface ? 'pointer' : 'default', borderRadius: '4px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.15)' }}
               title={onOpenSurface ? "Click to view full 3D surface in main window" : undefined}
             >
-              <img src={modelInfo.preview_url} alt="Scientific terrain render preview" style={{ width: '100%', height: 'auto', display: 'block' }} />
+              <img
+                src={`${modelInfo.preview_url}${modelInfo.preview_url.includes('?') ? '&' : '?'}v=2`}
+                alt="Scientific terrain render preview"
+                style={{ width: '100%', height: 'auto', display: 'block' }}
+              />
               {onOpenSurface && (
                 <div
                   style={{ position: 'absolute', inset: 0, background: 'rgba(15, 23, 42, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s' }}

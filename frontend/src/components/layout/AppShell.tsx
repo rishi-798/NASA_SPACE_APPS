@@ -4,6 +4,7 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { Navigation } from "../navigation/Navigation";
 import { MissionControlDock } from "../voice/MissionControlDock";
 import { VoiceGuideProvider } from "../voice/VoiceGuideProvider";
+import { OfflineNotice } from "../game/OfflineNotice";
 
 export function AppShell() {
   const { pathname } = useLocation();
@@ -18,6 +19,7 @@ export function AppShell() {
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
+      <OfflineNotice />
       <Navigation />
       <main id="main-content" className="page-frame" tabIndex={-1}>
         <Outlet />
@@ -31,6 +33,7 @@ export function AppShell() {
             <Link to="/missions">Missions</Link>
             <Link to="/timeline">Timeline</Link>
             <Link to="/about">About</Link>
+            <Link to="/game">🚀 Asteroid Game</Link>
           </nav>
         </div>
         <div className="footer-bottom">

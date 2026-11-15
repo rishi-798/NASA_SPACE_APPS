@@ -202,18 +202,39 @@ export function TripPage() {
               className={`visual-toggle-btn ${tripMoonView === "surface" ? "active" : ""}`}
               onClick={() => setTripMoonView("surface")}
             >
-              🏔️ 3D Surface Topography
+              🏔️ 3D Surface Terrain
             </button>
           </div>
           {tripMoonView === "surface" && (
-            <span className="visual-view-badge">1:1 Measured Topography</span>
+            <span className="visual-view-badge">1:1 Continuous Lunar Topography</span>
           )}
         </div>
 
         {tripMoonView === "globe" ? (
           <>
             <div className="trip-moon-canvas"><MoonMap onLocationSelect={selectLocation} onSiteSelect={selectSite} selectedLocation={landing} showGrid={false} showAxis={false} controlsRef={controls} /></div>
-            <div className="trip-map-tools"><button onClick={() => controls.current?.zoom(1)} aria-label="Zoom in">+</button><button onClick={() => controls.current?.zoom(-1)} aria-label="Zoom out">−</button><button onClick={() => controls.current?.setView("near")}>Reset view</button></div>
+            <div className="trip-map-tools">
+              <button
+                type="button"
+                className="trip-aerial-fly-btn"
+                style={{
+                  background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+                  color: "#ffffff",
+                  fontWeight: 600,
+                  border: "1px solid rgba(56, 189, 248, 0.4)",
+                  padding: "0.3rem 0.65rem",
+                  fontSize: "0.82rem",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+                onClick={() => controls.current?.setAerialView(landing?.destinationId)}
+              >
+                🚁 Epic Aerial View
+              </button>
+              <button onClick={() => controls.current?.zoom(1)} aria-label="Zoom in">+</button>
+              <button onClick={() => controls.current?.zoom(-1)} aria-label="Zoom out">−</button>
+              <button onClick={() => controls.current?.setView("near")}>Reset view</button>
+            </div>
           </>
         ) : (
           <div className="trip-surface-full-view">

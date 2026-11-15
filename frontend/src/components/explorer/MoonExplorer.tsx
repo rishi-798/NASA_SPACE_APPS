@@ -54,6 +54,19 @@ export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, o
       </div>
 
       <div className="moon-guide-controls" aria-label="Lunar map guides">
+        <button
+          type="button"
+          className="moon-aerial-btn"
+          style={{
+            background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+            color: "#ffffff",
+            fontWeight: 600,
+            border: "1px solid rgba(56, 189, 248, 0.4)",
+          }}
+          onClick={() => controlsRef.current?.setAerialView(selectedSite.id)}
+        >
+          🚁 Epic Aerial View
+        </button>
         <button type="button" aria-pressed={showPsr} onClick={() => {
           setShowPsr(value => !value);
           if (!showPsr) controlsRef.current?.setView("south");

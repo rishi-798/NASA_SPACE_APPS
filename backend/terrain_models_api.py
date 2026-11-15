@@ -344,7 +344,7 @@ def find_model(model_id: str) -> Optional[Dict[str, Any]]:
             "coordinate_frame": "MOON_ME / DE421",
             "has_glb": glb_path.is_file(),
             "glb_url": "/api/terrain/models/site04-g7/glb" if glb_path.is_file() else None,
-            "preview_url": None,
+            "preview_url": "/api/terrain/models/site04-g7/preview" if (outputs / "Site04 G7 measured terrain preview.png").is_file() else None,
             "metadata_url": "/api/terrain/models/site04-g7/metadata",
             "blend_file": "G7 - Terrain only.blend" if blend_path.is_file() else None,
             "blend_size_bytes": blend_path.stat().st_size if blend_path.is_file() else None,
@@ -445,7 +445,18 @@ def get_model_glb(model_id: str):
 
 @router.get("/{model_id}/preview", summary="Serve rendered terrain preview image")
 def get_model_preview(model_id: str):
-    spec = next((s for s in KNOWN_MODELS if s["id"] == model_id.strip().lower()), None)
+    clean_id = model_id.strip().lower()
+    outputs = get_outputs_dir()
+    if clean_id in ("site04-g7", "g7"):
+        g7_prev = outputs / "Site04 G7 measured terrain preview.png"
+        if g7_prev.is_file():
+            return FileResponse(
+                path=str(g7_prev),
+                media_type="image/png",
+                headers={"Cache-Control": "no-cache, must-revalidate"},
+            )
+
+    spec = next((s for s in KNOWN_MODELS if s["id"] == clean_id), None)
     if not spec:
         raise HTTPException(status_code=404, detail=f"Model '{model_id}' not found")
 
@@ -470,7 +481,7 @@ def get_model_preview(model_id: str):
     return FileResponse(
         path=str(found),
         media_type="image/png",
-        headers={"Cache-Control": "public, max-age=86400"},
+        headers={"Cache-Control": "no-cache, must-revalidate"},
     )
 
 

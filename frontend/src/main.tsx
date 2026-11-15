@@ -8,6 +8,21 @@ import { BrowserRouter } from "react-router-dom";
 import { App } from "./App";
 import "./styles.css";
 import "./cinematic.css";
+import "./asteroid-game.css";
+
+// Register Service Worker for offline capability and cached asset delivery
+if ("serviceWorker" in navigator && import.meta.env.PROD) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((reg) => {
+        console.log("CLPS Lunar ServiceWorker registered:", reg.scope);
+      })
+      .catch((err) => {
+        console.warn("ServiceWorker registration failed:", err);
+      });
+  });
+}
 
 const application = (
   <StrictMode>

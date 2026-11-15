@@ -1,6 +1,7 @@
-import { ArrowRight } from "@phosphor-icons/react";
+import { ArrowRight, GameController } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { NASA_FACTS_SOURCE, nasaFacts } from "../../data/nasaFacts";
+import { AsteroidModal } from "../game/AsteroidModal";
 
 const FACT_MS = 2500;
 /** Continue is offered only after the first fact has been on screen, so the screen is always seen. */
@@ -15,6 +16,7 @@ export function LoadingScreen({ visible, ready, onDismiss, message = "Calculatin
 
 function LoadingOverlay({ ready: resultsReady, onDismiss, message }: { ready: boolean; onDismiss: () => void; message: string }) {
   const [settled, setSettled] = useState(false);
+  const [showGame, setShowGame] = useState(false);
   useEffect(() => {
     const timer = window.setTimeout(() => setSettled(true), CONTINUE_AFTER_MS);
     return () => window.clearTimeout(timer);
@@ -56,8 +58,43 @@ function LoadingOverlay({ ready: resultsReady, onDismiss, message }: { ready: bo
       </figure>
       {ready
         ? <button ref={continueRef} type="button" className="loading-continue" onClick={onDismiss}>Continue <ArrowRight aria-hidden="true" /></button>
-        : <span className="loading-bar" aria-hidden="true" />}
+        : (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', width: '100%', maxWidth: '340px' }}>
+            <span className="loading-bar" aria-hidden="true" style={{ width: '100%' }} />
+            <button
+              type="button"
+              onClick={() => setShowGame(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                padding: '0.45rem 0.9rem',
+                background: 'rgba(56, 189, 248, 0.12)',
+                border: '1px solid rgba(56, 189, 248, 0.35)',
+                borderRadius: '9999px',
+                color: '#38bdf8',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <GameController size={16} /> Play Asteroid Defense while calculating
+            </button>
+          </div>
+        )}
       <a className="loading-source" href={NASA_FACTS_SOURCE} target="_blank" rel="noreferrer">Facts from NASA science pages</a>
+
+      {showGame && (
+        <AsteroidModal
+          isOpen={showGame}
+          onClose={() => {
+            setShowGame(false);
+            if (ready) onDismiss();
+          }}
+          calculationReady={ready}
+        />
+      )}
     </div>
   );
 }

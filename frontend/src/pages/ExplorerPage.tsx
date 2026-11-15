@@ -243,7 +243,7 @@ function ExplorerWorkspace() {
               </button>
             </div>
             {visualMode === "surface" && (
-              <span className="visual-view-badge">1:1 Measured Topography</span>
+              <span className="visual-view-badge">1:1 Continuous Lunar Topography</span>
             )}
           </div>
 
