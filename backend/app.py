@@ -41,6 +41,8 @@ from backend.weather.meteomatics import router as weather_router
 from backend.volatiles_api import router as volatiles_router
 from backend.power_api import router as power_router
 from backend.dossier_api import router as dossier_router
+from backend.traverse_api import router as traverse_router
+from backend.thermal_api import router as thermal_router
 from backend.media20261114.routes20261114 import router as discovery_router
 from backend.media20261114 import apod20261114  # Registers the 2026-11-14 APOD route.
 from backend.media20261114 import rovers20261114  # Registers the 2026-11-14 raw rover feed.
@@ -67,6 +69,8 @@ app.include_router(weather_router)
 app.include_router(volatiles_router)
 app.include_router(power_router)
 app.include_router(dossier_router)
+app.include_router(traverse_router)
+app.include_router(thermal_router)
 app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=6)
 app.add_middleware(
     CORSMiddleware,
