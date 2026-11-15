@@ -332,23 +332,39 @@ Which tree is served: whichever directory uvicorn runs in. The review preview on
 ### Mission Control voice guide (optional)
 - **Off by default.** Nothing is spoken until the user presses **Enable mission control** (bottom right). Enabling
   is not remembered across reloads, so every session starts silent.
-- **Speech engine:** the browser's built-in Web Speech API (`speechSynthesis`). No new dependency, network call or API
-  key. One manager (`lib/voiceGuide.ts`) owns all speech: one utterance at a time, and each new line cancels the
-  previous one. Every prompt has a key, so rerenders never repeat it. The voice is an English system voice (Samantha,
-  Google US English, Aria/Jenny, Daniel… when installed), at normal rate and pitch, with no effects or background audio.
+- **Pre-recorded audio, no voice service at runtime.** All 36 lines exist in English, Spanish, French, Hindi and
+  Chinese in `frontend/src/data/voiceLines.json`. They are recorded once into `frontend/public/voice/<lang>/` with
+  a `manifest.json`, and the app only plays those files (`lib/voicePlayback.ts`). No API key ships with the app,
+  nothing expires, and playing lines costs nothing.
+  - Record the final set once: `ELEVENLABS_API_KEY=... python -m scripts.generate_voice_lines --engine elevenlabs`
+    (optional `ELEVENLABS_VOICE_ID`). This uses the multilingual model, so one voice speaks all five languages. About
+    9,000 characters in total; `--dry-run` shows the count first.
+  - Free placeholders, already generated: `python -m scripts.generate_voice_lines --engine say` (macOS voices
+    Samantha, Paulina, Thomas, Lekha, Tingting). Replace them with the ElevenLabs set before publishing; Apple's
+    voice licence is not meant for redistribution.
+  - Re-running records only missing or edited lines (each entry stores a hash of the text and voice), so you are
+    never billed twice for the same line.
+- **Language follows the device** (`navigator.languages`): the first of en/es/fr/hi/zh in the user's preference list,
+  else English. The dock has an "Auto" selector to override it (remembered in this browser). Captions use the same
+  language. The rest of the UI stays in English.
+- **Fallbacks:** if a clip is missing for that language, the browser's built-in voice reads that one line in the same
+  language. If there's no voice either, the caption shows with "No recording for this line…".
+- One manager (`lib/voiceGuide.ts`) owns all playback: one line at a time, and each new line cancels the previous
+  one. Every prompt has a key, so rerenders never repeat it.
 - **Prompts** (`PROMPTS` in `lib/explainResult.ts`) follow real events only:
   - trip stages: departure, rocket, destination, observation time, mission record
   - Explorer intro
   - analysis or comparison started, complete or failed, announced from the request handlers when the event happens
   - playback and scrubbing are never narrated
-- **Explain this result** (Surface outlook panel, on both pages): a deterministic template built from the displayed
+- **Explain this result** (Surface outlook panel, on both pages): pre-recorded sentences chosen from the displayed
   sample only:
   - site and UTC time
   - Sun and Earth, from the backend's `visible` flag, plus `flat_visible` in terrain mode for "above the flat horizon,
     but blocked by the local terrain"
   - terrain mode
   - one limitation, plus the visibility-is-not-power/communications/landing line
-  Elevation is never used to decide visibility, and nothing is called safe. Clicking it pauses playback. Moving to
+  Elevation is never used to decide visibility, and nothing is called safe. The exact UTC time, and a custom site's
+  name, can't be pre-recorded: the audio says "at the selected time", and the caption shows the exact time. Clicking it pauses playback. Moving to
   another sample, changing inputs or getting a new result cancels the explanation.
 - **Controls:** Replay, Mute (captions continue), Turn off. Captions show exactly the spoken text, and a signal icon
   shows when the guide is speaking. Leaving the page stops speech. With the guide off, Explain still shows the
@@ -360,12 +376,12 @@ Which tree is served: whichever directory uvicorn runs in. The review preview on
   3. Analyze landing ("Calculating…", then "Analysis complete…") → Explain this result.
   4. In `/explorer`: Analyze → scrub to a sample → Explain this result (it names that sample's UTC time) → Mute → Replay → Turn off.
 - **Limitations:**
-  - Voice quality and availability depend on the operating system's installed voices. Some browsers load voices
-    late, and the first line may use the default voice.
-  - Explanations are English-only templates.
+  - The bundled recordings are macOS placeholders until the ElevenLabs set is generated.
+  - The translations are mine, not checked by native speakers; review the Hindi and Chinese especially.
+  - Spoken explanations do not read out the time (it's in the caption).
   - There is no microphone input or voice commands. That is a later extension.
-  - Browser checks used a recording stand-in for `speechSynthesis` (headless Chromium has no audible voices), so
-    actual audio was not listened to in this verification.
+  - Browser checks played the real clips in headless Chrome and confirmed each one played to the end, but nobody
+    listened to them.
 
 ## Sources and credits
 - SPICE toolkit and kernels: NASA/JPL NAIF, https://naif.jpl.nasa.gov. SpiceyPy (A. Annex et al.).

@@ -1,11 +1,16 @@
 """Serve the existing frontend build and its known React Router pages."""
 
+import mimetypes
 from pathlib import Path
 
 from starlette.exceptions import HTTPException
 from starlette.responses import FileResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
+
+# Pre-recorded voice lines: some systems map .m4a to "audio/mp4a-latm", which Safari may refuse.
+mimetypes.add_type("audio/mp4", ".m4a")
+mimetypes.add_type("audio/mpeg", ".mp3")
 
 DIST_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
 PAGES = {".", "explorer", "missions", "timeline", "about", "trip", "discover"}  # Discovery added 2026-11-14.
