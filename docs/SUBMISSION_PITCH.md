@@ -62,7 +62,7 @@ The repository currently credits **Rishi** for the interactive Moon map and **Su
 - Project source: [rishi-798/NASA_SPACE_APPS](https://github.com/rishi-798/NASA_SPACE_APPS).
 - Dependencies: React, TypeScript, Vite, CesiumJS, Three.js, FastAPI, SPICEypy, NumPy, Rasterio/GDAL, and Requests; retain their upstream notices and repository lockfiles. Review the repository license and third-party asset terms before redistributing a packaged submission.
 - NASA data and imagery remain credited to the producing instruments and institutions. This independent Space Apps project is not an official NASA product or endorsement.
-- Codex assisted with implementation, tests, and drafting this submission outline. The team must review the scientific interpretation and record any additional AI usage. Existing atmospheric home-page artwork is AI-generated and is not scientific imagery or a photograph of a landing site.
+- Codex assisted with implementation, tests, and drafting this submission outline. The team must review the scientific interpretation and record any additional AI usage. Early atmospheric homepage illustrations were AI-generated and have been removed from the current homepage.
 - No API credentials, private team contact details, or unpublished provider data should appear in the pitch recording or source repository.
 
 ## Demo rehearsal

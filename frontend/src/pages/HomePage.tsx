@@ -28,21 +28,18 @@ export function HomePage() {
     gsap.utils.toArray<HTMLElement>("[data-home-reveal]").forEach((element) => {
       gsap.from(element, { y: 36, opacity: 0, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: element, start: "top 92%", once: true } });
     });
-    if (window.matchMedia("(min-width: 901px)").matches) {
-      gsap.to(".hero-image", { y: 70, ease: "none", scrollTrigger: { trigger: ".lunar-hero", start: "top top", end: "bottom top", scrub: 1 } });
-    }
+
   }, { scope: root });
 
   return (
     <article ref={root} className="home-page">
       <section className="lunar-hero" aria-labelledby="hero-title">
-        <img className="hero-image" src="/lunar-hero.webp" alt="" width="1672" height="941" fetchPriority="high" />
         <div className="hero-shade" aria-hidden="true" />
         <div className="hero-copy">
           <p className="eyebrow">NASA Space Apps 2026</p>
           <h1 id="hero-title">THE MOON.<br /><span>IN CONTEXT.</span></h1>
           <p className="hero-description">Explore lunar terrain, track sunlight, and find a clear line of sight to Earth.</p>
-          <div className="hero-actions"><Link className="orbit-button" to="/explorer"><span>Analyze a landing site</span><span className="button-orbit"><ArrowUpRight aria-hidden="true" /></span></Link><Link className="quiet-link" to="/trip">Plan a trip (optional) <ArrowRight aria-hidden="true" /></Link></div>
+          <div className="hero-actions"><Link className="orbit-button" to="/explorer"><span>Analyze a landing site</span><span className="button-orbit"><ArrowUpRight aria-hidden="true" /></span></Link><Link className="quiet-link" to="/trip">Plan a trip <ArrowRight aria-hidden="true" /></Link></div>
         </div>
       </section>
 
@@ -59,7 +56,7 @@ export function HomePage() {
         </header>
         <div className="project-grid">
           <Link className="project-card project-map" to="/explorer" data-home-reveal aria-label="Open Rishi's interactive Moon map in Explorer">
-            <div className="project-image"><img src="/lunar-color-map.webp" srcSet="/lunar-color-map-640.webp 640w, /lunar-color-map-1280.webp 1280w, /lunar-color-map.webp 2048w" sizes="(max-width: 640px) calc(100vw - 44px), (max-width: 1600px) 55vw, 820px" alt="NASA LRO global lunar color map showing craters and dark maria" width="2048" height="1024" loading="lazy" /></div>
+            <div className="project-image"><img src="/lunar-color-map.webp" srcSet="/lunar-color-map-640.webp 640w, /lunar-color-map-1280.webp 1280w, /lunar-color-map.webp 2048w" sizes="(max-width: 640px) calc(100vw - 44px), (max-width: 1600px) 55vw, 820px" alt="LRO-derived global lunar color map showing craters and dark maria" width="2048" height="1024" loading="lazy" /></div>
             <div className="project-card-copy"><div><p className="project-author">RISHI / MOON MAP</p><h3>A world worth<br />looking closer at.</h3><p>Orbit the NASA 3D Moon, choose a location, and put the surface in perspective.</p></div><span className="card-arrow"><ArrowUpRight aria-hidden="true" /></span></div>
           </Link>
           <div className="project-side">
@@ -81,7 +78,6 @@ export function HomePage() {
           <div className="analysis-facts"><div><strong>30 min</strong><span>Daily window sampling</span></div><div><strong>NAIF SPICE</strong><span>Sun + Earth geometry</span></div></div>
         </div>
         <div className="analysis-details" data-home-reveal>
-          <figure className="terrain-figure"><img src="/lunar-terrain.webp" srcSet="/lunar-terrain-640.webp 640w, /lunar-terrain-1000.webp 1000w, /lunar-terrain.webp 1672w" sizes="(max-width: 900px) calc(100vw - 44px), (max-width: 1600px) 45vw, 650px" alt="Conceptual lunar landscape with grazing sunlight and long crater shadows" width="1672" height="941" loading="lazy" /><figcaption>Conceptual lunar terrain illustration. Not a landing-site photograph.</figcaption></figure>
           <div className="question-list">{questions.map(({ title, Icon, text }, index) => <details key={title} open={index === 0}><summary><Icon weight="light" aria-hidden="true" /><span>{title}</span><span className="details-plus" aria-hidden="true" /></summary><p>{text}</p></details>)}</div>
         </div>
       </section>
@@ -91,7 +87,7 @@ export function HomePage() {
         <div className="home-site-list">{landingSites.map((site) => <Link className="home-site-row" key={site.id} to={`/explorer?site=${site.id}`} data-home-reveal>
           <span className="site-mission">{site.mission}</span><h3>{site.name.replace(" landing site", "")}</h3><span className="site-coordinates">{formatCoordinate(site.latitude, "lat")}<br />{formatCoordinate(site.longitude, "lon")}</span><span className="site-row-action">Explore site <ArrowUpRight aria-hidden="true" /></span>
         </Link>)}</div>
-        <p className="site-dataset-note">Two source-linked landing sites with four dated events, alongside the wider mission archive.</p>
+        <p className="site-dataset-note">{landingSites.length} source-linked landing sites, alongside the wider mission archive.</p>
       </section>
 
       <section className="home-outro home-section" aria-labelledby="outro-title" data-home-reveal>

@@ -79,7 +79,6 @@ export function MissionPhasePlanner() {
       deltaVMs: currentDeltaV,
       distEarthKm,
       distMoonKm,
-      machNumber: (vel * 1000) / 340,
     };
   }, [activePhase, simMetSeconds]);
 
@@ -186,7 +185,7 @@ export function MissionPhasePlanner() {
           </div>
 
           {/* Floating Lower Telemetry Strip */}
-          <div className="planner-vp-hud" aria-label="Live flight telemetry">
+          <div className="planner-vp-hud" aria-label="Illustrative flight telemetry">
             <div className="hud-metric">
               <span className="hud-title">MET CLOCK</span>
               <span className="hud-val">{formatMet(simMetSeconds)}</span>
@@ -194,7 +193,7 @@ export function MissionPhasePlanner() {
             <div className="hud-metric">
               <span className="hud-title">VELOCITY</span>
               <span className="hud-val">
-                {telemetry.velocityKmS.toFixed(2)} km/s <small>Mach {telemetry.machNumber.toFixed(1)}</small>
+                {telemetry.velocityKmS.toFixed(2)} km/s
               </span>
             </div>
             <div className="hud-metric">

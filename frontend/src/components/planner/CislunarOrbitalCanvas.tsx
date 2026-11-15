@@ -13,7 +13,6 @@ interface CislunarOrbitalCanvasProps {
     deltaVMs: number;
     distEarthKm: number;
     distMoonKm: number;
-    machNumber: number;
   };
   cameraPreset: "system" | "earth" | "vehicle" | "moon";
   onCameraPresetChange: (preset: "system" | "earth" | "vehicle" | "moon") => void;

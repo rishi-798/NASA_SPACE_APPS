@@ -42,11 +42,18 @@ export function AboutPage() {
           product. Lunar imagery is credited to NASA’s Scientific Visualization Studio
           and the Lunar Reconnaissance Orbiter program. Suhas’s backend calculates
           geometric Sun and Earth positions using NAIF SPICE. Athena uses a LOLA terrain
-          horizon; other sites and map coordinates use a flat horizon. Daily visibility
-          windows use 30-minute samples and are not flight-certified predictions.
-          Atmospheric illustrations on the home page are AI-generated artwork, not
-          scientific imagery or photographs of the named landing sites.
+          horizon. Other coordinates use an available or generated LOLA profile, or an
+          explicitly labelled flat-horizon fallback. Visibility windows report their
+          sampling interval and are not flight-certified predictions. Surface rocks
+          and fine relief are illustrative; they do not establish local landing safety.
         </p>
+      </section>
+      <section className="integrity-note" aria-labelledby="data-sources-title">
+        <h2 id="data-sources-title">Data and availability</h2>
+        <p><a href="https://naif.jpl.nasa.gov/" target="_blank" rel="noreferrer">NASA/JPL NAIF SPICE</a> supplies the observation-geometry toolkit. The backend uses DE440s ephemerides for Sun, Earth and Moon positions.</p>
+        <p>The <a href="https://svs.gsfc.nasa.gov/4720/" target="_blank" rel="noreferrer">NASA CGI Moon Kit</a> supplies LRO-derived color and displacement maps. A global map is context, not a photograph of the selected landing site.</p>
+        <p>Point elevations and regional ranges are shown only when the terrain service returns them. Missing samples, unavailable weather access and uncomputed assessments are labelled explicitly.</p>
+        <p>Trip transfers use an Earth-centered two-body approximation. Lunar capture, descent, launch-site accessibility and vehicle capability are not validated.</p>
       </section>
     </article>
   );

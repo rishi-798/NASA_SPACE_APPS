@@ -9,12 +9,13 @@ export function MissionPhasePlannerPage() {
         <Link to="/">
           <ArrowLeft size={16} /> Back to overview
         </Link>
-        <span>FLIGHT ARCHITECTURE · ORBITAL MECHANICS ENGINE</span>
+        <span>FLIGHT ARCHITECTURE · EDUCATIONAL REFERENCE</span>
       </div>
 
       <header className="planner-heading">
         <h1>Flight phases</h1>
-        <p>Interactive cislunar trajectory stages from launch pad ascent through powered lunar touchdown.</p>
+        <p>Explore the stages of a reference lunar mission, from ascent to descent.</p>
+        <p className="trip-note">Educational scenario: displayed times, altitudes, speeds and delta-v budgets are illustrative parameters, not validated vehicle performance or a calculated flight. Use <Link to="/trip">Plan a trip</Link> for the date-based SPICE transfer.</p>
       </header>
 
       <MissionPhasePlanner />

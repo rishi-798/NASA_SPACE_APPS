@@ -15,7 +15,6 @@ import { ExplorerControls } from "../components/explorer/ExplorerControls";
 import { MoonExplorer } from "../components/explorer/MoonExplorer";
 import { TerrainContext } from "../components/explorer/TerrainContext";
 import { LocalSurfacePane } from "../components/explorer/LocalSurfacePane";
-import { HorizonContainer } from "../components/visualization/HorizonContainer";
 import { VisibilityTimeline } from "../components/visualization/VisibilityTimeline";
 import { landingSites } from "../data/landingSites";
 import { explorerDestination, missionRangeInput } from "../lib/missionNavigation";
@@ -306,20 +305,12 @@ function ExplorerWorkspace() {
             longitude={location.longitude}
             onExplain={explain}
           />
-          <TerrainContext
-            latitude={location.latitude}
-            longitude={location.longitude}
-            catalogue={catalogue.state}
-            onRetry={catalogue.retry}
-            terrain={result?.terrain ?? null}
-            horizon={result?.horizon ?? null}
-            onOpenSurface={() => setVisualMode("surface")}
-          />
+          <TerrainContext catalogue={catalogue.state} onRetry={catalogue.retry} />
         </aside>
       </div>
 
       <div className="analysis-grid" data-reveal>
-        <HorizonContainer data={active} profile={result?.horizon ?? null} />
+
         <VisibilityTimeline data={active} summary={result?.summary ?? null} sampleCount={result?.samples.length ?? 0} />
       </div>
 

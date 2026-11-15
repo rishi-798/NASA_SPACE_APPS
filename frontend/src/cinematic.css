@@ -322,3 +322,7 @@ details[open] .details-plus::after { transform: rotate(0); }
   .hero-image { transform: none !important; }
   .project-image img, .button-orbit svg { transition: none; }
 }
+
+/* The visibility chart now occupies the full analysis row. */
+.analysis-grid {grid-template-columns:minmax(0,1fr)}
+.lunar-hero {background:radial-gradient(ellipse at 80% 30%,#1b222b 0%,#08090c 65%)}

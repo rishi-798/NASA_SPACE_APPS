@@ -10,17 +10,6 @@
       content="Explore the Moon in context. Rishi's interactive lunar map and Suhas's sunlight, Earth visibility, and terrain analysis, together in CLPS Lunar Browser."
     />
     <title>CLPS Lunar Browser</title>
-    <script>
-      // Only the home route needs the artwork before React is ready.
-      if (location.pathname === "/") {
-        const heroPreload = document.createElement("link");
-        heroPreload.rel = "preload";
-        heroPreload.as = "image";
-        heroPreload.href = "/lunar-hero.webp";
-        heroPreload.fetchPriority = "high";
-        document.head.appendChild(heroPreload);
-      }
-    </script>
   </head>
   <body>
     <div id="root"></div>

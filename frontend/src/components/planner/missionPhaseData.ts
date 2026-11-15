@@ -1,4 +1,4 @@
-// Authoritative Mission Phase Parameters & Scientific Data
+// Illustrative educational reference parameters; not a validated mission or vehicle profile.
 export interface MissionPhaseMilestone {
   timeMet: string;
   name: string;

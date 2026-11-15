@@ -15,7 +15,6 @@ import { useAnnounce, useAutoEnableVoice, useCancelOnLeave, useVoiceGuide } from
 import { explainResult, PROMPTS } from "../lib/explainResult";
 import { useTerrainCatalogue } from "../components/explorer/useTerrainCatalogue";
 import { pointElevation } from "../lib/terrainFacts";
-import { HorizonContainer } from "../components/visualization/HorizonContainer";
 import { VisibilityTimeline } from "../components/visualization/VisibilityTimeline";
 import { destinations, launchSites, rockets } from "../data/tripCatalogue";
 import { landingSites } from "../data/landingSites";
@@ -190,15 +189,15 @@ export function TripPage() {
           <button className="trip-primary" disabled={!departure} onClick={() => go("rocket")}>Depart from here <ArrowRight /></button>
         </aside></div>}
       {mission.stage === "rocket" && <>
-        <div className="trip-layout trip-rocket-layout"><div className="trip-visual">{rocket?.model ? <Suspense fallback={sceneLoading}><SpaceScene key={rocket.id} modelUrl={rocket.model} modelName={rocket.name} modelCredit={rocket.modelCredit} /></Suspense> : <div className="trip-model-pending"><RocketLaunch weight="thin" /><h2>{rocket?.name ?? "Choose a rocket below"}</h2><p>{rocket ? "3D model verification pending. No substitute model is shown." : "Select a NASA model from the gallery below."}</p></div>}</div>
-          <aside className="trip-panel"><p className="trip-section-label">Rocket selection</p><h2>{rocket?.name ?? "Choose a launcher"}</h2><p>{rocket?.category}</p><p>{rocket?.mission}</p><p className="trip-note">{rocket?.note ?? "The catalogue includes historical and conceptual choices. It does not establish a feasible crewed flight."}</p>
+        <div className="trip-layout trip-rocket-layout"><div className="trip-visual">{rocket?.model ? <Suspense fallback={sceneLoading}><SpaceScene key={rocket.id} modelUrl={rocket.model} modelName={rocket.name} modelCredit={rocket.modelCredit} /></Suspense> : <div className="trip-model-pending"><RocketLaunch weight="thin" /><h2>{rocket?.name ?? "Choose a rocket below"}</h2><p>{rocket ? "Unavailable: no 3D model is supplied for this launcher." : "Select a launcher from the gallery below."}</p></div>}</div>
+          <aside className="trip-panel"><p className="trip-section-label">Rocket selection</p><h2>{rocket?.name ?? "Choose a launcher"}</h2>{rocket && <><p>{rocket.category}</p><p>{rocket.mission}</p></>}<p className="trip-note">{rocket?.note ?? "The catalogue includes historical and conceptual choices. It does not establish a feasible crewed flight."}</p>
             {rocket && <><a href={rocket.source} target="_blank" rel="noreferrer">Source / model reference <ArrowUpRight /></a>{!departure?.rockets.includes(rocket.id) && <p className="trip-notice">Concept selection: this launcher is not associated with the selected pad in our catalogue. No compatibility is implied.</p>}</>}
             {rocket?.modelCredit.startsWith("John Morris") && <p className="trip-note">3D model by <a href="https://github.com/johnmorrisdotca/uchusen-rockets" target="_blank" rel="noreferrer">John Morris / Uchusen Rockets</a> · <a href="/third-party-licenses/uchusen-rockets-MIT.txt" target="_blank" rel="noreferrer">MIT license</a>.</p>}
-            <dl className="trip-stat-list"><div><dt>TLI Delta-v</dt><dd>~3,150 m/s</dd></div><div><dt>Descent Delta-v</dt><dd>~1,850 m/s</dd></div></dl>
+            <p className="trip-note">Injection Δv is calculated from your transfer dates in the Mission section. Vehicle performance, staging and descent Δv are not assessed.</p>
             <button className="trip-primary" disabled={!rocket} onClick={() => go("moon")}>Choose rocket <ArrowRight /></button><button className="trip-secondary" onClick={() => go("earth")}>Back to Earth</button></aside></div>
         <div className="trip-rocket-gallery" aria-label="Rocket model catalogue">{allowedRockets.map((item) => <button key={item.id} aria-pressed={mission.rocketId === item.id} onClick={() => dispatch({ type: "rocket", id: item.id })}><RocketLaunch weight="light" /><span>{item.modelLabel}</span><strong>{item.name}</strong><small>{item.category}</small></button>)}</div>
         <label className="trip-catalogue-toggle"><input type="checkbox" checked={showOtherLaunchers} onChange={(event) => setShowOtherLaunchers(event.target.checked)} />Include international and commercial catalogue entries</label>
-        <p className="trip-note">The collection includes NASA and simplified community models; some launchers still have no model. Pad associations are historical context, not flight approval.</p>
+        <p className="trip-note">The collection includes NASA meshes and clearly labelled community or project reference models. Pad associations are historical context, not flight approval.</p>
       </>}
       {mission.stage === "moon" && <div className="trip-layout"><div className="trip-visual trip-moon-visual">
         <div className="visual-view-header">
@@ -227,23 +226,7 @@ export function TripPage() {
           <>
             <div className="trip-moon-canvas"><MoonMap onLocationSelect={selectLocation} onSiteSelect={selectSite} selectedLocation={landing} showGrid={false} showAxis={false} controlsRef={controls} /></div>
             <div className="trip-map-tools">
-              <button
-                type="button"
-                className="trip-aerial-fly-btn"
-                style={{
-                  background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
-                  color: "#ffffff",
-                  fontWeight: 600,
-                  border: "1px solid rgba(56, 189, 248, 0.4)",
-                  padding: "0.3rem 0.65rem",
-                  fontSize: "0.82rem",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
-                onClick={() => controls.current?.setAerialView(landing?.destinationId)}
-              >
-                🚁 Epic Aerial View
-              </button>
+
               <button onClick={() => controls.current?.zoom(1)} aria-label="Zoom in">+</button>
               <button onClick={() => controls.current?.zoom(-1)} aria-label="Zoom out">−</button>
               <button onClick={() => controls.current?.setView("near")}>Reset view</button>
@@ -268,7 +251,7 @@ export function TripPage() {
           {!filteredDestinations.length && <p role="status">No matching destinations. Try a mission name or enter coordinates below.</p>}
           <form onSubmit={enterCoordinates}><label className="trip-field">Or enter exact lunar coordinates<input value={coordinateText} onChange={(event) => setCoordinateText(event.target.value)} placeholder="Latitude, longitude" aria-describedby="trip-coordinate-note" /></label><button className="trip-secondary" type="submit">Select coordinates</button><p id="trip-coordinate-note" className="trip-note" role={coordinateError ? "alert" : undefined}>{coordinateError || "Planetocentric latitude, east-positive longitude."}</p></form>
           {landing && <div className="trip-selected"><strong>{landing.name}</strong><p>{landing.latitude.toFixed(6)}°, {landing.longitude.toFixed(6)}°</p></div>}
-          {landing && <TerrainContext latitude={landing.latitude} longitude={landing.longitude} catalogue={catalogue.state} onRetry={catalogue.retry} terrain={analysis?.terrain ?? null} horizon={analysis?.horizon ?? null} onOpenSurface={() => setTripMoonView("surface")} />}
+          {landing && <TerrainContext catalogue={catalogue.state} onRetry={catalogue.retry} />}
           <div className="trip-unavailable" style={{ borderLeftColor: "var(--accent)" }}><CheckCircle weight="fill" color="#a2ecd3" /><div><strong>Topographic Navigation Mode</strong><p>Calibrated coordinate projection with real-time NAIF SPICE solar lighting and Earth line-of-sight vectors.</p></div></div>
           <button className="trip-primary" disabled={!landing} onClick={() => go("landing")}>Review landing point <ArrowRight /></button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button></aside></div>}
       {(mission.stage === "landing" || mission.stage === "reveal") && landing && <>
@@ -305,12 +288,12 @@ export function TripPage() {
             {mission.stage === "landing" ? <><button className="trip-secondary" disabled={currentPreview?.state === "loading"} onClick={() => void analyze(false)}>{currentPreview?.state === "loading" ? "Analyzing..." : currentPreview?.state === "error" ? "Retry analysis" : "Analyze landing"}</button><button className="trip-primary" disabled={!currentPreview?.result} onClick={() => void analyze(true)}>Plan this landing <ArrowRight /></button><button className="trip-secondary" onClick={() => go("moon")}>Change landing point</button></> : <><p className="trip-note">The mission animation uses a preliminary date-based transfer. Launch-window feasibility, selected vehicle performance, capture and descent are not validated.</p><button className="trip-secondary" onClick={() => go("landing")}>Edit mission dates</button><button className="trip-secondary" onClick={() => go("earth")}>Edit departure</button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button><button className="trip-primary" onClick={() => go("moon")}>Explore landing site <ArrowRight /></button></>}
             {analysis && <MissionDossierModal latitude={landing.latitude} longitude={landing.longitude} start={mission.utcTime}
               launchSiteId={departure?.id} launchVehicle={rocket?.name} liftoffUtc={liftoffUtc ? `${liftoffUtc}:00Z` : undefined} missionName={landing.name} />}
-            <TerrainContext latitude={landing.latitude} longitude={landing.longitude} catalogue={catalogue.state} onRetry={catalogue.retry} terrain={analysis?.terrain ?? null} horizon={analysis?.horizon ?? null} onOpenSurface={() => { setTripMoonView("surface"); go("moon"); }} />
+            <TerrainContext catalogue={catalogue.state} onRetry={catalogue.retry} />
           </aside></div>
 
         <div className="trip-analysis"><ConditionsPanel showDossier={false} conditions={analysis?.conditions ?? null} state={mission.stage === "reveal" ? "success" : currentPreview?.state ?? "idle"} observationTime={mission.utcTime} errorMessage={currentPreview?.error} terrain={analysis?.terrain ?? null} siteId={landing.destinationId} latitude={landing.latitude} longitude={landing.longitude}
             onExplain={analysis && landing ? () => guide.say("explain", `trip:explain:${analysis.conditions.time}`, explainResult({ siteId: landingSites.find((site) => site.latitude === landing.latitude && site.longitude === landing.longitude)?.id ?? null, siteName: landing.name ?? "Selected point", conditions: analysis.conditions, terrain: analysis.terrain }), { force: true, explicit: true }) : undefined} />
-          <div><HorizonContainer data={analysis?.conditions ?? null} profile={analysis?.horizon ?? null} /><VisibilityTimeline data={analysis?.conditions ?? null} summary={analysis?.summary ?? null} sampleCount={analysis?.samples.length ?? 0} /></div></div>
+          <div><VisibilityTimeline data={analysis?.conditions ?? null} summary={analysis?.summary ?? null} sampleCount={analysis?.samples.length ?? 0} /></div></div>
       </>}
     </>}
     <footer className="trip-footer"><p>Exploration prototype. Geometric visibility is not a communications link budget or landing certification.</p><button onClick={() => { active.current?.abort(); dispatch({ type: "reset" }); setLiftoffUtc(""); setParkingAltitudeText("200"); }}>Start a new trip</button></footer>

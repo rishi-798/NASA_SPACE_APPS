@@ -1,3 +1,5 @@
+> Historical design notes: the AI-generated hero and landscape illustrations described below have been removed from the current homepage. The NASA lunar color map remains.
+
 # Combined lunar website design
 
 The redesign combines three user-provided references, viewed in the browser:

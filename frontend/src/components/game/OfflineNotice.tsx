@@ -1,23 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { GameController, WifiSlash } from "@phosphor-icons/react";
 import { AsteroidModal } from "./AsteroidModal";
 
+function subscribeConnection(update:()=>void) {
+  window.addEventListener('online',update);window.addEventListener('offline',update);
+  return()=>{window.removeEventListener('online',update);window.removeEventListener('offline',update);};
+}
+
 export function OfflineNotice() {
-  const [isOffline, setIsOffline] = useState(() => typeof navigator !== "undefined" && !navigator.onLine);
-  const [gameOpen, setGameOpen] = useState(false);
-
-  useEffect(() => {
-    const handleOnline = () => setIsOffline(false);
-    const handleOffline = () => setIsOffline(true);
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
+  const isOffline=useSyncExternalStore(subscribeConnection,()=>navigator.onLine===false,()=>false);
+  const [gameOpen,setGameOpen]=useState(false);
 
   return (
     <>

@@ -919,11 +919,6 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       scene.add(moonSphereMesh);
 
       const isYUp = region.gltf_up === 'Y';
-      const minX = box.min.x, maxX = box.max.x;
-      const spanX = Math.max(1, maxX - minX);
-      const minY = isYUp ? -box.max.z : box.min.y;
-      const maxY = isYUp ? -box.min.z : box.max.y;
-      const spanY = Math.max(1, maxY - minY);
 
       terrain.traverse(child => {
         if (!(child instanceof THREE.Mesh)) return;
@@ -1231,31 +1226,17 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       {/* Top HUD Controls Overlay Bar */}
       <div className="surface-hud-bar">
         <div className="surface-hud-modes" role="group" aria-label="Surface camera mode">
-          <button
-            type="button"
-            className={`hud-mode-btn ${mode === 'aerial' ? 'hud-mode-active' : ''}`}
-            aria-pressed={mode === 'aerial'}
-            onClick={() => setMode('aerial')}
-          >
-            🚁 Epic Aerial Flyover
-          </button>
+
           <button
             type="button"
             className={`hud-mode-btn ${mode === 'eye' && onMesh ? 'hud-mode-active' : ''}`}
             disabled={!onMesh}
             aria-pressed={mode === 'eye' && onMesh}
-            onClick={() => setMode('eye')}
+            onClick={() => setMode(mode === 'eye' ? 'aerial' : 'eye')}
           >
-            👨‍🚀 Lander Eye-Level (1.8m)
+            {mode === 'eye' ? 'Return to terrain view' : 'Lander Eye-Level (1.8m)'}
           </button>
-          <button
-            type="button"
-            className={`hud-mode-btn ${mode === 'orbit' ? 'hud-mode-active' : ''}`}
-            aria-pressed={mode === 'orbit'}
-            onClick={() => setMode('orbit')}
-          >
-            🛰️ Orbital Overview
-          </button>
+
         </div>
 
         {mode === 'eye' && onMesh && (
@@ -1276,9 +1257,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           {mode === 'eye' && onMesh ? (
             <span>🔭 Heading {camHeading.toString().padStart(3, '0')}° · Pitch {camPitch}° · Drag or use arrows to look</span>
           ) : mode === 'aerial' ? (
-            <span>🚁 Aerial Reconnaissance · Continuous 3D lunar landscape · Drag to glide</span>
+            <span>Terrain view · Drag to pan</span>
           ) : (
-            <span>🛰️ Orbital Overview · 1:1 Measured Topography · Drag to orbit</span>
+            <span>Terrain view · Drag to orbit</span>
           )}
         </div>
       </div>
@@ -1296,7 +1277,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           {region.name} · {region.source_spacing_m.toFixed(1)}m source sampling · 1:1 scale
         </span>
         <span className="surface-sky-tag">
-          {lighting.includes('Sun') ? lighting : 'SPICE DE440 Solar & Earth Ephemeris'}
+          {lighting}
         </span>
       </div>
     </div>

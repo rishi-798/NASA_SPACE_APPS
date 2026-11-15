@@ -88,11 +88,11 @@ export function MissionsPage() {
             </div>
             <div>
               <dt>Spacecraft / Lander</dt>
-              <dd>{selected.lander ?? "Not specified"}</dd>
+              <dd>{selected.lander ?? "Unavailable in cited mission sources"}</dd>
             </div>
             <div>
               <dt>Launch Vehicle</dt>
-              <dd>{selected.launchVehicle ?? "Not specified"}</dd>
+              <dd>{selected.launchVehicle ?? "Unavailable in cited mission sources"}</dd>
             </div>
             <div>
               <dt>Mission Objective</dt>

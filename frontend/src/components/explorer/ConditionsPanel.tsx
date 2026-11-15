@@ -72,11 +72,11 @@ function TelemetryRow({ kind, title, subtitle, data }: TelemetryRowProps) {
       <dl className="telemetry-values">
         <div>
           <dt>Elevation</dt>
-          <dd aria-label={data ? undefined : "Not calculated"}>{data ? formatSignedDegree(data.elevation) : "--"}</dd>
+          <dd aria-label={data ? undefined : "Not calculated"}>{data ? formatSignedDegree(data.elevation) : "Not calculated"}</dd>
         </div>
         <div>
           <dt>Azimuth</dt>
-          <dd aria-label={data ? undefined : "Not calculated"}>{data ? formatAzimuth(data.azimuth) : "--"}</dd>
+          <dd aria-label={data ? undefined : "Not calculated"}>{data ? formatAzimuth(data.azimuth) : "Not calculated"}</dd>
         </div>
       </dl>
     </article>
@@ -101,6 +101,12 @@ export function ConditionsPanel({
   const powerKey = `${latitude ?? conditions?.latitude}/${longitude ?? conditions?.longitude}/${conditions?.time}/${state}`;
   const [powerResult, setPowerResult] = useState<{key: string; value: PowerAssessment | null} | null>(null);
   const power = powerResult?.key === powerKey ? powerResult.value : null;
+
+  const powerUnavailable=!!conditions&&state==='success'&&(
+    powerResult?.key===powerKey&&powerResult.value===null||
+    !Number.isFinite(latitude??conditions.latitude)||!Number.isFinite(longitude??conditions.longitude));
+  const powerWaiting=!!conditions&&state==='success'&&!power&&!powerUnavailable;
+  const powerEmpty=powerUnavailable?'Unavailable':powerWaiting?'Calculating…':'Not calculated';
 
   const terrainClear = !!conditions && conditions.sun.visible && conditions.earth.visible;
   const hasTerrain = terrain ? terrain.mode === "terrain_profile" : conditions?.sun.terrain_horizon !== undefined;
@@ -209,22 +215,22 @@ export function ConditionsPanel({
             <BatteryCharging weight="light" aria-hidden="true" />
             <div>
               <p>Solar Power & Battery</p>
-              <span>{power ? (power.summary.power_survivable ? "Surviving buffer" : "Freeze risk") : "Photovoltaic buffer"}</span>
+              <span>{power ? (power.summary.power_survivable ? "Surviving buffer" : "Battery reserve depleted") : "Photovoltaic buffer"}</span>
             </div>
           </div>
           <StatusIndicator
             visible={power?.summary.power_survivable ?? false}
             pending={!power}
-            label={!power ? "CALCULATING" : power.summary.power_survivable ? "NOMINAL" : "DEPLETION RISK"}
+            label={!power ? powerUnavailable?"UNAVAILABLE":powerWaiting?"CALCULATING":"RUN ANALYSIS" : power.summary.power_survivable ? "NOMINAL" : "DEPLETION RISK"}
           />
           <dl className="telemetry-values">
             <div>
               <dt>Peak Generation</dt>
-              <dd aria-label={power ? undefined : "Not calculated"}>{power ? `${power.summary.peak_generation_w.toFixed(0)} W` : "--"}</dd>
+              <dd aria-label={power ? undefined : powerEmpty}>{power ? `${power.summary.peak_generation_w.toFixed(0)} W` : powerEmpty}</dd>
             </div>
             <div>
               <dt>Min Battery SoC</dt>
-              <dd aria-label={power ? undefined : "Not calculated"}>{power ? `${power.summary.minimum_battery_soc_pct.toFixed(0)}%` : "--"}</dd>
+              <dd aria-label={power ? undefined : powerEmpty}>{power ? `${power.summary.minimum_battery_soc_pct.toFixed(0)}%` : powerEmpty}</dd>
             </div>
           </dl>
         </article>

@@ -14,7 +14,7 @@ For the updated analysis API, methodology, setup, and validation, see [Analysis 
 [![NASA Space Apps](https://img.shields.io/badge/NASA%20Space%20Apps-2026-blue.svg)](https://www.spaceappschallenge.org/)
 [![NAIF SPICE](https://img.shields.io/badge/JPL%20NAIF%20SPICE-Integrated-orange.svg)](https://naif.jpl.nasa.gov/naif/)
 [![LOLA Topography](https://img.shields.io/badge/LRO%20LOLA-Topography%20720--bin-green.svg)](https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/)
-[![Build & Tests](https://img.shields.io/badge/Tests-94%20Passed%20(85%20py%20%2B%209%20node)-brightgreen.svg)]()
+[![Build & Tests](https://github.com/rishi-798/NASA_SPACE_APPS/actions/workflows/verify-2026-11-14.yml/badge.svg)](https://github.com/rishi-798/NASA_SPACE_APPS/actions/workflows/verify-2026-11-14.yml)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)]()
 
 > An integrated scientific platform for NASA's **Commercial Lunar Payload Services (CLPS)** and **Artemis** missions, combining real-time JPL NAIF SPICE celestial mechanics, LOLA topographic horizon profiling, 3D orbital trajectory visualization, and lunar surface landing analysis.
@@ -161,7 +161,7 @@ cd frontend
 npm test
 npm run lint
 ```
-**Current status**: 94/94 tests passing with zero errors.
+**Current verification**: see the repository’s GitHub Actions checks for the latest frontend and backend results.
 
 ---
 
@@ -170,6 +170,6 @@ npm run lint
 * **NASA Open Data**: All planetary kernels, lunar imagery, and landing site specifications are sourced directly from NASA JPL, NASA SVS, NASA PDS Geosciences, and the LRO mission.
 * **Independent Project**: This project was developed for the NASA International Space Apps Challenge. It is an independent research and visualization tool, not an official NASA flight-certified operational system.
 * **Generative AI Disclosure**: As per NASA Space Apps rules regarding the use of AI tools:
-  * Generative AI was utilized for atmospheric concept illustrations (the home page hero background and artistic landscape rendering; these are explicitly labeled as conceptual illustrations, not scientific data).
+  * Generative AI was previously used for atmospheric concept illustrations. Those illustrations have been removed from the current homepage; the remaining lunar map is credited to NASA’s CGI Moon Kit.
   * Generative AI was used for code optimization, refactoring, and test suite automation.
   * All scientific ephemeris calculations, coordinate transformations, and horizon profiles are computed deterministically using NASA's NAIF SPICE C library and real LOLA topography data.
