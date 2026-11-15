@@ -22,7 +22,8 @@ type Runtime = {
   placeRocks: (hit: THREE.Intersection) => void; setRocksVisible: (on: boolean) => void;
 };
 
-function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, hit: THREE.Intersection) {
+function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, hit: THREE.Intersection,
+  scanned: { geometry: THREE.BufferGeometry; material: THREE.Material } | null, variant = 0) {
   if (!(hit.object instanceof THREE.Mesh) || hit.faceIndex == null) return previous;
   const mesh = hit.object, positions = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
   if (!positions || !indices) return previous;
@@ -43,15 +44,16 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
     geometry.computeVertexNormals();
     return geometry;
   };
-  const rocks = previous ?? new THREE.InstancedMesh(makeRockGeometry(),
-    new THREE.MeshStandardMaterial({ color: 0x41413f, roughness: 1, metalness: 0 }), 1800);
+  const limit = 325;
+  const rocks = previous ?? new THREE.InstancedMesh(scanned?.geometry ?? makeRockGeometry(),
+    scanned?.material ?? new THREE.MeshStandardMaterial({ color: 0x41413f, roughness: 1, metalness: 0 }), limit);
   if (!previous) { rocks.castShadow = true; rocks.receiveShadow = true; rocks.frustumCulled = false; scene.add(rocks); }
   const transform = new THREE.Object3D();
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), point = new THREE.Vector3();
   const ab = new THREE.Vector3(), ac = new THREE.Vector3(), normal = new THREE.Vector3();
   const up = new THREE.Vector3(0, 0, 1), spin = new THREE.Quaternion();
   const tint = new THREE.Color();
-  let seed = (hit.faceIndex + 1) >>> 0, count = 0, candidates = 0;
+  let seed = (hit.faceIndex + 1 + variant * 7919) >>> 0, count = 0, candidates = 0;
   const random = () => { seed = (1664525 * seed + 1013904223) >>> 0; return seed / 4294967296; };
   const first = Math.max(0, hit.faceIndex - 16384), last = Math.min(indices.count / 3, hit.faceIndex + 16385);
   for (let face = first; face < last; face++) {
@@ -70,17 +72,17 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
       const distance = point.distanceToSquared(hit.point);
       if (distance > 4900 || distance < 4) continue;
       candidates++;
-      const slot = count < 1800 ? count++ : Math.floor(random() * candidates);
-      if (slot >= 1800) continue;
+      const slot = count < limit ? count++ : Math.floor(random() * candidates);
+      if (slot >= limit) continue;
       transform.position.copy(point);
       transform.position.z += lunarDetailHeight(point.x, point.y, hit.point);
       transform.quaternion.setFromUnitVectors(up, normal);
       transform.quaternion.multiply(spin.setFromAxisAngle(up, random() * Math.PI * 2));
-      // Many small fragments and occasional larger rocks, mostly buried in dust.
+      // Vary the proportions so the scanned fragments do not all read as flat chips.
       const scale = .035 + Math.pow(random(), 3) * .42;
-      transform.scale.set(scale, scale * (.65 + random() * .7), scale * (.35 + random() * .38));
+      transform.scale.set(scale, scale * (.65 + random() * .7), scale * (.5 + random() * .55));
       transform.updateMatrix(); rocks.setMatrixAt(slot, transform.matrix);
-      const shade = .65 + random() * .35;
+      const shade = .85 + random() * .15;
       tint.setRGB(shade, shade, shade * .98);
       rocks.setColorAt(slot, tint);
     }
@@ -186,7 +188,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     catch { queueMicrotask(() => setState('WebGL could not start. Try another browser.')); return; }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.setClearColor(0x010204);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 2.6;
@@ -217,7 +219,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
 
     // Baseline ambient light (deep space high-contrast)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.08);
-    scene.add(sunLight, sunLight.target, earthLight, earthLight.target, ambientLight);
+    const inspectionLight = new THREE.DirectionalLight(0xffffff, 0);
+    inspectionLight.position.set(-1, -1, 1);
+    scene.add(sunLight, sunLight.target, earthLight, earthLight.target, ambientLight, inspectionLight, inspectionLight.target);
 
     const marker = new THREE.Mesh(
       new THREE.SphereGeometry(1, 16, 12),
@@ -253,6 +257,10 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     let starfield: THREE.Points | null = null;
     let inspectActive = true;
     let rocks: THREE.InstancedMesh | null = null;
+    let scannedRock: { geometry: THREE.BufferGeometry; material: THREE.Material } | null = null;
+    let rocks2: THREE.InstancedMesh | null = null;
+    let scannedRock2: { geometry: THREE.BufferGeometry; material: THREE.Material } | null = null;
+    let latestRockHit: THREE.Intersection | null = null;
     let rocksVisible = true;
     let detail: THREE.Mesh | null = null;
     let detailSource: THREE.Mesh | null = null;
@@ -294,7 +302,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           controls.target.copy(savedTarget);
           controls.update();
         }
-        focusSun();
+        focusSun(); value.inspect(inspectActive);
         render();
         return true;
       },
@@ -318,7 +326,10 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       render: () => render(),
       placeRocks(hit) {
         if (detailAnchor.distanceToSquared(hit.point) < .0001 && detailSource === hit.object) return;
-        rocks = scatterRocks(scene, rocks, hit);
+        latestRockHit = hit;
+        rocks = scatterRocks(scene, rocks, hit, scannedRock);
+        if (scannedRock2) rocks2 = scatterRocks(scene, rocks2, hit, scannedRock2, 1);
+        if (rocks2) rocks2.visible = rocksVisible;
         if (rocks) rocks.visible = rocksVisible;
         if (detail) { scene.remove(detail); detail.geometry.dispose(); detail = null; }
         detailAnchor.copy(hit.point);
@@ -326,7 +337,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         const geometry = buildLunarSurfaceDetail(hit);
         if (geometry && detailSource) {
           detail = new THREE.Mesh(geometry, detailSource.material);
-          detail.castShadow = true; detail.receiveShadow = true;
+          detail.castShadow = true; detail.receiveShadow = !(inspectActive && value.mode === 'eye');
           detail.visible = value.mode === 'eye' && rocksVisible;
           scene.add(detail);
         }
@@ -334,6 +345,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       setRocksVisible(on) {
         rocksVisible = on;
         if (rocks) rocks.visible = on;
+        if (rocks2) rocks2.visible = on;
         if (detail) detail.visible = on && value.mode === 'eye' && !!value.selectedPoint;
         render();
       },
@@ -357,7 +369,15 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       },
       inspect(on) {
         inspectActive = on;
-        ambientLight.intensity = on ? 1.0 : 0.08;
+        ambientLight.intensity = on ? 0.55 : 0.08;
+        inspectionLight.intensity = on ? 1.1 : 0;
+        // A close shadow map covers only a small patch and otherwise leaves a
+        // hard artificial boundary on terrain. Inspection is explicitly
+        // illustrative; rocks retain their own directional shading.
+        value.terrain?.traverse(child => {
+          if (child instanceof THREE.Mesh) child.receiveShadow = !(on && value.mode === 'eye');
+        });
+        if (detail) detail.receiveShadow = !(on && value.mode === 'eye');
         render();
       },
     };
@@ -368,6 +388,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       const target = value.mode === 'eye' && value.selectedPoint ? value.selectedPoint : center;
       sunLight.target.position.copy(target);
       sunLight.position.copy(target).addScaledVector(new THREE.Vector3(...sky.sun.directional_vector_local_z_up), lightDistance);
+      inspectionLight.target.position.copy(target);
+      inspectionLight.position.copy(target).addScaledVector(new THREE.Vector3(-.55, -.6, .58).normalize(), lightDistance);
       const radius = value.mode === 'eye' ? 125 : extent * .75;
       const shadow = sunLight.shadow.camera;
       shadow.left = shadow.bottom = -radius; shadow.right = shadow.top = radius;
@@ -419,6 +441,46 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       for (const material of Array.isArray(child.material) ? child.material : [child.material]) material.dispose();
     });
 
+    for (const variant of [0, 1]) new GLTFLoader().load(`${import.meta.env.BASE_URL}terrain/moon-rock-${variant === 0 ? '02' : '05'}.glb`, gltf => {
+      if (cancelled) { dispose(gltf.scene); return; }
+      gltf.scene.updateMatrixWorld(true);
+      let sample: THREE.Mesh | null = null;
+      gltf.scene.traverse(child => { if (!sample && child instanceof THREE.Mesh) sample = child; });
+      const mesh = sample as THREE.Mesh | null;
+      if (!mesh || Array.isArray(mesh.material)) { dispose(gltf.scene); return; }
+      const geometry = mesh.geometry.clone().applyMatrix4(mesh.matrixWorld).rotateX(Math.PI / 2);
+      geometry.computeBoundingBox();
+      const bounds = geometry.boundingBox!;
+      const size = bounds.getSize(new THREE.Vector3());
+      const rockCenter = bounds.getCenter(new THREE.Vector3());
+      geometry.translate(-rockCenter.x, -rockCenter.y, -rockCenter.z);
+      const rockScale = 2 / Math.max(size.x, size.y, size.z);
+      geometry.scale(rockScale, rockScale, rockScale);
+      const material = mesh.material.clone();
+      if (material instanceof THREE.MeshStandardMaterial) {
+        material.roughness = 1;
+        material.onBeforeCompile = shader => {
+          shader.fragmentShader = shader.fragmentShader.replace(
+            '#include <map_fragment>',
+            `#include <map_fragment>
+             diffuseColor.rgb = vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722)));`
+          );
+        };
+      }
+      for (const value of Object.values(material)) if (value instanceof THREE.Texture) terrainTextures.add(value);
+      if (variant === 0) scannedRock = { geometry, material };
+      else scannedRock2 = { geometry, material };
+      dispose(gltf.scene);
+      if (variant === 0 && rocks) { scene.remove(rocks); dispose(rocks); rocks = null; }
+      if (latestRockHit) {
+        if (variant === 0) rocks = scatterRocks(scene, null, latestRockHit, scannedRock);
+        else rocks2 = scatterRocks(scene, rocks2, latestRockHit, scannedRock2, 1);
+        if (rocks2) rocks2.visible = rocksVisible;
+        if (rocks) rocks.visible = rocksVisible;
+      }
+      render();
+    }, undefined, () => { /* Keep the procedural rock fallback if the scan cannot load. */ });
+
     const download = new AbortController();
     const modelUrl = region.model_url.startsWith('/') ? `${import.meta.env.BASE_URL}${region.model_url.slice(1)}` : region.model_url;
 
@@ -456,9 +518,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         if (positions) {
           const uv = new Float32Array(positions.count * 2);
           for (let i = 0; i < positions.count; i++) {
-            uv[i * 2] = positions.getX(i) / 24;
+            uv[i * 2] = positions.getX(i) / 3.1;
             const yCoord = region.gltf_up === 'Y' ? -positions.getZ(i) : positions.getY(i);
-            uv[i * 2 + 1] = yCoord / 24;
+            uv[i * 2 + 1] = yCoord / 3.1;
           }
           child.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
         }
@@ -490,7 +552,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         } catch { /* Retain the model's original material if canvas textures are unavailable. */ }
       };
       texLoader.load(
-        `${import.meta.env.BASE_URL}terrain/lunar-detail-color.png`,
+        `${import.meta.env.BASE_URL}terrain/moon-01-diffuse.jpg`,
         colTex => {
           if (cancelled) { colTex.dispose(); return; }
           terrainTextures.add(colTex);
@@ -498,7 +560,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           colTex.colorSpace = THREE.SRGBColorSpace;
           colTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
           texLoader.load(
-            `${import.meta.env.BASE_URL}terrain/lunar-regolith-normal.png`,
+            `${import.meta.env.BASE_URL}terrain/moon-01-normal.jpg`,
             normTex => {
               if (cancelled) { normTex.dispose(); return; }
               terrainTextures.add(normTex);
@@ -508,25 +570,19 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
                 if (child instanceof THREE.Mesh && child.material) {
                   const mat = new THREE.MeshStandardMaterial({
                     map: colTex,
-                    color: new THREE.Color(0xa2a5aa),
+                    color: new THREE.Color(0xd0d0d0),
                     normalMap: normTex,
-                    normalScale: new THREE.Vector2(1.8, 1.8),
+                    normalScale: new THREE.Vector2(0.65, 0.65),
                     roughness: 1,
                     metalness: 0,
                   });
-                  // Two differently scaled samples soften visible repetition while adding
-                  // the fine, illustrative bump used in the reference material tutorials.
+                  // The terrestrial simulant scan is warm under its capture
+                  // lighting; use its detail without tinting the Moon brown.
                   mat.onBeforeCompile = shader => {
                     shader.fragmentShader = shader.fragmentShader.replace(
-                      '#include <normal_fragment_maps>',
-                      `#ifdef USE_NORMALMAP_TANGENTSPACE
-                        vec3 coarse = texture2D(normalMap, vNormalMapUv).xyz * 2.0 - 1.0;
-                        vec3 fine = texture2D(normalMap, vNormalMapUv * 2.73 + vec2(0.17, 0.43)).xyz * 2.0 - 1.0;
-                        vec3 detail = normalize(vec3((coarse.xy * 0.7 + fine.xy * 0.3) * normalScale, 1.0));
-                        normal = normalize(tbn * detail);
-                      #else
-                        #include <normal_fragment_maps>
-                      #endif`
+                      '#include <map_fragment>',
+                      `#include <map_fragment>
+                       diffuseColor.rgb = vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722)));`
                     );
                   };
                   child.material = mat;
@@ -556,7 +612,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
 
       controls.target.copy(center);
       controls.maxDistance = extent * 3.5;
-      camera.position.set(center.x + extent * 0.45, center.y - extent * 0.75, box.max.z + extent * 0.45);
+      camera.position.set(center.x + extent * 0.20, center.y - extent * 0.34, box.max.z + extent * 0.24);
       camera.far = skyDistance * 2 + extent * 5;
       camera.updateProjectionMatrix();
 
@@ -629,7 +685,10 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       cancelled = true; download.abort(); resizeObserver.disconnect(); controls.dispose();
       canvas.removeEventListener('pointerdown', start); canvas.removeEventListener('pointermove', move);
       canvas.removeEventListener('pointerup', pick); canvas.removeEventListener('pointercancel', cancelPointer); canvas.removeEventListener('keydown', key);
-      dispose(scene); terrainTextures.forEach(texture => texture.dispose());
+      dispose(scene);
+      if (scannedRock && !rocks) { scannedRock.geometry.dispose(); scannedRock.material.dispose(); }
+      if (scannedRock2 && !rocks2) { scannedRock2.geometry.dispose(); scannedRock2.material.dispose(); }
+      terrainTextures.forEach(texture => texture.dispose());
       earthMap.dispose(); sunLight.shadow.dispose(); renderer.dispose(); canvas.remove(); runtime.current = null;
     };
   }, [region]);
@@ -738,9 +797,10 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       <div className="local-terrain-canvas" ref={host} />
 
       <label><input type="checkbox" checked={showRocks} onChange={e => setShowRocks(e.target.checked)} /> Illustrative rocks and fine relief</label>
-      <p>Nearby rocks and fine surface relief are illustrative. Selected coordinates use the measured terrain.</p>
+      <p>Nearby rocks and fine surface relief are illustrative. Selected coordinates use the measured terrain; the patch ends at the data boundary. Surface detail uses <a href="https://polyhaven.com/collections/moon" target="_blank" rel="noreferrer">Poly Haven regolith simulant scans</a> when available.</p>
       <p role="status">{mode === 'eye' && state.startsWith('Ready.') ? 'Eye-level view · 1.8 m above the selected point' : state}</p>
       <label><input type="checkbox" checked={inspection} onChange={e => setInspection(e.target.checked)} /> Topographic relief light (illustrative)</label>
+      {inspection && mode === 'eye' && <p>Relief lighting adds a viewing light and suppresses terrain cast shadows. Switch it off to show calculated Sun and Earth lighting with terrain shadows.</p>}
       {/* Sleek Bottom Metadata & Ephemeris Strip */}
       <div className="surface-footer-strip">
         <span className="surface-meta-tag">

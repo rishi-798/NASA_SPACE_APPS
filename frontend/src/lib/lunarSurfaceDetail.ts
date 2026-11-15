@@ -48,7 +48,7 @@ export function buildLunarSurfaceDetail(hit: THREE.Intersection): THREE.BufferGe
         point.copy(a).multiplyScalar(1 - (i + j) / steps).addScaledVector(b, i / steps).addScaledVector(c, j / steps);
         row.push(vertices.length / 3);
         vertices.push(point.x, point.y, point.z + lunarDetailHeight(point.x, point.y, hit.point));
-        uvs.push(point.x / 24, point.y / 24);
+        uvs.push(point.x / 3.1, point.y / 3.1);
       }
       rows.push(row);
     }

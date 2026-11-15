@@ -18,6 +18,11 @@ test('detail adds bounded geometry without changing the measured mesh', () => {
   }
   assert.deepEqual(Array.from(terrain.geometry.getAttribute('position').array), before);
   assert.equal(detail.getAttribute('uv').count, positions.count);
+  const uvs = detail.getAttribute('uv');
+  for (let i = 0; i < positions.count; i++) {
+    assert.ok(Math.abs(uvs.getX(i) - positions.getX(i) / 3.1) < 1e-5);
+    assert.ok(Math.abs(uvs.getY(i) - positions.getY(i) / 3.1) < 1e-5);
+  }
   assert.ok(detail.index.count > 0);
   detail.dispose(); terrain.geometry.dispose();
 });

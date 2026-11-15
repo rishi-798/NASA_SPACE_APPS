@@ -41,3 +41,24 @@ API/grid identity; science endpoints; UI; Render restart; zero paid resources.
   Hugging Face upload token is needed to read this public dataset.
 - To check a coordinate, use `/api/terrain/catalogue?lat=0&lon=0`.
   Point elevation and regional statistics are returned separately.
+
+## Local presentation setup (PowerShell)
+
+Run these commands from the repository root in a Python environment with the backend dependencies and SPICE kernels installed. The small manifest is downloaded once; elevation windows and catalogue shards are read from the pinned public dataset when needed.
+
+```powershell
+$env:LUNAR_COG_RELEASE_FILE = 'data/cloud-release.json'
+$env:LUNAR_DATASET_DIR = 'data/lunar-cloud'
+$env:CORS_ORIGINS = 'http://127.0.0.1:5179'
+python -m scripts.prepare_cloud_runtime
+python -m uvicorn backend.app:app --host 127.0.0.1 --port 8012
+```
+
+In a second terminal, from `frontend`, start the interface against that backend:
+
+```powershell
+$env:VITE_API_BASE_URL = 'http://127.0.0.1:8012'
+npm run dev -- --host 127.0.0.1 --port 5179
+```
+
+Check `/api/ready` and a real `/api/terrain/catalogue?lat=-84.79&lon=29.2` response before a demo. A healthy calculation service does not guarantee that remote terrain, the Cesium token, or every model is available. Without a configured Cesium token the map uses a labeled reference globe.

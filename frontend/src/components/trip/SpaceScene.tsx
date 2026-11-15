@@ -6,6 +6,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import type { LandingPoint } from "../../lib/missionState";
 import type { LaunchSite } from "../../data/tripCatalogue";
 import type { CelestialPosition, VisibilityResponse, VisibilitySample } from "../../types";
+import { frameEarthMoon } from "../../lib/spaceSceneFraming";
 
 const MOON_RADIUS_KM = 1737.4;
 const SUN_RADIUS_KM = 695700;
@@ -54,10 +55,13 @@ function bodyDirection(body: CelestialPosition | undefined, landing?: LandingPoi
 function fitToRadius(root: THREE.Object3D, targetRadius: number) {
   root.updateMatrixWorld(true);
   const bounds = new THREE.Box3().setFromObject(root);
-  const sphere = bounds.getBoundingSphere(new THREE.Sphere());
-  const factor = targetRadius / Math.max(sphere.radius, 1e-5);
+  const size = bounds.getSize(new THREE.Vector3());
+  const center = bounds.getCenter(new THREE.Vector3());
+  // These assets are spherical. A box's enclosing sphere is sqrt(3) too
+  // large for a globe, which left the atmosphere detached from the Earth.
+  const factor = targetRadius / Math.max(Math.max(size.x, size.y, size.z) / 2, 1e-5);
   root.scale.multiplyScalar(factor);
-  root.position.addScaledVector(sphere.center, -factor);
+  root.position.addScaledVector(center, -factor);
 }
 
 function createAtmosphere(radius: number) {
@@ -418,7 +422,7 @@ export function SpaceScene({
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     host.append(renderer.domElement);
 
     const scene = new THREE.Scene();
@@ -625,16 +629,14 @@ export function SpaceScene({
       return new THREE.CubicBezierCurve3(from, controlA, controlB, to);
     };
     transferPath = makeTransferPath(earthCenter);
-    const initialTarget = transferPath?.getPoint(0.5)
-      ?? earthCenter.clone().lerp(moonCenter, 0.5);
-    // Frame both endpoints while keeping the camera on the transfer route's midpoint.
-    // Fit the horizontal Earth-to-Moon span so Earth reads as the hero without
-    // pushing the Moon offscreen; on narrow screens, move back only as needed.
+    // Place the Earth–Moon axis across the view and center the full visible
+    // diameter of both bodies. The larger Earth needs more room than the Moon.
     const viewAspect = host.clientWidth / Math.max(host.clientHeight, 1);
-    const horizontalFov = 2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * viewAspect);
-    const endpointSpan = EARTH_MOON_VIEW_DISTANCE + earthRadius + moonRadius;
-    const initialViewDistance = THREE.MathUtils.clamp(endpointSpan / (2 * Math.tan(horizontalFov / 2)) * 1.08, 9.2, 17.5);
-    controls.maxDistance = Math.min(18, initialViewDistance * 1.45);
+    const { target: initialTarget, up: frameUp, distance: initialViewDistance } = frameEarthMoon(
+      earthCenter, moonCenter, viewNormal, earthRadius, moonRadius, camera.fov, viewAspect,
+    );
+    camera.up.copy(frameUp);
+    controls.maxDistance = Math.max(18, initialViewDistance * 1.45);
     camera.position.copy(initialTarget).addScaledVector(viewNormal, initialViewDistance);
     camera.lookAt(initialTarget);
     controls.target.copy(initialTarget);

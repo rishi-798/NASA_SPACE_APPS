@@ -1,0 +1,11 @@
+# Presentation review rubric
+
+Each review is an independent assessment of the running application, not a score inferred from passing tests. Record the version, environment, evidence, failures, and a score for each category. A passing round requires **more than 9/10** with no critical failure. Do not round a score up.
+
+- **Lunar visuals — 4 points:** Judge the Moon, terrain, rocks, material, shadows, lighting, camera, and transitions against lunar photographic references. Deduct for obvious tiling, seams, floating edges, blobs, a muddy or desert appearance, distracting artifacts, or misleading detail. Inspect both eye-level and orbit views at Athena, Odysseus, G7, and one historical site on desktop and mobile. Illustrative features must be labeled.
+- **Complete workflow — 2 points:** Starting fresh, choose a departure, inspect and choose a rocket, select a Moon destination, set an observation time, analyze the landing, and open the mission result. Test site changes, surface picking, camera controls, lighting time, and recovery from unavailable data. Deduct for broken steps, misleading states, invisible results, and unusable waits.
+- **Backend and scientific clarity — 2 points:** Verify real API responses, source and resolution labels, the distinction between measured and illustrative detail, time-dependent Sun/Earth calculations, degraded states, and terrain-data availability. Do not treat health alone as evidence that every capability works.
+- **Usability — 1 point:** Judge hierarchy, legibility, feedback, accessibility, and whether the presentation communicates limitations without obscuring the task.
+- **Mobile and performance — 1 point:** Repeat the workflow on a narrow viewport; assess loading time, smoothness, model framing, controls, and errors.
+
+After changes, repeat the **entire workflow and visual inspection**, not only the previously failing step. A reviewer must report a fresh score and supporting evidence; a passing build, an earlier score, or an unverified deployment is not a passing review.

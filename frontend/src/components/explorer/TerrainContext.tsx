@@ -89,7 +89,7 @@ export function TerrainContext({ latitude, longitude, catalogue, onRetry, terrai
     {model.demHeight && point.state === "available" && <p className="terrain-note">The horizon DEM and the catalogue are separate products; their heights at one point may differ slightly.</p>}
 
     <h4>4 · Visual terrain model</h4>
-    <p className="terrain-note"><strong>Cesium Moon (integrated):</strong> NASA/USGS imagery and terrain for orientation and lighting only. It is not used in the visibility calculation.</p>
+    <p className="terrain-note"><strong>Moon map:</strong> Detailed NASA/USGS imagery and terrain require the map service; otherwise a reference globe is shown. The map is not used in the visibility calculation.</p>
       {modelInfo?.model_available ? (
         <div className="terrain-model-card" style={{ marginTop: '0.75rem', padding: '0.75rem', background: 'rgba(56, 189, 248, 0.08)', borderRadius: '6px', border: '1px solid rgba(56, 189, 248, 0.25)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
