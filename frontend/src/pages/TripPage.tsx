@@ -221,15 +221,17 @@ export function TripPage() {
           </>
         ) : (
           <div className="trip-surface-full-view">
+            {landing ? (
             <LocalSurfacePane
-              latitude={landing?.latitude ?? 26.1322}
-              longitude={landing?.longitude ?? 3.6339}
+              latitude={landing.latitude}
+              longitude={landing.longitude}
               observationTime={mission.utcTime}
               onPick={(pt) => {
                 selectLocation({ latitude: pt.latitude, longitude: pt.longitude, name: pt.name });
               }}
               onOpenGlobal={() => setTripMoonView("globe")}
             />
+            ) : <p className="trip-note" role="status">Choose a lunar destination to view its surface.</p>}
           </div>
         )}
       </div>

@@ -2513,6 +2513,11 @@ a {
 /* Mission control voice guide */
 .mc-dock { position: fixed; right: 16px; bottom: 16px; z-index: 90; display: grid; justify-items: end; gap: 0.5rem; width: min(360px, calc(100vw - 32px)); pointer-events: none; }
 .mc-dock > * { pointer-events: auto; }
+@media (max-width: 600px) {
+  .mc-dock { right: 8px; bottom: 8px; }
+  .mc-dock .mc-enable { width: 44px; height: 44px; padding: 0; justify-content: center; font-size: 0; }
+  .mc-dock .mc-enable svg { width: 20px; height: 20px; }
+}
 .mc-enable { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; padding: 0 1rem; border: 1px solid var(--line-strong); border-radius: 100px; background: rgb(10 13 18 / 0.92); color: var(--text); font: 500 0.72rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; backdrop-filter: blur(8px); }
 .mc-enable:hover { border-color: var(--accent); color: var(--accent); }
 .mc-panel, .mc-caption { position: relative; width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--line-strong); border-radius: var(--radius-panel); background: rgb(10 13 18 / 0.95); backdrop-filter: blur(8px); box-shadow: 0 12px 40px rgb(0 0 0 / 0.45); }
