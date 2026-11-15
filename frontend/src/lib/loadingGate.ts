@@ -38,6 +38,8 @@ export function createLoadingGate(options: LoadingGateOptions, onChange: (visibl
         timer = timers.set(() => { timer = null; hiding = false; setVisible(false); }, options.minShowMs);
       }
     },
+    /** Close early, but only once loading has finished (the user chose not to wait out the minimum). */
+    dismiss() { if (!loading && visible) { cancel(); setVisible(false); } },
     dispose() { cancel(); },
   };
 }
