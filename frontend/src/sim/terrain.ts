@@ -5,15 +5,17 @@
 export type SlopeEstimate = { deg: number; scaleM: number; method: string } | null;
 
 export type Terrain = {
-  kind: "synthetic" | "lola";
+  kind: "synthetic" | "lola" | "blender";
   /** Shown everywhere the result appears (UI, report, export). */
   label: string;
   /** Half-width of the supported square area, metres. */
   halfSizeM: number;
   heightAt: (x: number, y: number) => number;
   slopeAt: (x: number, y: number) => SlopeEstimate;
-  /** Grid used to draw the surface: the same heights the physics uses. */
-  grid: { count: number; spacingM: number; heights: (number | null)[][] };
+  /** Grid used to draw the surface (synthetic and 80 m DEM). Absent when a mesh model is drawn instead. */
+  grid?: { count: number; spacingM: number; heights: (number | null)[][] };
+  /** Mesh terrain: height of the target above the datum sphere (the model is drawn shifted by −h0). */
+  targetDatumHeightM?: number;
   source: string;
   sampleSpacingM: number | null;
   missingCells: number;
@@ -77,5 +79,63 @@ export function gridTerrain(patch: TerrainPatch, siteName: string): Terrain {
     kind: "lola", label: `Real terrain: ${siteName} (LOLA 80 m DEM)`, halfSizeM: half, heightAt, slopeAt,
     grid: { count, spacingM: s, heights: h }, source: patch.source, sampleSpacingM: s, missingCells: patch.missing_cells,
     notes: [...patch.limitations, patch.datum],
+  };
+}
+
+/**
+ * Real terrain from a triangle mesh (the team's Blender export of LOLA 60 m elevation). Positions are given in the
+ * local east-north-up frame at the target (metres; up = height above the datum sphere, curvature included).
+ * heightAt interpolates inside the triangle under the point, so the physics surface IS the drawn mesh.
+ * z is reported relative to the mesh surface under the target.
+ */
+export function meshTerrain(east: Float32Array | number[], north: Float32Array | number[], up: Float32Array | number[], triangles: Uint32Array | number[],
+  meta: { siteName: string; source: string; sourceSpacingM: number; halfSizeM?: number; notes?: string[] }): Terrain {
+  const halfSizeM = meta.halfSizeM ?? 2000;
+  const reach = halfSizeM + 300;                 // index only triangles that can matter for the supported area
+  const cell = 100, cells = Math.ceil((2 * reach) / cell);
+  const buckets: number[][] = Array.from({ length: cells * cells }, () => []);
+  const toCell = (v: number) => Math.min(cells - 1, Math.max(0, Math.floor((v + reach) / cell)));
+  for (let t = 0; t < triangles.length; t += 3) {
+    const a = triangles[t]!, b = triangles[t + 1]!, c = triangles[t + 2]!;
+    const xs = [east[a]!, east[b]!, east[c]!], ys = [north[a]!, north[b]!, north[c]!];
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    if (x1 < -reach || x0 > reach || y1 < -reach || y0 > reach) continue;
+    for (let cy = toCell(y0); cy <= toCell(y1); cy++) for (let cx = toCell(x0); cx <= toCell(x1); cx++) buckets[cy * cells + cx]!.push(t);
+  }
+  const absolute = (x: number, y: number) => {
+    if (Math.abs(x) >= reach || Math.abs(y) >= reach) return NaN;
+    for (const t of buckets[toCell(y) * cells + toCell(x)]!) {
+      const a = triangles[t]!, b = triangles[t + 1]!, c = triangles[t + 2]!;
+      const ax = east[a]!, ay = north[a]!, bx = east[b]!, by = north[b]!, cx = east[c]!, cy = north[c]!;
+      const det = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy);
+      if (det === 0) continue;
+      const l1 = ((by - cy) * (x - cx) + (cx - bx) * (y - cy)) / det;
+      const l2 = ((cy - ay) * (x - cx) + (ax - cx) * (y - cy)) / det;
+      const l3 = 1 - l1 - l2;
+      const eps = -1e-9;
+      if (l1 >= eps && l2 >= eps && l3 >= eps) return l1 * up[a]! + l2 * up[b]! + l3 * up[c]!;
+    }
+    return NaN;                                   // no triangle here: missing data, never filled
+  };
+  const h0 = absolute(0, 0);
+  if (!Number.isFinite(h0)) throw new Error("The terrain model has no surface under the target point.");
+  const heightAt = (x: number, y: number) => absolute(x, y) - h0;
+  const s = meta.sourceSpacingM;
+  const slopeAt = (x: number, y: number): SlopeEstimate => {
+    let sxz = 0, syz = 0, sxx = 0;
+    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+      const z = heightAt(x + dc * s, y + dr * s);
+      if (!Number.isFinite(z)) return null;
+      sxz += dc * s * z; syz += dr * s * z; sxx += (dc * s) ** 2;
+    }
+    return { deg: (Math.atan(Math.hypot(sxz / sxx, syz / sxx)) * 180) / Math.PI, scaleM: 2 * s,
+      method: `least-squares plane through 3×3 samples of the ${s} m terrain mesh` };
+  };
+  let missing = 0;
+  for (let y = -halfSizeM; y <= halfSizeM; y += 100) for (let x = -halfSizeM; x <= halfSizeM; x += 100) if (!Number.isFinite(heightAt(x, y))) missing++;
+  return {
+    kind: "blender", label: `Real terrain: ${meta.siteName} (team Blender model, LOLA ${s} m)`, halfSizeM, heightAt, slopeAt,
+    targetDatumHeightM: h0, source: meta.source, sampleSpacingM: s, missingCells: missing,
+    notes: meta.notes ?? [],
   };
 }

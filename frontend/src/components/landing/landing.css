@@ -90,3 +90,5 @@ kbd { padding: 0.05rem 0.35rem; border: 1px solid var(--line-strong); border-rad
   .sim-stage { height: 56vh; }
   .sim-facts div { grid-template-columns: 1fr; gap: 0.1rem; }
 }
+.sim-model-status { position: absolute; top: 2.6rem; left: 0.7rem; margin: 0; padding: 0.3rem 0.6rem; background: rgb(5 7 10 / 0.8); color: var(--muted); font: 0.64rem var(--mono); }
+.sim-model-note { margin: 0; }

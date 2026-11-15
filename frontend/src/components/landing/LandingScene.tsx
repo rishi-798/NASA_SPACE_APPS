@@ -1,18 +1,28 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { thrustDirection, type Vec3 } from "../../sim/physics";
 import type { SnapshotStore } from "../../sim/store";
 import type { Terrain } from "../../sim/terrain";
+import { macroAlbedo, regolithTextures, starField } from "./regolith";
 
-type Props = { terrain: Terrain; store: SnapshotStore; exaggeration: number; targetRadiusM: number; padRadiusM: number; overview: boolean };
+type Props = { terrain: Terrain; store: SnapshotStore; exaggeration: number; targetRadiusM: number; padRadiusM: number; overview: boolean;
+  /** Visual size multiplier for the vehicle model only (physics and contact are unchanged). */
+  landerScale: number;
+  /** Prepared terrain mesh in glTF axes (x east, y = height above datum, z = −north), when the terrain is a model. */
+  terrainModel?: THREE.Object3D | null;
+  /** Real 3D vehicle model (NASA GLB) drawn at the simulated position. Display only. */
+  vehicleModelUrl: string;
+  onVehicleStatus?: (status: "loading" | "ready" | "failed") => void };
 
 /**
  * Draws the simulation state from the shared snapshot. Simulation axes (x east, y north, z up) map to
  * three.js as (x, z·exaggeration, −y). The terrain mesh uses exactly the physics heights; exaggeration
  * (visual only) scales every z the same way, so the lander, trail and surface stay aligned.
  */
-export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padRadiusM, overview }: Props) {
+export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padRadiusM, overview, landerScale, terrainModel, vehicleModelUrl, onVehicleStatus }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const overviewRef = useRef(overview);
   useEffect(() => { overviewRef.current = overview; }, [overview]);
@@ -24,41 +34,110 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     el.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x05070a);
-    const camera = new THREE.PerspectiveCamera(50, 1, 0.5, 20000);
+    scene.background = new THREE.Color(0x020306);
+    scene.add(starField());
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    const camera = new THREE.PerspectiveCamera(50, 1, 0.5, 40000);
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.maxPolarAngle = Math.PI * 0.495;
-    scene.add(new THREE.AmbientLight(0xffffff, 0.35));
-    const sun = new THREE.DirectionalLight(0xfff4e0, 2.2);
-    sun.position.set(-3000, 900, 1500);
-    scene.add(sun);
+    // ILLUSTRATIVE LIGHTING: a low Sun (~12° up), typical near the lunar south pole, plus faint fill so
+    // shadowed ground is not pure black. Not computed for a specific date.
+    scene.add(new THREE.HemisphereLight(0x8fa3c0, 0x1a1712, 0.35));
+    const sun = new THREE.DirectionalLight(0xfff1dc, 3.2);
+    const sunDir = new THREE.Vector3(-0.78, 0.21, 0.59).normalize();
+    sun.position.copy(sunDir.clone().multiplyScalar(4000));
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(4096, 4096);
+    Object.assign(sun.shadow.camera, { left: -2300, right: 2300, top: 2300, bottom: -2300, near: 100, far: 9000 });
+    sun.shadow.bias = -0.0004;
+    sun.shadow.normalBias = 1.5;
+    scene.add(sun, sun.target);
 
-    // Terrain mesh from the same grid the physics samples.
-    const { count, spacingM, heights } = terrain.grid;
-    const half = ((count - 1) * spacingM) / 2;
-    const geometry = new THREE.BufferGeometry();
-    const positions: number[] = [], colors: number[] = [], index: number[] = [];
-    const finite = heights.flat().filter((v): v is number => typeof v === "number");
-    const low = finite.length ? Math.min(...finite) : 0;
-    for (let r = 0; r < count; r++) for (let c = 0; c < count; c++) {
-      const v = heights[r]![c];
-      const ok = typeof v === "number";
-      const p = toThree([-half + c * spacingM, -half + r * spacingM, ok ? v : low]);
-      positions.push(p.x, p.y, p.z);
-      if (ok) colors.push(0.55, 0.56, 0.58); else colors.push(0.75, 0.2, 0.2);   // missing data drawn red
+    const disposables: { dispose: () => void }[] = [];
+    if (terrain.grid) {
+      // Terrain mesh: sampled from terrain.heightAt — the SAME surface the physics uses — on a 4× finer grid,
+      // so the bilinear facets of the 80 m DEM are drawn smoothly without inventing new relief.
+      const { count, spacingM, heights } = terrain.grid;
+      const half = ((count - 1) * spacingM) / 2;
+      const fine = Math.min(4 * (count - 1), 240) + 1;
+      const step = (2 * half) / (fine - 1);
+      const finite = heights.flat().filter((v): v is number => typeof v === "number");
+      const low = finite.length ? Math.min(...finite) : 0, high = finite.length ? Math.max(...finite) : 1;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(fine * fine * 3), colors = new Float32Array(fine * fine * 3), uvs = new Float32Array(fine * fine * 2);
+      const index: number[] = [];
+      const tile = 110;   // metres per texture repeat
+      const albedo = macroAlbedo();
+      for (let r = 0; r < fine; r++) for (let c = 0; c < fine; c++) {
+        const x = -half + c * step, y = -half + r * step;
+        const h = terrain.heightAt(x, y);
+        const ok = Number.isFinite(h);
+        const p = toThree([x, y, ok ? h : low]);
+        const i = r * fine + c;
+        positions.set([p.x, p.y, p.z], i * 3);
+        uvs.set([x / tile, y / tile], i * 2);
+        // Subtle albedo: brighter highlands, a little darker low ground, fading toward the patch edge.
+        const t = (ok ? h : low) - low, span = Math.max(1, high - low);
+        const edge = Math.min(1, (half - Math.max(Math.abs(x), Math.abs(y))) / 250);
+        const shade = (0.7 + 0.12 * (t / span) + 0.3 * albedo(x, y)) * (0.45 + 0.55 * edge);
+        if (ok) colors.set([shade, shade * 0.985, shade * 0.96], i * 3); else colors.set([0.8, 0.22, 0.2], i * 3);  // missing data: red
+      }
+      for (let r = 0; r < fine - 1; r++) for (let c = 0; c < fine - 1; c++) {
+        const a = r * fine + c, b = a + 1, d = a + fine, e = d + 1;
+        index.push(a, b, d, b, e, d);   // counter-clockwise from above: faces point up
+      }
+      geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+      geometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+      geometry.setIndex(index);
+      geometry.computeVertexNormals();
+      const { map, bump } = regolithTextures();
+      const ground = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ vertexColors: true, map, bumpMap: bump, bumpScale: 1.4, roughness: 0.97, metalness: 0 }));
+      ground.receiveShadow = true;
+      ground.castShadow = true;
+      scene.add(ground);
+      // Faint 80 m DEM grid lines (one line per real sample), so the data resolution stays visible.
+      const gridLines: number[] = [];
+      for (let k = 0; k < count; k += 1) {
+        for (let j = 0; j < fine - 1; j++) {
+          const a = -half + j * step, b = a + step, fixed = -half + k * spacingM;
+          for (const [x1, y1, x2, y2] of [[a, fixed, b, fixed], [fixed, a, fixed, b]] as const) {
+            const h1 = terrain.heightAt(x1, y1), h2 = terrain.heightAt(x2, y2);
+            if (!Number.isFinite(h1) || !Number.isFinite(h2)) continue;
+            const p1 = toThree([x1, y1, h1 + 0.25]), p2 = toThree([x2, y2, h2 + 0.25]);
+            gridLines.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+          }
+        }
+      }
+      const gridGeo = new THREE.BufferGeometry();
+      gridGeo.setAttribute("position", new THREE.Float32BufferAttribute(gridLines, 3));
+      const wire = new THREE.LineSegments(gridGeo, new THREE.LineBasicMaterial({ color: 0x8ebfce, transparent: true, opacity: terrain.kind === "lola" ? 0.07 : 0.04 }));
+      scene.add(wire);
+
+      disposables.push(geometry, map, bump, gridGeo);
+    } else if (terrainModel) {
+      // Team Blender terrain: glTF axes are (x east, y up, z −north) = this scene's axes. Shift by the target's
+      // datum height so z = 0 at the target, and apply the same visual exaggeration as everything else.
+      terrainModel.position.set(0, -(terrain.targetDatumHeightM ?? 0) * exaggeration, 0);
+      terrainModel.scale.set(1, exaggeration, 1);
+      scene.add(terrainModel);
+      // Outline of the supported simulation square.
+      const h = terrain.halfSizeM, pts: THREE.Vector3[] = [];
+      const edge: [number, number][] = [];
+      for (let i = 0; i <= 80; i++) edge.push([-h + (2 * h * i) / 80, -h]);
+      for (let i = 0; i <= 80; i++) edge.push([h, -h + (2 * h * i) / 80]);
+      for (let i = 0; i <= 80; i++) edge.push([h - (2 * h * i) / 80, h]);
+      for (let i = 0; i <= 80; i++) edge.push([-h, h - (2 * h * i) / 80]);
+      for (const [x, y] of edge) { const z = terrain.heightAt(x, y); if (Number.isFinite(z)) pts.push(toThree([x, y, z + 1])); }
+      const outline = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineDashedMaterial({ color: 0x8ebfce, dashSize: 25, gapSize: 15, transparent: true, opacity: 0.6 }));
+      outline.computeLineDistances();
+      scene.add(outline);
+      disposables.push(outline.geometry);
     }
-    for (let r = 0; r < count - 1; r++) for (let c = 0; c < count - 1; c++) {
-      const a = r * count + c, b = a + 1, d = a + count, e = d + 1;
-      index.push(a, b, d, b, e, d);   // counter-clockwise seen from above: faces point up
-    }
-    geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-    geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
-    geometry.setIndex(index);
-    geometry.computeVertexNormals();
-    scene.add(new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: true })));
-    const wire = new THREE.LineSegments(new THREE.WireframeGeometry(geometry), new THREE.LineBasicMaterial({ color: 0x8ebfce, transparent: true, opacity: 0.08 }));
-    scene.add(wire);
 
     // Target area ring, draped by sampling terrain heights around the circle.
     const ringPts: THREE.Vector3[] = [];
@@ -72,31 +151,53 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     centre.position.copy(toThree([0, 0, terrain.heightAt(0, 0) + 0.1]));
     scene.add(centre);
 
-    // Lander: legs and pads stay level (as in the contact model); body + plume tilt to show thrust direction.
+    // Vehicle: a real NASA 3D model (display only), standing on the contact plane. Small discs mark the four
+    // contact points the physics uses. The model and plume tilt to show the thrust direction.
     const lander = new THREE.Group();
-    const metal = new THREE.MeshStandardMaterial({ color: 0xd9dde2, metalness: 0.3, roughness: 0.5 });
-    const gold = new THREE.MeshStandardMaterial({ color: 0xc9a54a, metalness: 0.6, roughness: 0.4 });
-    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
-      const pad = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.08, 12), metal);
-      pad.position.set(dx * padRadiusM, 0.04, -dy * padRadiusM);
+    const padMat = new THREE.MeshStandardMaterial({ color: 0x3a3f46, metalness: 0.4, roughness: 0.6 });
+    for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+      const pad = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.06, 16), padMat);
+      pad.position.set(dx * padRadiusM, 0.03, dz * padRadiusM);
       lander.add(pad);
-      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.2, 6), metal);
-      leg.position.set(dx * padRadiusM * 0.6, 0.9, -dy * padRadiusM * 0.6);
-      leg.lookAt(new THREE.Vector3(0, 1.7, 0));
-      leg.rotateX(Math.PI / 2);
-      lander.add(leg);
     }
     const tiltGroup = new THREE.Group();
-    tiltGroup.position.set(0, 1.7, 0);
-    const body = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.3, 1.4, 16), gold);
-    body.position.y = 0.4;
-    tiltGroup.add(body);
-    const plume = new THREE.Mesh(new THREE.ConeGeometry(0.45, 1, 16, 1, true), new THREE.MeshBasicMaterial({ color: 0xffd28a, transparent: true, opacity: 0.75, side: THREE.DoubleSide }));
-    plume.rotation.x = Math.PI;
-    tiltGroup.add(plume);
     lander.add(tiltGroup);
-    lander.scale.set(1, exaggeration, 1);
+    const displayHeight = 6 * landerScale;      // metres on screen; 1× ≈ the lander's real size
+    const loader = new GLTFLoader().setDRACOLoader(new DRACOLoader().setDecoderPath("/draco/"));
+    let vehicle: THREE.Object3D | null = null;
+    let cancelledLoad = false;
+    onVehicleStatus?.("loading");
+    loader.load(vehicleModelUrl, (asset) => {
+      if (cancelledLoad) return;
+      const model = asset.scene;
+      let box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      if (size.z > size.y && size.z > size.x) model.rotateX(-Math.PI / 2);      // stand the long axis upright
+      else if (size.x > size.y) model.rotateZ(Math.PI / 2);
+      box = new THREE.Box3().setFromObject(model);
+      model.scale.setScalar(displayHeight / box.getSize(new THREE.Vector3()).y);
+      box = new THREE.Box3().setFromObject(model);
+      const centre = box.getCenter(new THREE.Vector3());
+      model.position.sub(new THREE.Vector3(centre.x, box.min.y, centre.z));   // base centre at the contact plane
+      model.traverse((o) => { if (o instanceof THREE.Mesh) { o.castShadow = true; o.receiveShadow = true; } });
+      const holder = new THREE.Group();
+      holder.add(model);
+      tiltGroup.add(holder);
+      vehicle = holder;
+      onVehicleStatus?.("ready");
+    }, undefined, () => { if (!cancelledLoad) onVehicleStatus?.("failed"); });
+    // Plume from the base of the model: bright core + soft glow (additive), plus a light on the ground.
+    const additive = (color: number, opacity: number) => new THREE.MeshBasicMaterial({ color, transparent: true, opacity, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false });
+    const plumeScale = Math.max(1, displayHeight / 6);
+    const core = new THREE.Mesh(new THREE.ConeGeometry(0.3 * plumeScale, 1, 20, 1, true), additive(0xfff1d0, 0.95));
+    const glow = new THREE.Mesh(new THREE.ConeGeometry(0.75 * plumeScale, 1, 20, 1, true), additive(0xff9f4a, 0.4));
+    for (const m of [core, glow]) { m.rotation.x = Math.PI; tiltGroup.add(m); }
+    const engineLight = new THREE.PointLight(0xffa860, 0, 40 * plumeScale, 1.5);
+    engineLight.position.y = -1;
+    tiltGroup.add(engineLight);
     scene.add(lander);
+    const followOffset = new THREE.Vector3(-2.1, 1.1, 2.5).multiplyScalar(Math.max(8, displayHeight));   // keeps the model ~30% of the view
+    const lookHeight = new THREE.Vector3(0, displayHeight * 0.4, 0);
 
     // Drop line from the lander to the terrain below: keeps the lander findable and shows its height.
     const dropGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
@@ -110,8 +211,8 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     scene.add(trail);
 
     const start = store.get().state.pos;
-    controls.target.copy(toThree(start));
-    camera.position.copy(toThree(start)).add(new THREE.Vector3(-45, 25, 55));
+    controls.target.copy(toThree(start)).add(lookHeight);
+    camera.position.copy(toThree(start)).add(followOffset);
     let lastTarget = controls.target.clone();
     let lastTrailLength = -1;
     let wasOverview = false;
@@ -144,10 +245,16 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
       const dir = thrustDirection(s.tilt[0], s.tilt[1]);
       const up = new THREE.Vector3(dir[0], dir[2], -dir[1]).normalize();
       tiltGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), up);
-      const len = s.thrustN > 0 ? 0.8 + 5 * s.throttle : 0;
-      plume.visible = len > 0;
-      plume.scale.set(1, len, 1);
-      plume.position.y = -0.3 - len / 2;
+      // Plume length follows the applied throttle; the flicker is cosmetic and never touches the simulation.
+      const len = s.thrustN > 0 ? (1 + 6 * s.throttle) * plumeScale : 0;
+      const flicker = 0.9 + 0.1 * Math.sin(performance.now() / 23) * Math.sin(performance.now() / 61);
+      for (const [m, widen] of [[core, 1], [glow, 1.15]] as const) {
+        m.visible = len > 0;
+        m.scale.set(widen * flicker, len * flicker * widen, widen * flicker);
+        m.position.y = -(len * flicker * widen) / 2;
+      }
+      engineLight.intensity = len > 0 ? (6 + 30 * s.throttle * flicker) * plumeScale : 0;
+      void vehicle;
       if (snap.trail.length !== lastTrailLength) {
         trailGeo.setFromPoints(snap.trail.map(toThree));
         lastTrailLength = snap.trail.length;
@@ -156,10 +263,10 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
       if (overviewRef.current !== wasOverview) {
         wasOverview = overviewRef.current;
         if (wasOverview) { controls.target.set(0, p.y * 0.3, 0); camera.position.set(-1600, 1400, 1800); }
-        else { controls.target.copy(p); camera.position.copy(p).add(new THREE.Vector3(-45, 25, 55)); }
+        else { controls.target.copy(p).add(lookHeight); camera.position.copy(p).add(followOffset); }
         lastTarget = controls.target.clone();
       } else if (!wasOverview) {
-        const delta = p.clone().sub(lastTarget);
+        const delta = p.clone().add(lookHeight).sub(lastTarget);
         controls.target.add(delta);
         camera.position.add(delta);
         lastTarget = controls.target.clone();
@@ -169,13 +276,15 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     };
     render();
     return () => {
+      cancelledLoad = true;
       cancelAnimationFrame(frame);
       observer.disconnect();
       controls.dispose();
       renderer.dispose();
-      geometry.dispose();
+      disposables.forEach((d) => d.dispose());
+      if (terrainModel) scene.remove(terrainModel);
       el.removeChild(renderer.domElement);
     };
-  }, [terrain, store, exaggeration, targetRadiusM, padRadiusM]);
+  }, [terrain, store, exaggeration, targetRadiusM, padRadiusM, landerScale, terrainModel, vehicleModelUrl, onVehicleStatus]);
   return <div ref={host} className="sim-scene" aria-label="3D view of the simulated descent. Drag to orbit, scroll to zoom." role="img" />;
 }
