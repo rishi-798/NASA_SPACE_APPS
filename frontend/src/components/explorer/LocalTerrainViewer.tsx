@@ -792,7 +792,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           };
           material.customProgramCacheKey = () => 'lunar-neutral-regolith-v1';
           terrain.traverse(child => { if(child instanceof THREE.Mesh) child.material=material; });
-          for (const context of [skirtMesh,rimMesh]) {
+          for (const context of [landscapeMesh,underCapMesh]) {
             const positions=context.geometry.getAttribute('position');
             const uv=new Float32Array(positions.count*2);
             for(let i=0;i<positions.count;i++){uv[i*2]=positions.getX(i)/24;uv[i*2+1]=positions.getY(i)/24;}
