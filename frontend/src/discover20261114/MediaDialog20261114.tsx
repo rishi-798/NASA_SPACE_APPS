@@ -1,17 +1,11 @@
 // 2026-11-14 — native modal keeps focus within the open image details.
-import { useEffect, useRef } from "react";
+import { useDialogFocus20261114 } from "./useDialogFocus20261114";
 import type { MediaEntry } from "./mediaClient20261114";
 
 export function MediaDialog20261114({ entry, onDismiss, saved, onToggle, notice }: {
   entry: MediaEntry; onDismiss: () => void; saved?: boolean; onToggle?: () => void; notice?: string;
 }) {
-  const dialog = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const element = dialog.current;
-    if (!element) return;
-    element.showModal();
-    return () => element.close();
-  }, []);
+  const dialog = useDialogFocus20261114();
   return <dialog ref={dialog} className="media-dialog" aria-labelledby="media-detail-title"
     onCancel={event => { event.preventDefault(); onDismiss(); }}
     onClick={event => { if (event.target === dialog.current) onDismiss(); }}>

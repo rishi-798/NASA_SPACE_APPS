@@ -1,17 +1,12 @@
 // 2026-11-14 — a native modal drawer for the device-local collection.
-import { useEffect, useRef } from "react";
+import { useDialogFocus20261114 } from "./useDialogFocus20261114";
 import type { MediaEntry } from "./mediaClient20261114";
 
 export function CollectionDrawer20261114({ items, onDismiss, onOpen, onRemove }: {
   items: MediaEntry[]; onDismiss: () => void;
   onOpen: (entry: MediaEntry) => void; onRemove: (entry: MediaEntry) => void;
 }) {
-  const drawer = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const element = drawer.current;
-    element?.showModal();
-    return () => element?.close();
-  }, []);
+  const drawer = useDialogFocus20261114();
   return <dialog ref={drawer} className="media-dialog media-drawer" aria-labelledby="saved-title"
     onCancel={event => { event.preventDefault(); onDismiss(); }}>
     <div className="media-dialog-top"><span>YOUR COLLECTION</span><button onClick={onDismiss}>Close ×</button></div>
