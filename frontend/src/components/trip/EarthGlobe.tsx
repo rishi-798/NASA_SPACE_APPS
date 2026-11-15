@@ -31,13 +31,13 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true; controls.enablePan = false; controls.minDistance = 1.3; controls.maxDistance = 5;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const sun = point(5, -5, 1).normalize();
+    const sun = point(25, -15, 1).normalize();
     // Keep the original lighting angle fixed in camera space as the user orbits.
     camera.lookAt(0, 0, 0);
     const cameraSun = sun.clone().applyQuaternion(camera.quaternion.clone().invert());
-    const light = new THREE.DirectionalLight(0xffffff, 3.0); light.position.copy(sun.clone().multiplyScalar(5)); scene.add(light);
-    scene.add(new THREE.AmbientLight(0x8aa4c9, .035));
-    const geometry = new THREE.SphereGeometry(1, 288, 192);
+    const light = new THREE.DirectionalLight(0xffffff, 3.2); light.position.copy(sun.clone().multiplyScalar(5)); scene.add(light);
+    scene.add(new THREE.AmbientLight(0x8aa4c9, .06));
+    const geometry = new THREE.SphereGeometry(1, 384, 256);
     const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .85, metalness: 0 });
     const globe = new THREE.Group(); scene.add(globe);
     const earth = new THREE.Mesh(geometry, material); globe.add(earth);
@@ -52,13 +52,13 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
       t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); textures.push(t); return t;
     });
     const cloudOffset = { value: 0 };
-    const cloudMat = new THREE.MeshPhongMaterial({ transparent:true, opacity:.80, depthWrite:false, color:0xffffff });
-    const clouds = new THREE.Mesh(new THREE.SphereGeometry(1.011,288,192),cloudMat);globe.add(clouds);
+    const cloudMat = new THREE.MeshPhongMaterial({ transparent:true, opacity:.42, depthWrite:false, color:0xffffff });
+    const clouds = new THREE.Mesh(new THREE.SphereGeometry(1.035,256,192),cloudMat);globe.add(clouds);
     const atmosphereMat = new THREE.ShaderMaterial({ transparent:true, depthWrite:false, side:THREE.FrontSide,
       uniforms: { sun:{value:sun} },
       vertexShader:`varying vec3 vW;void main(){vW=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
       fragmentShader:`uniform vec3 sun;varying vec3 vW;void main(){
-        vec3 o=cameraPosition;vec3 d=normalize(vW-o);float b=dot(o,d);float outer=b*b-dot(o,o)+1.025*1.025;
+        vec3 o=cameraPosition;vec3 d=normalize(vW-o);float b=dot(o,d);float outer=b*b-dot(o,o)+1.048*1.048;
         if(outer<0.)discard;float start=-b-sqrt(outer);float end=-b+sqrt(outer);
         float inner=b*b-dot(o,o)+1.;if(inner>=0.)end=min(end,-b-sqrt(inner));
         float stepSize=max(0.,end-start)/12.;float optical=0.;float illumination=0.;
@@ -67,36 +67,52 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
         float alpha=1.-exp(-optical*45.);float lit=illumination/max(optical,.00001);
         vec3 tint=mix(vec3(.035,.10,.24),vec3(.30,.55,1.),lit);
         gl_FragColor=vec4(tint,alpha*(.08+.92*lit));}` });
-    const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(1.025,96,64),atmosphereMat);scene.add(atmosphere);
+    const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(1.048,96,64),atmosphereMat);scene.add(atmosphere);
     void Promise.all([load('daymap',true),load('nightmap',true),load('clouds'),load('normal'),load('specular'),loader.loadAsync('/earth/tutorial-topography.png')]).then(([day,nights,cloud,normal,spec,height])=>{
       if(disposed)return;
-      material.map=day;material.normalMap=normal;material.normalScale.set(1.85,1.85);textures.push(height); material.displacementMap=height;material.displacementScale=.0085;
+      material.map=day;material.normalMap=normal;material.normalScale.set(2.8,2.8);textures.push(height); material.displacementMap=height;material.displacementScale=.026;
       material.onBeforeCompile = shader => {
         shader.uniforms.oceanMask={value:spec};shader.uniforms.cityMap={value:nights};shader.uniforms.sunDirection={value:sun};shader.uniforms.localSun=localSun;shader.uniforms.cloudMask={value:cloud};shader.uniforms.cloudOffset=cloudOffset;shader.uniforms.topoMap={value:height};
+        shader.vertexShader = shader.vertexShader.replace('#include <displacementmap_vertex>', `#include <displacementmap_vertex>
+          #ifdef USE_DISPLACEMENTMAP
+            vec2 dUvV = vec2(1.0 / 4096.0, 1.0 / 2048.0) * 2.0;
+            float dE = texture2D(displacementMap, vDisplacementMapUv + vec2(dUvV.x, 0.0)).x - texture2D(displacementMap, vDisplacementMapUv - vec2(dUvV.x, 0.0)).x;
+            float dN = texture2D(displacementMap, vDisplacementMapUv + vec2(0.0, dUvV.y)).x - texture2D(displacementMap, vDisplacementMapUv - vec2(0.0, dUvV.y)).x;
+            vec3 tangent = normalize(vec3(-sin(vDisplacementMapUv.x * 6.2831853), 0.0, -cos(vDisplacementMapUv.x * 6.2831853)));
+            vec3 bitangent = cross(objectNormal, tangent);
+            vec3 displacedObjectNormal = normalize(objectNormal - (tangent * dE + bitangent * dN) * (displacementScale * 280.0));
+            transformedNormal = normalMatrix * displacedObjectNormal;
+          #endif`);
         shader.fragmentShader='uniform sampler2D oceanMask;uniform sampler2D cityMap;uniform vec3 sunDirection;uniform vec3 localSun;uniform sampler2D cloudMask;uniform float cloudOffset;uniform sampler2D topoMap;\n'+shader.fragmentShader;
         shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
           float ocean=texture2D(oceanMask,vMapUv).r;
           float grey=dot(diffuseColor.rgb,vec3(.2126,.7152,.0722));
           diffuseColor.rgb=mix(diffuseColor.rgb,vec3(grey)*vec3(.70,.85,1.),ocean*.70);
           float elevation=texture2D(topoMap,vMapUv).r;
-          vec2 dUv=vec2(0.0006,0.0006);
+          vec2 dUv=vec2(1.0 / 4096.0, 1.0 / 2048.0) * 1.5;
           float eR=texture2D(topoMap,vMapUv+vec2(dUv.x,0.0)).r;
           float eL=texture2D(topoMap,vMapUv-vec2(dUv.x,0.0)).r;
           float eU=texture2D(topoMap,vMapUv+vec2(0.0,dUv.y)).r;
           float eD=texture2D(topoMap,vMapUv-vec2(0.0,dUv.y)).r;
-          vec2 slope=vec2(eR-eL,eU-eD)*18.0;
-          float terrainShade=clamp(dot(slope,localSun.xy)*1.5,-0.25,0.35)*(1.0-ocean);
-          diffuseColor.rgb*=(1.0+terrainShade);
+          vec2 slope=vec2(eR-eL,eU-eD)*32.0;
+          float relief=clamp(dot(slope,localSun.xy)*2.2,-0.50,0.65);
+          float valleyAo=1.0-clamp(length(slope)*0.35,0.0,0.45);
+          float land=(1.0-ocean);
+          diffuseColor.rgb*=(1.0+relief*land)*(ocean+land*(0.72+0.28*valleyAo));
+          if(elevation>0.42 && land>0.5){
+            float snow=smoothstep(0.42,0.72,elevation);
+            diffuseColor.rgb=mix(diffuseColor.rgb,vec3(0.96,0.97,1.0),snow*0.60);
+          }
           float lat=(vMapUv.y-.5)*3.14159265;float lon=(vMapUv.x-.5)*6.2831853;
           vec3 radial=vec3(cos(lat)*cos(lon),sin(lat),-cos(lat)*sin(lon));
           float solarDot=dot(radial,localSun);
-          float cloudDistance=-solarDot+sqrt(solarDot*solarDot+1.011*1.011-1.);
+          float cloudDistance=-solarDot+sqrt(solarDot*solarDot+1.035*1.035-1.);
           vec3 cloudPoint=normalize(radial+localSun*cloudDistance);
           vec2 cloudUv=vec2(fract(atan(-cloudPoint.z,cloudPoint.x)/6.2831853+.5-cloudOffset),asin(cloudPoint.y)/3.14159265+.5);
           float cloudShadow=texture2D(cloudMask,cloudUv).g*smoothstep(.02,.15,solarDot);
-          diffuseColor.rgb*=1.-cloudShadow*.32;`);
+          diffuseColor.rgb*=1.-cloudShadow*.30;`);
         shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
-          roughnessFactor=mix(clamp(0.92-elevation*0.25,0.70,0.96),.18,ocean);`);
+          roughnessFactor=mix(clamp(0.96-elevation*0.30,0.65,0.98),.16,ocean);`);
         shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
           vec3 worldNormal=normalize(inverseTransformDirection(normal,viewMatrix));
           float darkness=1.-smoothstep(-.22,-.035,dot(worldNormal,sunDirection));
@@ -108,7 +124,7 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
     }).catch(()=>{if(!disposed)setFailed(true);});
     const pins = launchSites.map(site=>{
       const pin=new THREE.Mesh(new THREE.SphereGeometry(.018,12,8),new THREE.MeshBasicMaterial({color:0xff8b52}));
-      pin.position.copy(point(site.latitude,site.longitude,1.025));pin.userData.site=site;globe.add(pin);return pin;
+      pin.position.copy(point(site.latitude,site.longitude,1.042));pin.userData.site=site;globe.add(pin);return pin;
     });
     const raycaster=new THREE.Raycaster();let down={x:0,y:0};
     const press=(e:PointerEvent)=>{down={x:e.clientX,y:e.clientY};};
