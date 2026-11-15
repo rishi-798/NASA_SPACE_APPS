@@ -6,14 +6,8 @@ export type RegolithTextures = {
   dispose: () => void;
 };
 
-/**
- * Generates isotropic, photometrically calibrated lunar regolith micro-roughness.
- * Calibrated against NASA Apollo surface photography and LRO Diviner radiometric data:
- * - Uniform isotropic powdery regolith grain (no artificial dunes or fake craters).
- * - Calibrated lunar optical reflectance (albedo ~0.12, neutral charcoal gray).
- * - Seamless fractal micro-roughness for high-quality PBR diffuse and tangent normals.
- */
-export function createRegolithTextures(extent: number): RegolithTextures {
+/** Procedural illustrative regolith; not measured reflectance or mapped craters. */
+export function createRegolithTextures(extent: number, enriched = false): RegolithTextures {
   const size = 512;
   const canvas = document.createElement('canvas');
   canvas.width = size;
@@ -115,6 +109,26 @@ export function createRegolithTextures(extent: number): RegolithTextures {
     }
   }
 
+  if (enriched) {
+    // Seeded shallow pits and rims affect shading only, never measured vertices.
+    for (let crater = 0; crater < 70; crater++) {
+      const cx = lcg() * size, cy = lcg() * size, radius = 1.5 + lcg() * 9;
+      for (let oy = -Math.ceil(radius * 1.5); oy <= radius * 1.5; oy++) {
+        for (let ox = -Math.ceil(radius * 1.5); ox <= radius * 1.5; ox++) {
+          const d = Math.hypot(ox, oy) / radius;
+          if (d > 1.5) continue;
+          const x = (Math.floor(cx) + ox + size) % size;
+          const y = (Math.floor(cy) + oy + size) % size;
+          const idx = y * size + x;
+          const profile = -.12 * Math.exp(-d * d * 5) + .045 * Math.exp(-Math.pow((d - .9) * 5, 2));
+          heights[idx] += profile;
+          for (let channel = 0; channel < 3; channel++) {
+            cData[idx * 4 + channel] = Math.max(0, Math.min(255, cData[idx * 4 + channel]! + profile * 32));
+          }
+        }
+      }
+    }
+  }
   ctx.putImageData(colorData, 0, 0);
 
   // Compute subtle tangent-space normal map using seamless Sobel filter
