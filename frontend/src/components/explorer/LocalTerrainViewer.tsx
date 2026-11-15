@@ -539,9 +539,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             if (child instanceof THREE.Mesh && child.material) {
               child.material = new THREE.MeshStandardMaterial({
                 map: regolithTextures.map,
-                color: new THREE.Color(0xa2a5aa),
+                color: new THREE.Color(0xb0b4bc),
                 normalMap: regolithTextures.normalMap,
-                normalScale: new THREE.Vector2(0.45, 0.45),
+                normalScale: new THREE.Vector2(0.85, 0.85),
                 roughness: 0.95,
                 metalness: 0.0,
               });
@@ -559,6 +559,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           colTex.wrapS = colTex.wrapT = THREE.RepeatWrapping;
           colTex.colorSpace = THREE.SRGBColorSpace;
           colTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
+          const repeatScale = Math.max(8, Math.min(64, Math.round(extent / 160)));
+          colTex.repeat.set(repeatScale, repeatScale);
+
           texLoader.load(
             `${import.meta.env.BASE_URL}terrain/moon-01-normal.jpg`,
             normTex => {
@@ -566,6 +569,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
               terrainTextures.add(normTex);
               normTex.wrapS = normTex.wrapT = THREE.RepeatWrapping;
               normTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
+              normTex.repeat.set(repeatScale * 1.5, repeatScale * 1.5);
+
               terrain.traverse(child => {
                 if (child instanceof THREE.Mesh && child.material) {
                   const mat = new THREE.MeshStandardMaterial({

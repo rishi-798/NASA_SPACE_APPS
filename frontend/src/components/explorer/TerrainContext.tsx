@@ -19,6 +19,7 @@ type Props = {
   /** Backend terrain status + profile of the current analysis, when one exists. */
   terrain?: TerrainStatus | null;
   horizon?: HorizonProfile | null;
+  onOpenSurface?: () => void;
 };
 
 function metres(value: number | null) {
@@ -27,7 +28,7 @@ function metres(value: number | null) {
 }
 
 /** Four different terrain products, shown separately so none is mistaken for another. */
-export function TerrainContext({ latitude, longitude, catalogue, onRetry, terrain = null, horizon = null }: Props) {
+export function TerrainContext({ latitude, longitude, catalogue, onRetry, terrain = null, horizon = null, onOpenSurface }: Props) {
   const key = `${latitude},${longitude}`;
   const [identity, setIdentity] = useState<{ key: string; data: ModelIdentity } | null>(null);
   const modelInfo = identity?.key === key ? identity.data : null;
@@ -102,7 +103,49 @@ export function TerrainContext({ latitude, longitude, catalogue, onRetry, terrai
           </div>
           <p style={{ margin: '0.35rem 0 0', fontSize: '0.8rem', color: '#cbd5e1' }}>{modelInfo.note}</p>
           {modelInfo.preview_url && (
-            <img src={modelInfo.preview_url} alt="Scientific terrain render preview" style={{ marginTop: '0.5rem', width: '100%', height: 'auto', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.15)' }} />
+            <div
+              className="terrain-preview-wrapper"
+              onClick={onOpenSurface}
+              style={{ position: 'relative', marginTop: '0.5rem', cursor: onOpenSurface ? 'pointer' : 'default', borderRadius: '4px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.15)' }}
+              title={onOpenSurface ? "Click to view full 3D surface in main window" : undefined}
+            >
+              <img src={modelInfo.preview_url} alt="Scientific terrain render preview" style={{ width: '100%', height: 'auto', display: 'block' }} />
+              {onOpenSurface && (
+                <div
+                  style={{ position: 'absolute', inset: 0, background: 'rgba(15, 23, 42, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s' }}
+                  onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+                  onMouseLeave={e => e.currentTarget.style.opacity = '0'}
+                >
+                  <span style={{ background: '#0284c7', color: '#fff', padding: '0.35rem 0.75rem', borderRadius: '4px', fontSize: '0.78rem', fontWeight: 600 }}>
+                    🔍 View Full 3D Surface
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+          {onOpenSurface && (
+            <button
+              type="button"
+              onClick={onOpenSurface}
+              style={{
+                marginTop: '0.6rem',
+                width: '100%',
+                padding: '0.55rem 0.75rem',
+                background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                color: '#ffffff',
+                border: '1px solid rgba(56, 189, 248, 0.4)',
+                borderRadius: '6px',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.4rem',
+              }}
+            >
+              🏔️ View High-Res 3D Terrain in Main View
+            </button>
           )}
         </div>
       ) : (
