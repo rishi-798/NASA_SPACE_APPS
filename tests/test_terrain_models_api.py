@@ -107,6 +107,22 @@ def test_get_model_lighting_returns_valid_vectors():
     assert err_res.status_code == 422
 
 
+def test_apparent_lighting_matches_topocentric_visibility():
+    from backend.calculations.sun_earth import calculate_visibility
+    time_iso = '1969-11-19T06:54:35Z'
+    geometric = client.get('/api/terrain/models/apollo-12/lighting', params={'time': time_iso})
+    apparent = client.get('/api/terrain/models/apollo-12/lighting', params={'time': time_iso, 'apparent': 'true'})
+    assert geometric.status_code == apparent.status_code == 200
+    data = apparent.json()
+    coords = data['center_coordinates']
+    expected = calculate_visibility(coords['latitude_deg'], coords['longitude_deg'], time_iso, apparent=True)
+    for name in ('sun', 'earth'):
+        assert data[name]['azimuth_deg'] == pytest.approx(expected[name]['azimuth'], abs=1e-8)
+        assert data[name]['elevation_deg'] == pytest.approx(expected[name]['elevation'], abs=1e-8)
+    assert data['sun']['directional_vector_local_z_up'] != geometric.json()['sun']['directional_vector_local_z_up']
+    assert 'Apparent' in data['note']
+
+
 def test_terrain_identity_matches_model_and_site04():
     # Apollo 12 coordinates (-3.0128, -23.4219)
     res_ap12 = client.get("/api/terrain/identity?lat=-3.0128&lon=-23.4219")

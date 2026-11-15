@@ -14,6 +14,18 @@ from backend.spice_kernels import KERNEL_FILES, kernel_directory
 client = TestClient(app)
 
 
+def test_visibility_apparent_option_is_opt_in(monkeypatch):
+    calls = []
+    def fake(*args, **kwargs):
+        calls.append(kwargs)
+        return {'ok': True}
+    monkeypatch.setattr('backend.app.calculate_visibility', fake)
+    url = '/api/visibility?lat=0&lon=0&time=2026-10-03T18:00:00Z'
+    assert client.get(url).status_code == 200
+    assert client.get(url + '&apparent=true').status_code == 200
+    assert calls == [{}, {'apparent': True}]
+
+
 def test_health_endpoint():
     response = client.get("/health")
     assert response.status_code == 200
