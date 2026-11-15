@@ -7,7 +7,7 @@ export type RegolithTextures = {
 };
 
 /** Procedural illustrative regolith; not measured reflectance or mapped craters. */
-export function createRegolithTextures(extent: number, enriched = false): RegolithTextures {
+export function createRegolithTextures(extent: number, enriched = false, hero = false): RegolithTextures {
   const size = enriched ? 1024 : 512;
   const canvas = document.createElement('canvas');
   canvas.width = size;
@@ -95,16 +95,21 @@ export function createRegolithTextures(extent: number, enriched = false): Regoli
       const dust = (lcg() - 0.5) * (enriched ? .025 : .04);
       h += dust;
 
+      if (hero) {
+        // Broad dust deposits, broken clasts and fine grains share one object-space field.
+        h += periodicNoise(x * 32 / size, y * 32 / size, 32) * .11;
+        h += periodicNoise(x * 256 / size, y * 256 / size, 256) * .035;
+      }
       heights[idx] = h;
 
       // Illustrative muted gray; no measured reflectance claim.
-      let tone = 132 + Math.round(h * (enriched ? 42 : 32) + dust * 18);
+      let tone = 132 + Math.round(h * (hero ? 18 : enriched ? 42 : 32) + dust * (hero ? 160 : 18));
       tone = Math.max(90, Math.min(185, tone));
 
       const pIdx = idx * 4;
       cData[pIdx] = tone;
-      cData[pIdx + 1] = Math.round(tone * 0.98);
-      cData[pIdx + 2] = Math.round(tone * 0.96);
+      cData[pIdx + 1] = Math.round(tone * (hero ? 1 : .98));
+      cData[pIdx + 2] = Math.round(tone * (hero ? 1 : .96));
       cData[pIdx + 3] = 255;
     }
   }
@@ -122,7 +127,7 @@ export function createRegolithTextures(extent: number, enriched = false): Regoli
           const idx = y * size + x;
           const profile = -.12 * Math.exp(-d * d * 5) + .045 * Math.exp(-Math.pow((d - .9) * 5, 2));
           heights[idx] += profile;
-          for (let channel = 0; channel < 3; channel++) {
+          for (let channel = 0; !hero && channel < 3; channel++) {
             cData[idx * 4 + channel] = Math.max(0, Math.min(255, cData[idx * 4 + channel]! + profile * 32));
           }
         }
@@ -134,7 +139,7 @@ export function createRegolithTextures(extent: number, enriched = false): Regoli
   // Compute subtle tangent-space normal map using seamless Sobel filter
   const normData = normCtx.createImageData(size, size);
   const nData = normData.data;
-  const strength = enriched ? 1.0 : 0.45; // Subtle powdery micro-slope gradient
+  const strength = hero ? 2.2 : enriched ? 1.0 : 0.45; // Subtle powdery micro-slope gradient
 
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
