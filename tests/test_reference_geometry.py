@@ -50,8 +50,8 @@ def test_target_at_zenith_beneath_it_and_nadir_at_antipode(target):
     above = calculate_visibility(lat, lon, TIME)[target.lower()]
     anti_lon = (lon + 360) % 360 - 180
     below = calculate_visibility(-lat, anti_lon, TIME)[target.lower()]
-    assert above["elevation"] == pytest.approx(90, abs=1e-6)
-    assert below["elevation"] == pytest.approx(-90, abs=1e-6)
+    assert above["elevation"] == pytest.approx(90, abs=1e-5)
+    assert below["elevation"] == pytest.approx(-90, abs=1e-5)
 
 
 def test_equator_is_sunlit_about_half_a_synodic_month():

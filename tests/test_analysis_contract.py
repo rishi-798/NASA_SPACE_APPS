@@ -48,7 +48,10 @@ def test_ready_is_503_when_kernels_missing_and_hides_paths(monkeypatch, tmp_path
 def test_corrupt_kernel_is_detected_by_manifest_hash(monkeypatch, tmp_path):
     real = kernel_directory()
     for name in KERNEL_FILES:
-        (tmp_path / name).symlink_to(real / name)
+        try:
+            (tmp_path / name).symlink_to(real / name)
+        except OSError:
+            shutil.copy(real / name, tmp_path / name)
     shutil.copy(real / "manifest.json", tmp_path / "manifest.json")
     (tmp_path / "naif0012.tls").unlink()
     (tmp_path / "naif0012.tls").write_text("\\begindata\nDELTET/DELTA_T_A = 0\n")
