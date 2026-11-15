@@ -357,7 +357,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       },
       inspect(on) {
         inspectActive = on;
-        ambientLight.intensity = on ? 1.0 : 0.08;
+        ambientLight.intensity = on ? 1.0 : 0.36;
         render();
       },
     };
@@ -448,6 +448,13 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       starfield = createStarfield(skyDistance);
       scene.add(starfield);
 
+      const isYUp = region.gltf_up === 'Y';
+      const minX = box.min.x, maxX = box.max.x;
+      const spanX = Math.max(1, maxX - minX);
+      const minY = isYUp ? -box.max.z : box.min.y;
+      const maxY = isYUp ? -box.min.z : box.max.y;
+      const spanY = Math.max(1, maxY - minY);
+
       terrain.traverse(child => {
         if (!(child instanceof THREE.Mesh)) return;
         child.castShadow = true;
@@ -456,9 +463,10 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         if (positions) {
           const uv = new Float32Array(positions.count * 2);
           for (let i = 0; i < positions.count; i++) {
-            uv[i * 2] = positions.getX(i) / 24;
-            const yCoord = region.gltf_up === 'Y' ? -positions.getZ(i) : positions.getY(i);
-            uv[i * 2 + 1] = yCoord / 24;
+            const px = positions.getX(i);
+            const py = isYUp ? -positions.getZ(i) : positions.getY(i);
+            uv[i * 2] = (px - minX) / spanX;
+            uv[i * 2 + 1] = (py - minY) / spanY;
           }
           child.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
         }
@@ -477,9 +485,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             if (child instanceof THREE.Mesh && child.material) {
               child.material = new THREE.MeshStandardMaterial({
                 map: regolithTextures.map,
-                color: new THREE.Color(0xa2a5aa),
+                color: new THREE.Color(0xb0b4bc),
                 normalMap: regolithTextures.normalMap,
-                normalScale: new THREE.Vector2(0.45, 0.45),
+                normalScale: new THREE.Vector2(0.85, 0.85),
                 roughness: 0.95,
                 metalness: 0.0,
               });
@@ -497,6 +505,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           colTex.wrapS = colTex.wrapT = THREE.RepeatWrapping;
           colTex.colorSpace = THREE.SRGBColorSpace;
           colTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
+          const repeatScale = Math.max(8, Math.min(64, Math.round(extent / 160)));
+          colTex.repeat.set(repeatScale, repeatScale);
+
           texLoader.load(
             `${import.meta.env.BASE_URL}terrain/lunar-regolith-normal.png`,
             normTex => {
@@ -504,31 +515,18 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
               terrainTextures.add(normTex);
               normTex.wrapS = normTex.wrapT = THREE.RepeatWrapping;
               normTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
+              normTex.repeat.set(repeatScale * 1.5, repeatScale * 1.5);
+
               terrain.traverse(child => {
                 if (child instanceof THREE.Mesh && child.material) {
                   const mat = new THREE.MeshStandardMaterial({
                     map: colTex,
-                    color: new THREE.Color(0xa2a5aa),
+                    color: new THREE.Color(0xd2d6dc),
                     normalMap: normTex,
                     normalScale: new THREE.Vector2(1.8, 1.8),
-                    roughness: 1,
-                    metalness: 0,
+                    roughness: 0.92,
+                    metalness: 0.02,
                   });
-                  // Two differently scaled samples soften visible repetition while adding
-                  // the fine, illustrative bump used in the reference material tutorials.
-                  mat.onBeforeCompile = shader => {
-                    shader.fragmentShader = shader.fragmentShader.replace(
-                      '#include <normal_fragment_maps>',
-                      `#ifdef USE_NORMALMAP_TANGENTSPACE
-                        vec3 coarse = texture2D(normalMap, vNormalMapUv).xyz * 2.0 - 1.0;
-                        vec3 fine = texture2D(normalMap, vNormalMapUv * 2.73 + vec2(0.17, 0.43)).xyz * 2.0 - 1.0;
-                        vec3 detail = normalize(vec3((coarse.xy * 0.7 + fine.xy * 0.3) * normalScale, 1.0));
-                        normal = normalize(tbn * detail);
-                      #else
-                        #include <normal_fragment_maps>
-                      #endif`
-                    );
-                  };
                   child.material = mat;
                   if (detail && detailSource === child) detail.material = mat;
                   mat.needsUpdate = true;

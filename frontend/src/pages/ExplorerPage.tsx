@@ -61,6 +61,7 @@ function ExplorerWorkspace() {
   const [errorMessage, setErrorMessage] = useState<string>();
   const [playback, dispatchPlayback] = useReducer(playbackReducer, idlePlayback);
   const [speed, setSpeed] = useState(0);
+  const [visualMode, setVisualMode] = useState<"orbit" | "surface">("orbit");
   // Each gate keeps only the newest request's response; changing any input invalidates both.
   const analysisGate = useRef(createRequestGate());
   const comparisonGate = useRef(createRequestGate());
@@ -224,19 +225,70 @@ function ExplorerWorkspace() {
       {searchParams.get("context") && <p className="trip-notice" role="note">{searchParams.get("context")?.slice(0, 500)}</p>}
       <div className="explorer-grid">
         <div className="explorer-visual" data-reveal>
-          <MoonExplorer
-            focusOnMount={Boolean(destination.siteId || destination.location)}
-            observationTime={sceneTime}
-            selectedSite={selectedSite}
-            pickedLocation={pickedLocation}
-            onLocationSelect={pickLocation}
-            onSiteSelect={selectSite}
+          <div className="visual-view-header">
+            <div className="visual-view-toggle" role="group" aria-label="Visual view mode">
+              <button
+                type="button"
+                className={`visual-toggle-btn ${visualMode === "orbit" ? "active" : ""}`}
+                onClick={() => setVisualMode("orbit")}
+              >
+                🌐 Global Moon Orbit
+              </button>
+              <button
+                type="button"
+                className={`visual-toggle-btn ${visualMode === "surface" ? "active" : ""}`}
+                onClick={() => setVisualMode("surface")}
+              >
+                🏔️ 3D Surface Terrain
+              </button>
+            </div>
+            {visualMode === "surface" && (
+              <span className="visual-view-badge">1:1 Measured Topography</span>
+            )}
+          </div>
+
+          {visualMode === "orbit" ? (
+            <>
+              <MoonExplorer
+                focusOnMount={Boolean(destination.siteId || destination.location)}
+                observationTime={sceneTime}
+                selectedSite={selectedSite}
+                pickedLocation={pickedLocation}
+                onLocationSelect={pickLocation}
+                onSiteSelect={selectSite}
+              />
+              {result && active && (
+                <PlaybackControls
+                  playback={playback}
+                  activeTime={active.time}
+                  requestedStart={result.summary.start}
+                  speed={speed}
+                  onSpeed={setSpeed}
+                  dispatch={dispatchPlayback}
+                />
+              )}
+            </>
+          ) : (
+            <div className="explorer-surface-hero">
+              <LocalSurfacePane
+                latitude={location.latitude}
+                longitude={location.longitude}
+                observationTime={sceneTime ?? `${DEFAULT_INPUT.startDate}T${DEFAULT_INPUT.startTime}:00Z`}
+                onPick={pickLocation}
+                onOpenGlobal={() => setVisualMode("orbit")}
+              />
+            </div>
+          )}
+
+          <TerrainContext
+            latitude={location.latitude}
+            longitude={location.longitude}
+            catalogue={catalogue.state}
+            onRetry={catalogue.retry}
+            terrain={result?.terrain ?? null}
+            horizon={result?.horizon ?? null}
+            onOpenSurface={() => setVisualMode("surface")}
           />
-          {result && active && <PlaybackControls playback={playback} activeTime={active.time} requestedStart={result.summary.start}
-            speed={speed} onSpeed={setSpeed} dispatch={dispatchPlayback} />}
-          <TerrainContext latitude={location.latitude} longitude={location.longitude}
-            catalogue={catalogue.state} onRetry={catalogue.retry}
-            terrain={result?.terrain ?? null} horizon={result?.horizon ?? null} />
         </div>
         <aside className="explorer-sidebar" data-reveal>
           <ExplorerControls
@@ -267,8 +319,10 @@ function ExplorerWorkspace() {
         </aside>
       </div>
 
-      <LocalSurfacePane latitude={location.latitude} longitude={location.longitude}
-        observationTime={sceneTime ?? `${DEFAULT_INPUT.startDate}T${DEFAULT_INPUT.startTime}:00Z`} onPick={pickLocation} />
+      {visualMode === "orbit" && (
+        <LocalSurfacePane latitude={location.latitude} longitude={location.longitude}
+          observationTime={sceneTime ?? `${DEFAULT_INPUT.startDate}T${DEFAULT_INPUT.startTime}:00Z`} onPick={pickLocation} />
+      )}
 
       <div className="analysis-grid" data-reveal>
         <HorizonContainer data={active} profile={result?.horizon ?? null} />

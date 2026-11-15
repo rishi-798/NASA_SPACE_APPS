@@ -6,6 +6,7 @@ import { ConditionsPanel } from "../components/explorer/ConditionsPanel";
 import { MissionDossierModal } from "../components/trip/MissionDossierModal";
 import { LaunchWeatherPanel } from "../components/trip/LaunchWeatherPanel";
 import { TerrainContext } from "../components/explorer/TerrainContext";
+import { LocalSurfacePane } from "../components/explorer/LocalSurfacePane";
 import { LoadingScreen } from "../components/ui/LoadingScreen";
 import { useLoadingScreen } from "../components/ui/useLoadingScreen";
 import { useAnnounce, useCancelOnLeave, useVoiceGuide } from "../components/voice/voiceContext";
@@ -50,6 +51,7 @@ export function TripPage() {
     return restoreMission(saved, launchSites.map((site) => site.id), rockets.map((rocket) => rocket.id));
   });
   const [liftoffUtc, setLiftoffUtc] = useState("");
+  const [tripMoonView, setTripMoonView] = useState<"globe" | "surface">("globe");
   const [query, setQuery] = useState("");
   const [destinationQuery, setDestinationQuery] = useState("");
   const [coordinateText, setCoordinateText] = useState("");
@@ -182,13 +184,54 @@ export function TripPage() {
         <label className="trip-catalogue-toggle"><input type="checkbox" checked={showOtherLaunchers} onChange={(event) => setShowOtherLaunchers(event.target.checked)} />Include international and commercial catalogue entries</label>
         <p className="trip-note">The collection includes NASA and simplified community models; some launchers still have no model. Pad associations are historical context, not flight approval.</p>
       </>}
-      {mission.stage === "moon" && <div className="trip-layout"><div className="trip-visual trip-moon-visual"><div className="trip-moon-canvas"><MoonMap onLocationSelect={selectLocation} onSiteSelect={selectSite} selectedLocation={landing} showGrid={false} showAxis={false} controlsRef={controls} /></div><div className="trip-map-tools"><button onClick={() => controls.current?.zoom(1)} aria-label="Zoom in">+</button><button onClick={() => controls.current?.zoom(-1)} aria-label="Zoom out">−</button><button onClick={() => controls.current?.setView("near")}>Reset view</button></div></div>
+      {mission.stage === "moon" && <div className="trip-layout"><div className="trip-visual trip-moon-visual">
+        <div className="visual-view-header">
+          <div className="visual-view-toggle" role="group" aria-label="Moon view selector">
+            <button
+              type="button"
+              className={`visual-toggle-btn ${tripMoonView === "globe" ? "active" : ""}`}
+              onClick={() => setTripMoonView("globe")}
+            >
+              🌐 Global Moon Orbit
+            </button>
+            <button
+              type="button"
+              className={`visual-toggle-btn ${tripMoonView === "surface" ? "active" : ""}`}
+              onClick={() => setTripMoonView("surface")}
+            >
+              🏔️ 3D Surface Topography
+            </button>
+          </div>
+          {tripMoonView === "surface" && (
+            <span className="visual-view-badge">1:1 Measured Topography</span>
+          )}
+        </div>
+
+        {tripMoonView === "globe" ? (
+          <>
+            <div className="trip-moon-canvas"><MoonMap onLocationSelect={selectLocation} onSiteSelect={selectSite} selectedLocation={landing} showGrid={false} showAxis={false} controlsRef={controls} /></div>
+            <div className="trip-map-tools"><button onClick={() => controls.current?.zoom(1)} aria-label="Zoom in">+</button><button onClick={() => controls.current?.zoom(-1)} aria-label="Zoom out">−</button><button onClick={() => controls.current?.setView("near")}>Reset view</button></div>
+          </>
+        ) : (
+          <div className="trip-surface-full-view">
+            <LocalSurfacePane
+              latitude={landing?.latitude ?? 26.1322}
+              longitude={landing?.longitude ?? 3.6339}
+              observationTime={mission.utcTime}
+              onPick={(pt) => {
+                selectLocation({ latitude: pt.latitude, longitude: pt.longitude, name: pt.name });
+              }}
+              onOpenGlobal={() => setTripMoonView("globe")}
+            />
+          </div>
+        )}
+      </div>
         <aside className="trip-panel"><label className="trip-field">Find a Moon destination<input value={destinationQuery} onChange={(event) => setDestinationQuery(event.target.value)} placeholder="Apollo, Lunokhod, Athena..." /></label>
           <div className="trip-site-list">{filteredDestinations.map((site) => <button className="trip-site-option" key={site.id} aria-pressed={landing?.destinationId === site.id} onClick={() => { if (controls.current) controls.current.flyToSite(site.id); else selectSite(site.id); }}><span>{site.category}</span><strong>{site.name}</strong><small>{formatCoordinate(site.latitude, "lat")} / {formatCoordinate(site.longitude, "lon")}</small></button>)}</div>
           {!filteredDestinations.length && <p role="status">No matching destinations. Try a mission name or enter coordinates below.</p>}
           <form onSubmit={enterCoordinates}><label className="trip-field">Or enter exact lunar coordinates<input value={coordinateText} onChange={(event) => setCoordinateText(event.target.value)} placeholder="Latitude, longitude" aria-describedby="trip-coordinate-note" /></label><button className="trip-secondary" type="submit">Select coordinates</button><p id="trip-coordinate-note" className="trip-note" role={coordinateError ? "alert" : undefined}>{coordinateError || "Planetocentric latitude, east-positive longitude."}</p></form>
           {landing && <div className="trip-selected"><strong>{landing.name}</strong><p>{landing.latitude.toFixed(6)}°, {landing.longitude.toFixed(6)}°</p></div>}
-          {landing && <TerrainContext latitude={landing.latitude} longitude={landing.longitude} catalogue={catalogue.state} onRetry={catalogue.retry} terrain={analysis?.terrain ?? null} horizon={analysis?.horizon ?? null} />}
+          {landing && <TerrainContext latitude={landing.latitude} longitude={landing.longitude} catalogue={catalogue.state} onRetry={catalogue.retry} terrain={analysis?.terrain ?? null} horizon={analysis?.horizon ?? null} onOpenSurface={() => setTripMoonView("surface")} />}
           <div className="trip-unavailable" style={{ borderLeftColor: "var(--accent)" }}><CheckCircle weight="fill" color="#a2ecd3" /><div><strong>Topographic Navigation Mode</strong><p>Calibrated coordinate projection with real-time NAIF SPICE solar lighting and Earth line-of-sight vectors.</p></div></div>
           <button className="trip-primary" disabled={!landing} onClick={() => go("landing")}>Review landing point <ArrowRight /></button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button></aside></div>}
       {(mission.stage === "landing" || mission.stage === "reveal") && landing && <>
@@ -201,7 +244,7 @@ export function TripPage() {
             {mission.stage === "landing" ? <><button className="trip-secondary" disabled={currentPreview?.state === "loading"} onClick={() => void analyze(false)}>{currentPreview?.state === "loading" ? "Analyzing..." : currentPreview?.state === "error" ? "Retry analysis" : "Analyze landing"}</button><button className="trip-primary" disabled={!currentPreview?.result} onClick={() => void analyze(true)}>Plan this landing <ArrowRight /></button><button className="trip-secondary" onClick={() => go("moon")}>Change landing point</button></> : <><p className="trip-note">Flight duration, launch window, fuel and delta-v are pending a trajectory solver. No generic top-speed estimate is used.</p><button className="trip-secondary" onClick={() => go("earth")}>Edit departure</button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button><button className="trip-primary" onClick={() => go("moon")}>Explore landing site <ArrowRight /></button></>}
             {analysis && <MissionDossierModal latitude={landing.latitude} longitude={landing.longitude} start={mission.utcTime}
               launchSiteId={departure?.id} launchVehicle={rocket?.name} liftoffUtc={liftoffUtc ? `${liftoffUtc}:00Z` : undefined} missionName={landing.name} />}
-            <TerrainContext latitude={landing.latitude} longitude={landing.longitude} catalogue={catalogue.state} onRetry={catalogue.retry} terrain={analysis?.terrain ?? null} horizon={analysis?.horizon ?? null} />
+            <TerrainContext latitude={landing.latitude} longitude={landing.longitude} catalogue={catalogue.state} onRetry={catalogue.retry} terrain={analysis?.terrain ?? null} horizon={analysis?.horizon ?? null} onOpenSurface={() => { setTripMoonView("surface"); go("moon"); }} />
           </aside></div>
         <div className="trip-analysis"><ConditionsPanel showDossier={false} conditions={analysis?.conditions ?? null} state={mission.stage === "reveal" ? "success" : currentPreview?.state ?? "idle"} observationTime={mission.utcTime} errorMessage={currentPreview?.error} terrain={analysis?.terrain ?? null} siteId={landing.destinationId} latitude={landing.latitude} longitude={landing.longitude}
             onExplain={analysis && landing ? () => guide.say("explain", `trip:explain:${analysis.conditions.time}`, explainResult({ siteId: landingSites.find((site) => site.latitude === landing.latitude && site.longitude === landing.longitude)?.id ?? null, siteName: landing.name ?? "Selected point", conditions: analysis.conditions, terrain: analysis.terrain }), { force: true, explicit: true }) : undefined} />
