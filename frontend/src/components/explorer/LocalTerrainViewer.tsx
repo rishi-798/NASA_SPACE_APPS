@@ -47,7 +47,24 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
   const limit = 325;
   const rocks = previous ?? new THREE.InstancedMesh(scanned?.geometry ?? makeRockGeometry(),
     scanned?.material ?? new THREE.MeshStandardMaterial({ color: 0x41413f, roughness: 1, metalness: 0 }), limit);
-  if (!previous) { rocks.castShadow = true; rocks.receiveShadow = true; rocks.frustumCulled = false; scene.add(rocks); }
+  if (!previous) {
+    rocks.castShadow = true; rocks.receiveShadow = true; rocks.frustumCulled = false; scene.add(rocks);
+    const canvas = document.createElement('canvas'); canvas.width = canvas.height = 64;
+    const context = canvas.getContext('2d');
+    if (context) {
+      const gradient = context.createRadialGradient(32, 32, 4, 32, 32, 32);
+      gradient.addColorStop(0, 'rgba(0,0,0,0.55)'); gradient.addColorStop(1, 'rgba(0,0,0,0)');
+      context.fillStyle = gradient; context.fillRect(0, 0, 64, 64);
+      const texture = new THREE.CanvasTexture(canvas);
+      const shadows = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1),
+        new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1 }), limit);
+      shadows.material.addEventListener('dispose', () => texture.dispose());
+      shadows.frustumCulled = false; shadows.name = 'illustrative-rock-contact';
+      rocks.userData.contactShadows = shadows;
+      rocks.add(shadows);
+    }
+  }
+  const shadows = rocks.userData.contactShadows as THREE.InstancedMesh | undefined;
   const transform = new THREE.Object3D();
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), point = new THREE.Vector3();
   const ab = new THREE.Vector3(), ac = new THREE.Vector3(), normal = new THREE.Vector3();
@@ -82,12 +99,20 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
       const scale = .035 + Math.pow(random(), 3) * .42;
       transform.scale.set(scale, scale * (.65 + random() * .7), scale * (.5 + random() * .55));
       transform.updateMatrix(); rocks.setMatrixAt(slot, transform.matrix);
+      if (shadows) {
+        const shadow = new THREE.Object3D();
+        shadow.position.copy(transform.position).addScaledVector(normal, .025);
+        shadow.quaternion.copy(transform.quaternion);
+        shadow.scale.set(scale * 2.7, scale * 2.7, 1);
+        shadow.updateMatrix(); shadows.setMatrixAt(slot, shadow.matrix);
+      }
       const shade = .85 + random() * .15;
       tint.setRGB(shade, shade, shade * .98);
       rocks.setColorAt(slot, tint);
     }
   }
   rocks.count = count; rocks.instanceMatrix.needsUpdate = true;
+  if (shadows) { shadows.count = count; shadows.instanceMatrix.needsUpdate = true; }
   if (rocks.instanceColor) rocks.instanceColor.needsUpdate = true;
   return rocks;
 }
@@ -802,7 +827,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       <div className="local-terrain-canvas" ref={host} />
 
       <label><input type="checkbox" checked={showRocks} onChange={e => setShowRocks(e.target.checked)} /> Illustrative rocks and fine relief</label>
-      <p>Nearby rocks and fine surface relief are illustrative. Selected coordinates use the measured terrain; the patch ends at the data boundary. Surface detail uses <a href="https://polyhaven.com/collections/moon" target="_blank" rel="noreferrer">Poly Haven regolith simulant scans</a> when available.</p>
+      <p>Nearby rocks, their contact shading, and fine surface relief are illustrative. Selected coordinates use the measured terrain; the patch ends at the data boundary. Surface detail uses <a href="https://polyhaven.com/collections/moon" target="_blank" rel="noreferrer">Poly Haven regolith simulant scans</a> when available.</p>
       <p role="status">{mode === 'eye' && state.startsWith('Ready.') ? 'Eye-level view · 1.8 m above the selected point' : state}</p>
       <label><input type="checkbox" checked={inspection} onChange={e => setInspection(e.target.checked)} /> Topographic relief light (illustrative)</label>
       {inspection && mode === 'eye' && <p>Relief lighting adds a viewing light and suppresses terrain cast shadows. Switch it off to show calculated Sun and Earth lighting with terrain shadows.</p>}
