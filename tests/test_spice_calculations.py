@@ -15,6 +15,17 @@ pytestmark = pytest.mark.skipif(
     reason="download the SPICE kernels described in backend/kernels/README.md",
 )
 
+
+def test_historical_apparent_sun_and_window_use_corrected_utc():
+    # JPL Horizons apparent Sun at this Surveyor 1-region anchor; the
+    # Horizons comparison site is 1.89 km below the reference sphere.
+    time = '1966-06-02T06:17:36Z'
+    single = calculate_visibility(-2.4745, -43.3398, time)
+    window = calculate_visibility_window(-2.4745, -43.3398, time, time, 30)[0]
+    apparent = calculate_visibility(-2.4745, -43.3398, time, apparent=True)
+    assert window['sun'] == single['sun']
+    assert apparent['sun']['elevation'] == pytest.approx(28.899852, abs=2e-6)
+
 # Snapshot from JPL Horizons: target 10/399, topocentric observer coord@301,
 # geodetic SITE_COORD (east longitude, latitude, 0 km), quantity 4, airless.
 # Horizons uses DE441 and apparent directions; this backend uses DE440s and

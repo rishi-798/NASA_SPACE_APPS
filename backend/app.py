@@ -244,8 +244,11 @@ def visibility(
     lat: float = Query(..., ge=-90, le=90),
     lon: float = Query(..., ge=-180, le=180),
     time: str = Query(...),
+    apparent: bool = Query(False, description="Apply light-time and stellar aberration for apparent directions."),
 ):
     with api_errors():
+        if apparent:
+            return calculate_visibility(lat, lon, time, apparent=True)
         return calculate_visibility(lat, lon, time)
 
 

@@ -7,6 +7,7 @@ import spiceypy
 from spiceypy.utils.exceptions import SpiceyError
 
 from backend.spice_kernels import SPICE_LOCK, load_spice_kernels, spice_code
+from backend.calculations.time_scales import utc_to_et
 
 
 log = logging.getLogger("backend.calculations")
@@ -65,7 +66,7 @@ def _local_angles(vector: np.ndarray, latitude: float, longitude: float) -> tupl
     return azimuth, elevation
 
 
-def calculate_visibility(latitude: float, longitude: float, utc_time: str) -> dict:
+def calculate_visibility(latitude: float, longitude: float, utc_time: str, *, apparent: bool = False) -> dict:
     latitude, longitude = validate_coordinates(latitude, longitude)
     time = parse_utc_time(utc_time)
     output_time = time.isoformat().replace("+00:00", "Z")
@@ -73,7 +74,7 @@ def calculate_visibility(latitude: float, longitude: float, utc_time: str) -> di
     with SPICE_LOCK:
         load_spice_kernels()
         try:
-            et = spiceypy.utc2et(output_time)
+            et = utc_to_et(time)
             _, radii = spiceypy.bodvrd("MOON", "RADII", 3)
             equatorial_radius = float(radii[0])
             flattening = (equatorial_radius - float(radii[2])) / equatorial_radius
@@ -88,11 +89,15 @@ def calculate_visibility(latitude: float, longitude: float, utc_time: str) -> di
 
             bodies = {}
             for name, target in (("sun", "SUN"), ("earth", "EARTH")):
-                moon_to_body, _light_time_seconds = spiceypy.spkpos(
-                    target, et, "J2000", "NONE", "MOON"
-                )
+                correction = "CN+S" if apparent else "NONE"
+                moon_to_body, _light_time_seconds = spiceypy.spkpos(target, et, "J2000", correction, "MOON")
                 distance_km = float(np.linalg.norm(moon_to_body))
-                body_from_site_fixed = j2000_to_fixed @ (moon_to_body - site_j2000)
+                if apparent:
+                    state, _ = spiceypy.spkcpo(target, et, MOON_FRAME, "OBSERVER", correction,
+                                                site_fixed, "MOON", MOON_FRAME)
+                    body_from_site_fixed = state[:3]
+                else:
+                    body_from_site_fixed = j2000_to_fixed @ (moon_to_body - site_j2000)
                 moon_center_to_body_fixed = j2000_to_fixed @ moon_to_body
                 azimuth, elevation = _local_angles(body_from_site_fixed, latitude, longitude)
                 bodies[name] = {
@@ -170,7 +175,7 @@ def calculate_visibility_window(
 
             for dt in timestamps:
                 output_time = dt.isoformat().replace("+00:00", "Z")
-                et = spiceypy.utc2et(output_time)
+                et = utc_to_et(dt)
                 fixed_to_j2000 = spiceypy.pxform(MOON_FRAME, "J2000", et)
                 j2000_to_fixed = spiceypy.pxform("J2000", MOON_FRAME, et)
                 site_j2000 = fixed_to_j2000 @ site_fixed

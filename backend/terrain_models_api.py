@@ -15,12 +15,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import numpy as np
+import spiceypy
 
 from fastapi import APIRouter, HTTPException, Query, Response
 from fastapi.responses import FileResponse
 
 from backend.calculations.sun_earth import calculate_visibility, parse_utc_time
+from backend.calculations.time_scales import utc_to_et
 from backend.errors import ApiError, api_errors
+from backend.spice_kernels import SPICE_LOCK, load_spice_kernels
 
 log = logging.getLogger("backend.terrain_models")
 router = APIRouter(prefix="/api/terrain/models", tags=["terrain-models"])
@@ -504,6 +507,7 @@ def get_model_metadata(model_id: str):
 def get_model_lighting(
     model_id: str,
     time: Optional[str] = Query(None, description="ISO UTC timestamp (e.g. 2026-11-15T12:00:00Z). Defaults to current UTC."),
+    apparent: bool = Query(False, description="Apply light-time and stellar aberration to Sun and Earth directions."),
 ):
     """Computes exact astronomical sub-solar and sub-Earth vectors relative to the 3D model's tangent plane."""
     from backend.local_scenes import scenes
@@ -540,6 +544,18 @@ def get_model_lighting(
         transform = np.asarray(local_scene['local_to_moon_fixed'], dtype=float)
         rotation = transform[:3, :3].T
         site = transform[:3, 3] / 1000
+    apparent_vectors = {}
+    if apparent:
+        try:
+            with SPICE_LOCK:
+                load_spice_kernels()
+                et = utc_to_et(parse_utc_time(target_time))
+                for name, target in (('sun', 'SUN'), ('earth', 'EARTH')):
+                    state, _ = spiceypy.spkcpo(target, et, 'MOON_ME', 'OBSERVER', 'CN+S', site, 'MOON', 'MOON_ME')
+                    apparent_vectors[name] = state[:3]
+        except Exception:
+            log.exception('Apparent terrain lighting calculation failed')
+            raise HTTPException(status_code=503, detail='SPICE ephemeris calculation failed')
     sun_fixed = np.array(vis['sun']['moon_fixed_position_km'])
     earth_fixed = np.array(vis['earth']['moon_fixed_position_km'])
     earth_to_sun = sun_fixed - earth_fixed
@@ -548,7 +564,7 @@ def get_model_lighting(
                          (np.linalg.norm(earth_to_sun) * np.linalg.norm(earth_to_observer)))
 
     def sky_body(name, radius_km):
-        vector = (sun_fixed if name == 'sun' else earth_fixed) - site
+        vector = apparent_vectors[name] if apparent else (sun_fixed if name == 'sun' else earth_fixed) - site
         distance = float(np.linalg.norm(vector))
         local = rotation @ (vector / distance)
         elevation = math.degrees(math.atan2(float(local[2]), math.hypot(float(local[0]), float(local[1]))))
@@ -567,5 +583,5 @@ def get_model_lighting(
         "model_id": spec['id'], "model_name": spec['name'], "time": target_time,
         "center_coordinates": {"latitude_deg": spec['center_lat'], "longitude_deg": spec['center_lon']},
         "sun": sun, "earth": earth,
-        "note": "Geometric SPICE sky at the model anchor; terrain mesh occludes the sky. Earth texture orientation is illustrative.",
+        "note": ("Apparent SPICE directions" if apparent else "Geometric SPICE sky") + " at the model anchor; terrain mesh occludes the sky. Earth phase and texture orientation are illustrative.",
     }
