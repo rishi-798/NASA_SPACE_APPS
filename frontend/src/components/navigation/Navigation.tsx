@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 const links = [
-  { to: "/trip", label: "Plan a trip" },
-  { to: "/explorer", label: "Explorer" },
+  { to: "/explorer", label: "Analyze a site" },
+  { to: "/trip", label: "Plan a trip (optional)" },
   { to: "/missions", label: "Missions" },
   { to: "/timeline", label: "Timeline" },
   { to: "/about", label: "About" },

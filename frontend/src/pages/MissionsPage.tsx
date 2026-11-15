@@ -10,11 +10,15 @@ import { Link } from "react-router-dom";
 import { RouteIntro } from "../components/ui/RouteIntro";
 import { missions, landingSites, missionRecordCount } from "../data/landingSites";
 
+import { missionEvents, missionFacts } from "../data/missionEvents";
+
 export function MissionsPage() {
   const [selectedId, setSelectedId] = useState(missions[0]?.id ?? "");
   const selected = missions.find((m) => m.id === selectedId) ?? missions[0]!;
 
   const explorerUrl = missionExplorerUrl(selected);
+  const facts = missionFacts.find((record) => record.siteId === selected.siteId);
+  const events = missionEvents.filter((event) => event.siteId === selected.siteId);
 
   return (
     <article className="editorial-page missions-page">
@@ -96,7 +100,14 @@ export function MissionsPage() {
               <dt>Payload highlights</dt>
               <dd>{selected.payloads.join(", ")}</dd>
             </div>
+            {facts && <div><dt>Outcome</dt><dd>{facts.outcome}</dd></div>}
           </dl>
+          {events.length > 0 && <ul className="evidence-list" aria-label="Dated events">
+            {events.map((event) => <li key={event.time}>
+              <time dateTime={event.time}>{event.time.slice(0, 10)}{event.approximate ? " (approx.)" : ""}</time> — {event.label}
+              {" "}(<a href={event.source.url} target="_blank" rel="noreferrer">{event.source.name}</a>)
+            </li>)}
+          </ul>}
 
           <div className="mission-actions" style={{ marginTop: "28px" }}>
             {explorerUrl ? <Link className="primary-text-link" to={explorerUrl}>

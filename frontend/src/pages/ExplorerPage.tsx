@@ -1,9 +1,12 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ConditionsPanel } from "../components/explorer/ConditionsPanel";
+import { PlaybackControls } from "../components/explorer/PlaybackControls";
 import { SiteComparison } from "../components/explorer/SiteComparison";
+import { WindowFinder } from "../components/explorer/WindowFinder";
+import { useTerrainCatalogue } from "../components/explorer/useTerrainCatalogue";
 import { ExplorerControls } from "../components/explorer/ExplorerControls";
 import { MoonExplorer } from "../components/explorer/MoonExplorer";
 import { TerrainContext } from "../components/explorer/TerrainContext";
@@ -14,11 +17,21 @@ import { landingSites } from "../data/landingSites";
 import { explorerDestination } from "../lib/missionNavigation";
 import { ApiError, getAnalysis, getComparison } from "../lib/api";
 import type { MoonLocation } from "../MoonMap";
+import { checkRange, type RangeInput } from "../lib/analysisRange";
 import { formatCoordinate } from "../lib/format";
+import { conditionsAt, idlePlayback, playbackReducer, SPEEDS } from "../lib/playback";
+import { createRequestGate } from "../lib/requestGate";
 import type { AnalysisResult, AnalysisState, ComparisonResult } from "../types";
 
-function timestamp(date: string, time: string) {
-  return `${date}T${time}:00Z`;
+const DEFAULT_INPUT: RangeInput = {
+  startDate: "2026-10-03", startTime: "18:00", endDate: "2026-10-04", endTime: "18:00", stepMinutes: "30",
+};
+/** Statement of the horizon model the user should expect, before the backend reports the real one. */
+function horizonExpectation(custom: boolean, latitude: number) {
+  if (!custom) return "Reported by the backend after analysis: terrain-aware only where a LOLA profile exists";
+  return latitude <= -81.3
+    ? "LOLA terrain generated for this point when its data is reachable; otherwise flat horizon, labelled degraded"
+    : "Flat horizon: terrain data exists only poleward of about 81.3° S";
 }
 
 export function ExplorerPage() {
@@ -34,26 +47,39 @@ function ExplorerWorkspace() {
   const initialSite = landingSites.find((site) => site.id === destination.siteId) ?? firstSite;
 
   const [selectedId, setSelectedId] = useState(initialSite.id);
-  const [date, setDate] = useState("2026-10-03");
-  const [time, setTime] = useState("18:00");
+  const [input, setInput] = useState<RangeInput>(DEFAULT_INPUT);
   const [analysisState, setAnalysisState] = useState<AnalysisState>("idle");
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [pickedLocation, setPickedLocation] = useState<MoonLocation | null>(destination.location);
-  const activeRequest = useRef<AbortController | null>(null);
   const [comparison, setComparison] = useState<ComparisonResult | null>(null);
   const [comparisonState, setComparisonState] = useState<AnalysisState>("idle");
   const [comparisonError, setComparisonError] = useState<string>();
-  const comparisonRequest = useRef<AbortController | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [playback, dispatchPlayback] = useReducer(playbackReducer, idlePlayback);
+  const [speed, setSpeed] = useState(0);
+  // Each gate keeps only the newest request's response; changing any input invalidates both.
+  const analysisGate = useRef(createRequestGate());
+  const comparisonGate = useRef(createRequestGate());
 
-  const selectedSite =
-    landingSites.find((site) => site.id === selectedId) ?? firstSite;
+  const selectedSite = landingSites.find((site) => site.id === selectedId) ?? firstSite;
   const location = pickedLocation ?? selectedSite;
-  const conditions = result?.conditions ?? null;
-  useEffect(() => () => {
-    activeRequest.current?.abort();
-    comparisonRequest.current?.abort();
+  const check = useMemo(() => checkRange(input), [input]);
+  const requestedStart = check.ok ? check.range.start : null;
+  // The one authoritative sample: everything below reads `active`, nothing keeps its own time.
+  const active = useMemo(() => (result ? conditionsAt(result, playback.index) : null), [result, playback.index]);
+  const catalogue = useTerrainCatalogue(location.latitude, location.longitude);
+
+  useEffect(() => {
+    const analysis = analysisGate.current, compareGate = comparisonGate.current;
+    return () => { analysis.invalidate(); compareGate.invalidate(); };
   }, []);
+
+  // Playback clock: advances the single sample index; stops itself at the final sample.
+  useEffect(() => {
+    if (!playback.playing) return;
+    const timer = window.setInterval(() => dispatchPlayback({ type: "tick" }), SPEEDS[speed]!.ms);
+    return () => window.clearInterval(timer);
+  }, [playback.playing, speed]);
 
   useGSAP(
     () => {
@@ -77,17 +103,17 @@ function ExplorerWorkspace() {
   );
 
   const resetComparison = useCallback(() => {
-    comparisonRequest.current?.abort();
-    comparisonRequest.current = null;
+    comparisonGate.current.invalidate();
     setComparisonState("idle");
     setComparison(null);
     setComparisonError(undefined);
   }, []);
 
+  /** Any change to the inputs cancels playback, in-flight requests and every outdated result. */
   const resetAnalysis = useCallback(() => {
     resetComparison();
-    activeRequest.current?.abort();
-    activeRequest.current = null;
+    analysisGate.current.invalidate();
+    dispatchPlayback({ type: "load", count: 0 });
     setAnalysisState("idle");
     setResult(null);
     setErrorMessage(undefined);
@@ -105,21 +131,24 @@ function ExplorerWorkspace() {
     resetAnalysis();
   }, [resetAnalysis]);
 
+  function changeInput(patch: Partial<RangeInput>) {
+    setInput((current) => ({ ...current, ...patch }));
+    resetAnalysis();
+  }
+
   async function compare() {
-    if (!date || !time) return;
-    comparisonRequest.current?.abort();
-    const controller = new AbortController();
-    comparisonRequest.current = controller;
+    if (!check.ok) return;
+    const ticket = comparisonGate.current.begin();
     setComparisonState("loading");
     setComparison(null);
     setComparisonError(undefined);
     try {
-      const response = await getComparison(timestamp(date, time), controller.signal);
-      if (controller.signal.aborted) return;
+      const response = await getComparison(check.range, ticket.signal);
+      if (!ticket.current()) return;
       setComparison(response);
       setComparisonState("success");
     } catch (error) {
-      if (controller.signal.aborted) return;
+      if (!ticket.current()) return;
       setComparison(null);
       setComparisonState("error");
       setComparisonError(error instanceof ApiError ? error.message : "An unexpected comparison error occurred.");
@@ -127,29 +156,27 @@ function ExplorerWorkspace() {
   }
 
   async function analyze() {
-    if (!date || !time) return;
-    activeRequest.current?.abort();
-    const controller = new AbortController();
-    activeRequest.current = controller;
+    if (!check.ok) return;
+    const ticket = analysisGate.current.begin();
+    dispatchPlayback({ type: "load", count: 0 });
     setAnalysisState("loading");
     setResult(null);
     setErrorMessage(undefined);
-
     try {
-      const response = await getAnalysis(selectedSite.id, pickedLocation, timestamp(date, time), controller.signal);
-      if (controller.signal.aborted) return;
+      const response = await getAnalysis(selectedSite.id, pickedLocation, check.range, ticket.signal);
+      if (!ticket.current()) return;
       setResult(response);
+      dispatchPlayback({ type: "load", count: response.samples.length });
       setAnalysisState("success");
     } catch (error) {
-      if (controller.signal.aborted) return;
-      controller.abort();
+      if (!ticket.current()) return;
       setResult(null);
       setAnalysisState("error");
-      setErrorMessage(
-        error instanceof ApiError ? error.message : "An unexpected analysis error occurred.",
-      );
+      setErrorMessage(error instanceof ApiError ? error.message : "An unexpected analysis error occurred.");
     }
   }
+
+  const sceneTime = active?.time ?? requestedStart;
 
   return (
     <article ref={root} className="explorer-page">
@@ -159,74 +186,66 @@ function ExplorerWorkspace() {
           <h1>Landing condition explorer</h1>
         </div>
         <dl className="context-coordinates">
-          <div>
-            <dt>LAT</dt>
-            <dd>{formatCoordinate(location.latitude, "lat")}</dd>
-          </div>
-          <div>
-            <dt>LON</dt>
-            <dd>{formatCoordinate(location.longitude, "lon")}</dd>
-          </div>
-          <div>
-            <dt>SITES</dt>
-            <dd>{landingSites.length.toString().padStart(2, "0")} LOADED</dd>
-          </div>
+          <div><dt>LAT</dt><dd>{formatCoordinate(location.latitude, "lat")}</dd></div>
+          <div><dt>LON</dt><dd>{formatCoordinate(location.longitude, "lon")}</dd></div>
+          <div><dt>SITES</dt><dd>{landingSites.length.toString().padStart(2, "0")} LOADED</dd></div>
         </dl>
       </header>
 
       <div className="explorer-grid">
         <div className="explorer-visual" data-reveal>
           <MoonExplorer
-            observationTime={date && time ? timestamp(date, time) : null}
+            observationTime={sceneTime}
             selectedSite={selectedSite}
             pickedLocation={pickedLocation}
             onLocationSelect={pickLocation}
             onSiteSelect={selectSite}
           />
+          {result && active && <PlaybackControls playback={playback} activeTime={active.time} requestedStart={result.summary.start}
+            speed={speed} onSpeed={setSpeed} dispatch={dispatchPlayback} />}
+          <TerrainContext latitude={location.latitude} longitude={location.longitude}
+            catalogue={catalogue.state} onRetry={catalogue.retry}
+            terrain={result?.terrain ?? null} horizon={result?.horizon ?? null} />
         </div>
         <aside className="explorer-sidebar" data-reveal>
           <ExplorerControls
             sites={landingSites}
             selectedId={pickedLocation ? "custom" : selectedSite.id}
             customLocation={!!pickedLocation}
-            date={date}
-            time={time}
+            input={input}
+            check={check}
             loading={analysisState === "loading"}
+            horizonExpectation={horizonExpectation(!!pickedLocation, location.latitude)}
             onSiteChange={selectSite}
-            onDateChange={(value) => {
-              setDate(value);
-              resetAnalysis();
-            }}
-            onTimeChange={(value) => {
-              setTime(value);
-              resetAnalysis();
-            }}
+            onInputChange={changeInput}
             onSubmit={analyze}
           />
           <ConditionsPanel
-            conditions={conditions}
+            conditions={active}
             state={analysisState}
-            observationTime={date && time ? timestamp(date, time) : null}
+            observationTime={requestedStart}
+            sampleLabel={result ? `Sample ${playback.index + 1} of ${playback.count}` : undefined}
             errorMessage={errorMessage}
             terrain={result?.terrain ?? null}
             siteId={pickedLocation ? undefined : selectedSite.id}
             latitude={location.latitude}
             longitude={location.longitude}
           />
-          <TerrainContext latitude={location.latitude} longitude={location.longitude} />
         </aside>
       </div>
 
       <LocalSurfacePane latitude={location.latitude} longitude={location.longitude}
-        observationTime={timestamp(date, time)} onPick={pickLocation} />
+        observationTime={sceneTime ?? `${DEFAULT_INPUT.startDate}T${DEFAULT_INPUT.startTime}:00Z`} onPick={pickLocation} />
 
       <div className="analysis-grid" data-reveal>
-        <HorizonContainer data={conditions} profile={result?.horizon ?? null} />
-        <VisibilityTimeline data={conditions} summary={result?.summary ?? null} sampleCount={result?.samples.length ?? 0} />
+        <HorizonContainer data={active} profile={result?.horizon ?? null} />
+        <VisibilityTimeline data={active} summary={result?.summary ?? null} sampleCount={result?.samples.length ?? 0} />
       </div>
 
+      <WindowFinder result={result} activeIndex={playback.index} onSelect={(index) => dispatchPlayback({ type: "seek", index })} />
+
       <SiteComparison result={comparison} state={comparisonState} errorMessage={comparisonError}
-        onCompare={compare} disabled={!date || !time} />
+        onCompare={compare} disabled={!check.ok} />
     </article>
   );
 }

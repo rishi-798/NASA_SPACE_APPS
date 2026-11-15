@@ -1,5 +1,5 @@
 import { Crosshair, Plus, Selection, Subtract } from "@phosphor-icons/react";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { MoonMap, type MoonControls, type MoonLocation } from "../../MoonMap";
 import { formatCoordinate } from "../../lib/format";
 import type { LandingSite } from "../../types";
@@ -17,10 +17,11 @@ export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, o
   const [showGrid, setShowGrid] = useState(false);
   const [showAxis, setShowAxis] = useState(false);
   const controlsRef = useRef<MoonControls | null>(null);
-  const selectedLocation = pickedLocation ?? {
-    latitude: selectedSite.latitude,
-    longitude: selectedSite.longitude,
-  };
+  // Stable identity: playback re-renders the page every sample and must not retrigger map effects.
+  const selectedLocation = useMemo(
+    () => pickedLocation ?? { latitude: selectedSite.latitude, longitude: selectedSite.longitude },
+    [pickedLocation, selectedSite.latitude, selectedSite.longitude],
+  );
 
   return (
     <section className="moon-explorer moon-explorer-3d" aria-label="Interactive 3D lunar explorer">

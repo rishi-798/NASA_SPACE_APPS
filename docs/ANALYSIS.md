@@ -296,13 +296,38 @@ These descriptions are read from the code, and `/api/methodology` returns the sa
 | Athena metadata | Adds LROC's precise position (84.7906° S, 29.1957° E, about 22 m from the rounded profile point) as a note. The coordinates stay −84.79/29.20 because the profile was built for that point | Unchanged |
 
 ## Frontend client
-- The Explorer and Trip pages make **one** `GET /api/analysis` request per analysis. Previously they made four
-  (`/visibility`, `/visibility/window`, `/summary`, `/horizon`), with the window and summary each recalculating
-  the same samples. The conditions shown are the first sample of that same sample set.
-- The analysis window is the **24 hours starting at the selected UTC time**, not the selected calendar day. The
-  timeline axis and cursor are relative to that window (`frontend/src/lib/analysisWindow.ts`).
-- "Plan this landing" reuses the successful preview while its inputs (the mission revision) are unchanged. It
-  does not send the requests again.
+Run it: `cd frontend && npm install && npm run build` (the backend serves `frontend/dist`), or `npm run dev` with the
+backend on port 8000. Start the backend with `.venv/bin/python -m uvicorn backend.app:app --port 8000`.
+
+Which tree is served: whichever directory uvicorn runs in. The review preview on port 8001 was a temporary copy
+(`/tmp/nasa-team-preview-nov14`, no git history). This repository's `frontend/` is the maintained source.
+
+- **One request, one sample set.** Explorer and Trip make one `GET /api/analysis` request per analysis. The
+  summary, windows and conditions all come from it. No frontend geometry is computed.
+- **Adjustable UTC range.** Start/end date and time, sampling interval 1–1440 min, and a 2,000-sample limit are
+  checked before sending (`lib/analysisRange.ts`, mirroring the backend limits, which stay authoritative). A review
+  box shows the exact request before Analyze. Invalid input fails visibly and disables Analyze.
+- **One authoritative sample** (`lib/playback.ts`). The playback index drives the UTC timestamp, scene lighting time,
+  Sun/Earth readings and visibility flags, horizon markers, and timeline cursor. "Requested start" and "active
+  sample" are labelled separately. Play/pause, step, a scrub slider (arrow/Home/End/Page keys; Space toggles),
+  1×/2×/4× speed. Scrubbing and stepping pause. Playback stops at the last sample and offers Replay. Changing any
+  input, site or map point cancels playback, aborts in-flight requests and discards results. The Cesium camera is
+  untouched by playback.
+- **Timelines** for sunlight, Earth and both-visible, with percentages and longest dark / Earth-hidden periods.
+- **Visibility-window finder.** Minimum continuous duration (h/min) over the backend's joint intervals: every match
+  with start, end and duration. Selecting one jumps playback to its start sample. Windows cut by the range edge are
+  labelled. Boundaries name which body changed, read from the returned samples. With no match it says why. It is
+  labelled "windows matching visibility requirements", not power, link or landing safety, and there is no score.
+- **Athena vs Odysseus** compares over exactly the analysis range (start, end and step verified). Terrain-aware,
+  flat-horizon and degraded results carry badges and a "not equally reliable" caution.
+- **Terrain, one result per location** (`useTerrainCatalogue`, `lib/terrainFacts.ts`). Four separate sections: sampled
+  point elevation (source, datum, resolution), regional statistics, the LOLA horizon used for visibility, and the
+  visual models (Cesium integrated; Blender pending, no substitute). The Trip "Point elevation" row reads the same
+  result. The old hardcoded "Unavailable: no raster sampling" is gone. If the catalogue cannot be read, the reason is
+  shown with Retry.
+- **Paths.** Home and the nav lead with "Analyze a site". The trip planner is an optional path. Missions and
+  Timeline show only sourced records (`data/missionEvents.ts`: four dated events for two missions, each linked);
+  other fields say "No verified record".
 
 ## Sources and credits
 - SPICE toolkit and kernels: NASA/JPL NAIF, https://naif.jpl.nasa.gov. SpiceyPy (A. Annex et al.).
@@ -317,7 +342,8 @@ These descriptions are read from the code, and `/api/methodology` returns the sa
 `pytest -q` gives **179 passed, 3 skipped**. The skips are the external Moon catalogue (`data/lunar`) and two opt-in
 data checks. `RUN_NETWORK_TESTS=1 pytest -k "real_pgda or partial"` regenerates Athena from the LOLA DEM (exact
 match required) and checks the Odysseus terrain numbers. They use the local DEM copy when present.
-Frontend unit tests: `cd frontend && npm test` gives 16 passed. The suite covers:
+Frontend unit tests: `cd frontend && npm test` gives **40 passed** (time sync and playback, range validation, interval
+matching, window finder, stale-request gate, terrain consistency, mission state, comparison). The backend suite covers:
 - JPL Horizons and `azlcpo` reference cases
 - zenith and nadir checks
 - terrain and flat modes, and terrain blocking a positive-elevation Sun
@@ -340,4 +366,9 @@ Frontend unit tests: `cd frontend && npm test` gives 16 passed. The suite covers
 - The Athena profile is not regenerated at LROC's precise coordinate. The 22 m difference is below DEM resolution,
   but this has not been verified.
 - The cloud-terrain routes are tested only offline. Remote Hugging Face reads were not exercised here.
-- The frontend is not part of this step. Two frontend-asset tests are skipped until `frontend/` is restored.
+- The terrain catalogue (point elevation and regional statistics) needs the Moon grid index, which is not installed
+  here, so those fields show an explicit "unavailable" with the reason. The LOLA horizon height is shown separately.
+- The Cesium scene light uses the Sun direction at lat/lon 0 for the active time (a global directional light), not
+  the site's own Sun direction. It is for orientation only.
+- Window boundaries are known only to the sampling step. Only Odysseus and Athena have mission records.
+- Browser checks were run with headless Chromium (software GL) and a scripted flow, not on real devices or screen readers.

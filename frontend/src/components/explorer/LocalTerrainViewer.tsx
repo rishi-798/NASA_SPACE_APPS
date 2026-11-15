@@ -5,7 +5,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import type { TerrainRegion } from './terrainTypes';
 import type { MoonLocation } from '../../MoonMap';
 import { eyePosition, lookDirection, type Vec3 } from '../../lib/surfaceViewMath';
-import { createRegolithTextures, type RegolithTextures } from '../../lib/regolithTexture';
+import { createRegolithTextures } from '../../lib/regolithTexture';
 
 const api = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 type SkyBody = { directional_vector_local_z_up: Vec3; angular_radius_deg: number; elevation_deg: number };

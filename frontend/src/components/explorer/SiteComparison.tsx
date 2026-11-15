@@ -1,5 +1,5 @@
 import { Scales, Warning } from "@phosphor-icons/react";
-import { ANALYSIS_WINDOW_HOURS } from "../../lib/analysisWindow";
+import { formatUtcDisplay } from "../../lib/format";
 import { CONFIDENCE, failedSites, formatDuration, unequalConfidence } from "../../lib/comparison";
 import type { AnalysisState, ComparisonResult } from "../../types";
 
@@ -38,7 +38,7 @@ export function SiteComparison({ result, state, errorMessage, onCompare, disable
       </div>
 
       {state === "idle" && <p className="analysis-note">
-        Analyses both sites over the same next {ANALYSIS_WINDOW_HOURS} hours from the selected time, on identical sample times.
+        Analyses both sites over exactly the range set above, on identical sample times.
       </p>}
       {state === "loading" && <p role="status" className="analysis-note">Calculating both sites…</p>}
       {state === "error" && <div className="service-notice" role="status">
@@ -59,7 +59,7 @@ export function SiteComparison({ result, state, errorMessage, onCompare, disable
             </caption>
             <thead>
               <tr>
-                <th scope="col">Next {ANALYSIS_WINDOW_HOURS} h</th>
+                <th scope="col">{formatUtcDisplay(result.request.start)} → {formatUtcDisplay(result.request.end)}</th>
                 {rows.map((row) => <th scope="col" key={row.site_id}>
                   {row.mission}
                   <span className={`confidence confidence-${row.horizon_mode}`} title={CONFIDENCE[row.horizon_mode].detail}>

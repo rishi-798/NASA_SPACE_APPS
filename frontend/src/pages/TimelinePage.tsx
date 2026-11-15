@@ -8,6 +8,8 @@ import { RouteIntro } from "../components/ui/RouteIntro";
 import { missionExplorerUrl, missionTypeLabel } from "../lib/missionNavigation";
 import { missions, missionRecordCount } from "../data/landingSites";
 
+import { missionEvents } from "../data/missionEvents";
+
 gsap.registerPlugin(ScrollTrigger);
 
 const years = [...new Set(missions.filter((m) => m.status !== "Cancelled").map((m) => m.year))].sort((a, b) => a - b);
@@ -77,6 +79,11 @@ export function TimelinePage() {
                     ? yearMissions.map((m) => m.name.replace(" Mission 1", " 1")).join(" · ")
                     : "DEVELOPMENT"}
                 </small>
+                {missionEvents.filter((event) => event.time.startsWith(String(year))).map((event) => <div className="chronology-event" key={event.time}>
+                  <time dateTime={event.time}>{event.time.slice(0, 10)}{event.approximate ? " ≈" : ""}</time>
+                  <p>{event.label}</p>
+                  <small><a href={event.source.url} target="_blank" rel="noreferrer">{event.source.name}</a></small>
+                </div>)}
               </div>
             );
           })}

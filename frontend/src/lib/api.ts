@@ -1,7 +1,8 @@
 import type { MoonLocation } from "../MoonMap";
-import type { AnalysisBundle, AnalysisResult, ComparisonResult, PowerAssessment, VisibilityResponse, VolatilesAssessment } from "../types";
-import { analysisQuery, analysisWindow, toAnalysisResult } from "./analysisWindow";
-import { comparisonQuery, validateComparison } from "./comparison";
+import type { AnalysisBundle, AnalysisResult, ComparisonResult, PowerAssessment, VolatilesAssessment, VisibilityResponse } from "../types";
+import { analysisRangeQuery, defaultRange, rangeParams, type AnalysisRange } from "./analysisRange";
+import { analysisWindow, toAnalysisResult } from "./analysisWindow";
+import { validateComparisonRange } from "./comparison";
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
 
@@ -55,41 +56,44 @@ export function getSiteVisibility(
   );
 }
 
+/** A bare UTC time means "the 24 hours from then" (the trip planner); the Explorer passes a full range. */
+function asRange(rangeOrTime: AnalysisRange | string): AnalysisRange {
+  try {
+    return typeof rangeOrTime === "string" ? defaultRange(rangeOrTime) : rangeOrTime;
+  } catch (error) {
+    throw new ApiError(error instanceof Error ? error.message : "Choose a valid UTC date and time.");
+  }
+}
+
 /**
  * One request, one calculation: GET /api/analysis returns the samples, summary, windows and horizon
- * computed from a single sample set covering the 24 hours from `time`.
+ * computed from a single sample set covering the requested UTC range.
  */
 export async function getAnalysis(
   siteId: string,
   location: MoonLocation | null,
-  time: string,
+  rangeOrTime: AnalysisRange | string,
   signal: AbortSignal,
 ): Promise<AnalysisResult> {
-  let params: URLSearchParams;
+  const range = asRange(rangeOrTime);
+  const bundle = await request<AnalysisBundle>(`/api/analysis?${analysisRangeQuery(siteId, location, range)}`, signal);
   try {
-    params = analysisQuery(siteId, location, time);
-  } catch (error) {
-    throw new ApiError(error instanceof Error ? error.message : "Choose a valid UTC date and time.");
-  }
-  const bundle = await request<AnalysisBundle>(`/api/analysis?${params}`, signal);
-  try {
-    return toAnalysisResult(bundle, analysisWindow(time).start);
+    const result = toAnalysisResult(bundle, range.start);
+    if (Date.parse(bundle.summary.end) !== Date.parse(range.end) || bundle.summary.step_minutes !== range.stepMinutes) {
+      throw new Error("The calculation did not cover the requested interval. No results are displayed.");
+    }
+    return result;
   } catch (error) {
     throw new ApiError(error instanceof Error ? error.message : "The calculation returned invalid data.");
   }
 }
 
-/** Athena vs Odysseus over the same 24 h window and sample times (GET /api/compare). */
-export async function getComparison(time: string, signal: AbortSignal): Promise<ComparisonResult> {
-  let params: URLSearchParams;
+/** Athena vs Odysseus over exactly the same range and sample times (GET /api/compare). */
+export async function getComparison(rangeOrTime: AnalysisRange | string, signal: AbortSignal): Promise<ComparisonResult> {
+  const range = asRange(rangeOrTime);
+  const result = await request<ComparisonResult>(`/api/compare?${rangeParams(range)}`, signal);
   try {
-    params = comparisonQuery(time);
-  } catch (error) {
-    throw new ApiError(error instanceof Error ? error.message : "Choose a valid UTC date and time.");
-  }
-  const result = await request<ComparisonResult>(`/api/compare?${params}`, signal);
-  try {
-    return validateComparison(result, analysisWindow(time).start);
+    return validateComparisonRange(result, range);
   } catch (error) {
     throw new ApiError(error instanceof Error ? error.message : "The comparison returned invalid data.");
   }

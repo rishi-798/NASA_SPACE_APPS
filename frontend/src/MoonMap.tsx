@@ -392,7 +392,8 @@ export function MoonMap({
     const base = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
     // At lat/lon 0, local up/east/north correspond to lunar fixed X/Y/Z.
     // Solar parallax across the Moon is negligible for this global directional light.
-    void fetch(`${base}/api/visibility?lat=0&lon=0&time=${encodeURIComponent(observationTime)}`, {signal:abort.signal})
+    // Debounced: playback changes the time every few hundred ms; only the settled time is requested.
+    const timer = window.setTimeout(() => void fetch(`${base}/api/visibility?lat=0&lon=0&time=${encodeURIComponent(observationTime)}`, {signal:abort.signal})
       .then(async response => {
         if (!response.ok) throw new Error("Sun calculation unavailable");
         const data = await response.json() as {sun:{azimuth:number;elevation:number}};
@@ -403,8 +404,8 @@ export function MoonMap({
         scene.viewer.clock.currentTime = JulianDate.fromIso8601(observationTime);
         scene.viewer.scene.requestRender();
         setLightingNote(`Sunlight for ${observationTime.replace("T", " ")}`);
-      }).catch(() => { if (!abort.signal.aborted) setLightingNote("Sun calculation unavailable; lighting is illustrative."); });
-    return () => abort.abort();
+      }).catch(() => { if (!abort.signal.aborted) setLightingNote("Sun calculation unavailable; lighting is illustrative."); }), 120);
+    return () => { window.clearTimeout(timer); abort.abort(); };
   }, [observationTime, controlsRef, onLocationSelect, onSiteSelect]);
 
   useEffect(() => {

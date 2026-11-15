@@ -12,7 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 const questions = [
   { title: "Where does the light fall?", Icon: SunHorizon, text: "Choose a UTC observation time. Suhas's SPICE backend calculates the Sun's azimuth and elevation, then checks it against the local horizon." },
   { title: "Is Earth within sight?", Icon: Broadcast, text: "Check geometric Earth visibility from the same lunar location. A sampled daily window shows when a direct line of sight is available." },
-  { title: "What does terrain change?", Icon: Mountains, text: "Athena's LOLA horizon includes local terrain obstruction at a 2 m observer height. Odysseus and custom map coordinates use a flat horizon, clearly identified in the results." },
+  { title: "What does terrain change?", Icon: Mountains, text: "Athena's LOLA horizon includes local terrain obstruction at a 2 m observer height. Custom points near the south pole get a LOLA horizon generated on demand; Odysseus and other points use a flat horizon. Every result states which model was used." },
 ];
 
 function ExplorerLink({ className = "", children = "Open Explorer" }: { className?: string; children?: string }) {
@@ -42,7 +42,7 @@ export function HomePage() {
           <p className="eyebrow">NASA Space Apps 2026</p>
           <h1 id="hero-title">THE MOON.<br /><span>IN CONTEXT.</span></h1>
           <p className="hero-description">Explore lunar terrain, track sunlight, and find a clear line of sight to Earth.</p>
-          <div className="hero-actions"><Link className="orbit-button" to="/trip"><span>Plan a trip</span><span className="button-orbit"><ArrowUpRight aria-hidden="true" /></span></Link><Link className="quiet-link" to="/explorer">Open Explorer <ArrowRight aria-hidden="true" /></Link></div>
+          <div className="hero-actions"><Link className="orbit-button" to="/explorer"><span>Analyze a landing site</span><span className="button-orbit"><ArrowUpRight aria-hidden="true" /></span></Link><Link className="quiet-link" to="/trip">Plan a trip (optional) <ArrowRight aria-hidden="true" /></Link></div>
         </div>
       </section>
 
@@ -91,7 +91,7 @@ export function HomePage() {
         <div className="home-site-list">{landingSites.map((site) => <Link className="home-site-row" key={site.id} to={`/explorer?site=${site.id}`} data-home-reveal>
           <span className="site-mission">{site.mission}</span><h3>{site.name.replace(" landing site", "")}</h3><span className="site-coordinates">{formatCoordinate(site.latitude, "lat")}<br />{formatCoordinate(site.longitude, "lon")}</span><span className="site-row-action">Explore site <ArrowUpRight aria-hidden="true" /></span>
         </Link>)}</div>
-        <p className="site-dataset-note">Featured CLPS polar landing sites with validated NAIF SPICE ephemeris and LOLA terrain profiles.</p>
+        <p className="site-dataset-note">Two source-linked landing sites with four dated events, alongside the wider mission archive.</p>
       </section>
 
       <section className="home-outro home-section" aria-labelledby="outro-title" data-home-reveal>

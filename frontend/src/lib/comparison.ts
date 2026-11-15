@@ -1,5 +1,6 @@
 import type { ComparisonResult, ComparisonRow, ComparisonSiteResult } from "../types";
 import { analysisWindow, ANALYSIS_STEP_MINUTES } from "./analysisWindow.ts";
+import type { AnalysisRange } from "./analysisRange.ts";
 
 export function comparisonQuery(time: string): URLSearchParams {
   const { start, end } = analysisWindow(time);
@@ -41,4 +42,14 @@ export function formatDuration(minutes: number): string {
 
 export function failedSites(result: ComparisonResult): ComparisonSiteResult[] {
   return result.sites.filter((site) => !site.ok);
+}
+
+/** The comparison must cover exactly the range that was requested (start, end and sampling step). */
+export function validateComparisonRange(result: ComparisonResult, range: AnalysisRange): ComparisonResult {
+  validateComparison(result, range.start);
+  const r = result.request;
+  if (Date.parse(r.end) !== Date.parse(range.end) || r.step_minutes !== range.stepMinutes) {
+    throw new Error("The comparison did not cover the requested interval. No results are displayed.");
+  }
+  return result;
 }

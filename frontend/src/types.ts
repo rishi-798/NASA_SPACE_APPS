@@ -91,6 +91,12 @@ export type HorizonProfile = {
   azimuth_step: number;
   observer_height_m: number;
   horizon: number[];
+  /** Height of the LOLA horizon DEM at the site (metres above the datum sphere). */
+  site_elevation_m?: number;
+  pixel_resolution_m?: number;
+  max_distance_m?: number;
+  min_distance_m?: number;
+  datum_radius_m?: number;
 };
 
 export type TerrainStatus = {
@@ -98,7 +104,31 @@ export type TerrainStatus = {
   status: string;
   terrain_obstruction_assessed: boolean;
   message: string;
+  profile_metadata?: {
+    source: string; site_elevation_m?: number; pixel_resolution_m?: number; max_distance_m?: number;
+    min_distance_m?: number; observer_height_m?: number; datum_radius_m?: number; azimuth_step?: number;
+  } | null;
 };
+
+/** Response of GET /api/terrain/catalogue: point sample + regional statistics for one coordinate. */
+export type TerrainCatalogue = {
+  latitude: number; longitude: number; grid_id: string; global_child_grid_id: string;
+  statistics_grid_id: string; statistics_scope: string; point_elevation_m: number | null;
+  point_elevation_note?: string | null;
+  point_terrain?: { source_id: string; source_url: string; sampling: string; coordinate_frame: string; sample_spacing_x_m: number; sample_spacing_y_m: number; vertical_reference_radius_m: number } | null;
+  local_elevation_files: number; expected_elevation_files: number; scene_available: false;
+  statistics: {
+    elevation_min_m: number | null; elevation_max_m: number | null;
+    source_resolution_m: number | null; terrain_source: string | null; source_url: string | null;
+    native_elevation_min_m: number | null; native_elevation_max_m: number | null;
+    native_statistics_spacing_m: number | null; native_statistics_source_ids: string | null;
+    height_uncertainty_rms_m_median: number | null;
+  };
+};
+export type CatalogueState =
+  | { status: "loading" }
+  | { status: "error"; message: string }
+  | { status: "ready"; data: TerrainCatalogue };
 
 /** Response of GET /api/analysis: one sample set behind samples, windows and summary. */
 export type AnalysisBundle = {

@@ -24,7 +24,10 @@ import { StatusIndicator } from "../ui/StatusIndicator";
 type ConditionsPanelProps = {
   conditions: VisibilityResponse | null;
   state: AnalysisState;
+  /** Start of the requested range (what the user asked for). */
   observationTime: string | null;
+  /** Position of the active playback sample, when an analysis exists. */
+  sampleLabel?: string;
   errorMessage?: string;
   /** Backend terrain status for this analysis (mode, status, explanation). */
   terrain?: TerrainStatus | null;
@@ -82,14 +85,19 @@ export function ConditionsPanel({
   conditions,
   state,
   observationTime,
+  sampleLabel,
   errorMessage,
   terrain,
   siteId,
   latitude,
   longitude,
 }: ConditionsPanelProps) {
-  const [power, setPower] = useState<PowerAssessment | null>(null);
-  const [volatiles, setVolatiles] = useState<VolatilesAssessment | null>(null);
+  const observed = conditions?.time ?? observationTime;
+  const assessmentKey = JSON.stringify([siteId, latitude, longitude, observed]);
+  const [powerResponse, setPower] = useState<{ key: string; data: PowerAssessment | null } | null>(null);
+  const [volatilesResponse, setVolatiles] = useState<{ key: string; data: VolatilesAssessment | null } | null>(null);
+  const power = conditions && state === "success" && powerResponse?.key === assessmentKey ? powerResponse.data : null;
+  const volatiles = conditions && state === "success" && volatilesResponse?.key === assessmentKey ? volatilesResponse.data : null;
 
   const terrainClear = !!conditions && conditions.sun.visible && conditions.earth.visible;
   const hasTerrain = terrain ? terrain.mode === "terrain_profile" : conditions?.sun.terrain_horizon !== undefined;
@@ -98,12 +106,9 @@ export function ConditionsPanel({
     : !conditions ? "Awaiting horizon analysis"
       : terrain ? TERRAIN_LABELS[terrain.status] ?? terrain.mode
         : hasTerrain ? "LOLA horizon · 2 m observer" : "No terrain profile · flat horizon";
-  const observed = conditions?.time ?? observationTime;
 
   useEffect(() => {
     if (!conditions || state !== "success") {
-      setPower(null);
-      setVolatiles(null);
       return;
     }
     const controller = new AbortController();
@@ -118,23 +123,23 @@ export function ConditionsPanel({
         controller.signal,
       )
         .then((res) => {
-          if (!controller.signal.aborted) setPower(res);
+          if (!controller.signal.aborted) setPower({ key: assessmentKey, data: res });
         })
         .catch(() => {
-          if (!controller.signal.aborted) setPower(null);
+          if (!controller.signal.aborted) setPower({ key: assessmentKey, data: null });
         });
 
       getVolatilesAssessment(targetLat, targetLon, controller.signal)
         .then((res) => {
-          if (!controller.signal.aborted) setVolatiles(res);
+          if (!controller.signal.aborted) setVolatiles({ key: assessmentKey, data: res });
         })
         .catch(() => {
-          if (!controller.signal.aborted) setVolatiles(null);
+          if (!controller.signal.aborted) setVolatiles({ key: assessmentKey, data: null });
         });
     }
 
     return () => controller.abort();
-  }, [conditions, state, siteId, latitude, longitude]);
+  }, [conditions, state, siteId, latitude, longitude, assessmentKey]);
 
   const dossierUrl = siteId && siteId !== "custom"
     ? `/api/mission/dossier/html?site_id=${encodeURIComponent(siteId)}${observed ? `&start=${encodeURIComponent(observed)}` : ""}`
@@ -153,8 +158,10 @@ export function ConditionsPanel({
       </div>
 
       <div className="conditions-time">
-        <span>OBSERVATION</span>
-        {observed ? <time dateTime={observed}>{formatUtcDisplay(observed)}</time> : <span>Choose a date and time</span>}
+        <span>{conditions ? "ACTIVE SAMPLE" : "REQUESTED START"}</span>
+        {conditions ? <time dateTime={conditions.time}>{formatUtcDisplay(conditions.time)}</time>
+          : observationTime ? <time dateTime={observationTime}>{formatUtcDisplay(observationTime)}</time> : <span>Choose a date and time</span>}
+        {conditions && sampleLabel && <small className="conditions-sample">{sampleLabel}{observationTime ? ` · requested start ${formatUtcDisplay(observationTime)}` : ""}</small>}
       </div>
 
       {state === "error" && (
