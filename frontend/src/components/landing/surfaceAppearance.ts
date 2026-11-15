@@ -2,6 +2,7 @@ import * as THREE from "three";
 import type { Terrain } from "../../sim/terrain";
 import { scatterRocks } from "../../lib/lunarRockScatter";
 import { buildLunarSurfaceDetail } from "../../lib/lunarSurfaceDetail";
+import { buildWideDust, wideGravel } from "./wideSurface";
 import { createRegolithTextures } from "../../lib/regolithTexture";
 
 /** Presentation only: shared approved powder palette; never changes contact heights. */
@@ -32,19 +33,20 @@ export function landingSurfaceMaterial() {
 }
 
 /** Adapter from landing Y-up axes to the approved Explorer Z-up detail workflow. */
-export function landingGravel(terrain: Terrain, exaggeration: number, material: THREE.Material) {
+function closeLandingDetail(terrain: Terrain, exaggeration: number, material: THREE.Material, east: number, north: number) {
   const scene = new THREE.Scene();
   const geometry = new THREE.PlaneGeometry(140, 140, 140, 140);
   const positions = geometry.getAttribute("position");
   for (let i = 0; i < positions.count; i++) {
-    const x = positions.getX(i), y = positions.getY(i);
+    const x = positions.getX(i) + east, y = positions.getY(i) + north;
+    positions.setXY(i, x, y);
     const height = terrain.heightAt(x, y);
     positions.setZ(i, Number.isFinite(height) ? height * exaggeration : NaN);
   }
   geometry.computeVertexNormals();
   const measured = new THREE.Mesh(geometry);
   measured.updateMatrixWorld(true);
-  const ray = new THREE.Raycaster(new THREE.Vector3(0, 0, 100000), new THREE.Vector3(0, 0, -1));
+  const ray = new THREE.Raycaster(new THREE.Vector3(east, north, 100000), new THREE.Vector3(0, 0, -1));
   const hit = ray.intersectObject(measured)[0];
   if (hit) {
     scatterRocks(scene, null, hit, true, [], true);
@@ -72,4 +74,28 @@ export function landingGravel(terrain: Terrain, exaggeration: number, material: 
     });
     materials.forEach(m => m.dispose()); textures.forEach(t => t.dispose());
   } };
+}
+
+/** Details follow the viewed ground; coarse coverage remains across the supported area. */
+export function landingGravel(terrain: Terrain, exaggeration: number, material: THREE.Material) {
+  const group = new THREE.Group();
+  let close: ReturnType<typeof closeLandingDetail> | null = null;
+  let wide: ReturnType<typeof wideGravel> | null = null;
+  let skin: THREE.Mesh | null = null;
+  let anchorEast = Infinity, anchorNorth = Infinity;
+  const update = (east: number, north: number) => {
+    east = THREE.MathUtils.clamp(Math.round(east / 48) * 48, -terrain.halfSizeM + 72, terrain.halfSizeM - 72);
+    north = THREE.MathUtils.clamp(Math.round(north / 48) * 48, -terrain.halfSizeM + 72, terrain.halfSizeM - 72);
+    if (east === anchorEast && north === anchorNorth) return;
+    anchorEast = east; anchorNorth = north;
+    if (close) { group.remove(close.group); close.dispose(); }
+    if (wide) { group.remove(wide.group); wide.dispose(); }
+    if (skin) { group.remove(skin); skin.geometry.dispose(); }
+    close = closeLandingDetail(terrain, exaggeration, material, east, north);
+    wide = wideGravel(terrain, exaggeration, east, north);
+    skin = new THREE.Mesh(buildWideDust(terrain, exaggeration, east, north, 256, 256), material);
+    skin.castShadow = skin.receiveShadow = true;
+    group.add(skin, wide.group, close.group);
+  };
+  return { group, update, dispose: () => { close?.dispose(); wide?.dispose(); skin?.geometry.dispose(); } };
 }

@@ -166,6 +166,7 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     }
 
     const gravel = landingGravel(terrain, exaggeration, surfaceMaterial);
+    gravel.update(store.get().state.pos[0], store.get().state.pos[1]);
     scene.add(gravel.group);
     disposables.push(gravel);
 
@@ -268,7 +269,9 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
       const p = toThree(s.pos);
       lander.position.copy(p);
       const ground = terrain.heightAt(s.pos[0], s.pos[1]);
-      const shadowCentre = toThree([s.pos[0], s.pos[1], Number.isFinite(ground) ? ground : 0]);
+      const focusEast = controls.target.x, focusNorth = -controls.target.z;
+      const focusHeight = terrain.heightAt(focusEast, focusNorth);
+      const shadowCentre = toThree([focusEast, focusNorth, Number.isFinite(focusHeight) ? focusHeight : Number.isFinite(ground) ? ground : 0]);
       sun.target.position.copy(shadowCentre);
       sun.position.copy(shadowCentre).addScaledVector(sunDir, 4000);
       dropGeo.setFromPoints([p.clone().add(new THREE.Vector3(0, 0.1, 0)), toThree([s.pos[0], s.pos[1], Number.isFinite(ground) ? ground : s.pos[2]])]);
@@ -309,6 +312,8 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
         lastTarget = controls.target.clone();
       }
       controls.update();
+      // Rebuild only after crossing a 48 m ground cell, never once per animation frame.
+      gravel.update(controls.target.x, -controls.target.z);
       renderer.render(scene, camera);
     };
     render();
