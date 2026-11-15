@@ -20,6 +20,8 @@ from backend.volatiles_api import evaluate_volatiles_at_coordinate
 from backend.power_api import calculate_solar_power_and_battery
 from backend.terrain_models_api import find_model_for_coordinates, get_all_models
 from backend.spice_kernels import kernel_provenance, kernel_status
+from backend.thermal_api import get_thermal_point
+from backend.telemetry_api import compute_rf_link_budget
 
 router = APIRouter(prefix="/api/mission", tags=["dossier"])
 
@@ -79,6 +81,25 @@ def build_mission_dossier(
         step_minutes=step_minutes,
     )
 
+    # Run Thermal & Cryogenic Survival assessment
+    eval_time = start or now_utc if 'now_utc' in locals() else datetime.now(timezone.utc).isoformat()
+    try:
+        thermal_data = get_thermal_point(lat=target_lat, lon=target_lon, time=start or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"))
+    except Exception:
+        thermal_data = None
+
+    # Run DSN RF Comm Link Budget assessment
+    try:
+        telemetry_data = compute_rf_link_budget(
+            lat=target_lat,
+            lon=target_lon,
+            time_iso=start or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            band="X-band",
+            telemetry_rate_kbps=1000.0,
+        )
+    except Exception:
+        telemetry_data = None
+
     # Check 3D models availability
     matched_model = find_model_for_coordinates(target_lat, target_lon)
 
@@ -104,6 +125,22 @@ def build_mission_dossier(
             "drilling_feasibility": volatiles_data["ice_stability"]["drilling_feasibility"],
         },
         "power_and_energy_summary": power_data["summary"],
+        "cryogenic_thermal_survival": {
+            "surface_temperature_k": thermal_data["thermal_equilibrium"]["surface_temperature_k"] if thermal_data else None,
+            "surface_temperature_c": thermal_data["thermal_equilibrium"]["surface_temperature_c"] if thermal_data else None,
+            "environment_regime": thermal_data["thermal_equilibrium"]["regime"] if thermal_data else "UNKNOWN",
+            "battery_freezing_hazard": thermal_data["spacecraft_thermal_survival"]["battery_freezing_risk"] if thermal_data else None,
+            "survival_heater_watts": thermal_data["spacecraft_thermal_survival"]["required_survival_heater_power_watts"] if thermal_data else None,
+        },
+        "deep_space_telemetry_link_budget": {
+            "comm_status": telemetry_data["link_budget_performance"]["comm_status"] if telemetry_data else "UNKNOWN",
+            "link_health": telemetry_data["link_budget_performance"]["link_health"] if telemetry_data else "UNKNOWN",
+            "link_margin_db": telemetry_data["link_budget_performance"]["link_margin_db"] if telemetry_data else None,
+            "carrier_to_noise_density_dbhz": telemetry_data["link_budget_performance"]["carrier_to_noise_density_c_n0_dbhz"] if telemetry_data else None,
+            "max_downlink_rate_kbps": telemetry_data["link_budget_performance"]["max_sustainable_downlink_rate_kbps"] if telemetry_data else None,
+            "primary_dsn_station": telemetry_data["ground_segment_dsn"]["primary_station"] if telemetry_data else None,
+            "round_trip_light_time_sec": telemetry_data["ephemeris_range"]["round_trip_light_time_sec"] if telemetry_data else None,
+        },
         "measured_3d_terrain": {
             "model_available": matched_model is not None,
             "model_id": matched_model.get("id") if matched_model else None,
