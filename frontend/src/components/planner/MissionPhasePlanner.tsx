@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "@phosphor-icons/react";
+import { ArrowRight, Play, Pause, ArrowCounterClockwise } from "@phosphor-icons/react";
 import { MISSION_PHASES, type MissionPhase } from "./missionPhaseData";
 import { CislunarOrbitalCanvas } from "./CislunarOrbitalCanvas";
 import "./planner.css";
@@ -123,21 +123,22 @@ export function MissionPhasePlanner() {
   }, [isPlaying, playbackSpeed, activePhaseId]);
 
   return (
-    <div className="planner-workspace">
+    <div className="planner-container">
       {/* 6-Phase Stepper Rail */}
-      <nav className="planner-progress" aria-label="Mission flight phases">
+      <nav className="planner-stepper" aria-label="Mission flight phases">
         {MISSION_PHASES.map((p) => {
           const isActive = p.id === activePhaseId;
           return (
             <button
               key={p.id}
               type="button"
-              aria-current={isActive ? "step" : undefined}
+              className={`planner-step-tab ${isActive ? "active" : ""}`}
               onClick={() => selectPhase(p.id)}
+              aria-current={isActive ? "step" : undefined}
             >
-              <span className="planner-step-badge">0{p.phaseNumber}</span>
-              <span>{p.shortName}</span>
-              <span className="planner-step-deltav">
+              <span className="step-num">0{p.phaseNumber}</span>
+              <span className="step-name">{p.shortName}</span>
+              <span className="step-badge">
                 {p.deltaVBudgetMS > 0 ? `${p.deltaVBudgetMS.toLocaleString()} m/s` : "Coast"}
               </span>
             </button>
@@ -145,10 +146,10 @@ export function MissionPhasePlanner() {
         })}
       </nav>
 
-      {/* Main Grid Layout: Visual Viewport + Phase Panel */}
-      <div className="trip-layout">
-        {/* Left Visual Column */}
-        <div className="trip-visual trip-space-scene-mission">
+      {/* Main Grid: 3D Viewport on Left, Telemetry & Dossier on Right */}
+      <div className="planner-grid">
+        {/* Left Column: 3D Trajectory Canvas */}
+        <div className="planner-viewport">
           <CislunarOrbitalCanvas
             activePhaseId={activePhaseId}
             simMetSeconds={simMetSeconds}
@@ -157,231 +158,267 @@ export function MissionPhasePlanner() {
             onCameraPresetChange={setCameraPreset}
           />
 
-          {/* Top Overlaid Labels */}
-          <div className="trip-overview-labels">
-            <span>{activePhase.name}</span>
-            <span>{activePhase.durationLabel}</span>
+          {/* Top Viewport Header */}
+          <div className="planner-vp-top">
+            <div className="planner-vp-badge">
+              <span className="vp-dot" />
+              <span className="vp-label">
+                Phase 0{activePhase.phaseNumber} · {activePhase.shortName.toUpperCase()} · {activePhase.durationLabel}
+              </span>
+            </div>
+
+            {/* Camera Presets Segmented Bar */}
+            <div className="planner-cam-bar" role="group" aria-label="Camera perspective">
+              {(["system", "earth", "vehicle", "moon"] as const).map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  className={`cam-btn ${cameraPreset === preset ? "active" : ""}`}
+                  onClick={() => setCameraPreset(preset)}
+                >
+                  {preset === "system" && "System"}
+                  {preset === "earth" && "Earth"}
+                  {preset === "vehicle" && "Craft"}
+                  {preset === "moon" && "Moon"}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Floating Telemetry Pills */}
-          <div className="trip-space-data">
-            <span>
-              <span className="trip-space-sun-dot" />
-              {formatMet(simMetSeconds)}
-            </span>
-            <span>
-              VEL: {telemetry.velocityKmS.toFixed(2)} km/s (Mach {telemetry.machNumber.toFixed(1)})
-            </span>
-            <span>
-              ALT: {telemetry.altitudeKm >= 1000 ? `${(telemetry.altitudeKm / 1000).toFixed(1)}k km` : `${telemetry.altitudeKm.toFixed(1)} km`}
-            </span>
-            <span>
-              ENGINE: {activePhase.telemetryProfile.engineStatus}
-            </span>
-            <span>
-              GRAV: {activePhase.telemetryProfile.gravitationalDominance}
-            </span>
+          {/* Floating Lower Telemetry Strip */}
+          <div className="planner-vp-hud" aria-label="Live flight telemetry">
+            <div className="hud-metric">
+              <span className="hud-title">MET CLOCK</span>
+              <span className="hud-val">{formatMet(simMetSeconds)}</span>
+            </div>
+            <div className="hud-metric">
+              <span className="hud-title">VELOCITY</span>
+              <span className="hud-val">
+                {telemetry.velocityKmS.toFixed(2)} km/s <small>Mach {telemetry.machNumber.toFixed(1)}</small>
+              </span>
+            </div>
+            <div className="hud-metric">
+              <span className="hud-title">ALTITUDE</span>
+              <span className="hud-val">
+                {telemetry.altitudeKm >= 1000 ? `${(telemetry.altitudeKm / 1000).toFixed(1)}k km` : `${telemetry.altitudeKm.toFixed(1)} km`}
+              </span>
+            </div>
+            <div className="hud-metric">
+              <span className="hud-title">PROPULSION</span>
+              <span className="hud-val hud-propulsion">
+                {activePhase.telemetryProfile.engineStatus}
+              </span>
+            </div>
           </div>
 
-          {/* Camera Focus Selector */}
-          <div className="planner-camera-tools" role="group" aria-label="Camera focus mode">
-            {(["system", "earth", "vehicle", "moon"] as const).map((preset) => (
+          {/* Bottom Timeline Controls */}
+          <div className="planner-timeline-bar">
+            <div className="timeline-playback">
               <button
-                key={preset}
                 type="button"
-                className={`planner-cam-btn ${cameraPreset === preset ? "active" : ""}`}
-                onClick={() => setCameraPreset(preset)}
+                className="btn-play"
+                onClick={() => setIsPlaying((p) => !p)}
+                aria-label={isPlaying ? "Pause simulation" : "Play flight simulation"}
               >
-                {preset === "system" && "🌐 System"}
-                {preset === "earth" && "🌍 Earth"}
-                {preset === "vehicle" && "🚀 Craft"}
-                {preset === "moon" && "🌕 Moon"}
+                {isPlaying ? <Pause size={14} weight="fill" /> : <Play size={14} weight="fill" />}
+                <span>{isPlaying ? "Pause" : "Play"}</span>
               </button>
-            ))}
-          </div>
+              <button
+                type="button"
+                className="btn-reset"
+                onClick={() => setSimMetSeconds(activePhase.startMetSeconds)}
+                title="Reset to start of active phase"
+              >
+                <ArrowCounterClockwise size={14} />
+              </button>
+            </div>
 
-          {/* Bottom Scrubbing Timeline */}
-          <div className="trip-space-timeline">
-            <button
-              type="button"
-              onClick={() => setIsPlaying((p) => !p)}
-              aria-label={isPlaying ? "Pause simulation" : "Play flight simulation"}
-            >
-              {isPlaying ? "Pause" : "Play"}
-            </button>
-            <input
-              type="range"
-              min={0}
-              max={TOTAL_MISSION_SECONDS}
-              step={30}
-              value={simMetSeconds}
-              onChange={(e) => {
-                const val = Number(e.target.value);
-                setSimMetSeconds(val);
-                const matching = MISSION_PHASES.find((p) => val >= p.startMetSeconds && val < p.endMetSeconds);
-                if (matching && matching.id !== activePhaseId) {
-                  setActivePhaseId(matching.id);
-                }
-              }}
-              aria-label="Mission Elapsed Time Scrubber"
-            />
-            <output>{formatMet(simMetSeconds)}</output>
-          </div>
+            <div className="timeline-track-wrap">
+              <input
+                type="range"
+                className="timeline-slider"
+                min={0}
+                max={TOTAL_MISSION_SECONDS}
+                step={30}
+                value={simMetSeconds}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setSimMetSeconds(val);
+                  const matching = MISSION_PHASES.find((p) => val >= p.startMetSeconds && val < p.endMetSeconds);
+                  if (matching && matching.id !== activePhaseId) {
+                    setActivePhaseId(matching.id);
+                  }
+                }}
+                aria-label="Mission Elapsed Time Scrubber"
+              />
+            </div>
 
-          <p className="trip-globe-hint">
-            Interactive 3D cislunar ephemeris. Drag to orbit, scroll to zoom. Camera presets automatically align with active flight maneuvers.
-          </p>
-        </div>
-
-        {/* Right Panel: Phase Intelligence & Telemetry */}
-        <aside className="trip-panel">
-          <span className="trip-section-label">
-            PHASE 0{activePhase.phaseNumber} OF 06 · {activePhase.shortName.toUpperCase()}
-          </span>
-          <h2>{activePhase.name}</h2>
-          <p>{activePhase.tagline}</p>
-
-          <dl className="trip-stat-list">
-            <div>
-              <dt>Δv Budget</dt>
-              <dd>
-                <strong>{activePhase.deltaVBudgetMS.toLocaleString()} m/s</strong> (Cumulative: {Math.round(telemetry.deltaVMs).toLocaleString()} m/s)
-              </dd>
-            </div>
-            <div>
-              <dt>Velocity</dt>
-              <dd>
-                {activePhase.initialVelocityKmS} → {activePhase.finalVelocityKmS} km/s
-              </dd>
-            </div>
-            <div>
-              <dt>Altitude</dt>
-              <dd>
-                {activePhase.initialAltitudeKm >= 1000 ? `${(activePhase.initialAltitudeKm / 1000).toFixed(1)}k km` : `${activePhase.initialAltitudeKm} km`} → {activePhase.finalAltitudeKm >= 1000 ? `${(activePhase.finalAltitudeKm / 1000).toFixed(1)}k km` : `${activePhase.finalAltitudeKm} km`}
-              </dd>
-            </div>
-            <div>
-              <dt>Earth Dist</dt>
-              <dd>{Math.round(telemetry.distEarthKm).toLocaleString()} km</dd>
-            </div>
-            <div>
-              <dt>Moon Dist</dt>
-              <dd>{Math.round(telemetry.distMoonKm).toLocaleString()} km</dd>
-            </div>
-            <div>
-              <dt>Gravity Domain</dt>
-              <dd>{activePhase.telemetryProfile.gravitationalDominance}</dd>
-            </div>
-          </dl>
-
-          {/* Simulation Rate Control */}
-          <div className="planner-rate-row">
-            <span className="trip-note">Sim Rate:</span>
-            <div className="planner-rate-pills">
+            <div className="timeline-rates" role="group" aria-label="Simulation speed">
               {([1, 5, 20, 100] as const).map((spd) => (
                 <button
                   key={spd}
                   type="button"
-                  className={`rate-pill ${playbackSpeed === spd ? "active" : ""}`}
+                  className={`rate-btn ${playbackSpeed === spd ? "active" : ""}`}
                   onClick={() => setPlaybackSpeed(spd)}
                 >
                   {spd}×
                 </button>
               ))}
-              <button
-                type="button"
-                className="rate-pill reset"
-                onClick={() => setSimMetSeconds(activePhase.startMetSeconds)}
-              >
-                Reset
-              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Mission Intelligence & Telemetry Dossier */}
+        <aside className="planner-dossier">
+          {/* Header */}
+          <div className="dossier-head">
+            <span className="dossier-tag">
+              FLIGHT STAGE 0{activePhase.phaseNumber} · CISLUNAR ARCHITECTURE
+            </span>
+            <h2 className="dossier-title">{activePhase.name}</h2>
+            <p className="dossier-tagline">{activePhase.tagline}</p>
+          </div>
+
+          {/* High-Density Telemetry Metrics Grid */}
+          <div className="dossier-metrics-grid">
+            <div className="metric-box">
+              <span className="m-label">Δv BUDGET</span>
+              <strong className="m-val">{activePhase.deltaVBudgetMS.toLocaleString()} <small>m/s</small></strong>
+              <span className="m-sub">Cumulative: {Math.round(telemetry.deltaVMs).toLocaleString()} m/s</span>
+            </div>
+
+            <div className="metric-box">
+              <span className="m-label">VELOCITY RANGE</span>
+              <strong className="m-val">{activePhase.initialVelocityKmS} → {activePhase.finalVelocityKmS} <small>km/s</small></strong>
+              <span className="m-sub">Current: {telemetry.velocityKmS.toFixed(2)} km/s</span>
+            </div>
+
+            <div className="metric-box">
+              <span className="m-label">ALTITUDE</span>
+              <strong className="m-val">
+                {telemetry.altitudeKm >= 1000 ? `${(telemetry.altitudeKm / 1000).toFixed(1)}k` : telemetry.altitudeKm.toFixed(1)} <small>km</small>
+              </strong>
+              <span className="m-sub">Range: {activePhase.initialAltitudeKm} → {activePhase.finalAltitudeKm} km</span>
+            </div>
+
+            <div className="metric-box">
+              <span className="m-label">EARTH DISTANCE</span>
+              <strong className="m-val">{Math.round(telemetry.distEarthKm).toLocaleString()} <small>km</small></strong>
+              <span className="m-sub">Geocentric radius</span>
+            </div>
+
+            <div className="metric-box">
+              <span className="m-label">MOON DISTANCE</span>
+              <strong className="m-val">{Math.round(telemetry.distMoonKm).toLocaleString()} <small>km</small></strong>
+              <span className="m-sub">Target perilune</span>
+            </div>
+
+            <div className="metric-box">
+              <span className="m-label">GRAVITY DOMAIN</span>
+              <strong className="m-val text-accent">{activePhase.telemetryProfile.gravitationalDominance}</strong>
+              <span className="m-sub">{activePhase.telemetryProfile.engineStatus}</span>
             </div>
           </div>
 
-          {/* Scientific Tabs */}
-          <div className="planner-tab-bar" role="tablist" aria-label="Phase technical details">
+          {/* Segmented Scientific Tabs */}
+          <div className="dossier-tabs" role="tablist" aria-label="Dossier categories">
             <button
               type="button"
-              className={`planner-tab-btn ${activeTab === "overview" ? "active" : ""}`}
+              className={`tab-btn ${activeTab === "overview" ? "active" : ""}`}
               onClick={() => setActiveTab("overview")}
             >
               Overview
             </button>
             <button
               type="button"
-              className={`planner-tab-btn ${activeTab === "mechanics" ? "active" : ""}`}
+              className={`tab-btn ${activeTab === "mechanics" ? "active" : ""}`}
               onClick={() => setActiveTab("mechanics")}
             >
               Mechanics
             </button>
             <button
               type="button"
-              className={`planner-tab-btn ${activeTab === "milestones" ? "active" : ""}`}
+              className={`tab-btn ${activeTab === "milestones" ? "active" : ""}`}
               onClick={() => setActiveTab("milestones")}
             >
               Milestones
             </button>
             <button
               type="button"
-              className={`planner-tab-btn ${activeTab === "equations" ? "active" : ""}`}
+              className={`tab-btn ${activeTab === "equations" ? "active" : ""}`}
               onClick={() => setActiveTab("equations")}
             >
               Equations
             </button>
           </div>
 
-          {/* Tab Content Display */}
-          <div className="planner-tab-content">
+          {/* Tab Content Panes */}
+          <div className="dossier-tab-body">
             {activeTab === "overview" && (
-              <div>
-                <p>{activePhase.overview}</p>
-                <h3>Primary Engineering Challenges</h3>
-                <p>{activePhase.engineeringChallenges}</p>
+              <div className="tab-pane">
+                <p className="pane-lead">{activePhase.overview}</p>
+                <div className="pane-card">
+                  <h4>Critical Engineering Challenges</h4>
+                  <p>{activePhase.engineeringChallenges}</p>
+                </div>
               </div>
             )}
 
             {activeTab === "mechanics" && (
-              <div>
-                <h3>Astrodynamical Regime</h3>
-                <p>{activePhase.orbitalMechanics}</p>
-                <div style={{ marginTop: "10px", padding: "10px 12px", background: "#0b0d12", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <span style={{ fontSize: "11px", color: "#858d98", display: "block" }}>Key Indicator:</span>
-                  <strong style={{ color: "var(--accent)" }}>{activePhase.telemetryProfile.primaryMetric}:</strong>{" "}
-                  <span style={{ color: "var(--text)" }}>{activePhase.telemetryProfile.primaryValue}</span>
+              <div className="tab-pane">
+                <p className="pane-lead">{activePhase.orbitalMechanics}</p>
+                <div className="pane-card">
+                  <div className="metric-kv">
+                    <span className="kv-label">Primary Orbital Metric:</span>
+                    <strong className="kv-val">{activePhase.telemetryProfile.primaryMetric}</strong>
+                  </div>
+                  <div className="metric-kv">
+                    <span className="kv-label">Benchmark Value:</span>
+                    <strong className="kv-val text-accent">{activePhase.telemetryProfile.primaryValue}</strong>
+                  </div>
                 </div>
               </div>
             )}
 
             {activeTab === "milestones" && (
-              <div className="planner-milestones-list">
-                {activePhase.milestones.map((m, idx) => (
-                  <div key={idx} className="planner-milestone-item">
-                    <span className="planner-milestone-time">{m.timeMet}</span>
-                    <div className="planner-milestone-body">
-                      <strong>{m.name}</strong>
-                      <span>{m.description} ({m.altitudeKm} km · {m.velocityKmS} km/s)</span>
+              <div className="tab-pane milestones-pane">
+                <div className="milestones-track">
+                  {activePhase.milestones.map((m, idx) => (
+                    <div key={idx} className="milestone-row">
+                      <div className="m-node">
+                        <span className="m-dot" />
+                      </div>
+                      <div className="m-content">
+                        <div className="m-header">
+                          <span className="m-time">{m.timeMet}</span>
+                          <strong className="m-name">{m.name}</strong>
+                          <span className="m-telemetry">
+                            {m.altitudeKm} km · {m.velocityKmS} km/s
+                          </span>
+                        </div>
+                        <p className="m-desc">{m.description}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
 
             {activeTab === "equations" && (
-              <div className="planner-equations-container">
-                <p className="trip-note">Governing astrodynamical and propulsion equations for this flight phase.</p>
+              <div className="tab-pane equations-pane">
                 {activePhase.keyEquations.map((eq, idx) => (
-                  <div key={idx} className="planner-equation-card">
-                    <div className="planner-eq-header">
-                      <strong>{eq.name}</strong>
+                  <div key={idx} className="equation-card">
+                    <div className="eq-top">
+                      <strong className="eq-name">{eq.name}</strong>
                     </div>
-                    <div className="planner-eq-formula">
+                    <div className="eq-formula-box">
                       <code>{eq.formula || eq.latex}</code>
                     </div>
-                    <p className="planner-eq-meaning">{eq.meaning}</p>
+                    <p className="eq-meaning">{eq.meaning}</p>
                     {eq.variables && eq.variables.length > 0 && (
-                      <dl className="planner-eq-vars">
+                      <dl className="eq-vars-list">
                         {eq.variables.map((v, vIdx) => (
-                          <div key={vIdx}>
+                          <div key={vIdx} className="eq-var-item">
                             <dt>{v.symbol}</dt>
                             <dd>{v.label}</dd>
                           </div>
@@ -394,22 +431,34 @@ export function MissionPhasePlanner() {
             )}
           </div>
 
-          {/* Contextual Action Handoffs */}
-          {activePhase.id === "descent" && (
-            <Link to="/landing" className="trip-primary" style={{ marginTop: "12px" }}>
-              Launch 6DOF Landing Simulator <ArrowRight />
-            </Link>
-          )}
-          {(activePhase.id === "tli" || activePhase.id === "cruise") && (
-            <Link to="/trip" className="trip-primary" style={{ marginTop: "12px" }}>
-              Plan Cislunar Transfer Route <ArrowRight />
-            </Link>
-          )}
-          {activePhase.id === "arrival" && (
-            <Link to="/explorer" className="trip-primary" style={{ marginTop: "12px" }}>
-              Explore Lunar Surface Landing Site <ArrowRight />
-            </Link>
-          )}
+          {/* Workflow Handoff Link Button */}
+          <div className="dossier-handoff">
+            {activePhase.id === "descent" && (
+              <Link to="/landing" className="btn-handoff">
+                Launch 6DOF Landing Simulator <ArrowRight size={16} />
+              </Link>
+            )}
+            {(activePhase.id === "tli" || activePhase.id === "cruise") && (
+              <Link to="/trip" className="btn-handoff">
+                Plan Numerical Transfer Route <ArrowRight size={16} />
+              </Link>
+            )}
+            {activePhase.id === "arrival" && (
+              <Link to="/explorer" className="btn-handoff">
+                Explore Lunar Landing Sites <ArrowRight size={16} />
+              </Link>
+            )}
+            {activePhase.id === "ascent" && (
+              <Link to="/trip" className="btn-handoff">
+                Inspect Flight Departure Sites <ArrowRight size={16} />
+              </Link>
+            )}
+            {activePhase.id === "parking" && (
+              <Link to="/trip" className="btn-handoff">
+                Review Orbital Mission Profile <ArrowRight size={16} />
+              </Link>
+            )}
+          </div>
         </aside>
       </div>
     </div>

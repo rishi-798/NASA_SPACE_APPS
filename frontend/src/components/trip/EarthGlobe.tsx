@@ -19,7 +19,7 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
+    renderer.toneMappingExposure = 1.08;
     host.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, 1, .01, 100);
@@ -35,8 +35,8 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
     // Keep the original lighting angle fixed in camera space as the user orbits.
     camera.lookAt(0, 0, 0);
     const cameraSun = sun.clone().applyQuaternion(camera.quaternion.clone().invert());
-    const light = new THREE.DirectionalLight(0xffffff, 3.2); light.position.copy(sun.clone().multiplyScalar(5)); scene.add(light);
-    scene.add(new THREE.AmbientLight(0x8aa4c9, .06));
+    const light = new THREE.DirectionalLight(0xffffff, 2.6); light.position.copy(sun.clone().multiplyScalar(5)); scene.add(light);
+    scene.add(new THREE.AmbientLight(0x8aa4c9, .15));
     const geometry = new THREE.SphereGeometry(1, 384, 256);
     const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .85, metalness: 0 });
     const globe = new THREE.Group(); scene.add(globe);
@@ -70,7 +70,7 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
     const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(1.048,96,64),atmosphereMat);scene.add(atmosphere);
     void Promise.all([load('daymap',true),load('nightmap',true),load('clouds'),load('normal'),load('specular'),loader.loadAsync('/earth/tutorial-topography.png')]).then(([day,nights,cloud,normal,spec,height])=>{
       if(disposed)return;
-      material.map=day;material.normalMap=normal;material.normalScale.set(2.8,2.8);textures.push(height); material.displacementMap=height;material.displacementScale=.026;
+      material.map=day;material.normalMap=normal;material.normalScale.set(3.2,3.2);textures.push(height); material.displacementMap=height;material.displacementScale=.038;
       material.onBeforeCompile = shader => {
         shader.uniforms.oceanMask={value:spec};shader.uniforms.cityMap={value:nights};shader.uniforms.sunDirection={value:sun};shader.uniforms.localSun=localSun;shader.uniforms.cloudMask={value:cloud};shader.uniforms.cloudOffset=cloudOffset;shader.uniforms.topoMap={value:height};
         shader.vertexShader = shader.vertexShader.replace('#include <displacementmap_vertex>', `#include <displacementmap_vertex>
@@ -112,7 +112,7 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
           float cloudShadow=texture2D(cloudMask,cloudUv).g*smoothstep(.02,.15,solarDot);
           diffuseColor.rgb*=1.-cloudShadow*.30;`);
         shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
-          roughnessFactor=mix(clamp(0.96-elevation*0.30,0.65,0.98),.16,ocean);`);
+          roughnessFactor=mix(clamp(0.96-elevation*0.35,0.60,0.98),.42,ocean);`);
         shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
           vec3 worldNormal=normalize(inverseTransformDirection(normal,viewMatrix));
           float darkness=1.-smoothstep(-.22,-.035,dot(worldNormal,sunDirection));
