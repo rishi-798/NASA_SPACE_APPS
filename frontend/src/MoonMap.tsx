@@ -1,25 +1,31 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import {
-  Axis,
+  BoundingSphere,
   Cartesian2,
   Cartesian3,
+  Cesium3DTileset,
   Color,
   ConstantPositionProperty,
   DirectionalLight,
+  HeadingPitchRange,
+  HeightReference,
+  HorizontalOrigin,
+  IonResource,
+  LabelStyle,
   Math as CesiumMath,
-  Matrix3,
-  Matrix4,
-  Model,
+  NearFarScalar,
   ScreenSpaceEventHandler,
   ScreenSpaceEventType,
   Viewer,
+  VerticalOrigin,
   type Entity,
 } from "cesium";
-import { createMoonGuides, lunarPosition, MOON, RADIUS } from "./moonGuides";
+import { createMoonGuides, lunarPosition, MOON } from "./moonGuides";
+import { featuredMoonSites, moonMapSites, MOON_TERRAIN_ASSET_ID } from "./data/moonMapSites";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 
 const VIEWS = {
-  near: [0, 12],
+  near: [10, -25],
   far: [180, 12],
   south: [0, -85],
 } as const;
@@ -29,15 +35,18 @@ type ViewName = keyof typeof VIEWS;
 export interface MoonLocation {
   latitude: number;
   longitude: number;
+  name?: string;
 }
 
 export interface MoonControls {
   setView: (name?: ViewName, animate?: boolean) => void;
   zoom: (direction: number) => void;
+  flyToSite: (id: string) => void;
 }
 
 interface MoonMapProps {
   onLocationSelect: (location: MoonLocation) => void;
+  onSiteSelect: (id: string) => void;
   selectedLocation: MoonLocation | null;
   showGrid: boolean;
   showAxis: boolean;
@@ -52,6 +61,7 @@ interface SceneState {
 
 export function MoonMap({
   onLocationSelect,
+  onSiteSelect,
   selectedLocation,
   showGrid,
   showAxis,
@@ -68,6 +78,7 @@ export function MoonMap({
     try {
       viewer = new Viewer(containerRef.current, {
         ellipsoid: MOON,
+        globe: false,
         baseLayer: false,
         baseLayerPicker: false,
         geocoder: false,
@@ -93,15 +104,14 @@ export function MoonMap({
       return;
     }
 
-    viewer.scene.globe.show = false;
     viewer.scene.backgroundColor = Color.fromCssColorString("#0a1014");
     viewer.scene.fog.enabled = false;
-    viewer.resolutionScale = Math.min(window.devicePixelRatio || 1, 2);
+    viewer.resolutionScale = Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
     viewer.scene.postProcessStages.fxaa.enabled = true;
 
     const light = new DirectionalLight({
       direction: new Cartesian3(-1, 0, 0),
-      intensity: 4,
+      intensity: 2,
     });
     viewer.scene.light = light;
 
@@ -121,8 +131,10 @@ export function MoonMap({
     });
 
     const controller = viewer.scene.screenSpaceCameraController;
-    controller.minimumZoomDistance = 50000;
+    controller.minimumZoomDistance = 100;
     controller.maximumZoomDistance = 14000000;
+    controller.minimumTrackBallHeight = 0;
+    controller.enableCollisionDetection = true;
 
     const guides = createMoonGuides(viewer);
     const point = viewer.entities.add({
@@ -132,6 +144,8 @@ export function MoonMap({
         pixelSize: 10,
         outlineColor: Color.fromCssColorString("#0d1819"),
         outlineWidth: 3,
+        heightReference: HeightReference.CLAMP_TO_3D_TILE,
+        disableDepthTestDistance: 100000,
       },
     });
     sceneRef.current = { viewer, guides, point };
@@ -155,14 +169,81 @@ export function MoonMap({
       viewer.scene.requestRender();
     };
 
+    const flyToSite = (id: string) => {
+      const site = moonMapSites.find((candidate) => candidate.id === id);
+      if (!site) return;
+      if ("analysisSiteId" in site && site.analysisSiteId) {
+        onSiteSelect(site.analysisSiteId);
+      } else {
+        onLocationSelect({ latitude: site.latitude, longitude: site.longitude, name: site.name });
+      }
+      viewer.camera.cancelFlight();
+      viewer.camera.flyToBoundingSphere(
+        new BoundingSphere(lunarPosition(site.longitude, site.latitude), 1),
+        {
+          offset: new HeadingPitchRange(0, -CesiumMath.PI_OVER_TWO, 70000),
+          duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 1.8,
+        },
+      );
+      viewer.scene.requestRender();
+    };
+
+    for (const site of moonMapSites) {
+      const featured = featuredMoonSites.find((candidate) => candidate.id === site.id);
+      const leftLabel = featured?.side === "left";
+      viewer.entities.add({
+        id: `landing:${site.id}`,
+        name: site.name,
+        position: lunarPosition(site.longitude, site.latitude),
+        label: {
+          text: featured ? `${featured.name.toUpperCase()} ↗\n${featured.mission} · EXPLORE SITE` : site.name,
+          font: featured ? "600 13px sans-serif" : "13px monospace",
+          fillColor: featured ? Color.fromCssColorString(featured.color) : Color.WHITE,
+          outlineColor: Color.fromCssColorString("#0a1014"),
+          outlineWidth: 3,
+          style: LabelStyle.FILL_AND_OUTLINE,
+          pixelOffset: featured ? new Cartesian2(leftLabel ? -28 : 28, leftLabel ? -20 : 20) : new Cartesian2(0, -22),
+          horizontalOrigin: featured ? (leftLabel ? HorizontalOrigin.RIGHT : HorizontalOrigin.LEFT) : HorizontalOrigin.CENTER,
+          verticalOrigin: VerticalOrigin.CENTER,
+          showBackground: Boolean(featured),
+          backgroundColor: Color.fromCssColorString("#0c171dee"),
+          backgroundPadding: new Cartesian2(12, 9),
+          scaleByDistance: new NearFarScalar(150, 1, 15000000, featured ? 0.9 : 0.6),
+          heightReference: HeightReference.CLAMP_TO_3D_TILE,
+          disableDepthTestDistance: 100000,
+        },
+        billboard: featured ? {
+          image: `${import.meta.env.BASE_URL}landing-beacon.svg`,
+          color: Color.fromCssColorString(featured.color),
+          width: 36,
+          height: 36,
+          heightReference: HeightReference.CLAMP_TO_3D_TILE,
+          disableDepthTestDistance: 100000,
+        } : undefined,
+        point: featured ? undefined : {
+          pixelSize: 9,
+          color: Color.fromCssColorString("analysisSiteId" in site ? "#a2ecd3" : "#f3f263"),
+          outlineColor: Color.fromCssColorString("#0a1014"),
+          outlineWidth: 2,
+          heightReference: HeightReference.CLAMP_TO_3D_TILE,
+          disableDepthTestDistance: 100000,
+        },
+      });
+    }
+
     controlsRef.current = {
       setView,
+      flyToSite,
       zoom: (direction) => {
         viewer.camera.cancelFlight();
         const height = viewer.camera.positionCartographic.height;
-        const distance = Math.max(height * 0.22, 30000);
+        const canvas = viewer.scene.canvas;
+        const center = new Cartesian2(canvas.clientWidth / 2, canvas.clientHeight / 2);
+        const surface = viewer.scene.pickPositionSupported ? viewer.scene.pickPosition(center) : undefined;
+        const range = surface ? Cartesian3.distance(viewer.camera.positionWC, surface) : Math.max(height, 100);
+        const distance = Math.max(range * 0.22, 10);
         if (direction > 0) {
-          viewer.camera.zoomIn(Math.min(distance, Math.max(0, height - 50000)));
+          viewer.camera.zoomIn(Math.min(distance, Math.max(0, range - 100)));
         } else {
           viewer.camera.zoomOut(Math.min(distance, Math.max(0, 14000000 - height)));
         }
@@ -171,12 +252,28 @@ export function MoonMap({
     };
     setView("near", false);
 
-    let moonModel: Model | undefined;
+    let terrainReady = false;
     let cancelled = false;
+    const interruptFlight = () => viewer.camera.cancelFlight();
+    viewer.scene.canvas.addEventListener("pointerdown", interruptFlight);
+    viewer.scene.canvas.addEventListener("wheel", interruptFlight, { passive: true });
     const clickHandler = new ScreenSpaceEventHandler(viewer.scene.canvas);
+    clickHandler.setInputAction((motion: { endPosition: Cartesian2 }) => {
+      const id = viewer.scene.pick(motion.endPosition)?.id?.id;
+      viewer.scene.canvas.style.cursor = typeof id === "string" && id.startsWith("landing:") ? "pointer" : "grab";
+    }, ScreenSpaceEventType.MOUSE_MOVE);
     clickHandler.setInputAction((click: { position: Cartesian2 }) => {
-      if (!moonModel?.ready) return;
-      const position = viewer.camera.pickEllipsoid(click.position, MOON);
+      if (!terrainReady) return;
+      const picked = viewer.scene.pick(click.position);
+      const id = picked?.id?.id;
+      if (typeof id === "string" && id.startsWith("landing:")) {
+        flyToSite(id.slice("landing:".length));
+        return;
+      }
+      // Read the rendered terrain depth, so a crater click uses its actual surface.
+      const position = viewer.scene.pickPositionSupported
+        ? viewer.scene.pickPosition(click.position)
+        : undefined;
       if (!position) return;
       const coordinate = MOON.cartesianToCartographic(position);
       onLocationSelect({
@@ -186,53 +283,55 @@ export function MoonMap({
     }, ScreenSpaceEventType.LEFT_CLICK);
     viewer.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
-    async function loadModel() {
+    async function loadTerrain() {
       try {
-        const rotation = Matrix3.fromArray([0, -1, 0, 0, 0, 1, -1, 0, 0]);
-        const model = await Model.fromGltfAsync({
-          url: `${import.meta.env.BASE_URL}nasa-moon.glb`,
-          modelMatrix: Matrix4.fromRotationTranslation(rotation),
-          scale: RADIUS / 1.282231258940614,
-          upAxis: Axis.Z,
-          forwardAxis: Axis.X,
-          allowPicking: true,
+        const accessToken = import.meta.env.VITE_CESIUM_ION_ACCESS_TOKEN?.trim();
+        const resource = await IonResource.fromAssetId(MOON_TERRAIN_ASSET_ID,
+          accessToken ? { accessToken } : undefined,
+        );
+        if (cancelled) return;
+        const terrain = await Cesium3DTileset.fromUrl(resource, {
+          enableCollision: true,
+          maximumScreenSpaceError: 8,
         });
 
         if (cancelled) {
-          model.destroy();
+          terrain.destroy();
           return;
         }
 
-        model.imageBasedLighting.imageBasedLightingFactor = new Cartesian2(0.7, 0);
-        moonModel = viewer.scene.primitives.add(model);
-        model.readyEvent.addEventListener(() => {
+        viewer.scene.primitives.add(terrain);
+        terrain.initialTilesLoaded.addEventListener(() => {
           if (!cancelled) {
+            terrainReady = true;
             setStatus("ready");
             viewer.scene.requestRender();
           }
         });
-        model.errorEvent.addEventListener((error) => {
-          console.error("NASA Moon model failed to render", error);
-          if (!cancelled) setStatus("error");
+        terrain.tileFailed.addEventListener((error) => {
+          console.error("A lunar terrain tile failed to load", error);
+          if (!cancelled && !terrainReady) setStatus("error");
         });
         viewer.scene.requestRender();
       } catch (error) {
-        console.error("Could not load NASA Moon model", error);
+        console.error("Could not load Cesium Moon terrain", error);
         if (!cancelled) setStatus("error");
       }
     }
 
-    void loadModel();
+    void loadTerrain();
 
     return () => {
       cancelled = true;
       controlsRef.current = null;
       sceneRef.current = null;
       clickHandler.destroy();
+      viewer.scene.canvas.removeEventListener("pointerdown", interruptFlight);
+      viewer.scene.canvas.removeEventListener("wheel", interruptFlight);
       removeLightListener();
       viewer.destroy();
     };
-  }, [controlsRef, onLocationSelect]);
+  }, [controlsRef, onLocationSelect, onSiteSelect]);
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -245,10 +344,12 @@ export function MoonMap({
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene) return;
-    scene.point.show = Boolean(selectedLocation);
+    scene.point.show = Boolean(selectedLocation) && !moonMapSites.some((site) =>
+      site.latitude === selectedLocation?.latitude && site.longitude === selectedLocation?.longitude,
+    );
     if (selectedLocation) {
       scene.point.position = new ConstantPositionProperty(
-        lunarPosition(selectedLocation.longitude, selectedLocation.latitude, 8000),
+        lunarPosition(selectedLocation.longitude, selectedLocation.latitude),
       );
     }
     scene.viewer.scene.requestRender();
@@ -267,8 +368,8 @@ export function MoonMap({
           <strong>{status === "error" ? "The Moon could not load" : "Bringing the Moon into view"}</strong>
           <span>
             {status === "error"
-              ? "Refresh the page to retry the local NASA model."
-              : "Loading NASA’s lunar surface model…"}
+              ? "Check your connection and Cesium ion access, then refresh to retry."
+              : "Streaming lunar terrain from Cesium ion…"}
           </span>
         </div>
       )}

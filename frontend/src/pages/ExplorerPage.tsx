@@ -73,12 +73,12 @@ export function ExplorerPage() {
     resetAnalysis();
   }, [resetAnalysis]);
 
-  function selectSite(siteId: string) {
+  const selectSite = useCallback((siteId: string) => {
     if (siteId === "custom") return;
     setPickedLocation(null);
     setSelectedId(siteId);
     resetAnalysis();
-  }
+  }, [resetAnalysis]);
 
   async function analyze() {
     if (!date || !time) return;
@@ -131,10 +131,10 @@ export function ExplorerPage() {
       <div className="explorer-grid">
         <div className="explorer-visual" data-reveal>
           <MoonExplorer
-            key={selectedSite.id}
             selectedSite={selectedSite}
             pickedLocation={pickedLocation}
             onLocationSelect={pickLocation}
+            onSiteSelect={selectSite}
           />
         </div>
         <aside className="explorer-sidebar" data-reveal>

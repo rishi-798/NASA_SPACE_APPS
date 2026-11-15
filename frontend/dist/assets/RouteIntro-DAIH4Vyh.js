@@ -1,1 +1,0 @@
-import{u as e}from"./index-BhEuT-wc.js";var t=e();function n({eyebrow:e,title:n,description:r,side:i}){return(0,t.jsxs)(`header`,{className:`route-intro`,children:[(0,t.jsxs)(`div`,{children:[(0,t.jsx)(`p`,{className:`eyebrow`,children:e}),(0,t.jsx)(`h1`,{children:n})]}),(0,t.jsxs)(`div`,{className:`route-intro-copy`,children:[(0,t.jsx)(`p`,{children:r}),i]})]})}export{n as t};

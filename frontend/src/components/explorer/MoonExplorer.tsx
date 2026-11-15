@@ -3,16 +3,18 @@ import { useRef, useState } from "react";
 import { MoonMap, type MoonControls, type MoonLocation } from "../../MoonMap";
 import { formatCoordinate } from "../../lib/format";
 import type { LandingSite } from "../../types";
+import { featuredMoonSites, moonMapSites } from "../../data/moonMapSites";
 
 type MoonExplorerProps = {
   selectedSite: LandingSite;
   pickedLocation: MoonLocation | null;
   onLocationSelect: (location: MoonLocation | null) => void;
+  onSiteSelect: (id: string) => void;
 };
 
-export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect }: MoonExplorerProps) {
-  const [showGrid, setShowGrid] = useState(true);
-  const [showAxis, setShowAxis] = useState(true);
+export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect, onSiteSelect }: MoonExplorerProps) {
+  const [showGrid, setShowGrid] = useState(false);
+  const [showAxis, setShowAxis] = useState(false);
   const controlsRef = useRef<MoonControls | null>(null);
   const selectedLocation = pickedLocation ?? {
     latitude: selectedSite.latitude,
@@ -22,13 +24,14 @@ export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect }:
   return (
     <section className="moon-explorer moon-explorer-3d" aria-label="Interactive 3D lunar explorer">
       <div className="moon-meta moon-meta-top">
-        <span>VISUALIZATION / NASA 3D MODEL</span>
+        <span>VISUALIZATION / LUNAR 3D TERRAIN</span>
         <span>RISHI / CESIUM</span>
       </div>
 
       <div className="moon-stage moon-stage-3d" data-moon-stage>
         <MoonMap
           onLocationSelect={onLocationSelect}
+          onSiteSelect={onSiteSelect}
           selectedLocation={selectedLocation}
           showGrid={showGrid}
           showAxis={showAxis}
@@ -37,7 +40,7 @@ export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect }:
       </div>
 
       <div className="moon-selection-readout" aria-live="polite">
-        <span>{pickedLocation ? "SELECTED COORDINATE" : selectedSite.mission}</span>
+        <span>{pickedLocation ? pickedLocation.name ?? "SELECTED COORDINATE" : selectedSite.mission}</span>
         <strong>
           {formatCoordinate(selectedLocation.latitude, "lat")} / {formatCoordinate(selectedLocation.longitude, "lon")}
         </strong>
@@ -59,6 +62,25 @@ export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect }:
           AXIS
         </button>
       </div>
+
+      <select
+        className="moon-site-picker"
+        aria-label="Fly to landing site"
+        value=""
+        onChange={(event) => controlsRef.current?.flyToSite(event.target.value)}
+      >
+        <option value="" disabled>Explore landing sites…</option>
+        <optgroup label="Featured missions">
+          {featuredMoonSites.map((site) => (
+            <option key={site.id} value={site.id}>{site.name} · {site.mission}</option>
+          ))}
+        </optgroup>
+        <optgroup label="Cesium landing sites">
+          {moonMapSites.filter((site) => !featuredMoonSites.some((featured) => featured.id === site.id)).map((site) => (
+            <option key={site.id} value={site.id}>{site.name}</option>
+          ))}
+        </optgroup>
+      </select>
 
       <div className="moon-toolrail" aria-label="Map tools">
         <button type="button" aria-label="Zoom in" onClick={() => controlsRef.current?.zoom(1)}>
@@ -85,11 +107,11 @@ export function MoonExplorer({ selectedSite, pickedLocation, onLocationSelect }:
       </div>
       <a
         className="moon-credit"
-        href="https://svs.gsfc.nasa.gov/14959/"
+        href="https://sandcastle.cesium.com/standalone.html?id=moon"
         target="_blank"
         rel="noreferrer"
       >
-        MODEL · NASA GODDARD
+        TERRAIN · NASA / USGS · CESIUM
       </a>
     </section>
   );
