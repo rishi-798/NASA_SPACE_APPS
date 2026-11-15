@@ -16,6 +16,18 @@ An optional `--earth-orientation-pck` supplies a NAIF binary Earth-orientation k
 
 The spectral coefficients in `data/Earthshine_Spring_Approximation_Revised_Sept2018.txt` are by Glenar, Stubbs, Schwieterman, Robinson and Livengood, [Mendeley Data v2](https://doi.org/10.17632/xfjm6nmh3m.2), CC BY 4.0. The approximation is seasonal and does not reconstruct historical cloud cover.
 
+### Experimental NOAA reanalysis comparison
+
+`earthshine_reanalysis.py` is a separate research tool. It combines six-hour NOAA NCEP/NCAR reanalysis top-of-atmosphere upward and downward shortwave fluxes with SPICE geometry, then estimates Moon-facing broadband irradiance assuming Lambertian scattering. Its output is **not** read by the Blender rig or evidence of accurate historical Earthshine: six-hour modeled clouds, directional scattering, spectral color, eclipses, and terrain horizons remain unresolved.
+
+Obtain the relevant year's `uswrf.ntat.gauss.YEAR.nc` and `dswrf.ntat.gauss.YEAR.nc` files from [NOAA PSL](https://downloads.psl.noaa.gov/Datasets/ncep.reanalysis/other_gauss/), an Earth-orientation binary PCK with coverage for the epoch from [NAIF](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/), and the existing project SPICE kernels. The command also requires the optional `netCDF4` Python package. It refuses to overwrite an existing output.
+
+```text
+python scripts/blender/earthshine_reanalysis.py --metadata METADATA.json --time 1969-07-20T20:17:40Z --upward UPWARD.nc --downward DOWNWARD.nc --earth-orientation-pck EARTH.bpc --output EXPERIMENT.json
+```
+
+NOAA defines these fluxes as means for the six hours after the file's reference time. Low-illumination or invalid reflectance cells use a documented fallback, whose weighted contribution is reported. The model assumes an Earth sphere and reports broadband scalar irradiance, not an RGB light. Run `python -m pytest tests/test_earthshine_reanalysis.py -q` for mathematical checks; these do not validate atmospheric or cloud physics.
+
 ## Site04 source pixels
 
 `build_site04_glb.py SOURCE.tif OUTPUT_DIR` exports four direct source-pixel terrain candidates. The files deliberately store local Z-up coordinates, unlike standard glTF Y-up; consumers must use the documented conversion and frame metadata. They contain no synthetic displacement or smoothing. `verify_site04_glb.py` checks source heights and geometry; `build_site04_enu_blend.py` and `verify_site04_enu_blend.py` construct and check corresponding Blender scenes. Refer to each script's invocation and the generated sidecars before use. The original DEM must be supplied separately.
