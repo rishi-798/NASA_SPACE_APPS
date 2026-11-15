@@ -360,6 +360,7 @@ export function LandingSimPage({ landing, onContinue, onBack }: { landing: SimLa
           <label className="sim-inline"><input type="checkbox" checked={overview} onChange={(e) => setOverview(e.target.checked)} /> Overview camera</label>
         </div>
 
+        <p className="analysis-note">Neutral-gray dust and clustered gravel are illustrative shading and decoration; contact uses the underlying terrain. Low-angle sunlight in this simulator is illustrative, not date-calculated.</p>
         <p className="analysis-note sim-model-note"><strong>Visual only: {VISUAL_MODEL.name}</strong> ({VISUAL_MODEL.credit}), drawn {6 * landerScale} m tall. It does not set the mass, thrust or fuel. The physics always uses the illustrative lander in Preflight.</p>
 
         {mode === "manual" && <div className="sim-manual" aria-label="Manual controls">

@@ -9,7 +9,7 @@ import type { Terrain } from "../../sim/terrain";
 import { createDustEffect } from "./dustEffect";
 import { macroAlbedo, starField } from "./regolith";
 
-import { createRegolithTextures } from "../../lib/regolithTexture";
+import { landingGravel, landingSurfaceMaterial } from "./surfaceAppearance";
 
 type Props = { terrain: Terrain; store: SnapshotStore; exaggeration: number; targetRadiusM: number; padRadiusM: number; overview: boolean;
   /** Visual size multiplier for the vehicle model only (physics and contact are unchanged). */
@@ -37,10 +37,10 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     el.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x020306);
+    scene.background = new THREE.Color(0x000000);
     scene.add(starField());
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
     const camera = new THREE.PerspectiveCamera(50, 1, 0.5, 40000);
@@ -49,38 +49,22 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     controls.maxPolarAngle = Math.PI * 0.495;
     // ILLUSTRATIVE LIGHTING: a low Sun (~12° up), typical near the lunar south pole, plus faint fill so
     // shadowed ground is not pure black. Not computed for a specific date.
-    scene.add(new THREE.HemisphereLight(0x8fa3c0, 0x1a1712, 0.35));
-    const sun = new THREE.DirectionalLight(0xfff1dc, 3.2);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.10));
+    const sun = new THREE.DirectionalLight(0xffffff, 3.2);
     const sunDir = new THREE.Vector3(-0.78, 0.21, 0.59).normalize();
     sun.position.copy(sunDir.clone().multiplyScalar(4000));
     sun.castShadow = true;
     sun.shadow.mapSize.set(4096, 4096);
-    Object.assign(sun.shadow.camera, { left: -2300, right: 2300, top: 2300, bottom: -2300, near: 100, far: 9000 });
-    sun.shadow.bias = -0.0004;
-    sun.shadow.normalBias = 1.5;
+    Object.assign(sun.shadow.camera, { left: -180, right: 180, top: 180, bottom: -180, near: 100, far: 9000 });
+    sun.shadow.camera.updateProjectionMatrix();
+    sun.shadow.bias = -0.00002;
+    sun.shadow.normalBias = .15;
     scene.add(sun, sun.target);
 
     const disposables: { dispose: () => void }[] = [];
-    const dust = createRegolithTextures(24, true);
-    dust.map.repeat.set(1, 1); dust.normalMap.repeat.set(1, 1);
-    dust.map.anisotropy = dust.normalMap.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
-    const surfaceMaterial = new THREE.MeshStandardMaterial({map: dust.map, normalMap: dust.normalMap,
-      normalScale: new THREE.Vector2(.85, .85), color: 0x858585, roughness: .97, metalness: 0});
-    disposables.push(dust, surfaceMaterial);
-    // Actual Blender shader-node bakes, with procedural fallback while loading.
-    const nodeLoader = new THREE.TextureLoader();
-    for (const [filename, normal] of [['landing-node-color.png', false], ['landing-node-normal.png', true]] as const) {
-      const texture = nodeLoader.load(`${import.meta.env.BASE_URL}terrain/${filename}`, loaded => {
-        if (normal) surfaceMaterial.normalMap = loaded;
-        else surfaceMaterial.map = loaded;
-        surfaceMaterial.needsUpdate = true;
-      });
-      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-      texture.colorSpace = normal ? THREE.NoColorSpace : THREE.SRGBColorSpace;
-      texture.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
-      disposables.push(texture);
-    }
-
+    const appearance = landingSurfaceMaterial();
+    const surfaceMaterial = appearance.material;
+    disposables.push(appearance);
     let holder: THREE.Group | null = null;
     if (terrain.grid) {
       // Terrain mesh: sampled from terrain.heightAt — the SAME surface the physics uses — on a 4× finer grid,
@@ -108,7 +92,7 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
         const t = (ok ? h : low) - low, span = Math.max(1, high - low);
         const edge = Math.min(1, (half - Math.max(Math.abs(x), Math.abs(y))) / 250);
         const shade = (0.7 + 0.12 * (t / span) + 0.3 * albedo(x, y)) * (0.45 + 0.55 * edge);
-        if (ok) colors.set([shade, shade * 0.985, shade * 0.96], i * 3); else colors.set([0.8, 0.22, 0.2], i * 3);  // missing data: red
+        if (ok) colors.set([shade, shade, shade], i * 3); else colors.set([0.8, 0.22, 0.2], i * 3);  // missing data: red
       }
       for (let r = 0; r < fine - 1; r++) for (let c = 0; c < fine - 1; c++) {
         const a = r * fine + c, b = a + 1, d = a + fine, e = d + 1;
@@ -181,31 +165,9 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
       disposables.push(outline.geometry);
     }
 
-    // Decorative fragments only: excluded from the simulation contact surface.
-    const rockGeometry = new THREE.IcosahedronGeometry(1, 1);
-    const rockPositions = rockGeometry.getAttribute('position');
-    for (let i = 0; i < rockPositions.count; i++) {
-      const x = rockPositions.getX(i), y = rockPositions.getY(i), z = rockPositions.getZ(i);
-      const f = .85 + .16 * Math.sin(x * 9 + y * 7 + z * 5);
-      rockPositions.setXYZ(i, x * f, y * f, z * f);
-    }
-    rockGeometry.computeVertexNormals();
-    const rocks = new THREE.InstancedMesh(rockGeometry, surfaceMaterial, 3500);
-    let seed = 19690720, used = 0;
-    const random = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
-    const transform = new THREE.Object3D();
-    for (let i = 0; i < 3500; i++) {
-      const x = (random() - .5) * 1200, y = (random() - .5) * 1200;
-      const h = terrain.heightAt(x, y);
-      if (!Number.isFinite(h) || Math.hypot(x, y) < targetRadiusM + 5) continue;
-      const size = .08 + Math.pow(random(), 4) * 2.2;
-      transform.position.copy(toThree([x, y, h]));
-      transform.rotation.set(random() * .5, random() * Math.PI * 2, random() * .4);
-      transform.scale.set(size, size * .65, size * (.7 + random() * .7));
-      transform.updateMatrix(); rocks.setMatrixAt(used++, transform.matrix);
-    }
-    rocks.count = used; rocks.castShadow = rocks.receiveShadow = true;
-    scene.add(rocks); disposables.push(rockGeometry);
+    const gravel = landingGravel(terrain, exaggeration, surfaceMaterial);
+    scene.add(gravel.group);
+    disposables.push(gravel);
 
     // Target area ring, draped by sampling terrain heights around the circle.
     const ringPts: THREE.Vector3[] = [];
@@ -306,6 +268,9 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
       const p = toThree(s.pos);
       lander.position.copy(p);
       const ground = terrain.heightAt(s.pos[0], s.pos[1]);
+      const shadowCentre = toThree([s.pos[0], s.pos[1], Number.isFinite(ground) ? ground : 0]);
+      sun.target.position.copy(shadowCentre);
+      sun.position.copy(shadowCentre).addScaledVector(sunDir, 4000);
       dropGeo.setFromPoints([p.clone().add(new THREE.Vector3(0, 0.1, 0)), toThree([s.pos[0], s.pos[1], Number.isFinite(ground) ? ground : s.pos[2]])]);
       drop.computeLineDistances();
       // Beacon grows with camera distance so the lander stays visible in the overview.
