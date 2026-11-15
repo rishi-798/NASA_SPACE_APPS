@@ -509,6 +509,14 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
           ship.invulnerableTimer -= dt;
         }
 
+        // Combo decay timer
+        if (g.comboTimer > 0) {
+          g.comboTimer -= dt;
+          if (g.comboTimer <= 0) {
+            g.combo = 1;
+          }
+        }
+
         // Update lasers
         for (let i = g.lasers.length - 1; i >= 0; i--) {
           const l = g.lasers[i];
@@ -559,6 +567,13 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
               }
 
               // Scoring & Combo multiplier
+              if (g.comboTimer > 0) {
+                g.combo = Math.min(5, g.combo + 1);
+              } else {
+                g.combo = 1;
+              }
+              g.comboTimer = 2.2;
+
               const pts = (ast.tier === 3 ? 50 : ast.tier === 2 ? 100 : 200) * g.combo;
               g.score += pts;
               setScore(g.score);
@@ -566,10 +581,10 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
               g.floatingTexts.push({
                 x: ast.x,
                 y: ast.y,
-                text: `+${pts}`,
-                color: g.combo > 1 ? "#38bdf8" : "#ffffff",
-                life: 0.8,
-                maxLife: 0.8,
+                text: g.combo > 1 ? `+${pts} (${g.combo}x)` : `+${pts}`,
+                color: g.combo > 2 ? "#f59e0b" : g.combo > 1 ? "#38bdf8" : "#ffffff",
+                life: 0.85,
+                maxLife: 0.85,
               });
 
               if (g.score > highScore) {

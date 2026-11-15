@@ -2,7 +2,7 @@ import { useGSAP } from "@gsap/react";
 import { ArrowRight, CalendarDots } from "@phosphor-icons/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { RouteIntro } from "../components/ui/RouteIntro";
 import { missionExplorerUrl, missionTypeLabel } from "../lib/missionNavigation";
@@ -21,6 +21,18 @@ const groups = [
 
 export function TimelinePage() {
   const root = useRef<HTMLElement>(null);
+  const [filterType, setFilterType] = useState<"all" | "surface" | "orbit">("all");
+
+  const filteredGroups = useMemo(() => {
+    return groups.map((g) => ({
+      ...g,
+      records: g.records.filter((m) => {
+        if (filterType === "all") return true;
+        if (filterType === "surface") return m.missionType === "surface";
+        return m.missionType !== "surface";
+      }),
+    })).filter((g) => g.records.length > 0);
+  }, [filterType]);
 
   useGSAP(
     () => {
@@ -97,9 +109,32 @@ export function TimelinePage() {
           <p style={{ color: "var(--muted)", marginTop: "12px", lineHeight: "1.6" }}>
             Surface deliveries, lunar flybys, and Earth-orbit demonstrations serve different objectives. Dates and categories below follow the linked mission sources.
           </p>
+          <div className="timeline-filter-bar" role="group" aria-label="Mission category filter" style={{ display: "flex", gap: "8px", margin: "20px 0 10px", flexWrap: "wrap" }}>
+            {(["all", "surface", "orbit"] as const).map((type) => (
+              <button
+                key={type}
+                type="button"
+                style={{
+                  padding: "7px 16px",
+                  borderRadius: "100px",
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  border: "1px solid var(--line)",
+                  background: filterType === type ? "var(--text)" : "#14151a",
+                  color: filterType === type ? "#151619" : "var(--text)",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                }}
+                aria-pressed={filterType === type}
+                onClick={() => setFilterType(type)}
+              >
+                {type === "all" ? "All Programs" : type === "surface" ? "Surface Deliveries" : "Orbital & Demonstrations"}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="unscheduled-list">
-          {groups.map((group) => <section className="mission-timeline-group" key={group.title} aria-label={group.title}>
+          {filteredGroups.map((group) => <section className="mission-timeline-group" key={group.title} aria-label={group.title}>
           <h3>{group.title}</h3>
           {group.records.map((m) => (
             <article className="unscheduled-record" key={m.id}>

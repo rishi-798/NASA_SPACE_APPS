@@ -870,14 +870,16 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           fines.map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
           terrainTextures.add(fines.map);fines.normalMap.dispose();
           const hero = detailedRegions.has(region.id);
-          const dust = hero ? createRegolithTextures(24,true,true) : null;
-          if(dust) {
-            dust.map.repeat.set(1,1);
-            dust.map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
-            terrainTextures.add(dust.map);dust.normalMap.dispose();
-          }
-          const material = new THREE.MeshStandardMaterial({map:dust?.map ?? map,normalMap,roughnessMap,bumpMap:fines.map,bumpScale:.16,roughness:1,metalness:0,normalScale:new THREE.Vector2(hero ? .5 : .8,hero ? .5 : .8)});
-          if(hero) { material.roughnessMap=null; }
+          const material = new THREE.MeshStandardMaterial({
+            map: map,
+            normalMap,
+            roughnessMap: roughnessMap ?? undefined,
+            bumpMap: fines.map,
+            bumpScale: 0.16,
+            roughness: 0.95,
+            metalness: 0.0,
+            normalScale: new THREE.Vector2(0.8, 0.8),
+          });
           // Preserve texture structure but keep illustrative regolith neutral gray.
           material.onBeforeCompile = shader => {
             shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\n diffuseColor.rgb = vec3(dot(diffuseColor.rgb,vec3(.2126,.7152,.0722)));');

@@ -202,7 +202,6 @@ export const MISSION_PHASES: MissionPhase[] = [
       { timeMet: "T+02:45:00", name: "TLI Ignition", description: "Upper stage cryogenic restart, ullage motors active", altitudeKm: 185, velocityKmS: 7.79 },
       { timeMet: "T+02:47:30", name: "Burn Midpoint", description: "G-force peaks at 1.8g, apogee rapidly climbing through 100,000 km", altitudeKm: 245, velocityKmS: 9.35 },
       { timeMet: "T+02:50:30", name: "TLI Cutoff (SECO-2)", description: "Target orbital energy achieved, apogee at lunar distance", altitudeKm: 320, velocityKmS: 10.94 },
-      { timeMet: "T+03:10:00", name: "Transposition & Separation", description: "Spacecraft separates from spent booster and begins cislunar cruise", altitudeKm: 1420, velocityKmS: 10.35 },
     ],
     keyEquations: [
       {
@@ -237,7 +236,7 @@ export const MISSION_PHASES: MissionPhase[] = [
     tagline: "3-day cislunar transit, thermal barbecue roll & trajectory trims",
     durationLabel: "68 to 96 hours (~3 days)",
     startMetSeconds: 10230,
-    endMetSeconds: 259200, // ~72h
+    endMetSeconds: 257400, // ~71.5h
     deltaVBudgetMS: 35, // Mid-course corrections
     initialAltitudeKm: 320,
     finalAltitudeKm: 384400,
@@ -260,6 +259,7 @@ export const MISSION_PHASES: MissionPhase[] = [
       eccentricity: 0.9664,
     },
     milestones: [
+      { timeMet: "T+03:10:00", name: "Transposition & Separation", description: "Spacecraft separates from spent booster and begins cislunar cruise", altitudeKm: 1420, velocityKmS: 10.35 },
       { timeMet: "T+05:00:00", name: "Van Allen Radiation Belt Exit", description: "Spacecraft clears outer Earth radiation belt safely", altitudeKm: 25000, velocityKmS: 7.20 },
       { timeMet: "T+14:00:00", name: "TCM-1 Midcourse Correction", description: "Small 12 m/s RCS burn to refine perilune aim point", altitudeKm: 110000, velocityKmS: 3.10 },
       { timeMet: "T+40:00:00", name: "Cislunar Halfway Point", description: "Distance exceeds 200,000 km, passive thermal roll ongoing", altitudeKm: 205000, velocityKmS: 1.62 },
@@ -296,8 +296,8 @@ export const MISSION_PHASES: MissionPhase[] = [
     name: "Lunar Orbit Insertion & Capture (LOI)",
     shortName: "Lunar Arrival",
     tagline: "Hyperbolic perilune approach & retrograde braking into Low Lunar Orbit",
-    durationLabel: "4 hours (T+72:00:00 → T+76:00:00)",
-    startMetSeconds: 259200,
+    durationLabel: "4.5 hours (T+71:30:00 → T+76:00:00)",
+    startMetSeconds: 257400,
     endMetSeconds: 273600,
     deltaVBudgetMS: 890,
     initialAltitudeKm: 66180, // Moon-relative distance
@@ -308,7 +308,7 @@ export const MISSION_PHASES: MissionPhase[] = [
     overview:
       "As the spacecraft swoops past perilune (100 km above the Moon's far side), it fires its main engine retrograde for ~6 minutes to shed excess hyperbolic velocity, capturing into a stable circular Low Lunar Orbit.",
     orbitalMechanics:
-      "Because the Moon lacks an atmosphere, aerocapture is impossible: 100% of the capture velocity must be eliminated with rocket propellant. The approach trajectory is a hyperbola relative to the Moon with hyperbolic excess velocity $v_\\infty \\approx 0.85$ km/s. At periselene (100 km altitude), velocity reaches ~2.55 km/s. A retrograde burn of $\\Delta v \\approx 890$ m/s slows the craft to the circular orbital speed of 1.633 km/s.",
+      "Because the Moon lacks an atmosphere, aerocapture is impossible: 100% of the capture velocity must be eliminated with rocket propellant. The approach trajectory is a hyperbola relative to the Moon with hyperbolic excess velocity v∞ ≈ 0.85 km/s. At periselene (100 km altitude), velocity reaches ~2.55 km/s. A retrograde burn of Δv ≈ 890 m/s slows the craft to the circular orbital speed of 1.633 km/s.",
     engineeringChallenges:
       "LOI ignition takes place behind the Moon on the far side, resulting in a 45-minute Loss of Signal (LOS) where the spacecraft must operate entirely autonomously without Mission Control communications.",
     telemetryProfile: {
@@ -368,7 +368,7 @@ export const MISSION_PHASES: MissionPhase[] = [
     overview:
       "The descent engine throttles continuously to brake 1,630 m/s of horizontal orbital speed, transitioning from horizontal braking to a vertical optical/hazard-avoidance descent for a soft touchdown on the lunar regolith.",
     orbitalMechanics:
-      "A small Descent Orbit Insertion (DOI) burn drops perilune from 100 km to 15 km over the landing site. At 15 km, Powered Descent Initiation (PDI) begins. In vacuum, the descent trajectory executes a continuous gravity-turn braking maneuver. Below 2.5 km (High Gate), the lander pitches upright so optical cameras and LiDAR scan the landing zone. At Low Gate (300 m), pilot/autopilot guides vertical velocity to $\\le 1.5$ m/s until landing gear contact probes trigger engine shutdown.",
+      "A small Descent Orbit Insertion (DOI) burn drops perilune from 100 km to 15 km over the landing site. At 15 km, Powered Descent Initiation (PDI) begins. In vacuum, the descent trajectory executes a continuous gravity-turn braking maneuver. Below 2.5 km (High Gate), the lander pitches upright so optical cameras and LiDAR scan the landing zone. At Low Gate (300 m), pilot/autopilot guides vertical velocity to ≤ 1.5 m/s until landing gear contact probes trigger engine shutdown.",
     engineeringChallenges:
       "Non-linear rocket mass depletion, severe rocket exhaust plume interaction with lunar dust ('dust storm' obscuring surface below 30 m), crater slopes and boulder collision avoidance, and strict propellant margins leaving zero room for error.",
     telemetryProfile: {

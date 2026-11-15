@@ -166,13 +166,14 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
     }).catch(()=>{if(!disposed)setFailed(true);});
     const pins = launchSites.map(site=>{
       const pinGroup = new THREE.Group();
-      const pin=new THREE.Mesh(new THREE.SphereGeometry(.014,14,10),new THREE.MeshBasicMaterial({color:0xff9d54}));
-      const ring=new THREE.Mesh(new THREE.RingGeometry(.020,.026,24),new THREE.MeshBasicMaterial({color:0x38bdf8,side:THREE.DoubleSide,transparent:true,opacity:0.85}));
+      const pin=new THREE.Mesh(new THREE.SphereGeometry(.009,14,10),new THREE.MeshBasicMaterial({color:0xff9d54}));
+      const ring=new THREE.Mesh(new THREE.RingGeometry(.013,.018,24),new THREE.MeshBasicMaterial({color:0x38bdf8,side:THREE.DoubleSide,transparent:true,opacity:0.85}));
       ring.lookAt(point(site.latitude,site.longitude,1.0));
       pinGroup.add(pin,ring);
-      pinGroup.position.copy(point(site.latitude,site.longitude,1.042));
+      pinGroup.position.copy(point(site.latitude,site.longitude,1.025));
       pinGroup.userData.site=site;
       pin.userData.site=site;
+      ring.userData.site=site;
       globe.add(pinGroup);return pinGroup;
     });
     const raycaster=new THREE.Raycaster();let down={x:0,y:0};
@@ -181,8 +182,15 @@ export function EarthGlobe({ selectedId, onSelect }: { selectedId: string | null
       if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>5)return;
       const rect=renderer.domElement.getBoundingClientRect();
       raycaster.setFromCamera(new THREE.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1),camera);
-      const hit=raycaster.intersectObjects([earth,...pins])[0];
-      if(hit?.object.userData.site)select.current(hit.object.userData.site.id);
+      const pinHits = raycaster.intersectObjects(pins, true).filter(h => h.object.userData.site || h.object.parent?.userData.site);
+      if(pinHits.length > 0) {
+        // Find all unique sites hit in this click cone
+        const hitSites = [...new Set(pinHits.map(h => (h.object.userData.site || h.object.parent?.userData.site)?.id).filter(Boolean))];
+        const currentIndex = hitSites.indexOf(selected.current ?? "");
+        // If current site is in the cluster, cycle to next; otherwise select the first closest
+        const nextSiteId = hitSites[(currentIndex + 1) % hitSites.length];
+        if(nextSiteId) select.current(nextSiteId);
+      }
     };
     renderer.domElement.addEventListener('pointerdown',press);renderer.domElement.addEventListener('pointerup',click);
     const resize=()=>{const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();};
