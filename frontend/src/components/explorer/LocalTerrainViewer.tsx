@@ -30,7 +30,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
   const mesh = hit.object, positions = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
   if (!positions || !indices) return previous;
   const makeRockGeometry = () => {
-    const source = new THREE.IcosahedronGeometry(1, 2);
+    const source = new THREE.IcosahedronGeometry(1, enriched ? 3 : 2);
     source.deleteAttribute('normal');
     source.deleteAttribute('uv');
     const geometry = mergeVertices(source);
@@ -44,10 +44,24 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
       vertex.setXYZ(i, x * irregularity, y * irregularity, z * irregularity);
     }
     geometry.computeVertexNormals();
+    const rockUv = new Float32Array(vertex.count * 2);
+    for (let i = 0; i < vertex.count; i++) {
+      rockUv[i * 2] = Math.atan2(vertex.getY(i), vertex.getX(i)) / (Math.PI * 2) + .5;
+      rockUv[i * 2 + 1] = Math.acos(THREE.MathUtils.clamp(vertex.getZ(i) / Math.hypot(vertex.getX(i), vertex.getY(i), vertex.getZ(i)), -1, 1)) / Math.PI;
+    }
+    geometry.setAttribute('uv', new THREE.BufferAttribute(rockUv, 2));
     return geometry;
   };
   const rocks = previous ?? new THREE.InstancedMesh(makeRockGeometry(),
     new THREE.MeshStandardMaterial({ color: 0x41413f, roughness: 1, metalness: 0 }), capacity);
+  if (!previous && enriched) {
+    const grit = createRegolithTextures(24, true);
+    const material = rocks.material as THREE.MeshStandardMaterial;
+    material.map = grit.map;
+    material.normalMap = grit.normalMap;
+    grit.map.repeat.set(1, 1); grit.normalMap.repeat.set(1, 1);
+    material.normalScale.set(.7, .7);
+  }
   if (!previous) { rocks.castShadow = true; rocks.receiveShadow = true; rocks.frustumCulled = false; scene.add(rocks); }
   const transform = new THREE.Object3D();
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), point = new THREE.Vector3();
@@ -622,7 +636,12 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     const dispose = (object: THREE.Object3D) => object.traverse(child => {
       if (!(child instanceof THREE.Mesh || child instanceof THREE.Points || child instanceof THREE.LineSegments)) return;
       child.geometry.dispose();
-      for (const material of Array.isArray(child.material) ? child.material : [child.material]) material.dispose();
+      for (const material of Array.isArray(child.material) ? child.material : [child.material]) {
+        if (child instanceof THREE.InstancedMesh && material instanceof THREE.MeshStandardMaterial) {
+          material.map?.dispose(); material.normalMap?.dispose();
+        }
+        material.dispose();
+      }
     });
 
     const download = new AbortController();
@@ -687,8 +706,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           for (let i = 0; i < positions.count; i++) {
             const px = positions.getX(i);
             const py = isYUp ? -positions.getZ(i) : positions.getY(i);
-            uv[i * 2] = (px - minX) / spanX;
-            uv[i * 2 + 1] = (py - minY) / spanY;
+            uv[i * 2] = detailedRegions.has(region.id) ? px / 24 : (px - minX) / spanX;
+            uv[i * 2 + 1] = detailedRegions.has(region.id) ? py / 24 : (py - minY) / spanY;
           }
           child.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
         }
@@ -702,7 +721,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           const regolithTextures = createRegolithTextures(extent, isDetailed);
           terrainTextures.add(regolithTextures.map);
           terrainTextures.add(regolithTextures.normalMap);
-          const rep = isDetailed ? extent / 24 : 1.6;
+          const rep = isDetailed ? 1 : 1.6;
           regolithTextures.map.repeat.set(rep, rep);
           regolithTextures.normalMap.repeat.set(rep, rep);
           const fallbackMat = new THREE.MeshStandardMaterial({
