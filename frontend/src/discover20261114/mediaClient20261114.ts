@@ -17,6 +17,7 @@ export type MediaPage = {
   total: number;
   nextPage: number | null;
   note?: string;
+  cameras?: string[];
 };
 
 const apiRoot = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
