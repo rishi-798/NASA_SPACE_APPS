@@ -12,33 +12,6 @@ export function settledDustHeight(x: number, north: number): number {
   return .018 + .028 * noise(1.7) + .016 * noise(.23);
 }
 
-/** Bounded cosmetic skin over valid measured coverage; missing cells stay open. */
-export function buildWideDust(terrain: Terrain, exaggeration: number, east = 0, north = 0, radius = terrain.halfSizeM, steps = 192) {
-  const geometry = new THREE.BufferGeometry();
-  const positions: number[] = [], uvs: number[] = [], indices: number[] = [], valid: boolean[] = [];
-  const stride = steps + 1;
-  for (let row = 0; row <= steps; row++) for (let col = 0; col <= steps; col++) {
-    const x = east - radius + col * radius * 2 / steps, y = north - radius + row * radius * 2 / steps;
-    const inside = Math.abs(x) <= terrain.halfSizeM && Math.abs(y) <= terrain.halfSizeM;
-    const h = inside ? terrain.heightAt(x, y) : NaN;
-    valid.push(Number.isFinite(h));
-    // Fade the intermediate mesh to the whole-area skin, avoiding a square raised edge.
-    const edge = radius - Math.max(Math.abs(x - east), Math.abs(y - north));
-    const relief = .018 + THREE.MathUtils.smoothstep(edge, 0, 16) * (settledDustHeight(x, y) - .018);
-    positions.push(x, Number.isFinite(h) ? h * exaggeration + relief : 0, -y);
-    uvs.push(x / 24, y / 24);
-  }
-  for (let row = 0; row < steps; row++) for (let col = 0; col < steps; col++) {
-    const a = row * stride + col, b = a + 1, c = a + stride, d = c + 1;
-    if (valid[a] && valid[b] && valid[c]) indices.push(a, b, c);
-    if (valid[b] && valid[d] && valid[c]) indices.push(b, d, c);
-  }
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-  geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
-  geometry.setIndex(indices); geometry.computeVertexNormals(); geometry.computeBoundingSphere();
-  return geometry;
-}
-
 /** Cheap whole-area rocks plus denser fragments around the current viewing area. */
 export function wideGravel(terrain: Terrain, exaggeration: number, east: number, north: number) {
   const group = new THREE.Group();

@@ -14,8 +14,8 @@ function noise(x: number, y: number): number {
   return THREE.MathUtils.lerp(a, b, sy);
 }
 
-export function lunarDetailHeight(x: number, y: number, anchor: THREE.Vector3, enriched = false): number {
-  const fade = THREE.MathUtils.smoothstep((enriched ? 24 : 45) - Math.hypot(x - anchor.x, y - anchor.y), 0, enriched ? 8 : 12);
+export function lunarDetailHeight(x: number, y: number, anchor: THREE.Vector3, enriched = false, detailRadius = enriched ? 24 : 45): number {
+  const fade = THREE.MathUtils.smoothstep(detailRadius - Math.hypot(x - anchor.x, y - anchor.y), 0, enriched ? 8 : 12);
   if (enriched) {
     // An optional presentation skin, never a replacement elevation product.
     // Jittered cells are a Voronoi-style seed field; radial curves form bowls/rims.
@@ -52,10 +52,10 @@ export function lunarDetailHeight(x: number, y: number, anchor: THREE.Vector3, e
     + .06 * noise(x * .9 - 9, y * .9 + 4));
 }
 
-function buildDenseDetail(hit: THREE.Intersection): THREE.BufferGeometry | null {
+function buildDenseDetail(hit: THREE.Intersection, radius = 24): THREE.BufferGeometry | null {
   const mesh = hit.object as THREE.Mesh, source = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
   if (!source || !indices || hit.faceIndex == null) return null;
-  const radius = 24, steps = 384, spacing = radius * 2 / steps, stride = steps + 1;
+  const steps = 384, spacing = radius * 2 / steps, stride = steps + 1;
   const minX = hit.point.x - radius, minY = hit.point.y - radius;
   const heights = new Float64Array(stride * stride); heights.fill(NaN);
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3();
@@ -83,7 +83,7 @@ function buildDenseDetail(hit: THREE.Intersection): THREE.BufferGeometry | null 
     if(!Number.isFinite(z)) continue;
     const x=minX+ix*spacing,y=minY+iy*spacing;
     lookup[index]=vertices.length/3;
-    vertices.push(x,y,z+lunarDetailHeight(x,y,hit.point,true));uvs.push(x/24,y/24);
+    vertices.push(x,y,z+lunarDetailHeight(x,y,hit.point,true,radius));uvs.push(x/24,y/24);
   }
   for(let iy=0;iy<steps;iy++) for(let ix=0;ix<steps;ix++) {
     const a=lookup[iy*stride+ix]!,b=lookup[iy*stride+ix+1]!,c=lookup[(iy+1)*stride+ix]!,d=lookup[(iy+1)*stride+ix+1]!;
@@ -96,9 +96,9 @@ function buildDenseDetail(hit: THREE.Intersection): THREE.BufferGeometry | null 
   geometry.computeVertexNormals();geometry.computeBoundingSphere();return geometry;
 }
 
-export function buildLunarSurfaceDetail(hit: THREE.Intersection, enriched = false): THREE.BufferGeometry | null {
+export function buildLunarSurfaceDetail(hit: THREE.Intersection, enriched = false, detailRadius = 24): THREE.BufferGeometry | null {
   if (!(hit.object instanceof THREE.Mesh) || hit.faceIndex == null) return null;
-  if (enriched) return buildDenseDetail(hit);
+  if (enriched) return buildDenseDetail(hit, detailRadius);
   const mesh = hit.object, source = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
   if (!source || !indices) return null;
   const vertices: number[] = [], uvs: number[] = [], faces: number[] = [];
