@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { TerrainRegion } from './terrainTypes';
 import type { MoonLocation } from '../../MoonMap';
 import { eyePosition, lookDirection, type Vec3 } from '../../lib/surfaceViewMath';
 import { createRegolithTextures } from '../../lib/regolithTexture';
+import { buildLunarSurfaceDetail, lunarDetailHeight } from '../../lib/lunarSurfaceDetail';
 
 const api = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 type SkyBody = { directional_vector_local_z_up: Vec3; angular_radius_deg: number; elevation_deg: number };
@@ -25,42 +27,66 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
   const mesh = hit.object, positions = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
   if (!positions || !indices) return previous;
   const makeRockGeometry = () => {
-    const geometry = new THREE.IcosahedronGeometry(1, 1);
+    const source = new THREE.IcosahedronGeometry(1, 2);
+    source.deleteAttribute('normal');
+    source.deleteAttribute('uv');
+    const geometry = mergeVertices(source);
+    source.dispose();
     const vertex = geometry.getAttribute('position');
     for (let i = 0; i < vertex.count; i++) {
       const x = vertex.getX(i), y = vertex.getY(i), z = vertex.getZ(i);
-      const irregularity = .86 + .22 * (.5 + .5 * Math.sin(x * 12.7 + y * 19.3 + z * 8.1));
+      const irregularity = .85 + .16 * Math.sin(x * 3.7 + y * 5.3 + z * 4.1)
+        + .08 * Math.sin(x * 8.1 - y * 6.4 + z * 7.3)
+        + .035 * Math.sin(x * 18.1 + y * 13.4 - z * 16.3);
       vertex.setXYZ(i, x * irregularity, y * irregularity, z * irregularity);
     }
     geometry.computeVertexNormals();
     return geometry;
   };
   const rocks = previous ?? new THREE.InstancedMesh(makeRockGeometry(),
-    new THREE.MeshStandardMaterial({ color: 0x5e5b57, roughness: 1, metalness: 0 }), 900);
+    new THREE.MeshStandardMaterial({ color: 0x41413f, roughness: 1, metalness: 0 }), 1800);
   if (!previous) { rocks.castShadow = true; rocks.receiveShadow = true; rocks.frustumCulled = false; scene.add(rocks); }
   const transform = new THREE.Object3D();
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), point = new THREE.Vector3();
-  let seed = (hit.faceIndex + 1) >>> 0, count = 0;
+  const ab = new THREE.Vector3(), ac = new THREE.Vector3(), normal = new THREE.Vector3();
+  const up = new THREE.Vector3(0, 0, 1), spin = new THREE.Quaternion();
+  const tint = new THREE.Color();
+  let seed = (hit.faceIndex + 1) >>> 0, count = 0, candidates = 0;
   const random = () => { seed = (1664525 * seed + 1013904223) >>> 0; return seed / 4294967296; };
-  const first = Math.max(0, hit.faceIndex - 2048), last = Math.min(indices.count / 3, hit.faceIndex + 2049);
-  for (let face = first; face < last && count < 900; face++) {
+  const first = Math.max(0, hit.faceIndex - 16384), last = Math.min(indices.count / 3, hit.faceIndex + 16385);
+  for (let face = first; face < last; face++) {
     a.fromBufferAttribute(positions, indices.getX(face * 3)).applyMatrix4(mesh.matrixWorld);
     b.fromBufferAttribute(positions, indices.getX(face * 3 + 1)).applyMatrix4(mesh.matrixWorld);
     c.fromBufferAttribute(positions, indices.getX(face * 3 + 2)).applyMatrix4(mesh.matrixWorld);
     if (Math.min(a.distanceToSquared(hit.point), b.distanceToSquared(hit.point), c.distanceToSquared(hit.point)) > 10000) continue;
-    const area = b.clone().sub(a).cross(c.clone().sub(a)).length() / 2;
-    const samples = Math.min(80, Math.max(1, Math.ceil(area * .02)));
-    for (let i = 0; i < samples && count < 900; i++) {
+    normal.crossVectors(ab.subVectors(b, a), ac.subVectors(c, a));
+    const area = normal.length() / 2;
+    normal.normalize();
+    if (normal.z < 0) normal.negate();
+    const samples = Math.min(120, Math.max(1, Math.ceil(area * .09)));
+    for (let i = 0; i < samples; i++) {
       const u = Math.sqrt(random()), v = random();
       point.copy(a).multiplyScalar(1-u).addScaledVector(b, u*(1-v)).addScaledVector(c, u*v);
-      if (point.distanceToSquared(hit.point) > 6400) continue;
-      transform.position.copy(point); transform.rotation.set(0, 0, random() * Math.PI * 2);
-      const scale = .04 + random() * .20;
-      transform.scale.set(scale, scale * (.55 + random() * .8), scale * (.3 + random() * .45));
-      transform.updateMatrix(); rocks.setMatrixAt(count++, transform.matrix);
+      const distance = point.distanceToSquared(hit.point);
+      if (distance > 4900 || distance < 4) continue;
+      candidates++;
+      const slot = count < 1800 ? count++ : Math.floor(random() * candidates);
+      if (slot >= 1800) continue;
+      transform.position.copy(point);
+      transform.position.z += lunarDetailHeight(point.x, point.y, hit.point);
+      transform.quaternion.setFromUnitVectors(up, normal);
+      transform.quaternion.multiply(spin.setFromAxisAngle(up, random() * Math.PI * 2));
+      // Many small fragments and occasional larger rocks, mostly buried in dust.
+      const scale = .035 + Math.pow(random(), 3) * .42;
+      transform.scale.set(scale, scale * (.65 + random() * .7), scale * (.35 + random() * .38));
+      transform.updateMatrix(); rocks.setMatrixAt(slot, transform.matrix);
+      const shade = .65 + random() * .35;
+      tint.setRGB(shade, shade, shade * .98);
+      rocks.setColorAt(slot, tint);
     }
   }
   rocks.count = count; rocks.instanceMatrix.needsUpdate = true;
+  if (rocks.instanceColor) rocks.instanceColor.needsUpdate = true;
   return rocks;
 }
 
@@ -141,6 +167,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
   const pickRef = useRef(onPick);
   const [state, setState] = useState('Loading measured terrain…');
   const [lighting, setLighting] = useState('Calculating SPICE sky…');
+  const [skyReady, setSkyReady] = useState(false);
   const [inspection, setInspection] = useState(false);
   const [showRocks, setShowRocks] = useState(true);
   const [loaded, setLoaded] = useState(0);
@@ -162,13 +189,14 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setClearColor(0x010204);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
+    renderer.toneMappingExposure = 2.6;
     container.appendChild(renderer.domElement);
     const canvas = renderer.domElement;
     canvas.setAttribute('aria-label', `${region.name} terrain. In eye-level mode drag or use arrow keys to look around.`);
     canvas.tabIndex = 0;
 
     const scene = new THREE.Scene();
+    const terrainTextures = new Set<THREE.Texture>();
     const camera = new THREE.PerspectiveCamera(62, 1, 0.1, 2000000);
     camera.up.set(0, 0, 1);
     const controls = new OrbitControls(camera, canvas);
@@ -226,6 +254,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     let inspectActive = false;
     let rocks: THREE.InstancedMesh | null = null;
     let rocksVisible = true;
+    let detail: THREE.Mesh | null = null;
+    let detailSource: THREE.Mesh | null = null;
+    const detailAnchor = new THREE.Vector3(Infinity, Infinity, Infinity);
 
     const value: Runtime = {
       terrain: null, inverse, marker, up: new THREE.Vector3(0, 0, 1), mode: 'orbit',
@@ -244,13 +275,17 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           }
         }
         if (next === 'eye' && !value.selectedPoint) return false;
-        if (next === value.mode) { focusSun(); render(); return true; }
+        if (next === value.mode) {
+          if (detail) detail.visible = next === 'eye' && !!value.selectedPoint && rocksVisible;
+          focusSun(); render(); return true;
+        }
         if (next === 'eye') {
           savedPosition.copy(camera.position); savedTarget.copy(controls.target);
           yaw = 0; pitch = -0.08;
           setCamHeading(0); setCamPitch(-5);
         }
         value.mode = next;
+        if (detail) detail.visible = next === 'eye' && !!value.selectedPoint && rocksVisible;
         controls.enabled = next === 'orbit';
         marker.visible = next === 'orbit' && !!value.selectedPoint;
         if (next === 'orbit') {
@@ -281,8 +316,27 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         render();
       },
       render: () => render(),
-      placeRocks(hit) { rocks = scatterRocks(scene, rocks, hit); if (rocks) rocks.visible = rocksVisible; },
-      setRocksVisible(on) { rocksVisible = on; if (rocks) rocks.visible = on; render(); },
+      placeRocks(hit) {
+        if (detailAnchor.distanceToSquared(hit.point) < .0001 && detailSource === hit.object) return;
+        rocks = scatterRocks(scene, rocks, hit);
+        if (rocks) rocks.visible = rocksVisible;
+        if (detail) { scene.remove(detail); detail.geometry.dispose(); detail = null; }
+        detailAnchor.copy(hit.point);
+        detailSource = hit.object instanceof THREE.Mesh ? hit.object : null;
+        const geometry = buildLunarSurfaceDetail(hit);
+        if (geometry && detailSource) {
+          detail = new THREE.Mesh(geometry, detailSource.material);
+          detail.castShadow = true; detail.receiveShadow = true;
+          detail.visible = value.mode === 'eye' && rocksVisible;
+          scene.add(detail);
+        }
+      },
+      setRocksVisible(on) {
+        rocksVisible = on;
+        if (rocks) rocks.visible = on;
+        if (detail) detail.visible = on && value.mode === 'eye' && !!value.selectedPoint;
+        render();
+      },
       setLighting(data) {
         sky = data;
         if (data) {
@@ -402,72 +456,92 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         if (positions) {
           const uv = new Float32Array(positions.count * 2);
           for (let i = 0; i < positions.count; i++) {
-            uv[i * 2] = positions.getX(i) / 64;
+            uv[i * 2] = positions.getX(i) / 24;
             const yCoord = region.gltf_up === 'Y' ? -positions.getZ(i) : positions.getY(i);
-            uv[i * 2 + 1] = yCoord / 64;
+            uv[i * 2 + 1] = yCoord / 24;
           }
           child.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
         }
       });
 
       const texLoader = new THREE.TextureLoader();
+      const useFallbackTextures = () => {
+        if (cancelled) return;
+        try {
+          const regolithTextures = createRegolithTextures(extent);
+          terrainTextures.add(regolithTextures.map);
+          terrainTextures.add(regolithTextures.normalMap);
+          regolithTextures.map.repeat.set(1.6, 1.6);
+          regolithTextures.normalMap.repeat.set(1.6, 1.6);
+          terrain.traverse(child => {
+            if (child instanceof THREE.Mesh && child.material) {
+              child.material = new THREE.MeshStandardMaterial({
+                map: regolithTextures.map,
+                color: new THREE.Color(0xa2a5aa),
+                normalMap: regolithTextures.normalMap,
+                normalScale: new THREE.Vector2(0.45, 0.45),
+                roughness: 0.95,
+                metalness: 0.0,
+              });
+              if (detail && detailSource === child) detail.material = child.material;
+            }
+          });
+          render();
+        } catch { /* Retain the model's original material if canvas textures are unavailable. */ }
+      };
       texLoader.load(
         `${import.meta.env.BASE_URL}terrain/lunar-detail-color.png`,
         colTex => {
           if (cancelled) { colTex.dispose(); return; }
-          const repeats = Math.max(32, Math.round(extent / 25));
+          terrainTextures.add(colTex);
           colTex.wrapS = colTex.wrapT = THREE.RepeatWrapping;
-          colTex.repeat.set(repeats, repeats);
           colTex.colorSpace = THREE.SRGBColorSpace;
           colTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
           texLoader.load(
-            `${import.meta.env.BASE_URL}terrain/lunar-detail-normal.png`,
+            `${import.meta.env.BASE_URL}terrain/lunar-regolith-normal.png`,
             normTex => {
               if (cancelled) { normTex.dispose(); return; }
+              terrainTextures.add(normTex);
               normTex.wrapS = normTex.wrapT = THREE.RepeatWrapping;
-              normTex.repeat.set(repeats, repeats);
               normTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
               terrain.traverse(child => {
                 if (child instanceof THREE.Mesh && child.material) {
                   const mat = new THREE.MeshStandardMaterial({
                     map: colTex,
-                    color: new THREE.Color(0xb2b6bc),
+                    color: new THREE.Color(0xa2a5aa),
                     normalMap: normTex,
-                    normalScale: new THREE.Vector2(.35, .35),
+                    normalScale: new THREE.Vector2(1.8, 1.8),
                     roughness: 1,
                     metalness: 0,
                   });
+                  // Two differently scaled samples soften visible repetition while adding
+                  // the fine, illustrative bump used in the reference material tutorials.
+                  mat.onBeforeCompile = shader => {
+                    shader.fragmentShader = shader.fragmentShader.replace(
+                      '#include <normal_fragment_maps>',
+                      `#ifdef USE_NORMALMAP_TANGENTSPACE
+                        vec3 coarse = texture2D(normalMap, vNormalMapUv).xyz * 2.0 - 1.0;
+                        vec3 fine = texture2D(normalMap, vNormalMapUv * 2.73 + vec2(0.17, 0.43)).xyz * 2.0 - 1.0;
+                        vec3 detail = normalize(vec3((coarse.xy * 0.7 + fine.xy * 0.3) * normalScale, 1.0));
+                        normal = normalize(tbn * detail);
+                      #else
+                        #include <normal_fragment_maps>
+                      #endif`
+                    );
+                  };
                   child.material = mat;
+                  if (detail && detailSource === child) detail.material = mat;
                   mat.needsUpdate = true;
                 }
               });
               render();
-            }
+            },
+            undefined,
+            useFallbackTextures
           );
         },
         undefined,
-        () => {
-          try {
-            const regolithTextures = createRegolithTextures(extent);
-            regolithTextures.map.repeat.set(1.6, 1.6);
-            regolithTextures.normalMap.repeat.set(1.6, 1.6);
-            terrain.traverse(child => {
-              if (child instanceof THREE.Mesh && child.material) {
-                const mat = new THREE.MeshStandardMaterial({
-                  map: regolithTextures.map,
-                  color: new THREE.Color(0xa8acb2),
-                  normalMap: regolithTextures.normalMap,
-                  normalScale: new THREE.Vector2(0.75, 0.75),
-                  roughness: 0.95,
-                  metalness: 0.0,
-                });
-                child.material = mat;
-                mat.needsUpdate = true;
-              }
-            });
-            render();
-          } catch { /* fallback */ }
-        }
+        useFallbackTextures
       );
 
       // Auto-sample center landing point
@@ -555,7 +629,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       cancelled = true; download.abort(); resizeObserver.disconnect(); controls.dispose();
       canvas.removeEventListener('pointerdown', start); canvas.removeEventListener('pointermove', move);
       canvas.removeEventListener('pointerup', pick); canvas.removeEventListener('pointercancel', cancelPointer); canvas.removeEventListener('keydown', key);
-      dispose(scene); earthMap.dispose(); sunLight.shadow.dispose(); renderer.dispose(); canvas.remove(); runtime.current = null;
+      dispose(scene); terrainTextures.forEach(texture => texture.dispose());
+      earthMap.dispose(); sunLight.shadow.dispose(); renderer.dispose(); canvas.remove(); runtime.current = null;
     };
   }, [region]);
 
@@ -574,7 +649,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     setOnMesh(!!hit); value.render();
   }, [latitude, longitude, loaded, region, mode]);
 
-  useEffect(() => { runtime.current?.setRocksVisible(showRocks && onMesh); }, [showRocks, onMesh]);
+  useEffect(() => { runtime.current?.setRocksVisible(showRocks && onMesh); }, [showRocks, onMesh, loaded]);
 
   useEffect(() => {
     if (loaded) {
@@ -599,10 +674,12 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             !Number.isFinite(data.earth.illuminated_fraction) || data.earth.illuminated_fraction < 0 || data.earth.illuminated_fraction > 1 ||
             data.earth.sun_direction_local_z_up?.length !== 3 || !data.earth.sun_direction_local_z_up.every(Number.isFinite)) throw new Error('Invalid SPICE sky response.');
           runtime.current?.setLighting(data);
-          setLighting(`☀️ Sun ${data.sun.elevation_deg.toFixed(1)}° · 🌍 Earth ${data.earth.elevation_deg.toFixed(1)}° (${(data.earth.illuminated_fraction * 100).toFixed(0)}% lit)`);
+          setSkyReady(true);
+          setLighting(`Sun ${data.sun.elevation_deg.toFixed(2)}° · Earth ${data.earth.elevation_deg.toFixed(2)}° · Earth illuminated ${(data.earth.illuminated_fraction * 100).toFixed(1)}% · ${data.time}`);
         }).catch(error => {
           if (!controller.signal.aborted) {
             runtime.current?.setLighting(null);
+            setSkyReady(false);
             setLighting(error instanceof Error ? error.message : 'SPICE sky unavailable.');
           }
         });
@@ -636,10 +713,10 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
 
         {mode === 'eye' && onMesh && (
           <div className="surface-hud-targets">
-            <button type="button" className="hud-target-btn" onClick={() => runtime.current?.faceBody('sun')}>
+            <button type="button" className="hud-target-btn" disabled={!skyReady} onClick={() => runtime.current?.faceBody('sun')}>
               ☀️ Face Sun
             </button>
-            <button type="button" className="hud-target-btn" onClick={() => runtime.current?.faceBody('earth')}>
+            <button type="button" className="hud-target-btn" disabled={!skyReady} onClick={() => runtime.current?.faceBody('earth')}>
               🌍 Face Earth
             </button>
             <button type="button" className="hud-target-btn" onClick={() => runtime.current?.faceBody('north')}>
@@ -660,14 +737,14 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       {/* Main 3D Canvas */}
       <div className="local-terrain-canvas" ref={host} />
 
-      <label><input type="checkbox" checked={showRocks} onChange={e => setShowRocks(e.target.checked)} /> Illustrative nearby rocks</label>
-      <p>Rocks and surface texture are illustrative. Terrain shape and selected coordinates remain measured.</p>
-      <p role="status">{state}</p>
+      <label><input type="checkbox" checked={showRocks} onChange={e => setShowRocks(e.target.checked)} /> Illustrative rocks and fine relief</label>
+      <p>Nearby rocks and fine surface relief are illustrative. Selected coordinates use the measured terrain.</p>
+      <p role="status">{mode === 'eye' && state.startsWith('Measured terrain ready') ? 'Eye-level view · 1.8 m above the selected point' : state}</p>
       <label><input type="checkbox" checked={inspection} onChange={e => setInspection(e.target.checked)} /> Topographic relief light (illustrative)</label>
       {/* Sleek Bottom Metadata & Ephemeris Strip */}
       <div className="surface-footer-strip">
         <span className="surface-meta-tag">
-          {region.name} · {region.source_spacing_m.toFixed(1)}m SLDEM2015 Topography (1:1 scale)
+          {region.name} · {region.source_spacing_m.toFixed(1)}m source sampling · 1:1 scale
         </span>
         <span className="surface-sky-tag">
           {lighting.includes('Sun') ? lighting : 'SPICE DE440 Solar & Earth Ephemeris'}
