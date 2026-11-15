@@ -91,10 +91,12 @@ function createPedestal(box: THREE.Box3, extent: number) {
   const group = new THREE.Group();
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
-  const baseDepth = Math.max(20, extent * 0.05);
-  const baseGeom = new THREE.BoxGeometry(size.x * 1.012, size.y * 1.012, baseDepth);
+  const baseDepth = Math.max(25, extent * 0.06);
+  const baseGeom = new THREE.BoxGeometry(size.x * 1.015, size.y * 1.015, baseDepth);
   const baseMat = new THREE.MeshStandardMaterial({
-    color: 0x15181f, roughness: 0.7, metalness: 0.3,
+    color: 0x12151c,
+    roughness: 0.45,
+    metalness: 0.65,
   });
   const base = new THREE.Mesh(baseGeom, baseMat);
   base.position.set(center.x, center.y, box.min.z - baseDepth / 2);
@@ -102,7 +104,7 @@ function createPedestal(box: THREE.Box3, extent: number) {
   group.add(base);
 
   const wireGeom = new THREE.EdgesGeometry(baseGeom);
-  const wireMat = new THREE.LineBasicMaterial({ color: 0x76ffd0, transparent: true, opacity: 0.3 });
+  const wireMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.4 });
   const wire = new THREE.LineSegments(wireGeom, wireMat);
   wire.position.copy(base.position);
   group.add(wire);
@@ -111,6 +113,7 @@ function createPedestal(box: THREE.Box3, extent: number) {
 
 function createHorizonApron(box: THREE.Box3, extent: number) {
   const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
   const rInner = extent * 0.49;
   const rOuter = Math.max(extent * 6, 28000);
   const segments = 64;
@@ -127,8 +130,10 @@ function createHorizonApron(box: THREE.Box3, extent: number) {
     const z = box.min.z + curveDrop;
     for (let seg = 0; seg <= segments; seg++) {
       const angle = (seg / segments) * Math.PI * 2;
-      pos.push(center.x + r * Math.cos(angle), center.y + r * Math.sin(angle), z);
-      uvs.push((center.x + r * Math.cos(angle)) / 64, (center.y + r * Math.sin(angle)) / 64);
+      const px = center.x + r * Math.cos(angle);
+      const py = center.y + r * Math.sin(angle);
+      pos.push(px, py, z);
+      uvs.push((px - box.min.x) / (size.x || 1), (py - box.min.y) / (size.y || 1));
     }
   }
 
@@ -148,7 +153,9 @@ function createHorizonApron(box: THREE.Box3, extent: number) {
   geo.computeVertexNormals();
 
   const mat = new THREE.MeshStandardMaterial({
-    color: 0x707379, roughness: 0.94, metalness: 0.02,
+    color: 0x94989e,
+    roughness: 0.98,
+    metalness: 0.0,
   });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.receiveShadow = true;
@@ -322,19 +329,19 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       inspect(on) {
         inspectActive = on;
         if (on) {
-          inspectKey.position.set(center.x + extent * 0.65, center.y - extent * 0.75, center.z + extent * 0.9);
+          inspectKey.position.set(center.x + extent * 0.7, center.y - extent * 0.6, center.z + extent * 0.42);
           inspectKey.target.position.copy(center);
-          inspectKey.intensity = 1.05;
+          inspectKey.intensity = 1.35;
 
-          inspectRim.position.set(center.x - extent * 0.75, center.y + extent * 0.65, center.z + extent * 0.45);
+          inspectRim.position.set(center.x - extent * 0.7, center.y + extent * 0.6, center.z + extent * 0.28);
           inspectRim.target.position.copy(center);
-          inspectRim.intensity = 0.35;
+          inspectRim.intensity = 0.5;
 
-          ambientLight.intensity = 0.12;
+          ambientLight.intensity = 0.18;
         } else {
           inspectKey.intensity = 0.0;
           inspectRim.intensity = 0.0;
-          ambientLight.intensity = 0.03;
+          ambientLight.intensity = 0.04;
         }
         render();
       },
@@ -429,9 +436,12 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         const positions = child.geometry.getAttribute('position');
         if (positions && !child.geometry.getAttribute('uv')) {
           const uv = new Float32Array(positions.count * 2);
+          const invX = 1 / (size.x || 1);
+          const invY = 1 / (size.y || 1);
           for (let i = 0; i < positions.count; i++) {
-            uv[i * 2] = positions.getX(i) / 64;
-            uv[i * 2 + 1] = (region.gltf_up === 'Y' ? -positions.getZ(i) : positions.getY(i)) / 64;
+            uv[i * 2] = (positions.getX(i) - box.min.x) * invX;
+            const yCoord = region.gltf_up === 'Y' ? -positions.getZ(i) : positions.getY(i);
+            uv[i * 2 + 1] = (yCoord - box.min.y) * invY;
           }
           child.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
         }
@@ -477,16 +487,24 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
               if (child instanceof THREE.Mesh && child.material) {
                 const mat = new THREE.MeshStandardMaterial({
                   map: regolithTextures.map,
-                  color: new THREE.Color(0x9ca0a6),
+                  color: new THREE.Color(0xb0b4ba),
                   normalMap: regolithTextures.normalMap,
-                  normalScale: new THREE.Vector2(1.2, 1.2),
-                  roughness: 0.94,
-                  metalness: 0.02,
+                  normalScale: new THREE.Vector2(0.65, 0.65),
+                  roughness: 0.98,
+                  metalness: 0.0,
                 });
                 child.material = mat;
                 mat.needsUpdate = true;
               }
             });
+            if (horizonApron) {
+              horizonApron.material = new THREE.MeshStandardMaterial({
+                map: regolithTextures.map,
+                color: new THREE.Color(0xa2a6ac),
+                roughness: 0.98,
+                metalness: 0.0,
+              });
+            }
             render();
           } catch { /* fallback */ }
         }
