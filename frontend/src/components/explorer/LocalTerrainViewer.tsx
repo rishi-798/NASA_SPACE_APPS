@@ -90,7 +90,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
         const covers=new Float32Array(vertices.count);
         for(let i=0;i<vertices.count;i++) {
           const height=(vertices.getZ(i)-bounds.min.z)/Math.max(.001,bounds.max.z-bounds.min.z);
-          covers[i]=.35+.35*(1-THREE.MathUtils.smoothstep(height,.05,.65));
+          covers[i]=.5+.30*(1-THREE.MathUtils.smoothstep(height,.05,.65));
         }
         stoneGeometry.setAttribute('l1DustCover',new THREE.BufferAttribute(covers,1));
         material.normalScale.multiplyScalar(.6);
@@ -104,7 +104,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
         };
         material.customProgramCacheKey=()=> 'lunokhod1-dust-coated-stones-v1';
       }
-      const stones = new THREE.InstancedMesh(stoneGeometry, material, capacity);
+      const stones = new THREE.InstancedMesh(stoneGeometry, material, hero ? capacity + 20000 : capacity);
       stones.castShadow = stones.receiveShadow = true;
       stones.frustumCulled = false;
       rocks.add(stones);
@@ -114,6 +114,9 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
   const batches = rocks.children as THREE.InstancedMesh[];
   batches.forEach(batch => { if (!batch.geometry.boundingBox) batch.geometry.computeBoundingBox(); });
   const samplesBySlot: { matrix: THREE.Matrix4; shade: number; scale: number }[] = [];
+  const fineGravel: { matrix: THREE.Matrix4; shade: number; scale: number }[]=[];
+  let gravelSeed=(hit.faceIndex+77123)>>>0;
+  const gravelRandom=()=>{gravelSeed=(1664525*gravelSeed+1013904223)>>>0;return gravelSeed/4294967296;};
   const transform = new THREE.Object3D();
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), point = new THREE.Vector3();
   const ab = new THREE.Vector3(), ac = new THREE.Vector3(), normal = new THREE.Vector3();
@@ -131,6 +134,22 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
     const area = normal.length() / 2;
     normal.normalize();
     if (normal.z < 0) normal.negate();
+    if(hero && fineGravel.length<20000) {
+      for(let i=0,n=Math.min(24000,Math.ceil(area*24));i<n&&fineGravel.length<20000;i++) {
+        const u=Math.sqrt(gravelRandom()),v=gravelRandom();
+        point.copy(a).multiplyScalar(1-u).addScaledVector(b,u*(1-v)).addScaledVector(c,u*v);
+        const d=point.distanceToSquared(hit.point);
+        if(d>400||d<.0625) continue;
+        const pocket=lunokhodDustPocket(point.x*.1+19,point.y*.1-7);
+        if(gravelRandom()>.3+.7*pocket) continue;
+        transform.position.copy(point);transform.position.z+=lunarDetailHeight(point.x,point.y,hit.point,true);
+        transform.quaternion.setFromUnitVectors(up,normal);
+        transform.quaternion.multiply(spin.setFromAxisAngle(up,gravelRandom()*Math.PI*2));
+        const scale=.006+gravelRandom()*.012;
+        transform.scale.set(scale,scale*(.7+gravelRandom()*.5),scale*(.6+gravelRandom()*.35));
+        transform.updateMatrix();fineGravel.push({matrix:transform.matrix.clone(),shade:.8+gravelRandom()*.2,scale});
+      }
+    }
     const samples = Math.min(enriched ? 24000 : 120, Math.max(1, Math.ceil(area * (enriched ? 12 : .09))));
     for (let i = 0; i < samples; i++) {
       const u = Math.sqrt(random()), v = random();
@@ -159,6 +178,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
       samplesBySlot[slot] = { matrix: transform.matrix.clone(), shade: .65 + random() * .35, scale };
     }
   }
+  samplesBySlot.push(...fineGravel);
   batches.forEach(batch => { batch.count = 0; });
   samplesBySlot.forEach((sample, slot) => {
     // Reserve photographed geometry for visible stones; fine gravel uses cheaper fragments.
@@ -871,7 +891,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             dust.map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
             terrainTextures.add(dust.map);dust.normalMap.dispose();
           }
-          const material = new THREE.MeshStandardMaterial({map:dust?.map ?? map,normalMap,roughnessMap,bumpMap:fines.map,bumpScale:.16,roughness:1,metalness:0,normalScale:new THREE.Vector2(hero ? .6 : .8,hero ? .6 : .8)});
+          const material = new THREE.MeshStandardMaterial({map:dust?.map ?? map,normalMap,roughnessMap,bumpMap:fines.map,bumpScale:.16,roughness:1,metalness:0,normalScale:new THREE.Vector2(hero ? .5 : .8,hero ? .5 : .8)});
           if(hero) { material.roughnessMap=null; }
           // Preserve texture structure but keep illustrative regolith neutral gray.
           material.onBeforeCompile = shader => {

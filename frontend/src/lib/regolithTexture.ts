@@ -103,7 +103,7 @@ export function createRegolithTextures(extent: number, enriched = false, hero = 
       heights[idx] = h;
 
       // Illustrative muted gray; no measured reflectance claim.
-      let tone = 132 + Math.round(h * (hero ? 18 : enriched ? 42 : 32) + dust * (hero ? 160 : 18));
+      let tone = 132 + Math.round(h * (hero ? 18 : enriched ? 42 : 32) + dust * (hero ? 80 : 18));
       tone = Math.max(90, Math.min(185, tone));
 
       const pIdx = idx * 4;
