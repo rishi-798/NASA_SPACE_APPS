@@ -1,6 +1,6 @@
 # Lunar landing simulation (educational prototype)
 
-It is **step 5, "Landing", of Plan a trip** (Departure → Rocket → Destination → Conditions → **Landing** → Overview). Old `/landing`
+It is **step 6, "Landing", of Plan a trip** (Departure → Rocket → Destination → Conditions → Flight → **Landing** → Overview). Old `/landing`
 links forward to the trip planner. This is an educational model of the **final descent** over a small
 area. It is **not** a validated six-degree-of-freedom spacecraft simulator, and it does not certify any landing.
 
@@ -240,12 +240,13 @@ arrow keys tilt, Z full, X cut, C centre tilt, Space start/pause).
 ## Where it sits in the trip
 
 - Step 4, **Conditions**: pick the observation time and analyze the chosen point.
-- Step 5, **Landing**: this simulator, opened on the landing point you chose.
+- Step 5, **Flight**: the calculated Earth–Moon animation, with the chosen rocket, speed controls and gas puffs.
+- Step 6, **Landing**: this simulator, opened on the landing point you chose.
   - **Any of the team's 16 sites** (Apollo 11, 12, 14, 15, 16, 17, Athena, Odysseus, Luna 21, Lunokhod 1 and 2,
     Surveyor 1, 5, 6, 7, and G7): that site's measured terrain model. Poleward sites also offer the LOLA 80 m grid.
   - **A custom point south of about 80° S:** the real LOLA 80 m grid at that exact point.
   - **Any other point:** no real terrain exists, so a clear notice appears and the **synthetic training scenario** is
     used. It is labelled, and never silently substituted.
-  - The step is optional: **Continue to overview** works at any time, and **Back to conditions** keeps your analysis.
-- Step 6, **Overview**: the mission record.
+  - The step is optional: **Continue to overview** works at any time, and **Back to flight** keeps your analysis.
+- Step 7, **Overview**: the mission record.
 - Simulation time (T+) starts at 0 for each run and is separate from the UTC observation time chosen in step 4.

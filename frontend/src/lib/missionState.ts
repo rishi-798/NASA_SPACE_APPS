@@ -1,7 +1,7 @@
 import type { AnalysisResult } from "../types";
 
-/** earth, rocket, moon, landing (conditions) → preparing → simulate (landing simulation) → reveal (overview). */
-export type TripStage = "earth" | "rocket" | "moon" | "landing" | "preparing" | "simulate" | "reveal";
+/** earth, rocket, moon, landing (conditions) → preparing → flight → simulate (landing simulation) → reveal (overview). */
+export type TripStage = "earth" | "rocket" | "moon" | "landing" | "preparing" | "flight" | "simulate" | "reveal";
 export type LandingPoint = { latitude: number; longitude: number; name?: string; destinationId?: string };
 export type MissionRecord = {
   version: 1; stage: TripStage; departureId: string | null; rocketId: string | null;
@@ -50,16 +50,16 @@ export function missionReducer(mission: MissionRecord, action: MissionAction): M
     case "time": return Number.isFinite(Date.parse(action.time)) ? { ...invalidate(mission), utcTime: action.time } : mission;
     case "stage": {
       if (action.stage !== "earth" && !mission.departureId) return mission;
-      if (["moon", "landing", "preparing", "simulate", "reveal"].includes(action.stage) && !mission.rocketId) return mission;
-      if (["landing", "preparing", "simulate", "reveal"].includes(action.stage) && !mission.landing) return mission;
-      if ((action.stage === "simulate" || action.stage === "reveal") && mission.resultRevision !== mission.revision) return mission;
+      if (["moon", "landing", "preparing", "flight", "simulate", "reveal"].includes(action.stage) && !mission.rocketId) return mission;
+      if (["landing", "preparing", "flight", "simulate", "reveal"].includes(action.stage) && !mission.landing) return mission;
+      if (["flight", "simulate", "reveal"].includes(action.stage) && mission.resultRevision !== mission.revision) return mission;
       return { ...mission, stage: action.stage, error: null };
     }
     case "prepare": return missionReady(mission) ? { ...mission, stage: "preparing", result: null, resultRevision: null, error: null } : mission;
     case "plan": return action.revision === mission.revision && missionReady(mission)
-      ? { ...mission, result: action.result, resultRevision: action.revision, stage: "simulate", error: null } : mission;
+      ? { ...mission, result: action.result, resultRevision: action.revision, stage: "flight", error: null } : mission;
     case "result": return action.revision === mission.revision && mission.stage === "preparing"
-      ? { ...mission, result: action.result, resultRevision: action.revision, stage: "simulate", error: null } : mission;
+      ? { ...mission, result: action.result, resultRevision: action.revision, stage: "flight", error: null } : mission;
     case "error": return action.revision === mission.revision && mission.stage === "preparing"
       ? { ...mission, stage: "landing", error: action.error, result: null, resultRevision: null } : mission;
     case "reset": return { ...newMission(), revision: mission.revision + 1 };

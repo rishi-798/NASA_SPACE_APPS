@@ -437,7 +437,7 @@ export function LandingSimPage({ landing, onContinue, onBack }: { landing: SimLa
     </section>}
 
     <div className="sim-step-nav">
-      {onBack && <button type="button" onClick={onBack}>Back to conditions</button>}
+      {onBack && <button type="button" onClick={onBack}>Back to flight</button>}
       {onContinue && <button type="button" className="sim-primary" onClick={onContinue} disabled={phase === "running" || phase === "replay"}>Continue to overview</button>}
       <small>The simulation is optional: you can continue at any time.</small>
     </div>
