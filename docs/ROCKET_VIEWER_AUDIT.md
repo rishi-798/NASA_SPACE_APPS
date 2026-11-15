@@ -53,3 +53,5 @@ Three.js reflection reference: https://threejs.org/docs/pages/RoomEnvironment.ht
 ## Verification
 
 All 14 GLBs passed Blender import/bounds checks. Production build passes after merging current main. Matched SLS browser comparison confirms full body, boosters and orange/white material regions. SLS source is printable geometry including its base; this is not a flight-specific digital twin. Live deployment checks follow. Approximate models remain approximate; this is not an engineering reconstruction or verified flight-specific marking set.
+
+Browser verification: matched SLS and Ares I A full-vehicle views inspected with the same camera and studio lighting. Both complete silhouettes load; SLS insulation and booster regions are distinct, Ares A retains its NASA concept silhouette with a dark nozzle. Other models retain their original geometry and paint; fine flight-specific details remain approximate.
