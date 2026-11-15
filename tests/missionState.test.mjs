@@ -73,3 +73,29 @@ test('plan ignores a preview from an older revision', () => {
   assert.equal(missionReducer(changed,{type:'plan',revision:state.revision,result:{}}),changed);
   assert.equal(missionReducer(newMission(),{type:'plan',revision:0,result:{}}).stage,'earth');
 });
+
+test('Transfer departure, arrival and parking altitude persist through navigation and refresh', () => {
+  let state = planned();
+  state = missionReducer(state, {type:'transfer-departure', time:'2026-12-30T23:00:00Z'});
+  state = missionReducer(state, {type:'time', time:'2027-01-03T23:00:00Z'});
+  state = missionReducer(state, {type:'parking-altitude', altitude:400});
+  const restored = restoreMission(JSON.stringify(state), ['earth'], ['rocket']);
+  assert.equal(restored.transferDepartureUtcTime, state.transferDepartureUtcTime);
+  assert.equal(restored.utcTime, state.utcTime);
+  assert.equal(restored.parkingAltitudeKm, 400);
+  assert.equal(missionReducer(state,{type:'stage',stage:'earth'}).transferDepartureUtcTime,state.transferDepartureUtcTime);
+  assert.equal(missionReducer(state,{type:'parking-altitude',altitude:100}),state);
+});
+test('Legacy saved trips receive an explicit transfer departure four days before observation', () => {
+  const state=planned(); delete state.transferDepartureUtcTime; delete state.parkingAltitudeKm;
+  const restored=restoreMission(JSON.stringify(state),['earth'],['rocket']);
+  assert.equal(Date.parse(restored.utcTime)-Date.parse(restored.transferDepartureUtcTime),96*3600000);
+  assert.equal(restored.parkingAltitudeKm,200);
+});
+test('Transfer edits invalidate previously finalized mission output', () => {
+  const state=missionReducer(planned(),{type:'plan',revision:planned().revision,result:{}});
+  for (const action of [{type:'transfer-departure',time:'2026-12-30T23:00:00Z'}, {type:'parking-altitude',altitude:500}]) {
+    const updated=missionReducer(state,action);
+    assert.equal(updated.result,null); assert.equal(updated.resultRevision,null); assert.ok(updated.revision>state.revision);
+  }
+});

@@ -1,0 +1,38 @@
+# Date-based Earth–Moon transfer
+
+The Trip Planner now calculates a **Preliminary two-body transfer** instead of using the mission-flight Bézier animation. The rocket gallery, lunar surface viewer, weather, voice guide and terrain/visibility calculations remain separate.
+
+## User flow
+
+In Trip, choose a departure pad, rocket and surface destination. Step 4 offers independent **Transfer departure (UTC)** and **Lunar arrival / observation (UTC)** inputs plus circular parking-orbit altitude. The defaults are a four-day transfer and a 200 km parking orbit. The lunar arrival date also starts the surface visibility analysis; this does not mean the transfer arrives at that surface point.
+
+Click **Calculate Earth–Moon transfer**. The results show duration, Earth–Moon distances at both epochs, lunar angular movement, injection delta-v, Moon-relative arrival-reference speed, numerical endpoint error and minimum Earth altitude. The 3D view offers play/pause/replay, UTC scrubbing, whole-journey/Earth/Moon cameras and inspectable J2000 states. Earth and Moon radii use the same scale as distances (100,000 km per scene unit). Spacecraft/target markers are enlarged; body sizes and orbital distances are not exaggerated. Textures are context; body positions and attitudes come from SPICE.
+
+Changing an input hides the old path and invalidates its request. Navigation/refresh retains date and altitude choices but does not replay stored scientific results. On failure, an error appears and no decorative flight path is substituted. A model result can be recalculated on the final mission page; edit dates by returning to Step 4.
+
+## Exact model and assumptions
+
+- API: `POST /api/transfer/calculate` with `departure_utc`, `arrival_utc`, `parking_altitude_km`.
+- Limits: timezone-aware dates, 24–240 hours of UTC flight duration, 160–2,000 km parking altitude, both dates within the existing kernel coverage. Pydantic rejects non-finite inputs. A bounded internal LRU stores at most 16 exact-date/altitude/kernel identities; responses use `Cache-Control: no-store`.
+- Frame: Earth-centered J2000 axes. Positions are geometric (`NONE`), with km, km/s and elapsed TDB seconds. The existing UTC-to-ET converter is used, including its historical UTC handling. No apparent/light-time-corrected positions enter the targeting problem.
+- Endpoint: at arrival, the target is `Moon_position - unit(Moon_position) × (1737.4 + 10000)` km. This is the Earth-facing point **10,000 km above the mean lunar radius**. It is not a Moon-center collision, a stable orbit, capture, or a surface landing. Its location is unrelated to the chosen surface latitude/longitude.
+- Central-body model: Earth gravity only, using DE440 GM = 398600.435507 km³/s² and a spherical Earth exclusion radius based on 6378.1363 km equatorial radius. The Moon follows its actual SPICE ephemeris but its gravity does not perturb the spacecraft in this approximation. Solar perturbations are also omitted, so real-world targeting errors are not represented by numerical endpoint error.
+- Parking orbit: assumed circular in the Moon's instantaneous orbital plane at arrival. The solver evaluates departure phase angles 100–175° in 5° steps, selecting the smallest injection delta-v among admissible candidates. This is a finite search, **not a global optimum**. The selected pad does not establish that the assumed orbit, plane or injection position is reachable from that pad at that time.
+- Lambert solver: universal variables with Stumpff C/S functions. Only the positive-sine short-way, zero-revolution branch is considered. Collinear endpoints are rejected. The bracket search uses 500 evaluations on `-4π² < z < 4π²` and at most 80 bisections; no unbounded retry occurs.
+- Independent propagation: NAIF `prop2b` propagates the solved initial state, returning 257 dated samples. Endpoint closure must be ≤0.01 km. Relative energy/angular momentum drift must be ≤1e-7; stricter tolerances are tested for representative cases.
+- Exclusions: candidates with inward initial radial motion or analytic arc minima inside Earth plus 120 km atmosphere are rejected. Piecewise-linear relative-spacecraft/Moon segment checks reject candidates passing within 100 km of the mean lunar surface. These are model exclusions, not certified collision avoidance, terrain clearance or landing safety.
+- Injection delta-v is the vector difference between solved departure velocity and the assumed circular parking velocity. Arrival-relative speed is the spacecraft velocity minus the Moon's geocentric velocity at the reference epoch; it is not a capture delta-v or a hyperbolic excess speed inferred at infinity.
+- No ascent, finite burns, staging, vehicle/payload performance, parking-plane change cost, lunar capture or descent is solved. Rocket choice remains catalogue context. This model does not recommend operational launch windows.
+
+## Verification
+
+`tests/test_transfer.py` verifies an analytical circular arc, independently closes non-circular Lambert solutions with SPICE, checks conservation, detects Earth-crossing periapsis between endpoints, verifies real ephemeris changes with dates, exercises supported duration bounds, and rejects invalid dates, unavailable coverage, nonconvergence and Earth intersections. `tests/transfer.test.mjs` checks frontend bounds, response completeness, input identity and stale-response rejection. Mission-state tests cover navigation/refresh, old saved-trip migration and invalidation.
+
+Browser verification should cover a complete Trip selection, calculation, date changes, replay/scrub, camera presets, invalid inputs, refresh persistence, mobile layout and existing surface/weather/visibility access. With WebGL unavailable, the numerical metrics and selected-state inspection remain accessible.
+
+## Primary references
+
+- [JPL DE440 astrodynamic constants](https://ssd.jpl.nasa.gov/astro_par.html).
+- [NAIF geometric ephemeris states (`spkezr`)](https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/spkezr_c.html).
+- [NAIF two-body universal-variable propagation (`prop2b`)](https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/prop2b_c.html).
+- [NASA example of real mission launch-availability constraints](https://www.nasa.gov/missions/artemis/artemis-i-mission-availability/). This application does not solve those constraints.
