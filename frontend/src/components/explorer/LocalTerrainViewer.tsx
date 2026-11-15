@@ -195,7 +195,6 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     camera.up.set(0, 0, 1);
     const controls = new OrbitControls(camera, canvas);
     controls.minDistance = 3; controls.maxPolarAngle = Math.PI * .49;
-    controls.enableDamping = true; controls.dampingFactor = 0.05;
 
     const world = new THREE.Matrix4().set(...region.local_to_moon_fixed.flat() as Parameters<THREE.Matrix4['set']>);
     const inverse = world.clone().invert();
@@ -352,7 +351,6 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         camera.lookAt(camera.position.clone().add(direction));
       }
       if (value.mode === 'orbit' && value.terrain) {
-        controls.update();
         const floor = new THREE.Raycaster(new THREE.Vector3(camera.position.x, camera.position.y, 100000), new THREE.Vector3(0, 0, -1)).intersectObject(value.terrain, true)[0];
         if (floor && camera.position.z < floor.point.z + 2) camera.position.z = floor.point.z + 2;
       }
