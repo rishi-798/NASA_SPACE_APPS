@@ -34,6 +34,14 @@
 .media-video-prompt { padding: 60px 30px; background: #080a10; text-align: center; }
 .media-nav { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 35px; }
 .media-nav button[aria-pressed="true"] { background: #f1efeb; color: #15161a; border-color: #f1efeb; }
+.media-nav .media-saved-trigger { margin-left: auto; border-color: #8e6550; color: #ffd0af; }
+.media-notice { color: #e8c3aa; font-size: 12px; margin: -14px 0 25px; min-height: 18px; }
+.media-drawer { width: min(600px, 94vw); margin: 15px 15px 15px auto; height: calc(100dvh - 30px); max-height: none; }
+.media-saved-list { list-style: none; padding: 0; margin: 25px 0 0; }
+.media-saved-list li { display: flex; align-items: center; gap: 12px; padding: 16px 0; border-bottom: 1px solid #30323a; }
+.media-saved-list .media-saved-open { display: flex; align-items: center; gap: 14px; background: none; border: 0; padding: 0; border-radius: 0; text-align: left; flex: 1; }
+.media-saved-open img { object-fit: cover; border-radius: 6px; }
+.media-saved-open small { display: block; color: #aeb1be; margin-top: 7px; font-size: 10px; }
 @media (max-width: 1000px) { .media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .media-grid { grid-template-columns: 1fr; } .media-controls { width: 100%; } .media-dialog-copy { padding: 20px; } .media-dialog-copy h2 { font-size: 24px; } .media-dialog-top { padding: 12px 15px; } }
 @media (prefers-reduced-motion: reduce) { .media-card-image img { transition: none; } }
