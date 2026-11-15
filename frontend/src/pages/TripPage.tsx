@@ -191,7 +191,7 @@ export function TripPage() {
         <label className="trip-catalogue-toggle"><input type="checkbox" checked={showOtherLaunchers} onChange={(event) => setShowOtherLaunchers(event.target.checked)} />Include international and commercial catalogue entries</label>
         <p className="trip-note">The collection includes NASA and simplified community models; some launchers still have no model. Pad associations are historical context, not flight approval.</p>
       </>}
-      {mission.stage === "moon" && <div className="trip-layout"><div className="trip-visual trip-moon-visual">
+      {mission.stage === "moon" && <div className="trip-layout"><div className={`trip-visual trip-moon-visual${tripMoonView === "surface" ? " trip-moon-surface" : ""}`}>
         <div className="visual-view-header">
           <div className="visual-view-toggle" role="group" aria-label="Moon view selector">
             <button
