@@ -369,8 +369,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       },
       inspect(on) {
         inspectActive = on;
-        ambientLight.intensity = on ? 0.55 : 0.08;
-        inspectionLight.intensity = on ? 1.1 : 0;
+        ambientLight.intensity = on ? 0.28 : 0.08;
+        inspectionLight.intensity = on ? 1.25 : 0;
         // A close shadow map covers only a small patch and otherwise leaves a
         // hard artificial boundary on terrain. Inspection is explicitly
         // illustrative; rocks retain their own directional shading.
@@ -559,8 +559,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           colTex.wrapS = colTex.wrapT = THREE.RepeatWrapping;
           colTex.colorSpace = THREE.SRGBColorSpace;
           colTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
-          const repeatScale = Math.max(8, Math.min(64, Math.round(extent / 160)));
-          colTex.repeat.set(repeatScale, repeatScale);
+          // UV coordinates already encode the 3.1 m texture scale.
+          colTex.repeat.set(1, 1);
 
           texLoader.load(
             `${import.meta.env.BASE_URL}terrain/moon-01-normal.jpg`,
@@ -569,7 +569,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
               terrainTextures.add(normTex);
               normTex.wrapS = normTex.wrapT = THREE.RepeatWrapping;
               normTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
-              normTex.repeat.set(repeatScale * 1.5, repeatScale * 1.5);
+              normTex.repeat.set(1, 1);
 
               terrain.traverse(child => {
                 if (child instanceof THREE.Mesh && child.material) {
