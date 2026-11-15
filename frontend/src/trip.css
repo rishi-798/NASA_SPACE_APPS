@@ -19,10 +19,23 @@
 .trip-visual { min-width: 0; min-height: 580px; position: relative; border-radius: 20px; border: 1px solid var(--line); background: #0b0c10; overflow: hidden; }
 .trip-earth-wrap, .trip-space-scene { position: relative; width: 100%; height: 100%; min-height: 580px; }
 .trip-earth, .trip-space-canvas { position: absolute; inset: 0; }
+.trip-space-scene-mission { isolation: isolate; overflow: hidden; background: radial-gradient(ellipse at 48% 42%, #0a1019 0%, #030407 62%, #010204 100%); }
+.trip-space-scene-mission::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgba(3,4,7,.5), transparent 24%, transparent 68%, rgba(3,4,7,.76)); }
+.trip-space-scene-mission .trip-space-canvas { z-index: 0; }
 .trip-overview-labels { position: absolute; left: 22px; right: 22px; top: 22px; display: flex; justify-content: space-between; gap: 20px; font-size: 12px; color: #c7c9d1; }
+.trip-space-scene-mission .trip-overview-labels { z-index: 2; top: 19px; font: 9px var(--mono); letter-spacing: .13em; color: #c8cbd2; text-transform: uppercase; }
+.trip-space-data { position: absolute; z-index: 2; top: 48px; left: 22px; display: flex; flex-wrap: wrap; gap: 9px; pointer-events: none; }
+.trip-space-data span { display: inline-flex; align-items: center; gap: 7px; min-height: 28px; padding: 6px 10px; border: 1px solid rgba(255,255,255,.09); border-radius: 100px; background: rgba(7,9,13,.62); color: #d8dae0; font: 9px var(--mono); letter-spacing: .035em; backdrop-filter: blur(8px); }
+.trip-space-sun-dot { width: 7px; height: 7px; border-radius: 50%; background: #ffbf79; box-shadow: 0 0 12px #ff9d56; }
+.trip-space-timeline { position: absolute; z-index: 3; left: 22px; right: 22px; bottom: 72px; display: grid; grid-template-columns: 82px minmax(0,1fr) 82px; align-items: center; gap: 12px; padding: 9px 12px; border: 1px solid rgba(255,255,255,.12); border-radius: 13px; background: rgba(7,9,13,.78); backdrop-filter: blur(10px); }
+.trip-space-timeline button { min-height: 34px; border: 1px solid #41444c; border-radius: 100px; background: #16181e; color: #e3e4e8; font-size: 10px; cursor: pointer; }
+.trip-space-timeline input { width: 100%; min-width: 0; accent-color: #ff995e; cursor: pointer; }
+.trip-space-timeline output { color: #d9dbe0; font: 9px var(--mono); text-align: right; white-space: nowrap; }
 .trip-earth .cesium-viewer, .trip-earth .cesium-widget { width: 100%; height: 100%; }
 .trip-earth .cesium-widget-credits { bottom: 45px; }
 .trip-globe-hint { position: absolute; bottom: 18px; left: 22px; right: 22px; margin: 0; color: #b9bac2; font-size: 11px; line-height: 1.5; text-align: center; pointer-events: none; }
+.trip-space-scene-mission .trip-globe-hint { z-index: 2; bottom: 14px; left: 26px; right: 26px; color: #aeb4bf; font-size: 9px; line-height: 1.45; text-shadow: 0 1px 10px #000; }
+.trip-space-scene-mission .trip-scene-message { z-index: 4; top: 88px; }
 .trip-globe-error, .trip-scene-message { position: absolute; top: 30px; left: 30px; right: 30px; padding: 16px; background: #15161e; color: var(--text); border-radius: 8px; font-size: 13px; }
 .trip-scene-loading { min-height: 500px; display: grid; place-items: center; color: var(--muted); }
 .trip-panel { min-width: 0; padding: 26px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); display: flex; flex-direction: column; gap: 16px; }
@@ -104,5 +117,5 @@
 .trip-footer { margin-top: 35px; padding-top: 20px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 25px; color: var(--muted); font-size: 11px; line-height: 1.6; }
 .trip-footer button { color: #cacbd0; background: none; border: 0; text-decoration: underline; cursor: pointer; min-height: 44px; white-space: nowrap; }
 @media (max-width: 900px) { .trip-layout, .trip-analysis { grid-template-columns: 1fr; } .trip-visual, .trip-earth-wrap, .trip-space-scene { min-height: 500px; } .trip-moon-visual { height: 540px; } .trip-site-list { max-height: 280px; } .trip-topline > span { display: none; } }
-@media (max-width: 600px) { .trip-page { padding: 10px 18px 45px; } .trip-heading { margin-bottom: 25px; } .trip-heading h1 { font-size: 38px; } .trip-progress { gap: 6px; margin-top: 20px; } .trip-progress button { padding: 10px 13px; } .trip-panel { padding: 20px; } .trip-visual, .trip-earth-wrap, .trip-space-scene { min-height: 410px; } .trip-moon-visual { height: 460px; } .trip-landing-presentation { min-height: 410px; padding: 28px; } .trip-footer { flex-direction: column; gap: 0; } .trip-rocket-gallery { grid-auto-columns: 210px; } .trip-stat-list > div { grid-template-columns: 85px minmax(0,1fr); } }
+@media (max-width: 600px) { .trip-page { padding: 10px 18px 45px; } .trip-heading { margin-bottom: 25px; } .trip-heading h1 { font-size: 38px; } .trip-progress { gap: 6px; margin-top: 20px; } .trip-progress button { padding: 10px 13px; } .trip-panel { padding: 20px; } .trip-visual, .trip-earth-wrap, .trip-space-scene { min-height: 410px; } .trip-moon-visual { height: 460px; } .trip-landing-presentation { min-height: 410px; padding: 28px; } .trip-footer { flex-direction: column; gap: 0; } .trip-rocket-gallery { grid-auto-columns: 210px; } .trip-stat-list > div { grid-template-columns: 85px minmax(0,1fr); } .trip-space-scene-mission .trip-overview-labels { left: 14px; right: 14px; top: 15px; font-size: 8px; } .trip-space-data { top: 42px; left: 14px; gap: 5px; } .trip-space-data span { min-height: 25px; padding: 5px 8px; font-size: 8px; } .trip-space-timeline { left: 12px; right: 12px; bottom: 78px; grid-template-columns: 68px minmax(0,1fr) 58px; gap: 8px; padding: 7px 8px; } .trip-space-timeline button { min-height: 32px; font-size: 9px; } .trip-space-timeline output { font-size: 8px; } .trip-space-scene-mission .trip-globe-hint { left: 14px; right: 14px; bottom: 12px; font-size: 8px; } }
 @media (prefers-reduced-motion: reduce) { .trip-page *, .trip-page *::before, .trip-page *::after { animation: none !important; transition: none !important; } }
