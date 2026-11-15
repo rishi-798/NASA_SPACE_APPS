@@ -347,17 +347,17 @@ export function SpaceScene({
       scene.add(createStarPoints());
 
       // Aerospace studio 3-point lighting
-      scene.add(new THREE.HemisphereLight(0x8cb8eb, 0x121722, 1.4));
-      const keyLight = new THREE.DirectionalLight(0xfffaee, 3.6);
+      scene.add(new THREE.HemisphereLight(0xd9e5f5, 0x30343e, 1.2));
+      const keyLight = new THREE.DirectionalLight(0xfffaee, 2.4);
       keyLight.position.set(-6, 9, 7);
       keyLight.castShadow = true;
       scene.add(keyLight);
 
-      const fillLight = new THREE.DirectionalLight(0x60a5fa, 1.8);
+      const fillLight = new THREE.DirectionalLight(0xd7e5fa, 1.1);
       fillLight.position.set(7, 3, -4);
       scene.add(fillLight);
 
-      const rimLight = new THREE.DirectionalLight(0xf97316, 2.5);
+      const rimLight = new THREE.DirectionalLight(0xf4f4ff, 1.5);
       rimLight.position.set(2, -4, -8);
       scene.add(rimLight);
 
@@ -376,7 +376,7 @@ export function SpaceScene({
       camera.position.set(6.5, 2.2, 9.5);
       controls.minDistance = 4;
       controls.maxDistance = 20;
-      controls.autoRotate = true;
+      controls.autoRotate = !reduceMotion;
       controls.autoRotateSpeed = 1.0;
       controls.enableDamping = true;
       controls.dampingFactor = 0.045;
@@ -385,6 +385,13 @@ export function SpaceScene({
       new GLTFLoader().setDRACOLoader(decoder).load(modelUrl, (asset) => {
         if (disposed) { disposeObjects(asset.scene); return; }
         const model = asset.scene;
+        if (/\/ares-i-[ab]\.glb$/.test(modelUrl)) {
+          // These NASA exports contain four duplicate meshes outside the rotated rocket root.
+          // They distort the bounds and push the actual vehicle out of the frame.
+          for (const child of [...model.children]) {
+            if (child instanceof THREE.Mesh) model.remove(child);
+          }
+        }
         let bounds = new THREE.Box3().setFromObject(model);
         const size = bounds.getSize(new THREE.Vector3());
         if (size.z > size.y && size.z > size.x) model.rotateX(-Math.PI / 2);
@@ -397,19 +404,6 @@ export function SpaceScene({
           if (object instanceof THREE.Mesh) {
             object.castShadow = true;
             object.receiveShadow = true;
-            const mats = Array.isArray(object.material) ? object.material : [object.material];
-            mats.forEach((m) => {
-              if (m instanceof THREE.MeshStandardMaterial) {
-                m.roughness = Math.min(m.roughness, 0.45);
-                m.metalness = Math.max(m.metalness, 0.25);
-                m.envMapIntensity = 0.8;
-                if (/engine|nozzle|exhaust|bell/i.test(object.name) || /engine|nozzle/i.test(m.name)) {
-                  m.color.setHex(0x28282b);
-                  m.metalness = 0.85;
-                  m.roughness = 0.25;
-                }
-              }
-            });
           }
         });
         scene.add(model);
@@ -702,7 +696,7 @@ export function SpaceScene({
       ? `Interactive ${modelName ?? "NASA rocket"} model. Drag to orbit and scroll to zoom.`
       : "NASA-textured Earth and Moon in a deep star field. Sunlight and the Earth position update from the selected lunar ephemeris time."} />
     {failed && <p className="trip-scene-message" role="status">A space asset could not load. The mission view remains available where possible.</p>}
-    {!ready && <p className="trip-scene-message" role="status">{modelUrl ? "Loading NASA model..." : "Loading NASA Earth, Moon and deep-space sky..."}</p>}
+    {!ready && <p className="trip-scene-message" role="status">{modelUrl ? "Loading 3D model..." : "Loading NASA Earth, Moon and deep-space sky..."}</p>}
     {!modelUrl && <>
       <div className="trip-overview-labels"><span>EARTH / {departure?.pad ?? "EARTH"}</span><span>MOON / {landing?.name ?? "SELECTED SITE"}</span></div>
       <div className="trip-space-data" aria-live="polite">

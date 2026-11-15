@@ -235,7 +235,7 @@ function ExplorerWorkspace() {
             className={`explorer-mode-btn ${activeView === "surface" ? "active" : ""}`}
             onClick={() => setActiveView("surface")}
           >
-            🏔️ 3D Surface View (1:1 Topography)
+            🏔️ 3D Surface View
           </button>
           <button
             type="button"
@@ -248,7 +248,7 @@ function ExplorerWorkspace() {
           </button>
         </div>
         <div className="explorer-mode-badge">
-          {activeView === "surface" ? "SLDEM2015 High-Resolution Mesh" : "NASA / USGS Lunar Basemap"}
+          {activeView === "surface" ? "Measured terrain previews where available" : "NASA / USGS Lunar Basemap"}
         </div>
       </div>
 
@@ -260,6 +260,7 @@ function ExplorerWorkspace() {
               longitude={location.longitude}
               observationTime={sceneTime ?? `${DEFAULT_INPUT.startDate}T${DEFAULT_INPUT.startTime}:00Z`}
               onPick={pickLocation}
+              onOpenGlobal={() => setActiveView("globe")}
             />
           ) : (
             <>
