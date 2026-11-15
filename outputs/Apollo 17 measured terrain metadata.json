@@ -1,0 +1,155 @@
+{
+  "region_id": "REGION-APOLLO-17",
+  "scene": "Apollo 17 - Measured terrain",
+  "object_name": "MOON-R0211-C0600-r7-c1",
+  "grid_id": "MOON-R0211-C0600-r7-c1",
+  "lookup_grid_id": "MOON-R0211-C0600-r7-c1",
+  "grid_parent_id": "MOON-R0211-C0600",
+  "locations_covered": [
+    {
+      "id": "apollo-17",
+      "name": "Apollo 17",
+      "latitude": 20.1911,
+      "longitude": 30.7723,
+      "grid_id": "MOON-R0211-C0600-r7-c1",
+      "lookup_grid_id": "MOON-R0211-C0600-r7-c1",
+      "source_id": "sldem2015_512_00n_30n_000_045_float",
+      "source_matches_region_mesh": true,
+      "height_m": -2628.966796875,
+      "api_height_m": -2628.966808319092,
+      "height_delta_m": -1.1444091796875e-05
+    },
+    {
+      "id": "apollo-17-rover",
+      "name": "Apollo 17 rover",
+      "latitude": 20.1896,
+      "longitude": 30.7769,
+      "grid_id": "MOON-R0211-C0600-r7-c1",
+      "lookup_grid_id": "MOON-R0211-C0600-r7-c1",
+      "source_id": "sldem2015_512_00n_30n_000_045_float",
+      "source_matches_region_mesh": true,
+      "height_m": -2631.255615234375,
+      "api_height_m": -2631.255626678467,
+      "height_delta_m": -1.1444091796875e-05
+    }
+  ],
+  "source_provenance_note": "All listed markers use the same selected elevation source as the region mesh.",
+  "footprint": {
+    "kind": "geodesic_circle",
+    "radius_m": 10000.0,
+    "diameter_m": 20000.0
+  },
+  "anchor": {
+    "latitude_planetocentric_deg": 20.1911,
+    "longitude_east_deg": 30.7723
+  },
+  "coordinate_frame": "ME/DE421",
+  "vertical_reference_radius_m": 1737400.0,
+  "source_id": "sldem2015_512_00n_30n_000_045_float",
+  "api_center_selected_source_id": "sldem2015_512_00n_30n_000_045_float",
+  "api_center_uses_different_source": false,
+  "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+  "source_pds_url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_000_045_float.lbl",
+  "source_cloud_cog": "cogs/sldem2015_512_00n_30n_000_045_float.tif",
+  "source_units": "km above 1737.4 km reference sphere",
+  "mesh_units": "m",
+  "source_pixel_spacing_m": {
+    "north_south": 59.225293797166955,
+    "east_west_at_anchor": 55.58570097560839
+  },
+  "source_pixels_used": 95640,
+  "mesh_faces": 94943,
+  "height_range_m": [
+    -2934.836181640625,
+    -749.9507446289062
+  ],
+  "anchor_sample_height_m": -2628.966796875,
+  "api_center_sample_height_m": -2628.966808319092,
+  "api_center_sample_delta_m": -1.1444091796875e-05,
+  "terrain_api_control_check": {
+    "endpoint": "https://brahmos-lunar-browser.onrender.com/api/terrain/lookup",
+    "controls": [
+      {
+        "latitude_deg": 20.1462,
+        "longitude_east_deg": 30.7723,
+        "grid_id": "MOON-R0211-C0600-r8-c1",
+        "source_height_m": -2634.750244140625,
+        "api_height_m": -2634.7501277923584,
+        "difference_m": 0.0001163482666015625
+      },
+      {
+        "latitude_deg": 20.235999999999997,
+        "longitude_east_deg": 30.7723,
+        "grid_id": "MOON-R0211-C0600-r6-c1",
+        "source_height_m": -2614.124755859375,
+        "api_height_m": -2614.1247749328613,
+        "difference_m": -1.9073486328125e-05
+      },
+      {
+        "latitude_deg": 20.1911,
+        "longitude_east_deg": 30.7273,
+        "grid_id": "MOON-R0211-C0599-r7-c9",
+        "source_height_m": -2632.275390625,
+        "api_height_m": -2632.275342941284,
+        "difference_m": 4.76837158203125e-05
+      },
+      {
+        "latitude_deg": 20.1911,
+        "longitude_east_deg": 30.817300000000003,
+        "grid_id": "MOON-R0211-C0600-r7-c2",
+        "source_height_m": -2666.325927734375,
+        "api_height_m": -2666.3260459899902,
+        "difference_m": -0.000118255615234375
+      }
+    ],
+    "max_abs_difference_m": 0.000118255615234375
+  },
+  "local_axes": {
+    "x": "east",
+    "y": "north",
+    "z": "up"
+  },
+  "local_frame_definition": "Moon-fixed ME/DE421 position vectors at original source pixel centers, with the 1737400 m reference-sphere anchor subtracted and projected onto anchor east/north/up basis vectors.",
+  "local_to_moon_fixed_matrix_row_major": [
+    [
+      -0.5116275355567561,
+      -0.2965574904661653,
+      0.8064061753908699,
+      1401050.0891240975
+    ],
+    [
+      0.85920734683784,
+      -0.176589479310791,
+      0.48018630856847994,
+      834275.6925068771
+    ],
+    [
+      0.0,
+      0.9385466480922267,
+      0.3451524146733527,
+      599667.805253483
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "vertical_exaggeration": 1.0,
+  "cosmetic_geometry": false,
+  "illustrative_lighting_only": true,
+  "candidate_glb": {
+    "filename": "Apollo 17 - Measured terrain candidate.glb",
+    "axis_convention": "Z-up; configure receiving loader as Z-up.",
+    "vertex_count": 95640,
+    "face_count": 94943,
+    "production_ready": false
+  },
+  "production_ready": false,
+  "not_yet_validated": [
+    "viewer/Moon-fixed-to-world placement",
+    "browser glTF/GLB integration and performance",
+    "Sun/Earth ephemeris lighting"
+  ]
+}

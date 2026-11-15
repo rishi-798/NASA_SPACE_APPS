@@ -1,0 +1,202 @@
+{
+  "region_id": "REGION-COPERNICUS",
+  "scene": "REGION-COPERNICUS - LOLA64 overview",
+  "object_name": "REGION-COPERNICUS - measured overview terrain",
+  "terrain_source": "LOLA64-SVS",
+  "terrain_source_role": "global low-resolution overview baseline",
+  "source_pds_url": "https://svs.gsfc.nasa.gov/4720/",
+  "source_cloud_cog": "cogs/LOLA64-SVS.tif",
+  "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+  "source_units": "km above 1737.4km reference sphere",
+  "coordinate_frame": "ME/DE421",
+  "latitude_type": "planetocentric",
+  "longitude": "east positive [-180,180)",
+  "vertical_reference_radius_m": 1737400.0,
+  "mesh_units": "m",
+  "source_resolution_m": {
+    "north_south": 473.80235037733564,
+    "east_west_at_center": 467.1396297796181
+  },
+  "footprint": {
+    "kind": "rectangular geographic overview envelope",
+    "bounds": {
+      "north": 11.539778862168081,
+      "south": 7.710221137831919,
+      "west": -22.016193007838275,
+      "east": -18.133806992161723
+    },
+    "published_crater_bounds": {
+      "north": 11.21,
+      "south": 8.04,
+      "east": -18.47,
+      "west": -21.68
+    },
+    "buffer_m": 10000.0,
+    "buffer_method": "Conservative latitude/longitude expansion of published feature bounds; longitude uses the most poleward published latitude. This is an overview envelope, not an exact geodesic polygon buffer.",
+    "registry_rim_polygon_state": "not acquired; conservative planning envelope only",
+    "coordinate_alignment_state": "provisional planning placement; validate against Moon ME data before production"
+  },
+  "feature": {
+    "name": "Copernicus",
+    "latitude_deg": 9.62,
+    "longitude_east_deg": -20.08,
+    "published_diameter_km": 96.07,
+    "published_coordinate_source_url": "https://planetarynames.wr.usgs.gov/Feature/1296",
+    "published_coordinate_frame": "USGS Gazetteer displayed planetographic, east-positive; control-network alignment pending"
+  },
+  "boundary_reference": {
+    "source": "LROC Copernican Craters (D > 10 km) shapefile, COPERNICAN_CRATERS_360",
+    "source_url": "https://data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_COPERNICAN_CRATERS",
+    "source_file_sha256": "d6d954f47f1888324149016b2f213e7999d205f5a8f4d76da89fab3564f2e65a",
+    "coordinate_reference": "IAU Moon 2000 Geographic; the product README documents both -180..180 and 0..360 longitude domains.",
+    "geometry_type": "digitized polygon",
+    "feature_name": "Copernicus",
+    "lroc_database_center": {
+      "latitude_deg": 9.59115979529,
+      "longitude_east_deg": -20.0582817867
+    },
+    "lroc_database_diameter_km": 94.8114796149,
+    "polygon_rings": 1,
+    "polygon_vertex_count": 129,
+    "polygon_bounds_180": {
+      "west": -21.64378271404769,
+      "east": -18.472781064249205,
+      "south": 8.026029540403442,
+      "north": 11.152711627229984
+    },
+    "usgs_published_bounds": {
+      "north": 11.21,
+      "south": 8.04,
+      "east": -18.47,
+      "west": -21.68
+    },
+    "maximum_polygon_excursion_outside_usgs_bounds_km_by_axis": {
+      "north_km": 0.0,
+      "south_km": 0.42363114193281537,
+      "east_km_at_feature_latitude": 0.0,
+      "west_km_at_feature_latitude": 0.0
+    },
+    "center_offset_from_usgs_km": 1.089239387301351,
+    "alignment_assessment": "Polygon envelope cross-checks the Gazetteer bounds closely; this is not a control-network transformation or proof of pixel-level registration to ME/DE421."
+  },
+  "mesh": {
+    "vertex_count": 61500,
+    "quad_count": 61005,
+    "triangle_count_in_glb": 122010,
+    "source_pixel_count": 61500,
+    "height_range_m": [
+      -3595.500244140625,
+      802.0000610351562
+    ],
+    "sample_height_center_m": -3451.500177383423,
+    "curvature": "preserved by converting every geographic source pixel center to the 1737400 m reference sphere plus its original LOLA64 height before projection into the local ENU anchor frame",
+    "face_normals": "outward from the reference sphere"
+  },
+  "center_api_controls": [
+    {
+      "latitude_planetocentric_deg": 9.62,
+      "longitude_east_deg": -20.08,
+      "grid_id": "MOON-R0243-C0477-r8-c9",
+      "source_id": "sldem2015_512_00n_30n_315_360_float",
+      "elevation_m": -3361.8009090423584,
+      "sample_spacing_x_m": 58.392433479282666,
+      "sample_spacing_y_m": 59.225293797166955,
+      "global_lola64_elevation_m": -3451.500244140625,
+      "api_minus_lola64_m": 89.6993350982666
+    },
+    {
+      "latitude_planetocentric_deg": 11.539778862168081,
+      "longitude_east_deg": -22.016193007838275,
+      "grid_id": "MOON-R0237-C0469-r9-c1",
+      "source_id": "sldem2015_512_00n_30n_315_360_float",
+      "elevation_m": -957.2809934616089,
+      "sample_spacing_x_m": 58.02806303316232,
+      "sample_spacing_y_m": 59.225293797166955,
+      "global_lola64_elevation_m": -943.5000610351562,
+      "api_minus_lola64_m": -13.780932426452637
+    },
+    {
+      "latitude_planetocentric_deg": 11.539778862168081,
+      "longitude_east_deg": -18.133806992161723,
+      "grid_id": "MOON-R0237-C0480-r9-c6",
+      "source_id": "sldem2015_512_00n_30n_315_360_float",
+      "elevation_m": -900.5676507949829,
+      "sample_spacing_x_m": 58.02806303316232,
+      "sample_spacing_y_m": 59.225293797166955,
+      "global_lola64_elevation_m": -900.5000610351562,
+      "api_minus_lola64_m": -0.06758975982666016
+    },
+    {
+      "latitude_planetocentric_deg": 7.710221137831919,
+      "longitude_east_deg": -22.016193007838275,
+      "grid_id": "MOON-R0249-C0474-r6-c8",
+      "source_id": "sldem2015_512_00n_30n_315_360_float",
+      "elevation_m": -707.481324672699,
+      "sample_spacing_x_m": 58.689890690770206,
+      "sample_spacing_y_m": 59.225293797166955,
+      "global_lola64_elevation_m": -706.5000610351562,
+      "api_minus_lola64_m": -0.9812636375427246
+    },
+    {
+      "latitude_planetocentric_deg": 7.710221137831919,
+      "longitude_east_deg": -18.133806992161723,
+      "grid_id": "MOON-R0249-C0486-r6-c4",
+      "source_id": "sldem2015_512_00n_30n_315_360_float",
+      "elevation_m": -1099.353551864624,
+      "sample_spacing_x_m": 58.689890690770206,
+      "sample_spacing_y_m": 59.225293797166955,
+      "global_lola64_elevation_m": -1088.5,
+      "api_minus_lola64_m": -10.853551864624023
+    }
+  ],
+  "source_selection_note": "The live API selects higher-priority SLDEM/LOLA products at the sampled locations. This overview mesh intentionally uses only LOLA64-SVS for one consistent global baseline and does not merge higher-priority pixels. Control deltas document that distinction; they are not mesh errors against an identical source.",
+  "local_frame_definition": "Moon-fixed ME/DE421 position vectors at original LOLA64 sample centers, with the reference-sphere anchor subtracted and projected onto anchor east/north/up basis vectors.",
+  "local_to_moon_fixed_matrix_row_major": [
+    [
+      0.34333186792161524,
+      -0.15695481435756276,
+      0.9260067033879602,
+      1608844.046466242
+    ],
+    [
+      0.9392141547429184,
+      0.05737518894976885,
+      -0.33850385407484473,
+      -588116.5960696352
+    ],
+    [
+      0.0,
+      0.9859377637269816,
+      0.16711291409414972,
+      290341.97694717575
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "local_axes": {
+    "x": "east",
+    "y": "north",
+    "z": "up"
+  },
+  "vertical_exaggeration": 1.0,
+  "cosmetic_geometry": false,
+  "illustrative_lighting_only": true,
+  "candidate_glb": {
+    "filename": "Copernicus - Overview terrain candidate.glb",
+    "axis_convention": "Z-up; x east, y north, z up",
+    "vertex_count": 61500,
+    "face_count": 122010,
+    "production_ready": false
+  },
+  "production_ready": false,
+  "not_yet_validated": [
+    "IAU Gazetteer/LROC/Robbins feature-boundary alignment to the viewer's ME/DE421 frame",
+    "exact geodesic 10 km buffer and rim containment; this package uses a conservative geographic envelope",
+    "higher-resolution source mosaics and seamless detail transitions",
+    "Moon-fixed viewer placement, browser loading/performance, and site-specific Sun/Earth ephemeris lighting"
+  ]
+}

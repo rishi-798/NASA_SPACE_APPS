@@ -1,0 +1,142 @@
+{
+  "region_id": "REGION-SURVEYOR-1",
+  "scene": "Surveyor 1 - Measured terrain",
+  "object_name": "MOON-R0280-C0414-r5-c1",
+  "grid_id": "MOON-R0280-C0414-r5-c1",
+  "lookup_grid_id": "MOON-R0280-C0414-r5-c1",
+  "grid_parent_id": "MOON-R0280-C0414",
+  "locations_covered": [
+    {
+      "id": "surveyor-1",
+      "name": "Surveyor 1",
+      "latitude": -2.4745,
+      "longitude": -43.3398,
+      "grid_id": "MOON-R0280-C0414-r5-c1",
+      "lookup_grid_id": "MOON-R0280-C0414-r5-c1",
+      "source_id": "sldem2015_512_30s_00s_315_360_float",
+      "source_matches_region_mesh": true,
+      "height_m": -1885.656982421875,
+      "api_height_m": -1885.6569528579712,
+      "height_delta_m": 2.956390380859375e-05
+    }
+  ],
+  "source_provenance_note": "All listed markers use the same selected elevation source as the region mesh.",
+  "footprint": {
+    "kind": "geodesic_circle",
+    "radius_m": 10000.0,
+    "diameter_m": 20000.0
+  },
+  "anchor": {
+    "latitude_planetocentric_deg": -2.4745,
+    "longitude_east_deg": -43.3398
+  },
+  "coordinate_frame": "ME/DE421",
+  "vertical_reference_radius_m": 1737400.0,
+  "source_id": "sldem2015_512_30s_00s_315_360_float",
+  "api_center_selected_source_id": "sldem2015_512_30s_00s_315_360_float",
+  "api_center_uses_different_source": false,
+  "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+  "source_pds_url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30s_00s_315_360_float.lbl",
+  "source_cloud_cog": "cogs/sldem2015_512_30s_00s_315_360_float.tif",
+  "source_units": "km above 1737.4 km reference sphere",
+  "mesh_units": "m",
+  "source_pixel_spacing_m": {
+    "north_south": 59.225293797166955,
+    "east_west_at_anchor": 59.17006833309204
+  },
+  "source_pixels_used": 89846,
+  "mesh_faces": 89171,
+  "height_range_m": [
+    -1999.828857421875,
+    -1754.2821044921875
+  ],
+  "anchor_sample_height_m": -1885.656982421875,
+  "api_center_sample_height_m": -1885.6569528579712,
+  "api_center_sample_delta_m": 2.956390380859375e-05,
+  "terrain_api_control_check": {
+    "endpoint": "https://brahmos-lunar-browser.onrender.com/api/terrain/lookup",
+    "controls": [
+      {
+        "latitude_deg": -2.5194,
+        "longitude_east_deg": -43.3398,
+        "grid_id": "MOON-R0280-C0414-r6-c1",
+        "source_height_m": -1896.1070556640625,
+        "api_height_m": -1896.1070775985718,
+        "difference_m": -2.193450927734375e-05
+      },
+      {
+        "latitude_deg": -2.4295999999999998,
+        "longitude_east_deg": -43.3398,
+        "grid_id": "MOON-R0280-C0414-r3-c1",
+        "source_height_m": -1875.2266845703125,
+        "api_height_m": -1875.2267360687256,
+        "difference_m": -5.14984130859375e-05
+      },
+      {
+        "latitude_deg": -2.4745,
+        "longitude_east_deg": -43.3848,
+        "grid_id": "MOON-R0280-C0414-r5-c0",
+        "source_height_m": -1884.0538330078125,
+        "api_height_m": -1884.0538263320923,
+        "difference_m": 6.67572021484375e-06
+      },
+      {
+        "latitude_deg": -2.4745,
+        "longitude_east_deg": -43.294799999999995,
+        "grid_id": "MOON-R0280-C0414-r5-c2",
+        "source_height_m": -1894.1583251953125,
+        "api_height_m": -1894.1583633422852,
+        "difference_m": -3.814697265625e-05
+      }
+    ],
+    "max_abs_difference_m": 5.14984130859375e-05
+  },
+  "local_axes": {
+    "x": "east",
+    "y": "north",
+    "z": "up"
+  },
+  "local_frame_definition": "Moon-fixed ME/DE421 position vectors at original source pixel centers, with the 1737400 m reference-sphere anchor subtracted and projected onto anchor east/north/up basis vectors.",
+  "local_to_moon_fixed_matrix_row_major": [
+    [
+      0.6863237282510045,
+      0.03140082926921932,
+      0.7266180069065497,
+      1262426.1251994392
+    ],
+    [
+      0.7272961845353249,
+      -0.02963185380656583,
+      -0.6856837559694301,
+      -1191306.9576212878
+    ],
+    [
+      0.0,
+      0.9990675358358871,
+      -0.043174747698259346,
+      -75011.80665095578
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "vertical_exaggeration": 1.0,
+  "cosmetic_geometry": false,
+  "illustrative_lighting_only": true,
+  "candidate_glb": {
+    "filename": "Surveyor 1 - Measured terrain candidate.glb",
+    "axis_convention": "Z-up; configure receiving loader as Z-up.",
+    "vertex_count": 89846,
+    "face_count": 89171,
+    "production_ready": false
+  },
+  "production_ready": false,
+  "not_yet_validated": [
+    "viewer/Moon-fixed-to-world placement",
+    "browser glTF/GLB integration and performance",
+    "Sun/Earth ephemeris lighting"
+  ]
+}

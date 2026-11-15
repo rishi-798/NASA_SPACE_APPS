@@ -1,0 +1,186 @@
+{
+  "source_master": "C:\\Users\\suhas\\Documents\\Codex\\2026-11-14\\https-drive-google-com-drive-u\\work\\blender\\Moon Model.blend",
+  "blender_version": "5.1.2",
+  "scenes": [
+    {
+      "scene": "Apollo 11 - Measured terrain",
+      "filename": "Apollo 11 - Legacy measured terrain.blend",
+      "source_master": "Moon Model.blend",
+      "source_object_count": 1,
+      "mesh_object_count": 1,
+      "mesh_vertex_count": 251001,
+      "mesh_polygon_count": 250000,
+      "coverage_note": "Original scene extracted from the preserved master; its original scene coverage, objects and appearance are retained. No 10 km expansion or terrain baking was performed.",
+      "source_scene_custom_properties": {
+        "grid_id": "MISSION-APOLLO-11",
+        "dataset_id": "brahmos-moon-terrain-v1"
+      },
+      "reopened_scene_names": [
+        "Apollo 11 - Measured terrain"
+      ],
+      "reopened_object_count": 1,
+      "packed_image_count": 1,
+      "reopen_verified": true,
+      "geometry_vertex_and_polygon_sha256": "965bdbeea023c57318e4385a958defec1d84a08d86b0632b128055ef4b8b3de5",
+      "source_geometry_match_verified": true,
+      "mesh_objects": [
+        {
+          "object": "MISSION-APOLLO-11-MEASURED",
+          "vertices": 251001,
+          "polygons": 250000
+        }
+      ]
+    },
+    {
+      "scene": "Apollo 14 - Measured terrain",
+      "filename": "Apollo 14 - Legacy measured terrain.blend",
+      "source_master": "Moon Model.blend",
+      "source_object_count": 1,
+      "mesh_object_count": 1,
+      "mesh_vertex_count": 251001,
+      "mesh_polygon_count": 250000,
+      "coverage_note": "Original scene extracted from the preserved master; its original scene coverage, objects and appearance are retained. No 10 km expansion or terrain baking was performed.",
+      "source_scene_custom_properties": {
+        "grid_id": "MISSION-APOLLO-14",
+        "dataset_id": "brahmos-moon-terrain-v1"
+      },
+      "reopened_scene_names": [
+        "Apollo 14 - Measured terrain"
+      ],
+      "reopened_object_count": 1,
+      "packed_image_count": 1,
+      "reopen_verified": true,
+      "geometry_vertex_and_polygon_sha256": "fc70e2af0fb5129e86634c07d9a7187282c8f84a211561130559c698c0f661d0",
+      "source_geometry_match_verified": true,
+      "mesh_objects": [
+        {
+          "object": "MISSION-APOLLO-14-MEASURED",
+          "vertices": 251001,
+          "polygons": 250000
+        }
+      ]
+    },
+    {
+      "scene": "Apollo 15 - Measured terrain",
+      "filename": "Apollo 15 - Legacy measured terrain.blend",
+      "source_master": "Moon Model.blend",
+      "source_object_count": 1,
+      "mesh_object_count": 1,
+      "mesh_vertex_count": 251001,
+      "mesh_polygon_count": 250000,
+      "coverage_note": "Original scene extracted from the preserved master; its original scene coverage, objects and appearance are retained. No 10 km expansion or terrain baking was performed.",
+      "source_scene_custom_properties": {
+        "grid_id": "MISSION-APOLLO-15",
+        "dataset_id": "brahmos-moon-terrain-v1"
+      },
+      "reopened_scene_names": [
+        "Apollo 15 - Measured terrain"
+      ],
+      "reopened_object_count": 1,
+      "packed_image_count": 1,
+      "reopen_verified": true,
+      "geometry_vertex_and_polygon_sha256": "2310c74b73a1e43d571c1cc8b556e237538cae119f33265375533f934f9f091c",
+      "source_geometry_match_verified": true,
+      "mesh_objects": [
+        {
+          "object": "MISSION-APOLLO-15-MEASURED",
+          "vertices": 251001,
+          "polygons": 250000
+        }
+      ]
+    },
+    {
+      "scene": "Lunokhod 1 - Measured terrain",
+      "filename": "Lunokhod 1 - Legacy measured terrain.blend",
+      "source_master": "Moon Model.blend",
+      "source_object_count": 1,
+      "mesh_object_count": 1,
+      "mesh_vertex_count": 525,
+      "mesh_polygon_count": 480,
+      "coverage_note": "Original scene extracted from the preserved master; its original scene coverage, objects and appearance are retained. No 10 km expansion or terrain baking was performed.",
+      "source_scene_custom_properties": {
+        "grid_id": "MISSION-LUNOKHOD-1",
+        "dataset_id": "brahmos-moon-terrain-v1"
+      },
+      "reopened_scene_names": [
+        "Lunokhod 1 - Measured terrain"
+      ],
+      "reopened_object_count": 1,
+      "packed_image_count": 1,
+      "reopen_verified": true,
+      "geometry_vertex_and_polygon_sha256": "d90abf29695c3c6d1c436da0573fca44e9c009e67f1f7fad7e11e40656efbaf9",
+      "source_geometry_match_verified": true,
+      "mesh_objects": [
+        {
+          "object": "MISSION-LUNOKHOD-1-MEASURED",
+          "vertices": 525,
+          "polygons": 480
+        }
+      ]
+    },
+    {
+      "scene": "Lunokhod 2 - Measured terrain",
+      "filename": "Lunokhod 2 - Legacy measured terrain.blend",
+      "source_master": "Moon Model.blend",
+      "source_object_count": 1,
+      "mesh_object_count": 1,
+      "mesh_vertex_count": 40401,
+      "mesh_polygon_count": 40000,
+      "coverage_note": "Original scene extracted from the preserved master; its original scene coverage, objects and appearance are retained. No 10 km expansion or terrain baking was performed.",
+      "source_scene_custom_properties": {
+        "grid_id": "MISSION-LUNOKHOD-2",
+        "dataset_id": "brahmos-moon-terrain-v1"
+      },
+      "reopened_scene_names": [
+        "Lunokhod 2 - Measured terrain"
+      ],
+      "reopened_object_count": 1,
+      "packed_image_count": 1,
+      "reopen_verified": true,
+      "geometry_vertex_and_polygon_sha256": "6d52866ab8b3df9f0f6af484515b9631edae2fa9b0b02efd5dea1d909c58fd44",
+      "source_geometry_match_verified": true,
+      "mesh_objects": [
+        {
+          "object": "MISSION-LUNOKHOD-2-MEASURED",
+          "vertices": 40401,
+          "polygons": 40000
+        }
+      ]
+    },
+    {
+      "scene": "G7 - Terrain only",
+      "filename": "G7 - Terrain only.blend",
+      "source_master": "Moon Model.blend",
+      "source_object_count": 3,
+      "mesh_object_count": 1,
+      "mesh_vertex_count": 40000,
+      "mesh_polygon_count": 79202,
+      "coverage_note": "Original scene extracted from the preserved master; its original scene coverage, objects and appearance are retained. No 10 km expansion or terrain baking was performed.",
+      "source_scene_custom_properties": {
+        "cycles": {
+          "samples": 128,
+          "use_denoising": 1
+        },
+        "uuid": "73755cce-c9d6-43d3-bd3b-16745fe5362f",
+        "assets reported": {},
+        "accuracy": "5m DEM unchanged; neutral material not measured reflectance; lighting is preview only."
+      },
+      "reopened_scene_names": [
+        "G7 - Terrain only"
+      ],
+      "reopened_object_count": 3,
+      "packed_image_count": 0,
+      "reopen_verified": true,
+      "geometry_vertex_and_polygon_sha256": "bddc74799d260d5d485af9da3c175359e24e36285a3f522926742caae10ffc5d",
+      "source_geometry_match_verified": true,
+      "mesh_objects": [
+        {
+          "object": "G7 - LOLA 5 m terrain - unchanged",
+          "vertices": 40000,
+          "polygons": 79202
+        }
+      ]
+    }
+  ],
+  "excluded_scene_note": "The complete Site04 - All 256 grids terrain has been split into four 64-grid standalone blocks documented in Site04 regional block manifest.json; presentation-only Earth/Sun meshes are not included in those scientific blocks."
+}

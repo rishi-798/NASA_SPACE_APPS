@@ -1,0 +1,51 @@
+{
+  "verified_crater_overviews": [
+    {
+      "region_id": "REGION-TYCHO",
+      "blend_reopened": true,
+      "glb_reopened": true,
+      "source_vertex_count": 68684,
+      "unique_glb_vertex_count": 68684,
+      "blender_quad_count": 68154,
+      "glb_triangle_count": 136308,
+      "max_abs_glb_position_delta_m": 0.0,
+      "glb_axis_conversion_checked": "undo Blender import Y-up to Z-up mapping before comparison",
+      "mean_up_normal_component": 0.9775657653808594,
+      "production_ready": false,
+      "blend_bytes": 2504315,
+      "glb_bytes": 8180024
+    },
+    {
+      "region_id": "REGION-COPERNICUS",
+      "blend_reopened": true,
+      "glb_reopened": true,
+      "source_vertex_count": 61500,
+      "unique_glb_vertex_count": 61500,
+      "blender_quad_count": 61005,
+      "glb_triangle_count": 122010,
+      "max_abs_glb_position_delta_m": 0.0,
+      "glb_axis_conversion_checked": "undo Blender import Y-up to Z-up mapping before comparison",
+      "mean_up_normal_component": 0.9857520461082458,
+      "production_ready": false,
+      "blend_bytes": 2216619,
+      "glb_bytes": 7322172
+    },
+    {
+      "region_id": "REGION-CLAVIUS",
+      "blend_reopened": true,
+      "glb_reopened": true,
+      "source_vertex_count": 544310,
+      "unique_glb_vertex_count": 544310,
+      "blender_quad_count": 542754,
+      "glb_triangle_count": 1085508,
+      "max_abs_glb_position_delta_m": 0.0,
+      "glb_axis_conversion_checked": "undo Blender import Y-up to Z-up mapping before comparison",
+      "mean_up_normal_component": 0.9837626814842224,
+      "production_ready": false,
+      "blend_bytes": 19875724,
+      "glb_bytes": 65131992
+    }
+  ],
+  "all_glbs_match_saved_blender_vertices": true,
+  "all_blender_normals_outward": true
+}

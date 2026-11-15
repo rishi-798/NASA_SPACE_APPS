@@ -1,0 +1,193 @@
+{
+  "region_id": "REGION-CLAVIUS",
+  "scene": "REGION-CLAVIUS - LOLA64 overview",
+  "object_name": "REGION-CLAVIUS - measured overview terrain",
+  "terrain_source": "LOLA64-SVS",
+  "terrain_source_role": "global low-resolution overview baseline",
+  "source_pds_url": "https://svs.gsfc.nasa.gov/4720/",
+  "source_cloud_cog": "cogs/LOLA64-SVS.tif",
+  "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+  "source_units": "km above 1737.4km reference sphere",
+  "coordinate_frame": "ME/DE421",
+  "latitude_type": "planetocentric",
+  "longitude": "east positive [-180,180)",
+  "vertical_reference_radius_m": 1737400.0,
+  "mesh_units": "m",
+  "source_resolution_m": {
+    "north_south": 473.80235037733564,
+    "east_west_at_center": 246.7144058515156
+  },
+  "footprint": {
+    "kind": "rectangular geographic overview envelope",
+    "bounds": {
+      "north": -54.49022113783192,
+      "south": -62.75977886216808,
+      "west": -22.742523967974268,
+      "east": -6.707476032025732
+    },
+    "published_crater_bounds": {
+      "north": -54.82,
+      "south": -62.43,
+      "east": -7.42,
+      "west": -22.03
+    },
+    "buffer_m": 10000.0,
+    "buffer_method": "Conservative latitude/longitude expansion of published feature bounds; longitude uses the most poleward published latitude. This is an overview envelope, not an exact geodesic polygon buffer.",
+    "registry_rim_polygon_state": "not acquired; conservative planning envelope only",
+    "coordinate_alignment_state": "provisional planning placement; validate against Moon ME data before production"
+  },
+  "feature": {
+    "name": "Clavius",
+    "latitude_deg": -58.62,
+    "longitude_east_deg": -14.73,
+    "published_diameter_km": 230.77,
+    "published_coordinate_source_url": "https://planetarynames.wr.usgs.gov/Feature/1236",
+    "published_coordinate_frame": "USGS Gazetteer displayed planetographic, east-positive; control-network alignment pending"
+  },
+  "boundary_reference": {
+    "source": "Robbins 2018 global lunar crater database (PDS4), USGS Astropedia",
+    "source_url": "https://astrogeology.usgs.gov/search/map/moon_crater_database_v1_robbins",
+    "source_reference": "https://doi.org/10.1029/2018JE005592",
+    "coordinate_reference": "The downloaded PDS4 catalogue records fitted circular/elliptical crater coordinates; exact rim vertices are not included in the CSV product.",
+    "geometry_type": "catalogue fitted ellipse, not a rim polygon",
+    "nearest_catalogue_record": {
+      "crater_id": "05-1-001581",
+      "center_latitude_deg": -58.5399,
+      "center_longitude_east_360_deg": 345.386,
+      "center_offset_from_usgs_km": 3.043358416255034,
+      "circular_diameter_km": 221.213,
+      "ellipse_major_diameter_km": 222.945,
+      "ellipse_minor_diameter_km": 217.769,
+      "ellipse_angle_deg": 136.602,
+      "arc_img": 0.7225,
+      "rim_point_count": 1844
+    },
+    "usgs_published_bounds": {
+      "north": -54.82,
+      "south": -62.43,
+      "east": -7.42,
+      "west": -22.03
+    },
+    "alignment_assessment": "Ellipse provides a size/center cross-check only. It does not replace a Clavius rim polygon or validate the exact edge/buffer."
+  },
+  "mesh": {
+    "vertex_count": 544310,
+    "quad_count": 542754,
+    "triangle_count_in_glb": 1085508,
+    "source_pixel_count": 544310,
+    "height_range_m": [
+      -6056.0,
+      2189.5
+    ],
+    "sample_height_center_m": -2955.000162124634,
+    "curvature": "preserved by converting every geographic source pixel center to the 1737400 m reference sphere plus its original LOLA64 height before projection into the local ENU anchor frame",
+    "face_normals": "outward from the reference sphere"
+  },
+  "center_api_controls": [
+    {
+      "latitude_planetocentric_deg": -58.62,
+      "longitude_east_deg": -14.73,
+      "grid_id": "MOON-R0450-C0262-r8-c1",
+      "source_id": "sldem2015_512_60s_30s_315_360_float",
+      "elevation_m": -2950.4799842834473,
+      "sample_spacing_x_m": 30.83919731537102,
+      "sample_spacing_y_m": 59.225293797166955,
+      "global_lola64_elevation_m": -2955.000244140625,
+      "api_minus_lola64_m": 4.520259857177734
+    },
+    {
+      "latitude_planetocentric_deg": -54.49022113783192,
+      "longitude_east_deg": -22.742523967974268,
+      "grid_id": "MOON-R0438-C0276-r2-c5",
+      "source_id": "sldem2015_512_60s_30s_315_360_float",
+      "elevation_m": -2546.40531539917,
+      "sample_spacing_x_m": 34.40134245065796,
+      "sample_spacing_y_m": 59.225293797166955,
+      "global_lola64_elevation_m": -2535.0,
+      "api_minus_lola64_m": -11.405315399169922
+    },
+    {
+      "latitude_planetocentric_deg": -54.49022113783192,
+      "longitude_east_deg": -6.707476032025732,
+      "grid_id": "MOON-R0438-C0304-r2-c7",
+      "source_id": "sldem2015_512_60s_30s_315_360_float",
+      "elevation_m": 623.0764389038086,
+      "sample_spacing_x_m": 34.40134245065796,
+      "sample_spacing_y_m": 59.225293797166955,
+      "global_lola64_elevation_m": 605.5000610351562,
+      "api_minus_lola64_m": 17.576377868652344
+    },
+    {
+      "latitude_planetocentric_deg": -62.75977886216808,
+      "longitude_east_deg": -22.742523967974268,
+      "grid_id": "MOON-R0463-C0217-r3-c9",
+      "source_id": "ldem_60s_60m_float",
+      "elevation_m": -3581.0000896453857,
+      "sample_spacing_x_m": 56.672858262251104,
+      "sample_spacing_y_m": 56.672858262251104,
+      "global_lola64_elevation_m": -3581.0,
+      "api_minus_lola64_m": -8.96453857421875e-05
+    },
+    {
+      "latitude_planetocentric_deg": -62.75977886216808,
+      "longitude_east_deg": -6.707476032025732,
+      "grid_id": "MOON-R0463-C0240-r3-c2",
+      "source_id": "ldem_60s_60m_float",
+      "elevation_m": -1004.0864944458008,
+      "sample_spacing_x_m": 56.672858262251104,
+      "sample_spacing_y_m": 56.672858262251104,
+      "global_lola64_elevation_m": -998.5000610351562,
+      "api_minus_lola64_m": -5.586433410644531
+    }
+  ],
+  "source_selection_note": "The live API selects higher-priority SLDEM/LOLA products at the sampled locations. This overview mesh intentionally uses only LOLA64-SVS for one consistent global baseline and does not merge higher-priority pixels. Control deltas document that distinction; they are not mesh errors against an identical source.",
+  "local_frame_definition": "Moon-fixed ME/DE421 position vectors at original LOLA64 sample centers, with the reference-sphere anchor subtracted and projected onto anchor east/north/up basis vectors.",
+  "local_to_moon_fixed_matrix_row_major": [
+    [
+      0.2542643699881034,
+      0.8256744786421898,
+      0.5035983374411606,
+      874951.7514702724
+    ],
+    [
+      0.9671347528418948,
+      -0.2170737847133621,
+      -0.13239842082012937,
+      -230029.0163328928
+    ],
+    [
+      0.0,
+      0.5207116546699959,
+      -0.8537326119405507,
+      -1483275.0399855128
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "local_axes": {
+    "x": "east",
+    "y": "north",
+    "z": "up"
+  },
+  "vertical_exaggeration": 1.0,
+  "cosmetic_geometry": false,
+  "illustrative_lighting_only": true,
+  "candidate_glb": {
+    "filename": "Clavius - Overview terrain candidate.glb",
+    "axis_convention": "Z-up; x east, y north, z up",
+    "vertex_count": 544310,
+    "face_count": 1085508,
+    "production_ready": false
+  },
+  "production_ready": false,
+  "not_yet_validated": [
+    "IAU Gazetteer/LROC/Robbins feature-boundary alignment to the viewer's ME/DE421 frame",
+    "exact geodesic 10 km buffer and rim containment; this package uses a conservative geographic envelope",
+    "higher-resolution source mosaics and seamless detail transitions",
+    "Moon-fixed viewer placement, browser loading/performance, and site-specific Sun/Earth ephemeris lighting"
+  ]
+}

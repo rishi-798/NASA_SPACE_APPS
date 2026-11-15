@@ -1,0 +1,155 @@
+{
+  "region_id": "REGION-LUNOKHOD-1",
+  "scene": "Lunokhod 1 region - Measured terrain",
+  "object_name": "MOON-R0156-C0344-r7-c7",
+  "grid_id": "MOON-R0156-C0344-r7-c7",
+  "lookup_grid_id": "MISSION-LUNOKHOD-1",
+  "grid_parent_id": "MOON-R0156-C0344",
+  "locations_covered": [
+    {
+      "id": "lunokhod-1",
+      "name": "Lunokhod 1",
+      "latitude": 38.315,
+      "longitude": -35.0081,
+      "grid_id": "MOON-R0156-C0344-r7-c7",
+      "lookup_grid_id": "MISSION-LUNOKHOD-1",
+      "source_id": "LUNOKHOD1-NATIVE-CROP",
+      "source_matches_region_mesh": false,
+      "height_m": -2478.896728515625,
+      "api_height_m": -2478.896728515625,
+      "height_delta_m": 0.0
+    },
+    {
+      "id": "luna-17",
+      "name": "Luna 17 lander",
+      "latitude": 38.23764,
+      "longitude": -35.00163,
+      "grid_id": "MOON-R0157-C0346-r0-c3",
+      "lookup_grid_id": "MOON-R0157-C0346-r0-c3",
+      "source_id": "sldem2015_512_30n_60n_315_360_float",
+      "source_matches_region_mesh": true,
+      "height_m": -2473.633544921875,
+      "api_height_m": -2473.6335277557373,
+      "height_delta_m": 1.71661376953125e-05
+    }
+  ],
+  "source_provenance_note": "The region mesh uses the listed global SLDEM tile. Any center or marker whose selected API source differs is recorded separately; exact point-height parity does not mean that higher-priority source pixels were overlaid across their footprint.",
+  "footprint": {
+    "kind": "geodesic_circle",
+    "radius_m": 10000.0,
+    "diameter_m": 20000.0
+  },
+  "anchor": {
+    "latitude_planetocentric_deg": 38.315,
+    "longitude_east_deg": -35.0081
+  },
+  "coordinate_frame": "ME/DE421",
+  "vertical_reference_radius_m": 1737400.0,
+  "source_id": "sldem2015_512_30n_60n_315_360_float",
+  "api_center_selected_source_id": "LUNOKHOD1-NATIVE-CROP",
+  "api_center_uses_different_source": true,
+  "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+  "source_pds_url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_315_360_float.lbl",
+  "source_cloud_cog": "cogs/sldem2015_512_30n_60n_315_360_float.tif",
+  "source_units": "km above 1737.4 km reference sphere",
+  "mesh_units": "m",
+  "source_pixel_spacing_m": {
+    "north_south": 59.225293797166955,
+    "east_west_at_anchor": 46.46899975304513
+  },
+  "source_pixels_used": 114422,
+  "mesh_faces": 113656,
+  "height_range_m": [
+    -2558.105712890625,
+    -2413.7119140625
+  ],
+  "anchor_sample_height_m": -2478.896728515625,
+  "api_center_sample_height_m": -2478.896728515625,
+  "api_center_sample_delta_m": 0.0,
+  "terrain_api_control_check": {
+    "endpoint": "https://brahmos-lunar-browser.onrender.com/api/terrain/lookup",
+    "controls": [
+      {
+        "latitude_deg": 38.2701,
+        "longitude_east_deg": -35.0081,
+        "grid_id": "MOON-R0156-C0344-r9-c7",
+        "source_height_m": -2472.486083984375,
+        "api_height_m": -2472.4860191345215,
+        "difference_m": 6.4849853515625e-05
+      },
+      {
+        "latitude_deg": 38.359899999999996,
+        "longitude_east_deg": -35.0081,
+        "grid_id": "MOON-R0156-C0344-r6-c7",
+        "source_height_m": -2473.369140625,
+        "api_height_m": -2473.3691215515137,
+        "difference_m": 1.9073486328125e-05
+      },
+      {
+        "latitude_deg": 38.315,
+        "longitude_east_deg": -35.0531,
+        "grid_id": "MOON-R0156-C0344-r7-c6",
+        "source_height_m": -2474.5380859375,
+        "api_height_m": -2474.5380878448486,
+        "difference_m": -1.9073486328125e-06
+      },
+      {
+        "latitude_deg": 38.315,
+        "longitude_east_deg": -34.9631,
+        "grid_id": "MOON-R0156-C0344-r7-c8",
+        "source_height_m": -2472.6123046875,
+        "api_height_m": -2472.6123809814453,
+        "difference_m": -7.62939453125e-05
+      }
+    ],
+    "max_abs_difference_m": 7.62939453125e-05
+  },
+  "local_axes": {
+    "x": "east",
+    "y": "north",
+    "z": "up"
+  },
+  "local_frame_definition": "Moon-fixed ME/DE421 position vectors at original source pixel centers, with the 1737400 m reference-sphere anchor subtracted and projected onto anchor east/north/up basis vectors.",
+  "local_to_moon_fixed_matrix_row_major": [
+    [
+      0.5736922355109286,
+      -0.507811263505114,
+      0.6426546036338749,
+      1116548.1083534942
+    ],
+    [
+      0.8190709486451544,
+      0.3556802734363487,
+      -0.4501270089361124,
+      -782050.6653256017
+    ],
+    [
+      0.0,
+      0.7846140858699797,
+      0.6199844645266654,
+      1077161.0086686285
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "vertical_exaggeration": 1.0,
+  "cosmetic_geometry": false,
+  "illustrative_lighting_only": true,
+  "candidate_glb": {
+    "filename": "Lunokhod 1 region - Measured terrain candidate.glb",
+    "axis_convention": "Z-up; configure receiving loader as Z-up.",
+    "vertex_count": 114422,
+    "face_count": 113656,
+    "production_ready": false
+  },
+  "production_ready": false,
+  "not_yet_validated": [
+    "viewer/Moon-fixed-to-world placement",
+    "browser glTF/GLB integration and performance",
+    "Sun/Earth ephemeris lighting"
+  ]
+}

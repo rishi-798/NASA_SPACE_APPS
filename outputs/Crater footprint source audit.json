@@ -1,0 +1,103 @@
+{
+  "title": "Crater outline and catalogue source cross-check",
+  "created_from": "The regional terrain task; source archives retained under work/blender for reproducibility.",
+  "caveat": "These geometries support overview framing and boundary review. Feature coordinate frame alignment remains provisional in each terrain asset.",
+  "features": {
+    "tycho": {
+      "source": "LROC Copernican Craters (D > 10 km) shapefile, COPERNICAN_CRATERS_360",
+      "source_url": "https://data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_COPERNICAN_CRATERS",
+      "source_file_sha256": "d6d954f47f1888324149016b2f213e7999d205f5a8f4d76da89fab3564f2e65a",
+      "coordinate_reference": "IAU Moon 2000 Geographic; the product README documents both -180..180 and 0..360 longitude domains.",
+      "geometry_type": "digitized polygon",
+      "feature_name": "Tycho",
+      "lroc_database_center": {
+        "latitude_deg": -43.2702982765,
+        "longitude_east_deg": -11.2855843665
+      },
+      "lroc_database_diameter_km": 81.5733694325,
+      "polygon_rings": 1,
+      "polygon_vertex_count": 129,
+      "polygon_bounds_180": {
+        "west": -13.132809021029686,
+        "east": -9.438363248611722,
+        "south": -44.60909484158631,
+        "north": -41.91902783888224
+      },
+      "usgs_published_bounds": {
+        "north": -41.89,
+        "south": -44.7,
+        "east": -9.28,
+        "west": -13.15
+      },
+      "maximum_polygon_excursion_outside_usgs_bounds_km_by_axis": {
+        "north_km": 0.0,
+        "south_km": 0.0,
+        "east_km_at_feature_latitude": 0.0,
+        "west_km_at_feature_latitude": 0.0
+      },
+      "center_offset_from_usgs_km": 1.7049995285484318,
+      "alignment_assessment": "Polygon envelope cross-checks the Gazetteer bounds closely; this is not a control-network transformation or proof of pixel-level registration to ME/DE421."
+    },
+    "copernicus": {
+      "source": "LROC Copernican Craters (D > 10 km) shapefile, COPERNICAN_CRATERS_360",
+      "source_url": "https://data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_COPERNICAN_CRATERS",
+      "source_file_sha256": "d6d954f47f1888324149016b2f213e7999d205f5a8f4d76da89fab3564f2e65a",
+      "coordinate_reference": "IAU Moon 2000 Geographic; the product README documents both -180..180 and 0..360 longitude domains.",
+      "geometry_type": "digitized polygon",
+      "feature_name": "Copernicus",
+      "lroc_database_center": {
+        "latitude_deg": 9.59115979529,
+        "longitude_east_deg": -20.0582817867
+      },
+      "lroc_database_diameter_km": 94.8114796149,
+      "polygon_rings": 1,
+      "polygon_vertex_count": 129,
+      "polygon_bounds_180": {
+        "west": -21.64378271404769,
+        "east": -18.472781064249205,
+        "south": 8.026029540403442,
+        "north": 11.152711627229984
+      },
+      "usgs_published_bounds": {
+        "north": 11.21,
+        "south": 8.04,
+        "east": -18.47,
+        "west": -21.68
+      },
+      "maximum_polygon_excursion_outside_usgs_bounds_km_by_axis": {
+        "north_km": 0.0,
+        "south_km": 0.42363114193281537,
+        "east_km_at_feature_latitude": 0.0,
+        "west_km_at_feature_latitude": 0.0
+      },
+      "center_offset_from_usgs_km": 1.089239387301351,
+      "alignment_assessment": "Polygon envelope cross-checks the Gazetteer bounds closely; this is not a control-network transformation or proof of pixel-level registration to ME/DE421."
+    },
+    "clavius": {
+      "source": "Robbins 2018 global lunar crater database (PDS4), USGS Astropedia",
+      "source_url": "https://astrogeology.usgs.gov/search/map/moon_crater_database_v1_robbins",
+      "source_reference": "https://doi.org/10.1029/2018JE005592",
+      "coordinate_reference": "The downloaded PDS4 catalogue records fitted circular/elliptical crater coordinates; exact rim vertices are not included in the CSV product.",
+      "geometry_type": "catalogue fitted ellipse, not a rim polygon",
+      "nearest_catalogue_record": {
+        "crater_id": "05-1-001581",
+        "center_latitude_deg": -58.5399,
+        "center_longitude_east_360_deg": 345.386,
+        "center_offset_from_usgs_km": 3.043358416255034,
+        "circular_diameter_km": 221.213,
+        "ellipse_major_diameter_km": 222.945,
+        "ellipse_minor_diameter_km": 217.769,
+        "ellipse_angle_deg": 136.602,
+        "arc_img": 0.7225,
+        "rim_point_count": 1844
+      },
+      "usgs_published_bounds": {
+        "north": -54.82,
+        "south": -62.43,
+        "east": -7.42,
+        "west": -22.03
+      },
+      "alignment_assessment": "Ellipse provides a size/center cross-check only. It does not replace a Clavius rim polygon or validate the exact edge/buffer."
+    }
+  }
+}
