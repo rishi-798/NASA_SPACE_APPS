@@ -51,3 +51,29 @@ test('eased cinematic clock is monotonic and reaches the exact endpoint in 35 se
   }
   assert.ok(Math.abs(cursor-256)<1e-8);
 });
+
+test('playback speed changes finish time without changing the selected physical state',async()=>{
+  const {transferPlaybackClock,formatPlaybackTime}=await import('../frontend/src/lib/transferPlayback.ts');
+  const slow=transferPlaybackClock(128,257,.5),fast=transferPlaybackClock(128,257,2);
+  assert.equal(slow.elapsed,17.5);assert.equal(fast.elapsed,17.5);
+  assert.equal(slow.remaining,35);assert.equal(fast.remaining,8.75);
+  assert.equal(formatPlaybackTime(70),'01:10');assert.equal(formatPlaybackTime(0),'00:00');
+  let cursor=0;
+  for(let i=0;i<175;i++)cursor=advanceTransferCursor(cursor,.1,257,35/2);
+  assert.ok(Math.abs(cursor-256)<1e-8);
+  assert.equal(transferPlaybackClock(256,257,4).remaining,0);
+});
+
+test('the gallery and flight normalize the selected asset without replacing its geometry',async()=>{
+  const THREE=await import('../frontend/node_modules/three/build/three.module.js');
+  const {prepareRocketModel}=await import('../frontend/src/components/trip/spaceVisuals.ts');
+  const root=new THREE.Group(),geometry=new THREE.BoxGeometry(12,2,2);
+  const rocket=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial());rocket.position.set(7,4,-3);root.add(rocket);
+  assert.equal(prepareRocketModel(root,'/selected.glb',.45),root);
+  assert.equal(rocket.geometry,geometry);
+  const bounds=new THREE.Box3().setFromObject(root),size=bounds.getSize(new THREE.Vector3());
+  assert.ok(Math.abs(size.y-.45)<1e-8);assert.ok(size.y>size.x);
+  assert.ok(bounds.getCenter(new THREE.Vector3()).length()<1e-8);
+  geometry.dispose();rocket.material.dispose();
+  assert.throws(()=>prepareRocketModel(new THREE.Group(),'/empty.glb',.45),/usable geometry/);
+});

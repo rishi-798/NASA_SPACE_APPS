@@ -273,7 +273,7 @@ export function TripPage() {
           <button className="trip-primary" disabled={!landing} onClick={() => go("landing")}>Review landing point <ArrowRight /></button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button></aside></div>}
       {(mission.stage === "landing" || mission.stage === "reveal") && landing && <>
         <div className="trip-layout">
-          <div className="trip-visual trip-mission-visual"><Suspense fallback={sceneLoading}><SpaceScene key={`${transfer.key}:${mission.stage}`} transfer={transfer.data} /></Suspense>
+          <div className="trip-visual trip-mission-visual"><Suspense fallback={sceneLoading}><SpaceScene key={`${transfer.key}:${mission.stage}:${rocket?.id}`} mission transfer={transfer.data} modelUrl={rocket?.model??undefined} modelName={rocket?.name} modelCredit={rocket?.modelCredit} /></Suspense>
             {transfer.loading && <p className="trip-scene-message" role="status">Calculating the mission flight…</p>}</div>
           <aside className="trip-panel"><TransferPlanner input={transferInput} altitudeText={parkingAltitudeText} calculation={transfer}
             onDeparture={time=>dispatch({type:"transfer-departure",time})} onArrival={time=>dispatch({type:"time",time})}
