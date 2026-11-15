@@ -193,6 +193,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     canvas.tabIndex = 0;
 
     const scene = new THREE.Scene();
+    const terrainTextures = new Set<THREE.Texture>();
     const camera = new THREE.PerspectiveCamera(55, 1, .05, 1000000);
     camera.up.set(0, 0, 1);
     const controls = new OrbitControls(camera, canvas);
@@ -426,10 +427,34 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       });
 
       const texLoader = new THREE.TextureLoader();
+      const useFallbackTextures = () => {
+        if (cancelled) return;
+        try {
+          const regolithTextures = createRegolithTextures(extent);
+          terrainTextures.add(regolithTextures.map);
+          terrainTextures.add(regolithTextures.normalMap);
+          regolithTextures.map.repeat.set(1.6, 1.6);
+          regolithTextures.normalMap.repeat.set(1.6, 1.6);
+          terrain.traverse(child => {
+            if (child instanceof THREE.Mesh && child.material) {
+              child.material = new THREE.MeshStandardMaterial({
+                map: regolithTextures.map,
+                color: new THREE.Color(0xa2a5aa),
+                normalMap: regolithTextures.normalMap,
+                normalScale: new THREE.Vector2(0.45, 0.45),
+                roughness: 0.95,
+                metalness: 0.0,
+              });
+            }
+          });
+          render();
+        } catch { /* Retain the model's original material if canvas textures are unavailable. */ }
+      };
       texLoader.load(
         `${import.meta.env.BASE_URL}terrain/lunar-detail-color.png`,
         colTex => {
           if (cancelled) { colTex.dispose(); return; }
+          terrainTextures.add(colTex);
           colTex.wrapS = colTex.wrapT = THREE.RepeatWrapping;
           colTex.colorSpace = THREE.SRGBColorSpace;
           colTex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
@@ -437,6 +462,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             `${import.meta.env.BASE_URL}terrain/lunar-regolith-normal.png`,
             normTex => {
               if (cancelled) { normTex.dispose(); return; }
+              terrainTextures.add(normTex);
               normTex.wrapS = normTex.wrapT = THREE.RepeatWrapping;
               normTex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
               terrain.traverse(child => {
@@ -469,32 +495,13 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
                 }
               });
               render();
-            }
+            },
+            undefined,
+            useFallbackTextures
           );
         },
         undefined,
-        () => {
-          try {
-            const regolithTextures = createRegolithTextures(extent);
-            regolithTextures.map.repeat.set(1.6, 1.6);
-            regolithTextures.normalMap.repeat.set(1.6, 1.6);
-            terrain.traverse(child => {
-              if (child instanceof THREE.Mesh && child.material) {
-                const mat = new THREE.MeshStandardMaterial({
-                  map: regolithTextures.map,
-                  color: new THREE.Color(0xa2a5aa),
-                  normalMap: regolithTextures.normalMap,
-                  normalScale: new THREE.Vector2(0.45, 0.45),
-                  roughness: 0.95,
-                  metalness: 0.0,
-                });
-                child.material = mat;
-                mat.needsUpdate = true;
-              }
-            });
-            render();
-          } catch { /* fallback */ }
-        }
+        useFallbackTextures
       );
 
       // Auto-sample center landing point
@@ -582,7 +589,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       cancelled = true; download.abort(); resizeObserver.disconnect(); controls.dispose();
       canvas.removeEventListener('pointerdown', start); canvas.removeEventListener('pointermove', move);
       canvas.removeEventListener('pointerup', pick); canvas.removeEventListener('pointercancel', cancelPointer); canvas.removeEventListener('keydown', key);
-      dispose(scene); earthMap.dispose(); sunLight.shadow.dispose(); renderer.dispose(); canvas.remove(); runtime.current = null;
+      dispose(scene); terrainTextures.forEach(texture => texture.dispose());
+      earthMap.dispose(); sunLight.shadow.dispose(); renderer.dispose(); canvas.remove(); runtime.current = null;
     };
   }, [region]);
 
