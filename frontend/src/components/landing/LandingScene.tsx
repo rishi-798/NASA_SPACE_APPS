@@ -324,6 +324,7 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
       observer.disconnect();
       controls.dispose();
       renderer.dispose();
+      renderer.forceContextLoss();
       disposables.forEach((d) => d.dispose());
       if (holder) { holder.remove(terrainModel!); scene.remove(holder); }
       el.removeChild(renderer.domElement);

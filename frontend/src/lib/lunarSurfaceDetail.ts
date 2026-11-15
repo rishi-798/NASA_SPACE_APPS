@@ -59,7 +59,8 @@ function buildDenseDetail(hit: THREE.Intersection, radius = 24): THREE.BufferGeo
   const minX = hit.point.x - radius, minY = hit.point.y - radius;
   const heights = new Float64Array(stride * stride); heights.fill(NaN);
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3();
-  const first = Math.max(0,hit.faceIndex-16384), last = Math.min(indices.count/3,hit.faceIndex+16385);
+  const first = radius > 24 ? 0 : Math.max(0,hit.faceIndex-16384);
+  const last = radius > 24 ? indices.count/3 : Math.min(indices.count/3,hit.faceIndex+16385);
   for(let face=first;face<last;face++) {
     a.fromBufferAttribute(source,indices.getX(face*3)).applyMatrix4(mesh.matrixWorld);
     b.fromBufferAttribute(source,indices.getX(face*3+1)).applyMatrix4(mesh.matrixWorld);

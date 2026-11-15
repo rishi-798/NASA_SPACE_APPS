@@ -27,7 +27,7 @@ test('detail gracefully skips an intersection without triangle data', () => {
 });
 
 test('landing detail can cover a 128 m square without changing the measured surface', () => {
-  const source = new THREE.Mesh(new THREE.PlaneGeometry(180, 180, 36, 36));
+  const source = new THREE.Mesh(new THREE.PlaneGeometry(140, 140, 140, 140));
   source.updateMatrixWorld(true);
   const before = Array.from(source.geometry.getAttribute('position').array);
   const hit = new THREE.Raycaster(new THREE.Vector3(0, 0, 10), new THREE.Vector3(0, 0, -1)).intersectObject(source)[0];
