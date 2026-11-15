@@ -137,6 +137,116 @@ function makePin(color: number, radius = 0.075) {
   return pin;
 }
 
+function setSpacecraftOpacity(root: THREE.Object3D, alpha: number) {
+  root.traverse((object) => {
+    if (object instanceof THREE.Mesh) {
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      materials.forEach((material) => {
+        if (material.userData.baseOpacity === undefined) {
+          material.userData.baseOpacity = material.opacity ?? 1.0;
+        }
+        material.transparent = true;
+        material.opacity = (material.userData.baseOpacity as number) * alpha;
+      });
+    }
+  });
+}
+
+function createExhaustWake() {
+  const count = 40;
+  const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+  const history: { pos: THREE.Vector3; age: number; maxAge: number }[] = [];
+
+  for (let i = 0; i < count * 3; i++) {
+    positions[i] = 9999;
+    colors[i] = 1;
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+  const material = new THREE.PointsMaterial({
+    size: 2.8,
+    sizeAttenuation: false,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.85,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    toneMapped: false,
+  });
+
+  const points = new THREE.Points(geometry, material);
+  points.name = "Translunar Exhaust Wake";
+  points.frustumCulled = false;
+
+  return {
+    points,
+    update: (emitterPos: THREE.Vector3 | null, delta: number, firing: boolean) => {
+      // Age existing particles
+      for (let i = history.length - 1; i >= 0; i--) {
+        history[i]!.age += delta;
+        if (history[i]!.age >= history[i]!.maxAge) {
+          history.splice(i, 1);
+        }
+      }
+
+      // Spawn new particle if firing
+      if (emitterPos && firing) {
+        history.unshift({
+          pos: emitterPos.clone(),
+          age: 0,
+          maxAge: 0.55,
+        });
+        if (history.length > count) history.pop();
+      }
+
+      // Update GPU buffers
+      const posAttr = geometry.attributes.position as THREE.BufferAttribute;
+      const colAttr = geometry.attributes.color as THREE.BufferAttribute;
+      const pArr = posAttr.array as Float32Array;
+      const cArr = colAttr.array as Float32Array;
+
+      for (let i = 0; i < count; i++) {
+        if (i < history.length) {
+          const item = history[i]!;
+          const life = Math.max(0, 1.0 - item.age / item.maxAge);
+          pArr[i * 3] = item.pos.x;
+          pArr[i * 3 + 1] = item.pos.y;
+          pArr[i * 3 + 2] = item.pos.z;
+
+          // Electric cyan-blue to glowing warm white
+          const intensity = Math.pow(life, 1.3);
+          cArr[i * 3] = (0.28 + 0.72 * life) * intensity;
+          cArr[i * 3 + 1] = (0.78 + 0.22 * life) * intensity;
+          cArr[i * 3 + 2] = 0.98 * intensity;
+        } else {
+          pArr[i * 3] = 9999;
+          pArr[i * 3 + 1] = 9999;
+          pArr[i * 3 + 2] = 9999;
+          cArr[i * 3] = 0;
+          cArr[i * 3 + 1] = 0;
+          cArr[i * 3 + 2] = 0;
+        }
+      }
+      posAttr.needsUpdate = true;
+      colAttr.needsUpdate = true;
+    },
+    clear: () => {
+      history.length = 0;
+      const posAttr = geometry.attributes.position as THREE.BufferAttribute;
+      (posAttr.array as Float32Array).fill(9999);
+      posAttr.needsUpdate = true;
+    },
+    dispose: () => {
+      geometry.dispose();
+      material.dispose();
+    },
+  };
+}
+
 function createSpacecraftMesh(): THREE.Group {
   const root = new THREE.Group();
   root.name = "Translunar Crew Vehicle";
@@ -149,6 +259,7 @@ function createSpacecraftMesh(): THREE.Group {
     roughness: 0.28,
     emissive: 0x0a101d,
     emissiveIntensity: 0.2,
+    transparent: true,
   });
   const cm = new THREE.Mesh(cmGeo, cmMat);
   cm.position.set(0, 0.10, 0);
@@ -157,14 +268,14 @@ function createSpacecraftMesh(): THREE.Group {
 
   // Heat Shield
   const shieldGeo = new THREE.CylinderGeometry(0.075, 0.076, 0.02, 20);
-  const shieldMat = new THREE.MeshStandardMaterial({ color: 0x27201c, metalness: 0.7, roughness: 0.4 });
+  const shieldMat = new THREE.MeshStandardMaterial({ color: 0x27201c, metalness: 0.7, roughness: 0.4, transparent: true });
   const shield = new THREE.Mesh(shieldGeo, shieldMat);
   shield.position.set(0, 0.02, 0);
   root.add(shield);
 
   // Service Module Cylinder
   const smGeo = new THREE.CylinderGeometry(0.072, 0.072, 0.13, 20);
-  const smMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.45, roughness: 0.32 });
+  const smMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.45, roughness: 0.32, transparent: true });
   const sm = new THREE.Mesh(smGeo, smMat);
   sm.position.set(0, -0.055, 0);
   sm.castShadow = true;
@@ -177,6 +288,7 @@ function createSpacecraftMesh(): THREE.Group {
     emissive: 0x051326,
     metalness: 0.85,
     roughness: 0.2,
+    transparent: true,
   });
   const wingAngles = [Math.PI / 4, 3 * Math.PI / 4, 5 * Math.PI / 4, 7 * Math.PI / 4];
   wingAngles.forEach((angle) => {
@@ -189,7 +301,7 @@ function createSpacecraftMesh(): THREE.Group {
 
   // Main Engine Bell
   const bellGeo = new THREE.CylinderGeometry(0.018, 0.042, 0.045, 16);
-  const bellMat = new THREE.MeshStandardMaterial({ color: 0x18181b, metalness: 0.9, roughness: 0.25 });
+  const bellMat = new THREE.MeshStandardMaterial({ color: 0x18181b, metalness: 0.9, roughness: 0.25, transparent: true });
   const bell = new THREE.Mesh(bellGeo, bellMat);
   bell.position.set(0, -0.14, 0);
   root.add(bell);
@@ -478,6 +590,23 @@ export function SpaceScene({
     const initialEarthDirection = getEarthDirection();
     const earthCenter = initialEarthDirection.clone().multiplyScalar(EARTH_MOON_VIEW_DISTANCE);
     sunVisualPosition = initialSunDirection.clone().multiplyScalar(SUN_VIEW_DISTANCE);
+    const targetEarthCenter = earthCenter.clone();
+    const currentEarthCenter = earthCenter.clone();
+    const targetSunDirection = initialSunDirection.clone();
+    const currentSunDirection = initialSunDirection.clone();
+    const earthSpin = (time: string) => {
+      const date = new Date(time);
+      if (!Number.isFinite(date.getTime())) return 0;
+      const dayFraction = (date.getUTCHours() * 3600 + date.getUTCMinutes() * 60 + date.getUTCSeconds()) / 86400;
+      return dayFraction * Math.PI * 2;
+    };
+    let currentEarthRotation = earthSpin(utcTime ?? "");
+    let targetEarthRotation = currentEarthRotation;
+
+    let viewNormal = initialEarthDirection.clone().cross(initialSunDirection).normalize();
+    if (viewNormal.lengthSq() < 0.1) viewNormal = initialSunDirection.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
+    if (viewNormal.lengthSq() < 0.1) viewNormal.set(0, 0, 1);
+
     const departurePoint = departure
       ? globePoint(departure.latitude, departure.longitude, earthRadius + 0.08)
       : undefined;
@@ -488,17 +617,18 @@ export function SpaceScene({
       if (!departurePoint || !landingPoint) return undefined;
       const from = sourceEarthCenter.clone().add(departurePoint);
       const to = moonCenter.clone().add(landingPoint);
-      const arcHeight = EARTH_MOON_VIEW_DISTANCE * 0.15;
-      const controlA = from.clone().lerp(to, 1 / 3).add(new THREE.Vector3(0, arcHeight, 0));
-      const controlB = from.clone().lerp(to, 2 / 3).add(new THREE.Vector3(0, arcHeight, 0));
+      const chord = to.clone().sub(from);
+      const chordLen = chord.length();
+      let transferPlaneNormal = chord.clone().cross(viewNormal).normalize();
+      if (transferPlaneNormal.lengthSq() < 0.1) transferPlaneNormal.set(0, 1, 0);
+      const arcHeight = chordLen * 0.14;
+      const controlA = from.clone().lerp(to, 0.32).addScaledVector(transferPlaneNormal, arcHeight);
+      const controlB = from.clone().lerp(to, 0.68).addScaledVector(transferPlaneNormal, arcHeight * 0.85);
       return new THREE.CubicBezierCurve3(from, controlA, controlB, to);
     };
     transferPath = makeTransferPath(earthCenter);
     const initialTarget = transferPath?.getPoint(0.5)
       ?? earthCenter.clone().lerp(moonCenter, 0.5);
-    let viewNormal = initialEarthDirection.clone().cross(initialSunDirection).normalize();
-    if (viewNormal.lengthSq() < 0.1) viewNormal = initialSunDirection.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
-    if (viewNormal.lengthSq() < 0.1) viewNormal.set(0, 0, 1);
     // Frame both endpoints while keeping the camera on the transfer route's midpoint.
     // Fit the horizontal Earth-to-Moon span so Earth reads as the hero without
     // pushing the Moon offscreen; on narrow screens, move back only as needed.
@@ -573,6 +703,9 @@ export function SpaceScene({
       markResourceFailed();
     });
 
+    const wake = createExhaustWake();
+    scene.add(wake.points);
+
     if (transferPath) {
       const pathGeometry = new THREE.BufferGeometry().setFromPoints(transferPath.getPoints(160));
       transferLine = new THREE.Line(pathGeometry, new THREE.LineDashedMaterial({ color: 0xffa06f, dashSize: 0.12, gapSize: 0.11, transparent: true, opacity: 0.8 }));
@@ -585,13 +718,6 @@ export function SpaceScene({
 
     const decoder = new DRACOLoader().setDecoderPath("/draco/");
     let lastRenderedSample = -1;
-    const started = performance.now();
-    const earthSpin = (time: string) => {
-      const date = new Date(time);
-      if (!Number.isFinite(date.getTime())) return 0;
-      const dayFraction = (date.getUTCHours() * 3600 + date.getUTCMinutes() * 60 + date.getUTCSeconds()) / 86400;
-      return dayFraction * Math.PI * 2;
-    };
     const applyEphemeris = () => {
       const index = sampleIndexRef.current;
       if (index === lastRenderedSample) return;
@@ -600,33 +726,15 @@ export function SpaceScene({
       if (!sample) return;
       const sunDirection = bodyDirection(sample.sun, landing);
       const earthDirection = bodyDirection(sample.earth, landing);
-      earthCenter.copy(earthDirection.multiplyScalar(EARTH_MOON_VIEW_DISTANCE));
-      if (earthGroup) {
-        earthGroup.position.copy(earthCenter);
-        earthGroup.rotation.set(0, earthSpin(sample.time), 0);
-      }
-      sunVisualPosition = sunDirection.clone().multiplyScalar(SUN_VIEW_DISTANCE);
-      sunRoot.position.copy(sunVisualPosition);
+      targetEarthCenter.copy(earthDirection.multiplyScalar(EARTH_MOON_VIEW_DISTANCE));
+      targetEarthRotation = earthSpin(sample.time);
+      targetSunDirection.copy(sunDirection);
       const rangeKm = sample.sun.distance_km;
       const angularRadius = rangeKm && rangeKm > SUN_RADIUS_KM ? Math.asin(SUN_RADIUS_KM / rangeKm) : SUN_ANGULAR_RADIUS;
       sunRoot.scale.setScalar(SUN_VIEW_DISTANCE * Math.tan(angularRadius));
-      sunGlow.position.copy(sunVisualPosition);
       if (directionalSun) {
-        // A parallel Sun lamp is the correct local-light approximation at 1 AU.
-        // Its direction and range are supplied by SPICE for the selected instant.
-        directionalSun.position.copy(sunDirection.clone().multiplyScalar(180));
-        directionalSun.target.position.copy(moonCenter);
-        directionalSun.target.updateMatrixWorld();
         directionalSun.userData.sourceDistanceKm = sample.sun.distance_km ?? null;
         directionalSun.userData.meanDistanceNote = "The Sun is about 1 AU from the Moon; collimated light avoids a false nearby point source.";
-      }
-      if (transferPath && transferLine) {
-        const nextPath = makeTransferPath(earthCenter);
-        if (!nextPath) return;
-        transferPath = nextPath;
-        transferLine.geometry.dispose();
-        transferLine.geometry = new THREE.BufferGeometry().setFromPoints(transferPath.getPoints(160));
-        transferLine.computeLineDistances();
       }
     };
 
@@ -637,41 +745,168 @@ export function SpaceScene({
       camera.updateProjectionMatrix();
     });
     resize.observe(host);
+
+    const clock = new THREE.Clock();
     renderer.setAnimationLoop(() => {
       applyEphemeris();
       controls.update();
-      if (vehicle && transferPath) {
-        const elapsed = (performance.now() - started) / 1000;
-        const cycleDuration = 9.0;
-        const transitDuration = 7.5;
-        const cycleTime = elapsed % cycleDuration;
-        const progress = reduceMotion ? 1.0 : Math.min(1.0, cycleTime / transitDuration);
 
-        const currentPos = transferPath.getPoint(progress);
-        vehicle.position.copy(currentPos);
+      const delta = Math.min(clock.getDelta(), 0.1);
+      const elapsed = clock.getElapsedTime();
 
-        // Orient spacecraft forward along the trajectory tangent
-        const tangentProgress = Math.min(0.999, Math.max(0.001, progress));
-        const tangent = transferPath.getTangent(tangentProgress).normalize();
-        const defaultForward = new THREE.Vector3(0, 1, 0);
-        vehicle.quaternion.setFromUnitVectors(defaultForward, tangent);
+      // Fluid exponential damping for astronomical coordinate updates (smooth 60/120fps)
+      const smoothFactor = Math.min(1.0, 1.0 - Math.exp(-4.2 * delta));
+      currentEarthCenter.lerp(targetEarthCenter, smoothFactor);
+      currentSunDirection.lerp(targetSunDirection, smoothFactor).normalize();
 
-        // Dynamic thrust flame pulse
-        const flame = vehicle.userData.flame as THREE.Object3D | undefined;
-        if (flame) {
-          if (progress >= 1.0) {
-            flame.scale.set(0, 0, 0); // Cut engines on lunar orbital capture
-          } else {
-            const flicker = 1.0 + Math.sin(elapsed * 28.0) * 0.16 + Math.cos(elapsed * 42.0) * 0.12;
-            flame.scale.set(flicker, 0.85 + flicker * 0.35, flicker);
+      // Smooth Earth spin without discrete 7.5-degree jumps
+      let rotDiff = targetEarthRotation - currentEarthRotation;
+      while (rotDiff > Math.PI) rotDiff -= Math.PI * 2;
+      while (rotDiff < -Math.PI) rotDiff += Math.PI * 2;
+      currentEarthRotation += rotDiff * smoothFactor;
+
+      if (earthGroup) {
+        earthGroup.position.copy(currentEarthCenter);
+        earthGroup.rotation.set(0, currentEarthRotation, 0);
+      }
+
+      const sunPos = currentSunDirection.clone().multiplyScalar(SUN_VIEW_DISTANCE);
+      sunRoot.position.copy(sunPos);
+      sunGlow.position.copy(sunPos);
+      if (directionalSun) {
+        directionalSun.position.copy(currentSunDirection.clone().multiplyScalar(180));
+        directionalSun.target.position.copy(moonCenter);
+        directionalSun.target.updateMatrixWorld();
+      }
+
+      // Smooth continuous transfer path update
+      if (transferLine && departurePoint && landingPoint) {
+        const nextPath = makeTransferPath(currentEarthCenter);
+        if (nextPath) {
+          transferPath = nextPath;
+          const pts = transferPath.getPoints(160);
+          const posAttr = transferLine.geometry.attributes.position as THREE.BufferAttribute;
+          const posArr = posAttr.array as Float32Array;
+          for (let i = 0; i < pts.length; i++) {
+            posArr[i * 3] = pts[i]!.x;
+            posArr[i * 3 + 1] = pts[i]!.y;
+            posArr[i * 3 + 2] = pts[i]!.z;
           }
-        }
-
-        // Animate dashed trajectory line (marching particles toward Moon)
-        if (transferLine && transferLine.material instanceof THREE.LineDashedMaterial) {
-          transferLine.material.dashOffset -= 0.006;
+          posAttr.needsUpdate = true;
+          transferLine.computeLineDistances();
         }
       }
+
+      // Smooth vehicle trajectory, orientation, thruster wake and looping
+      if (vehicle && transferPath) {
+        if (reduceMotion) {
+          // In reduced motion, park spacecraft gracefully at destination
+          const destPos = transferPath.getPoint(1.0);
+          vehicle.position.copy(destPos);
+          setSpacecraftOpacity(vehicle, 1.0);
+          wake.update(null, delta, false);
+        } else {
+          const cycleDuration = 9.5;
+          const cycleTime = elapsed % cycleDuration;
+          const phase = cycleTime / cycleDuration; // 0.0 to 1.0
+
+          let vehiclePos = new THREE.Vector3();
+          let forwardTangent = new THREE.Vector3(0, 1, 0);
+          let vehicleOpacity = 1.0;
+          let isThrusting = true;
+          let flameIntensity = 1.0;
+
+          if (phase < 0.74) {
+            // PHASE 1: Translunar Injection & Coast (Earth to Moon)
+            const u = phase / 0.74; // 0 to 1
+            // Smoothstep curve for authentic acceleration & deceleration
+            const progress = u * u * (3.0 - 2.0 * u);
+            vehiclePos = transferPath.getPoint(progress);
+
+            const tTang = Math.min(0.999, Math.max(0.001, progress));
+            forwardTangent = transferPath.getTangent(tTang).normalize();
+
+            // Silky fade-in when departing Earth
+            vehicleOpacity = u < 0.08 ? (u / 0.08) : 1.0;
+
+            // Full thrust during TLI, cruising pulse midcourse
+            flameIntensity = u < 0.25 ? 1.0 : 0.85;
+            isThrusting = true;
+          } else if (phase < 0.90) {
+            // PHASE 2: Lunar Orbital Insertion & Capture Arc
+            const v = (phase - 0.74) / (0.90 - 0.74); // 0 to 1
+            const arrivalPoint = transferPath.getPoint(1.0);
+            const arrivalDir = arrivalPoint.clone().normalize();
+            let orbitNormal = arrivalDir.clone().cross(viewNormal).normalize();
+            if (orbitNormal.lengthSq() < 0.1) orbitNormal = new THREE.Vector3(0, 1, 0);
+
+            const orbitRadius = moonRadius + 0.14;
+            const orbitAngle = v * Math.PI * 0.75;
+            vehiclePos = arrivalDir.clone().multiplyScalar(Math.cos(orbitAngle))
+              .addScaledVector(orbitNormal, Math.sin(orbitAngle))
+              .multiplyScalar(orbitRadius);
+
+            forwardTangent = arrivalDir.clone().multiplyScalar(-Math.sin(orbitAngle))
+              .addScaledVector(orbitNormal, Math.cos(orbitAngle))
+              .normalize();
+
+            vehicleOpacity = 1.0;
+            // Pulsing retro-burn for orbital deceleration
+            flameIntensity = 0.5 + Math.sin(elapsed * 24.0) * 0.3;
+            isThrusting = true;
+          } else {
+            // PHASE 3: Seamless Dissolve & Reset
+            const w = (phase - 0.90) / (1.0 - 0.90); // 0 to 1
+            const arrivalPoint = transferPath.getPoint(1.0);
+            const arrivalDir = arrivalPoint.clone().normalize();
+            let orbitNormal = arrivalDir.clone().cross(viewNormal).normalize();
+            if (orbitNormal.lengthSq() < 0.1) orbitNormal = new THREE.Vector3(0, 1, 0);
+
+            const orbitRadius = moonRadius + 0.14;
+            const orbitAngle = (1.0 + w * 0.2) * Math.PI * 0.75;
+            vehiclePos = arrivalDir.clone().multiplyScalar(Math.cos(orbitAngle))
+              .addScaledVector(orbitNormal, Math.sin(orbitAngle))
+              .multiplyScalar(orbitRadius);
+
+            forwardTangent = arrivalDir.clone().multiplyScalar(-Math.sin(orbitAngle))
+              .addScaledVector(orbitNormal, Math.cos(orbitAngle))
+              .normalize();
+
+            // Smoothly dissolve to zero before looping
+            vehicleOpacity = Math.max(0.0, 1.0 - w);
+            isThrusting = false;
+            flameIntensity = 0.0;
+          }
+
+          vehicle.position.copy(vehiclePos);
+          setSpacecraftOpacity(vehicle, vehicleOpacity);
+
+          // Smooth orientation SLERP without angular jitter
+          const targetQuat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), forwardTangent);
+          vehicle.quaternion.slerp(targetQuat, Math.min(1.0, delta * 14.0));
+
+          // Dynamic thrust flame with high-frequency plasma flicker
+          const flame = vehicle.userData.flame as THREE.Object3D | undefined;
+          if (flame) {
+            if (isThrusting && vehicleOpacity > 0.1) {
+              const flicker = (1.0 + Math.sin(elapsed * 32.0) * 0.18 + Math.cos(elapsed * 48.0) * 0.12) * flameIntensity;
+              flame.scale.set(flicker, (0.8 + flicker * 0.4) * flameIntensity, flicker);
+            } else {
+              flame.scale.set(0, 0, 0);
+            }
+          }
+
+          // Emit and update ion exhaust wake particles
+          const nozzlePos = vehicle.localToWorld(new THREE.Vector3(0, -0.16, 0));
+          wake.update(nozzlePos, delta, isThrusting && vehicleOpacity > 0.2);
+        }
+
+        // Animate dashed trajectory line locked to elapsed delta time
+        if (transferLine && transferLine.material instanceof THREE.LineDashedMaterial) {
+          transferLine.material.dashOffset -= delta * 0.38;
+        }
+      }
+
       renderer.render(scene, camera);
     });
 
@@ -681,6 +916,7 @@ export function SpaceScene({
       renderer.setAnimationLoop(null);
       controls.dispose();
       decoder.dispose();
+      wake.dispose();
       disposeObjects(scene);
       renderer.dispose();
       renderer.domElement.remove();
