@@ -519,6 +519,26 @@ export function SpaceScene({
           if (object instanceof THREE.Mesh) {
             object.castShadow = true;
             object.receiveShadow = true;
+            if (/\/ares-i-a\.glb$/.test(modelUrl)) {
+              // Variant A's NASA export is entirely gray. Its material groups
+              // correspond to the colored variant B export; apply that palette
+              // while retaining variant A's geometry.
+              const colors: Record<string, number> = {
+                blinn1: 0xffffff, blinn2: 0xbf722b, blinn3: 0x262833,
+                blinn4: 0x111111, blinn5: 0xffb711, blinn6: 0xa3a3a3,
+                blinn7: 0xe62222, blinn8: 0x111111,
+              };
+              const recolor = (material: THREE.Material) => {
+                const copy = material.clone();
+                const group = /^blinn\d+/.exec(copy.name)?.[0];
+                if (copy instanceof THREE.MeshStandardMaterial && group && colors[group] !== undefined) {
+                  copy.color.setHex(colors[group]);
+                  copy.roughness = 0.8;
+                }
+                return copy;
+              };
+              object.material = Array.isArray(object.material) ? object.material.map(recolor) : recolor(object.material);
+            }
           }
         });
         scene.add(model);
