@@ -21,3 +21,5 @@ steps:
 images:
   - '${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/lunar-browser:${_TAG}'
 timeout: 1200s
+options:
+  logging: CLOUD_LOGGING_ONLY
