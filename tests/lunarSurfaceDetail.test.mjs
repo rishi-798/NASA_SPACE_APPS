@@ -25,3 +25,25 @@ test('detail adds bounded geometry without changing the measured mesh', () => {
 test('detail gracefully skips an intersection without triangle data', () => {
   assert.equal(buildLunarSurfaceDetail({ object: new THREE.Object3D(), point: new THREE.Vector3() }), null);
 });
+
+
+test('enriched crater skin stays bounded and deterministic and leaves measured positions intact', () => {
+  const terrain = new THREE.Mesh(new THREE.PlaneGeometry(40, 40, 4, 4));
+  terrain.updateMatrixWorld(true);
+  const before = Array.from(terrain.geometry.getAttribute('position').array);
+  const hit = new THREE.Raycaster(new THREE.Vector3(1, 1, 10), new THREE.Vector3(0, 0, -1)).intersectObject(terrain)[0];
+  const first = buildLunarSurfaceDetail(hit, true), second = buildLunarSurfaceDetail(hit, true);
+  assert.ok(first && second);
+  const points = first.getAttribute('position');
+  assert.ok(points.count <= 180000);
+  let low = Infinity, high = -Infinity;
+  for (let i = 0; i < points.count; i++) {
+    assert.ok(Number.isFinite(points.getZ(i)));
+    low = Math.min(low, points.getZ(i)); high = Math.max(high, points.getZ(i));
+  }
+  assert.ok(low >= .014 && high < .35);
+  assert.ok(high - low > .03);
+  assert.deepEqual(Array.from(first.getAttribute('position').array), Array.from(second.getAttribute('position').array));
+  assert.deepEqual(Array.from(terrain.geometry.getAttribute('position').array), before);
+  first.dispose(); second.dispose(); terrain.geometry.dispose();
+});

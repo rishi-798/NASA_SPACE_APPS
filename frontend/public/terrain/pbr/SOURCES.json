@@ -1,0 +1,99 @@
+[
+  {
+    "asset": "moon_rock_01",
+    "source": "https://polyhaven.com/a/moon_rock_01",
+    "license": "CC0-1.0",
+    "files": {
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/moon_rock_01/moon_rock_01_1k.gltf",
+      "md5": "86c6b4f7792f9600ae33cb3b4d42bb20",
+      "size": 7088,
+      "include": {
+        "textures/moon_rock_01_nor_gl_1k.jpg": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/moon_rock_01/moon_rock_01_nor_gl_1k.jpg",
+          "md5": "5d222c1e40b180e8f376d72aec26703a",
+          "size": 645714
+        },
+        "textures/moon_rock_01_diff_1k.jpg": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/moon_rock_01/moon_rock_01_diff_1k.jpg",
+          "md5": "4cd48b9b451eef5f35c7be91deca6ead",
+          "size": 276354
+        },
+        "textures/moon_rock_01_arm_1k.jpg": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/moon_rock_01/moon_rock_01_arm_1k.jpg",
+          "md5": "f04ce87fb751ced28add48ad9eb50d0f",
+          "size": 330395
+        },
+        "moon_rock_01.bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/moon_rock_01/moon_rock_01.bin",
+          "md5": "5dc30dc1be5e8dd5fff64dd824cad828",
+          "size": 448168
+        }
+      }
+    }
+  },
+  {
+    "asset": "moon_rock_04",
+    "source": "https://polyhaven.com/a/moon_rock_04",
+    "license": "CC0-1.0",
+    "files": {
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/moon_rock_04/moon_rock_04_1k.gltf",
+      "md5": "852de791bb2ad6a1944f5ec3ce5495fb",
+      "size": 2786,
+      "include": {
+        "textures/moon_rock_04_nor_gl_1k.jpg": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/moon_rock_04/moon_rock_04_nor_gl_1k.jpg",
+          "md5": "919ca87d5ed303400177b7ebfcbf7e84",
+          "size": 666275
+        },
+        "textures/moon_rock_04_diff_1k.jpg": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/moon_rock_04/moon_rock_04_diff_1k.jpg",
+          "md5": "6e089f9753ce77b6127ea65e0c0d951b",
+          "size": 325832
+        },
+        "textures/moon_rock_04_arm_1k.jpg": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/moon_rock_04/moon_rock_04_arm_1k.jpg",
+          "md5": "4b362aad21f63f293d03f6628576d473",
+          "size": 361429
+        },
+        "moon_rock_04.bin": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/moon_rock_04/moon_rock_04.bin",
+          "md5": "3f57979362dbc345bf7d36f79f94246a",
+          "size": 175960
+        }
+      }
+    }
+  },
+  {
+    "asset": "moon_dusted_02",
+    "map": "Diffuse",
+    "source": "https://polyhaven.com/a/moon_dusted_02",
+    "license": "CC0-1.0",
+    "file": {
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/moon_dusted_02/moon_dusted_02_diff_2k.jpg",
+      "md5": "3bb33da9de8524c19cf1b6e6b68443c0",
+      "size": 2066500
+    }
+  },
+  {
+    "asset": "moon_dusted_02",
+    "map": "nor_gl",
+    "source": "https://polyhaven.com/a/moon_dusted_02",
+    "license": "CC0-1.0",
+    "file": {
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/moon_dusted_02/moon_dusted_02_nor_gl_2k.jpg",
+      "md5": "9943fad77e1e298b34d084ed64c789b1",
+      "size": 4344011
+    }
+  },
+  {
+    "asset": "moon_dusted_02",
+    "map": "Rough",
+    "source": "https://polyhaven.com/a/moon_dusted_02",
+    "license": "CC0-1.0",
+    "file": {
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/moon_dusted_02/moon_dusted_02_rough_2k.jpg",
+      "md5": "22f837d8a6f2ff791961ecdc443e07da",
+      "size": 1874995
+    }
+  }
+]

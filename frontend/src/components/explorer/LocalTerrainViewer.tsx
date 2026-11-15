@@ -24,13 +24,13 @@ type Runtime = {
   placeRocks: (hit: THREE.Intersection) => void; setRocksVisible: (on: boolean) => void;
 };
 
-function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, hit: THREE.Intersection, enriched = false) {
+function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THREE.Intersection, enriched = false, scans: THREE.Mesh[] = []) {
   if (!(hit.object instanceof THREE.Mesh) || hit.faceIndex == null) return previous;
   const capacity = enriched ? 7500 : 1800;
   const mesh = hit.object, positions = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
   if (!positions || !indices) return previous;
-  const makeRockGeometry = () => {
-    const source = new THREE.IcosahedronGeometry(1, enriched ? 3 : 2);
+  const makeRockGeometry = (variant: number) => {
+    const source = new THREE.IcosahedronGeometry(1, 2);
     source.deleteAttribute('normal');
     source.deleteAttribute('uv');
     const geometry = mergeVertices(source);
@@ -38,10 +38,11 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
     const vertex = geometry.getAttribute('position');
     for (let i = 0; i < vertex.count; i++) {
       const x = vertex.getX(i), y = vertex.getY(i), z = vertex.getZ(i);
-      const irregularity = .85 + .16 * Math.sin(x * 3.7 + y * 5.3 + z * 4.1)
+      const irregularity = .85 + .16 * Math.sin(x * (3.7 + variant * .7) + y * 5.3 + z * 4.1 + variant * 2.1)
         + .08 * Math.sin(x * 8.1 - y * 6.4 + z * 7.3)
         + .035 * Math.sin(x * 18.1 + y * 13.4 - z * 16.3);
-      vertex.setXYZ(i, x * irregularity, y * irregularity, z * irregularity);
+      const cut = enriched ? Math.min(1, .83 / Math.max(.001, Math.abs(x + .24 * y)), .88 / Math.max(.001, Math.abs(y - .17 * z))) : 1;
+      vertex.setXYZ(i, x * irregularity * cut, y * irregularity * cut, z * irregularity * cut);
     }
     geometry.computeVertexNormals();
     const rockUv = new Float32Array(vertex.count * 2);
@@ -52,17 +53,27 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
     geometry.setAttribute('uv', new THREE.BufferAttribute(rockUv, 2));
     return geometry;
   };
-  const rocks = previous ?? new THREE.InstancedMesh(makeRockGeometry(),
-    new THREE.MeshStandardMaterial({ color: 0x41413f, roughness: 1, metalness: 0 }), capacity);
-  if (!previous && enriched) {
-    const grit = createRegolithTextures(24, true);
-    const material = rocks.material as THREE.MeshStandardMaterial;
-    material.map = grit.map;
-    material.normalMap = grit.normalMap;
-    grit.map.repeat.set(1, 1); grit.normalMap.repeat.set(1, 1);
-    material.normalScale.set(.7, .7);
+  const rocks = previous ?? new THREE.Group();
+  const variants = enriched ? 8 : 1;
+  if (!previous) {
+    const grit = enriched ? createRegolithTextures(24, true) : null;
+    if (grit) { grit.map.repeat.set(1, 1); grit.normalMap.repeat.set(1, 1); }
+    for (let variant = 0; variant < variants; variant++) {
+      const template = scans.length && variant < scans.length ? scans[variant] : null;
+      const material = template ? (template.material as THREE.MeshStandardMaterial).clone() : new THREE.MeshStandardMaterial({
+        color: enriched ? 0xb8b6b0 : 0x41413f, roughness: .94, metalness: 0,
+        map: grit?.map, normalMap: grit?.normalMap,
+        normalScale: new THREE.Vector2(.25, .25), flatShading: enriched,
+      });
+      const stones = new THREE.InstancedMesh(template ? template.geometry.clone() : makeRockGeometry(variant), material, capacity);
+      stones.castShadow = stones.receiveShadow = true;
+      stones.frustumCulled = false;
+      rocks.add(stones);
+    }
+    scene.add(rocks);
   }
-  if (!previous) { rocks.castShadow = true; rocks.receiveShadow = true; rocks.frustumCulled = false; scene.add(rocks); }
+  const batches = rocks.children as THREE.InstancedMesh[];
+  const samplesBySlot: { matrix: THREE.Matrix4; shade: number; scale: number }[] = [];
   const transform = new THREE.Object3D();
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), point = new THREE.Vector3();
   const ab = new THREE.Vector3(), ac = new THREE.Vector3(), normal = new THREE.Vector3();
@@ -90,7 +101,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
       const slot = count < capacity ? count++ : Math.floor(random() * candidates);
       if (slot >= capacity) continue;
       transform.position.copy(point);
-      transform.position.z += lunarDetailHeight(point.x, point.y, hit.point);
+      transform.position.z += lunarDetailHeight(point.x, point.y, hit.point, enriched);
       transform.quaternion.setFromUnitVectors(up, normal);
       transform.quaternion.multiply(spin.setFromAxisAngle(up, random() * Math.PI * 2));
       // Many small fragments and occasional larger rocks, mostly buried in dust.
@@ -99,14 +110,25 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
         ? (sizeRoll < .90 ? .012 + Math.pow(random(), 3) * .13 : sizeRoll < .99 ? .18 + random() * .40 : .65 + random() * .65)
         : .035 + Math.pow(random(), 3) * .42;
       transform.scale.set(scale, scale * (.65 + random() * .7), scale * (.35 + random() * .38));
-      transform.updateMatrix(); rocks.setMatrixAt(slot, transform.matrix);
-      const shade = .65 + random() * .35;
-      tint.setRGB(shade, shade, shade * .98);
-      rocks.setColorAt(slot, tint);
+      transform.updateMatrix();
+      samplesBySlot[slot] = { matrix: transform.matrix.clone(), shade: .65 + random() * .35, scale };
     }
   }
-  rocks.count = count; rocks.instanceMatrix.needsUpdate = true;
-  if (rocks.instanceColor) rocks.instanceColor.needsUpdate = true;
+  batches.forEach(batch => { batch.count = 0; });
+  samplesBySlot.forEach((sample, slot) => {
+    // Reserve photographed geometry for visible stones; fine gravel uses cheaper fragments.
+    const variant = scans.length && enriched
+      ? sample.scale >= .18 ? slot % scans.length : scans.length + slot % (variants - scans.length)
+      : slot % variants;
+    const batch = batches[variant]!;
+    batch.setMatrixAt(batch.count, sample.matrix);
+    tint.setRGB(sample.shade, sample.shade, sample.shade * .98);
+    batch.setColorAt(batch.count++, tint);
+  });
+  batches.forEach(batch => {
+    batch.instanceMatrix.needsUpdate = true;
+    if (batch.instanceColor) batch.instanceColor.needsUpdate = true;
+  });
   return rocks;
 }
 
@@ -405,7 +427,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     const savedPosition = new THREE.Vector3(), savedTarget = new THREE.Vector3();
     let starfield: THREE.Points | null = null;
     let inspectActive = !detailedRegions.has(region.id);
-    let rocks: THREE.InstancedMesh | null = null;
+    let rocks: THREE.Group | null = null;
+    let rockScans: THREE.Mesh[] = [];
+    let lastRockHit: THREE.Intersection | null = null;
     let rocksVisible = true;
     let detail: THREE.Mesh | null = null;
     let detailSource: THREE.Mesh | null = null;
@@ -500,13 +524,14 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       },
       render: () => render(),
       placeRocks(hit) {
+        lastRockHit = hit;
         if (detailAnchor.distanceToSquared(hit.point) < .0001 && detailSource === hit.object) return;
-        rocks = scatterRocks(scene, rocks, hit, detailedRegions.has(region.id));
+        rocks = scatterRocks(scene, rocks, hit, detailedRegions.has(region.id), rockScans);
         if (rocks) rocks.visible = rocksVisible;
         if (detail) { scene.remove(detail); detail.geometry.dispose(); detail = null; }
         detailAnchor.copy(hit.point);
         detailSource = hit.object instanceof THREE.Mesh ? hit.object : null;
-        const geometry = buildLunarSurfaceDetail(hit);
+        const geometry = buildLunarSurfaceDetail(hit, detailedRegions.has(region.id));
         if (geometry && detailSource) {
           detail = new THREE.Mesh(geometry, detailSource.material);
           detail.castShadow = true; detail.receiveShadow = true;
@@ -526,8 +551,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           focusSun();
           const sunElev = data.sun.elevation_deg;
           if (sunElev > 0) {
-            sunLight.intensity = Math.max(1.8, 3.2 * Math.sin(THREE.MathUtils.degToRad(Math.min(90, Math.max(20, sunElev * 2.5)))));
-          } else if (sunElev > -6) {
+            sunLight.intensity = 3.2;
+          } else if (!detailedRegions.has(region.id) && sunElev > -6) {
             sunLight.intensity = 1.0 * (1 - Math.abs(sunElev) / 6);
           } else {
             sunLight.intensity = 0.0;
@@ -538,11 +563,13 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           earthLight.position.copy(center).addScaledVector(earthDir, lightDistance);
           const earthElev = data.earth.elevation_deg;
           const earthIllum = Math.max(0.18, data.earth.illuminated_fraction);
-          earthLight.intensity = earthElev > -10 ? (0.24 + earthIllum * 0.45) : 0.08;
+          earthLight.intensity = detailedRegions.has(region.id)
+            ? (earthElev > 0 ? .12 * data.earth.illuminated_fraction : 0)
+            : (earthElev > -10 ? (0.24 + earthIllum * 0.45) : 0.08);
           earthMaterial.uniforms.sunDirection!.value.set(...data.earth.sun_direction_local_z_up);
         } else {
-          sunLight.intensity = 2.4;
-          earthLight.intensity = 0.35;
+          sunLight.intensity = detailedRegions.has(region.id) ? 0 : 2.4;
+          earthLight.intensity = detailedRegions.has(region.id) ? 0 : .35;
         }
         value.inspect(inspectActive);
         render();
@@ -617,6 +644,36 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         material.dispose();
       }
     });
+
+    if (detailedRegions.has(region.id)) {
+      void Promise.all(['moon_rock_01', 'moon_rock_04'].map(async name => {
+        const gltf = await new GLTFLoader().loadAsync(`${import.meta.env.BASE_URL}terrain/pbr/${name}/${name}.gltf`);
+        gltf.scene.updateMatrixWorld(true);
+        const candidates: THREE.Mesh[] = [];
+        gltf.scene.traverse(object => { if (object instanceof THREE.Mesh) candidates.push(object); });
+        candidates.sort((a,b) => (a.geometry.index?.count ?? a.geometry.getAttribute('position').count) - (b.geometry.index?.count ?? b.geometry.getAttribute('position').count));
+        const source = candidates[0];
+        if (!source) throw new Error('Rock scan has no geometry');
+        const geometry = source.geometry.clone().applyMatrix4(source.matrixWorld);
+        geometry.rotateX(Math.PI / 2); geometry.computeBoundingBox();
+        const bounds = geometry.boundingBox!, middle = bounds.getCenter(new THREE.Vector3());
+        const span = bounds.getSize(new THREE.Vector3());
+        geometry.translate(-middle.x,-middle.y,-middle.z);
+        geometry.scale(2 / Math.max(span.x,span.y,span.z),2 / Math.max(span.x,span.y,span.z),2 / Math.max(span.x,span.y,span.z));
+        const material = (source.material as THREE.MeshStandardMaterial).clone();
+        material.color.set(0xffffff); material.metalness = 0;
+        dispose(gltf.scene);
+        const result = new THREE.Mesh(geometry,material);
+        if (cancelled) { dispose(result); throw new Error('Viewer closed'); }
+        return result;
+      })).then(scans => {
+        rockScans = scans;
+        if (rocks) { scene.remove(rocks); dispose(rocks); rocks = null; }
+        detailAnchor.set(Infinity,Infinity,Infinity);
+        if (lastRockHit) value.placeRocks(lastRockHit);
+        render();
+      }).catch(() => { /* Procedural rocks remain available when scans cannot load. */ });
+    }
 
     const download = new AbortController();
     const modelUrl = region.model_url.startsWith('/') ? `${import.meta.env.BASE_URL}${region.model_url.slice(1)}` : region.model_url;
@@ -718,7 +775,33 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           render();
         } catch { /* Retain the model's original material if canvas textures are unavailable. */ }
       };
-      if (detailedRegions.has(region.id)) loadFallbackTextures();
+      if (detailedRegions.has(region.id)) {
+        void Promise.all(['Diffuse','nor_gl','Rough'].map(name => texLoader.loadAsync(`${import.meta.env.BASE_URL}terrain/pbr/${name}.jpg`))).then(([map,normalMap,roughnessMap]) => {
+          for (const texture of [map!,normalMap!,roughnessMap!]) {
+            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(6,6); // 24 m coordinate tile / 4 m photographed tile.
+            texture.anisotropy = Math.min(8,renderer.capabilities.getMaxAnisotropy());
+            terrainTextures.add(texture);
+          }
+          if (cancelled) { terrainTextures.forEach(t=>t.dispose()); return; }
+          map!.colorSpace = THREE.SRGBColorSpace;
+          const material = new THREE.MeshStandardMaterial({map,normalMap,roughnessMap,roughness:1,metalness:0,normalScale:new THREE.Vector2(.65,.65)});
+          // Preserve texture structure but keep illustrative regolith neutral gray.
+          material.onBeforeCompile = shader => {
+            shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\n diffuseColor.rgb = vec3(dot(diffuseColor.rgb,vec3(.2126,.7152,.0722)));');
+          };
+          material.customProgramCacheKey = () => 'lunar-neutral-regolith-v1';
+          terrain.traverse(child => { if(child instanceof THREE.Mesh) child.material=material; });
+          for (const context of [landscapeMesh,underCapMesh]) {
+            const positions=context.geometry.getAttribute('position');
+            const uv=new Float32Array(positions.count*2);
+            for(let i=0;i<positions.count;i++){uv[i*2]=positions.getX(i)/24;uv[i*2+1]=positions.getY(i)/24;}
+            context.geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));context.material=material;
+          }
+          if(detail) detail.material=material;
+          render();
+        }).catch(loadFallbackTextures);
+      }
       else texLoader.load(
         `${import.meta.env.BASE_URL}terrain/lunar-detail-color.png`,
         colTex => {
@@ -850,7 +933,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       cancelled = true; download.abort(); resizeObserver.disconnect(); controls.dispose();
       canvas.removeEventListener('pointerdown', start); canvas.removeEventListener('pointermove', move);
       canvas.removeEventListener('pointerup', pick); canvas.removeEventListener('pointercancel', cancelPointer); canvas.removeEventListener('keydown', key);
-      dispose(scene); terrainTextures.forEach(texture => texture.dispose());
+      dispose(scene); rockScans.forEach(scan=>dispose(scan)); terrainTextures.forEach(texture => texture.dispose());
       earthMap.dispose(); sunLight.shadow.dispose(); renderer.dispose(); canvas.remove(); runtime.current = null;
     };
   }, [region]);
