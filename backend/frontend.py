@@ -13,7 +13,7 @@ mimetypes.add_type("audio/mp4", ".m4a")
 mimetypes.add_type("audio/mpeg", ".mp3")
 
 DIST_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
-PAGES = {".", "explorer", "missions", "timeline", "about", "trip", "discover", "landing"}  # Discovery added 2026-11-14.
+PAGES = {".", "explorer", "missions", "timeline", "about", "trip", "discover", "landing", "planner", "phases", "game"}
 
 
 class SPAStaticFiles(StaticFiles):

@@ -8,7 +8,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 ROOT = Path(__file__).resolve().parent.parent
 EXCLUDED = {"node_modules", "__pycache__", ".pytest_cache", ".git", ".venv", ".prerender"}
 FOLDERS = ("backend", "frontend", "data", "docs", "tests", "scripts", "terrain", "metadata")
-FILES = ("README.md", "MOON_DATASET.md", "START-NASA-APP.cmd", "requirements.txt", "requirements-lock.txt", ".gitignore")
+FILES = ("README.md", "START-NASA-APP.cmd", "requirements.txt", "requirements-lock.txt", ".gitignore")
 
 
 def main():
