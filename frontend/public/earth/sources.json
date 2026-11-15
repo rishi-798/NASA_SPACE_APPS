@@ -1,0 +1,62 @@
+{
+  "author": "Solar System Scope / INOVE",
+  "source_page": "https://www.solarsystemscope.com/textures/",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "changes": "Browser JPEG conversion, 8K desktop and 2K compact versions",
+  "textures": [
+    {
+      "source": "https://www.solarsystemscope.com/textures/download/8k_earth_daymap.jpg",
+      "source_sha256": "88ab060b6e7d241cfc590c69f528fab2b3247b738d40124cb590999a6fe44abc",
+      "source_pixels": [
+        8192,
+        4096
+      ],
+      "output": "daymap.jpg"
+    },
+    {
+      "source": "https://www.solarsystemscope.com/textures/download/8k_earth_nightmap.jpg",
+      "source_sha256": "9894e83a585a22c1c425e7ca4f987a9ba625bf08ecee45d3c9dcacae3c2ad5f7",
+      "source_pixels": [
+        8192,
+        4096
+      ],
+      "output": "nightmap.jpg"
+    },
+    {
+      "source": "https://www.solarsystemscope.com/textures/download/8k_earth_clouds.jpg",
+      "source_sha256": "c792eca228989d36ebb45d3ea6ff1198be5e21a25d70d2fbcb2124ffd14ba7f5",
+      "source_pixels": [
+        8192,
+        4096
+      ],
+      "output": "clouds.jpg"
+    },
+    {
+      "source": "https://www.solarsystemscope.com/textures/download/8k_earth_normal_map.tif",
+      "source_sha256": "79d6dbbde340c653f435f5a012c026a9bed94bdcfd9714e77885f4cba046635a",
+      "source_pixels": [
+        8192,
+        4096
+      ],
+      "output": "normal.jpg"
+    },
+    {
+      "source": "https://www.solarsystemscope.com/textures/download/8k_earth_specular_map.tif",
+      "source_sha256": "194e67ef7f14dd50b402a1a6f8c7ed55810e16515b95f7736091951efe8dc3fb",
+      "source_pixels": [
+        8192,
+        4096
+      ],
+      "output": "specular.jpg"
+    }
+  ],
+  "tutorial_topography": {
+    "source": "https://drive.google.com/file/d/1IW5tX5xrZS8SqTww19HcTxc3yWgGDIjB/view",
+    "reference": "https://www.youtube.com/watch?v=0YZzHn0iz8U",
+    "credit": "NASA imagery distributed in Blender Guru tutorial texture folder",
+    "source_name": "topography_5k.png",
+    "sha256": "520c739cbb9091a96686d57e81ce1790c950f41805971f07ab4013f82011fc06",
+    "usage": "Visual relief; not calibrated terrain heights"
+  }
+}

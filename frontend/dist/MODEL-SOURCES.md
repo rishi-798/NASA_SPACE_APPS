@@ -1,5 +1,13 @@
 # 3D model sources
 
+## Earth launch-site globe textures
+
+- Solar System Scope / INOVE: https://www.solarsystemscope.com/textures/
+- Licensed under CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+- Local 2K, 4K and 8K day, night, cloud, normal and specular textures are in
+  `earth/`. Browser conversions and source hashes are recorded in
+  `earth/sources.json`. See `docs/EARTH_VIEW.md` for presentation details.
+
 ## nasa-moon.glb
 
 - Credit: NASA's Goddard Space Flight Center.
@@ -16,6 +24,25 @@
 - Download: https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/lroc_color_2k.jpg
 - Used for the illustrative mission overview and the landing overview image.
   This is not detailed terrain for the selected coordinate.
+
+## nasa-earth-clouds.glb
+
+- Credit: NASA's Scientific Visualization Studio.
+- Source: https://science.nasa.gov/resource/earth-with-clouds-3d-model/
+- NASA Earth model with clouds, bundled locally for the Trip scene. The globe is scaled for the scene's visual composition; it is not a map or a geodetic surface for launch-site picking.
+
+## nasa-sun.glb
+
+- Credit: NASA.
+- Source: https://science.nasa.gov/learn/heat/resource/sun-3d-model/
+- Bundled locally as a visual Sun model. Its appearance does not determine the lighting: sunlight direction and the visible disc's apparent size are driven by the backend's Sun position and distance calculation.
+
+## deep-star-map-4k.jpg
+
+- Credit: NASA's Scientific Visualization Studio, "A 3D Map of 1.7 Billion Stars."
+- Source: https://svs.gsfc.nasa.gov/4851/
+- The source star map is converted to a 4096 × 2048 JPEG for use as the scene background. Additional procedural stars provide subtle depth; they are decorative and are not an astronomical star catalogue.
+- The Trip scene compresses the visual spacing between Earth, Moon, and the Sun so the whole system fits on screen. The Sun's direction, distance metadata, and apparent angular size are calculated from backend ephemeris data.
 
 ## saturn-v.glb
 
