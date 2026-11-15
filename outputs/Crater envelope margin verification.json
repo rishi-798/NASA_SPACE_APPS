@@ -1,0 +1,78 @@
+{
+  "method": "Spherical latitudinal and conservative meridian distances from bounding rectangle to outer pixel-center lines; 1737400 m radius.",
+  "limitations": "Assumes coordinates align; does not establish geodetic registration, rim identity for Clavius, or an exact polygon buffer.",
+  "regions": [
+    {
+      "name": "Tycho",
+      "reference": "LROC catalog polygon bounding box; detailed rim trace not established",
+      "reference_bounds_deg": {
+        "west": -13.132809021029686,
+        "east": -9.438363248611722,
+        "south": -44.60909484158631,
+        "north": -41.91902783888224
+      },
+      "outer_pixel_centers_deg": {
+        "south": -45.0234375,
+        "north": -41.5546875,
+        "west": -13.6171875,
+        "east": -8.8203125
+      },
+      "minimum_edge_margins_m": {
+        "south": 12564.257626751916,
+        "north": 11048.019769579643,
+        "west": 10456.52452520231,
+        "east": 13342.126548977398
+      },
+      "all_margins_at_least_10km": true,
+      "registration_verified": false
+    },
+    {
+      "name": "Copernicus",
+      "reference": "LROC catalog polygon bounding box; detailed rim trace not established",
+      "reference_bounds_deg": {
+        "west": -21.64378271404769,
+        "east": -18.472781064249205,
+        "south": 8.026029540403442,
+        "north": 11.152711627229984
+      },
+      "outer_pixel_centers_deg": {
+        "south": 7.6796875,
+        "north": 11.5546875,
+        "west": -22.0390625,
+        "east": -18.1171875
+      },
+      "minimum_edge_margins_m": {
+        "south": 10502.251057768519,
+        "north": 12189.255252058536,
+        "west": 11759.84600722352,
+        "east": 10579.154163825155
+      },
+      "all_margins_at_least_10km": true,
+      "registration_verified": false
+    },
+    {
+      "name": "Clavius",
+      "reference": "USGS published bounds, not a rim trace",
+      "reference_bounds_deg": {
+        "north": -54.82,
+        "south": -62.43,
+        "east": -7.42,
+        "west": -22.03
+      },
+      "outer_pixel_centers_deg": {
+        "south": -62.7734375,
+        "north": -54.4765625,
+        "west": -22.7734375,
+        "east": -6.6796875
+      },
+      "minimum_edge_margins_m": {
+        "south": 10414.175661293846,
+        "north": 10414.175661293846,
+        "west": 10433.629476711129,
+        "east": 10389.774191945564
+      },
+      "all_margins_at_least_10km": true,
+      "registration_verified": false
+    }
+  ]
+}

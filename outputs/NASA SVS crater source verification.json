@@ -1,0 +1,25 @@
+{
+  "source": "https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/ldem_64.tif",
+  "source_description": "NASA SVS 64 pixel/degree float LOLA displacement TIFF in km relative to radius 1737.4 km",
+  "scope": "Every elevation and pixel center in each retained crater window; no rim or control-network registration claim.",
+  "regions": [
+    {
+      "crater": "Tycho",
+      "pixels_checked": 68684,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match_pixel_centers": true
+    },
+    {
+      "crater": "Copernicus",
+      "pixels_checked": 62748,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match_pixel_centers": true
+    },
+    {
+      "crater": "Clavius",
+      "pixels_checked": 548492,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match_pixel_centers": true
+    }
+  ]
+}

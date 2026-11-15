@@ -1,0 +1,27 @@
+{
+  "importer": "trimesh",
+  "version": "5.2.1",
+  "results": [
+    {
+      "block": "A",
+      "vertices": 2563201,
+      "triangles": 5120000
+    },
+    {
+      "block": "B",
+      "vertices": 2561600,
+      "triangles": 5116800
+    },
+    {
+      "block": "C",
+      "vertices": 2561600,
+      "triangles": 5116800
+    },
+    {
+      "block": "D",
+      "vertices": 2560000,
+      "triangles": 5113602
+    }
+  ],
+  "scope": "GLB structure and decoded vertex/triangle counts; no browser rendering or axis placement verified."
+}

@@ -1,0 +1,101 @@
+{
+  "scope": "Reopened 16 rigged Blender copies; checked scene mesh coordinate and topology hashes against their source scenes and both light directions and energies against saved SPICE sidecars. This checks implementation fidelity, not Earthshine model accuracy or crater rim registration.",
+  "regions": [
+    {
+      "region": "Apollo 11",
+      "epoch_utc": "1969-07-20T20:17:40Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 4.2543810129849454e-07
+    },
+    {
+      "region": "Apollo 12",
+      "epoch_utc": "1969-11-19T06:54:35Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 1.0133885226201597e-07
+    },
+    {
+      "region": "Apollo 14",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 2.748464912374502e-07
+    },
+    {
+      "region": "Apollo 15",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 9.096499865557834e-08
+    },
+    {
+      "region": "Apollo 16",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 1.0848209096909341e-07
+    },
+    {
+      "region": "Apollo 17",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 1.9314112360500873e-07
+    },
+    {
+      "region": "Clavius",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 1.2644054553268208e-07
+    },
+    {
+      "region": "Copernicus",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 2.4027400458748785e-07
+    },
+    {
+      "region": "Luna 21",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 2.9802322387695312e-08
+    },
+    {
+      "region": "Lunokhod 1 region",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 2.4027400458748785e-07
+    },
+    {
+      "region": "Lunokhod 2",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 3.0683368864616754e-07
+    },
+    {
+      "region": "Surveyor 1",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 1.399837004248495e-07
+    },
+    {
+      "region": "Surveyor 5",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 9.685754776000977e-08
+    },
+    {
+      "region": "Surveyor 6",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 3.680503862137315e-07
+    },
+    {
+      "region": "Surveyor 7",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 8.560065398421926e-08
+    },
+    {
+      "region": "Tycho",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 1,
+      "maximum_direction_vector_error": 8.462232866585662e-08
+    }
+  ]
+}

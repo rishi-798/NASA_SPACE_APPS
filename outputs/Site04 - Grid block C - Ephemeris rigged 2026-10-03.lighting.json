@@ -1,0 +1,53 @@
+{
+  "time_utc": "2026-10-03T18:00:00Z",
+  "frame": "MOON_ME_DE440_ME421",
+  "aberration": "CN+S",
+  "sun": {
+    "direction_enu": [
+      0.7155302031882015,
+      -0.6983850118458805,
+      0.01658021575494192
+    ],
+    "distance_km": 149665652.1742357,
+    "light_time_seconds": 499.23087849740284,
+    "azimuth_deg": 134.30526318106976,
+    "elevation_deg": 0.9500199168739412,
+    "angular_diameter_deg": 0.5326648670051236,
+    "direction_blender": [
+      -0.9997939992045914,
+      -0.011707074784457316,
+      0.01658021575494192
+    ]
+  },
+  "earth": {
+    "direction_enu": [
+      -0.7262955421069343,
+      -0.683051674298691,
+      0.07704022165953184
+    ],
+    "distance_km": 370225.37746767886,
+    "light_time_seconds": 1.2349389305440062,
+    "azimuth_deg": 226.75749024533886,
+    "elevation_deg": 4.41845766154027,
+    "angular_diameter_deg": 1.9720389364949427,
+    "direction_blender": [
+      0.03099308944789625,
+      0.9965461517928436,
+      0.07704022165953184
+    ]
+  },
+  "anchor_height_m": -1055.4283447265625,
+  "solar_irradiance_w_m2": 1359.767523535337,
+  "earth_sun_angular_separation_deg": 92.37134721153282,
+  "solar_disc_visible_fraction": 1.0,
+  "direct_solar_irradiance_w_m2": 1359.767523535337,
+  "eclipse_model": "Uniform circular discs in tangent plane; no atmospheric refraction, limb darkening or spatially varying penumbra.",
+  "earth_phase_angle_deg": 87.48705091273486,
+  "earth_lambert_phase": 0.3405384822698177,
+  "earthshine_irradiance_w_m2_approx": 0.05031395159391323,
+  "earthshine_model": "Lambert sphere, geometric albedo 0.367; retarded Earth illumination and topocentric phase approximation excludes atmospheric and surface variation and eclipses",
+  "geometry_limit": "Anchor height is the recorded center sample, if available, otherwise zero; frame realization uncertainty and terrain outside the mesh are not modeled.",
+  "visibility_limit": "The local terrain casts shadows, but distant terrain and the lunar globe outside the mesh are not modeled as occluders.",
+  "blender_direction_frame": "Site04 south-polar stereographic plane, x increasing easting, y increasing northing, z up",
+  "blender_frame_limit": "Single-anchor rotation on a flat projected grid; lunar curvature and spatially varying orientation are not represented."
+}

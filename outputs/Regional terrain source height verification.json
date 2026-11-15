@@ -1,0 +1,133 @@
+{
+  "regions": [
+    {
+      "region": "REGION-APOLLO-11",
+      "vertices_checked": 89768,
+      "max_lat_error_deg": 1.6119323431595944e-08,
+      "max_lon_error_deg": 1.6126854518461187e-08,
+      "max_height_error_m": 0.00012426963075995445,
+      "source_window": "region-apollo-11-window.npz"
+    },
+    {
+      "region": "REGION-APOLLO-12",
+      "vertices_checked": 89833,
+      "max_lat_error_deg": 1.611869970830071e-08,
+      "max_lon_error_deg": 1.6140312197876483e-08,
+      "max_height_error_m": 6.336136721074581e-05,
+      "source_window": "apollo12-dem-window.npz"
+    },
+    {
+      "region": "REGION-APOLLO-14",
+      "vertices_checked": 89839,
+      "max_lat_error_deg": 1.610750155478513e-08,
+      "max_lon_error_deg": 1.6148927528547574e-08,
+      "max_height_error_m": 6.319209933280945e-05,
+      "source_window": "region-apollo-14-window.npz"
+    },
+    {
+      "region": "REGION-APOLLO-15",
+      "vertices_checked": 99951,
+      "max_lat_error_deg": 1.6128097968248767e-08,
+      "max_lon_error_deg": 1.7961319986881108e-08,
+      "max_height_error_m": 0.00012416765093803406,
+      "source_window": "region-apollo-15-window.npz"
+    },
+    {
+      "region": "REGION-APOLLO-16",
+      "vertices_checked": 90647,
+      "max_lat_error_deg": 1.6098422150889746e-08,
+      "max_lon_error_deg": 1.6297496685524493e-08,
+      "max_height_error_m": 3.271386958658695e-05,
+      "source_window": "region-apollo-16-window.npz"
+    },
+    {
+      "region": "REGION-APOLLO-17",
+      "vertices_checked": 95640,
+      "max_lat_error_deg": 1.6122022827858018e-08,
+      "max_lon_error_deg": 1.720287912121421e-08,
+      "max_height_error_m": 0.00012415996752679348,
+      "source_window": "region-apollo-17-window.npz"
+    },
+    {
+      "region": "REGION-CLAVIUS",
+      "vertices_checked": 548492,
+      "max_lat_error_deg": 2.583254570254212e-07,
+      "max_lon_error_deg": 4.848079537822514e-07,
+      "max_height_error_m": 0.0012977414298802614,
+      "source_window": "crater-clavius-lola64-window.npz"
+    },
+    {
+      "region": "REGION-COPERNICUS",
+      "vertices_checked": 62748,
+      "max_lat_error_deg": 6.462441071164449e-08,
+      "max_lon_error_deg": 6.582573774949196e-08,
+      "max_height_error_m": 0.0002397086936980486,
+      "source_window": "crater-copernicus-lola64-window.npz"
+    },
+    {
+      "region": "REGION-LUNA-21",
+      "vertices_checked": 99935,
+      "max_lat_error_deg": 1.6134084290797546e-08,
+      "max_lon_error_deg": 1.7980973154863023e-08,
+      "max_height_error_m": 0.000124332495033741,
+      "source_window": "region-luna-21-window.npz"
+    },
+    {
+      "region": "REGION-LUNOKHOD-1",
+      "vertices_checked": 114422,
+      "max_lat_error_deg": 1.6135686564666685e-08,
+      "max_lon_error_deg": 2.0595351202246093e-08,
+      "max_height_error_m": 0.00012447289191186428,
+      "source_window": "region-lunokhod-1-window.npz"
+    },
+    {
+      "region": "REGION-LUNOKHOD-2",
+      "vertices_checked": 99752,
+      "max_lat_error_deg": 1.6134386271460244e-08,
+      "max_lon_error_deg": 1.7929913553871302e-08,
+      "max_height_error_m": 0.00012447591871023178,
+      "source_window": "region-lunokhod-2-window.npz"
+    },
+    {
+      "region": "REGION-SURVEYOR-1",
+      "vertices_checked": 89846,
+      "max_lat_error_deg": 1.612678701690129e-08,
+      "max_lon_error_deg": 1.6142877257152577e-08,
+      "max_height_error_m": 6.383354775607586e-05,
+      "source_window": "region-surveyor-1-window.npz"
+    },
+    {
+      "region": "REGION-SURVEYOR-5",
+      "vertices_checked": 89793,
+      "max_lat_error_deg": 1.6129414026622158e-08,
+      "max_lon_error_deg": 1.6120853985057693e-08,
+      "max_height_error_m": 0.00012473342940211296,
+      "source_window": "region-surveyor-5-window.npz"
+    },
+    {
+      "region": "REGION-SURVEYOR-6",
+      "vertices_checked": 89659,
+      "max_lat_error_deg": 1.6107312816870945e-08,
+      "max_lon_error_deg": 1.6108091083211207e-08,
+      "max_height_error_m": 3.309524618089199e-05,
+      "source_window": "region-surveyor-6-window.npz"
+    },
+    {
+      "region": "REGION-SURVEYOR-7",
+      "vertices_checked": 118571,
+      "max_lat_error_deg": 1.6104415578865883e-08,
+      "max_lon_error_deg": 2.135684340487387e-08,
+      "max_height_error_m": 3.257882781326771e-05,
+      "source_window": "region-surveyor-7-window.npz"
+    },
+    {
+      "region": "REGION-TYCHO",
+      "vertices_checked": 68684,
+      "max_lat_error_deg": 6.588974343912923e-08,
+      "max_lon_error_deg": 9.244349641335248e-08,
+      "max_height_error_m": 0.00022290600463747978,
+      "source_window": "crater-tycho-lola64-window.npz"
+    }
+  ],
+  "scope": "All saved vertices compared to retained source window pixel centers and heights; no independent validation of the downloaded windows or mesh coverage."
+}

@@ -1,0 +1,98 @@
+{
+  "region_id": "SITE04-BLOCK-A",
+  "controls": [
+    {
+      "time_utc": "2026-10-01T00:00:00Z",
+      "frame": "MOON_ME_DE440_ME421",
+      "aberration": "CN+S",
+      "sun": {
+        "direction_enu": [
+          0.8973410450592852,
+          0.4409436176471259,
+          0.018648724036115318
+        ],
+        "distance_km": 150002000.6533117,
+        "light_time_seconds": 500.35281625834523,
+        "azimuth_deg": 63.83100079679053,
+        "elevation_deg": 1.068555122787575,
+        "angular_diameter_deg": 0.5314704675759796
+      },
+      "earth": {
+        "direction_enu": [
+          0.862319870047848,
+          -0.4943445426375202,
+          0.10967185092430776
+        ],
+        "distance_km": 369417.5467715604,
+        "light_time_seconds": 1.2322442973917658,
+        "azimuth_deg": 119.82447512106373,
+        "elevation_deg": 6.296399565283927,
+        "angular_diameter_deg": 1.976351756510576
+      },
+      "anchor_height_m": 796.8655395507812,
+      "solar_irradiance_w_m2": 1353.6763651028184,
+      "earth_sun_angular_separation_deg": 56.091918030721345,
+      "solar_disc_visible_fraction": 1.0,
+      "direct_solar_irradiance_w_m2": 1353.6763651028184,
+      "eclipse_model": "Uniform circular discs in tangent plane; no atmospheric refraction, limb darkening or spatially varying penumbra.",
+      "earth_phase_angle_deg": 123.79092838017714,
+      "earth_lambert_phase": 0.09086380295515577,
+      "earthshine_irradiance_w_m2_approx": 0.013463079102498181,
+      "earthshine_model": "Lambert sphere, geometric albedo 0.367; retarded Earth illumination and topocentric phase approximation excludes atmospheric and surface variation and eclipses",
+      "geometry_limit": "Anchor height is the recorded center sample, if available, otherwise zero; frame realization uncertainty and terrain outside the mesh are not modeled.",
+      "visibility_limit": "The local terrain casts shadows, but distant terrain and the lunar globe outside the mesh are not modeled as occluders.",
+      "local_light_travel_direction": [
+        -0.8973410450592852,
+        -0.4409436176471259,
+        -0.018648724036115318
+      ]
+    },
+    {
+      "time_utc": "2026-10-13T00:00:00Z",
+      "frame": "MOON_ME_DE440_ME421",
+      "aberration": "CN+S",
+      "sun": {
+        "direction_enu": [
+          -0.9915142982851621,
+          0.12810260678767496,
+          0.022116022026685937
+        ],
+        "distance_km": 148939205.2560043,
+        "light_time_seconds": 496.8077124075093,
+        "azimuth_deg": 277.3617735267689,
+        "elevation_deg": 1.2672580426117528,
+        "angular_diameter_deg": 0.5352629442399619
+      },
+      "earth": {
+        "direction_enu": [
+          0.8143472428915683,
+          -0.5677848662505398,
+          -0.1202452229893472
+        ],
+        "distance_km": 396689.3979528425,
+        "light_time_seconds": 1.3232134010283956,
+        "azimuth_deg": 124.88524865746575,
+        "elevation_deg": -6.906255300668914,
+        "angular_diameter_deg": 1.8404681724038543
+      },
+      "anchor_height_m": 796.8655395507812,
+      "solar_irradiance_w_m2": 1373.0643301950256,
+      "earth_sun_angular_separation_deg": 151.98577427582293,
+      "solar_disc_visible_fraction": 1.0,
+      "direct_solar_irradiance_w_m2": 1373.0643301950256,
+      "eclipse_model": "Uniform circular discs in tangent plane; no atmospheric refraction, limb darkening or spatially varying penumbra.",
+      "earth_phase_angle_deg": 27.94291092146555,
+      "earth_lambert_phase": 0.8954323455911584,
+      "earthshine_irradiance_w_m2_approx": 0.11584116408598072,
+      "earthshine_model": "Lambert sphere, geometric albedo 0.367; retarded Earth illumination and topocentric phase approximation excludes atmospheric and surface variation and eclipses",
+      "geometry_limit": "Anchor height is the recorded center sample, if available, otherwise zero; frame realization uncertainty and terrain outside the mesh are not modeled.",
+      "visibility_limit": "The local terrain casts shadows, but distant terrain and the lunar globe outside the mesh are not modeled as occluders.",
+      "local_light_travel_direction": [
+        0.9915142982851621,
+        -0.12810260678767496,
+        -0.022116022026685937
+      ]
+    }
+  ],
+  "scope": "SPICE anchor directions and approximate illuminance; not viewer rendering or terrain shadow validation."
+}

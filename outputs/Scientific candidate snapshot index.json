@@ -1,0 +1,618 @@
+{
+  "snapshot_type": "dated copies of scientific candidate files",
+  "production_ready": false,
+  "limitations": [
+    "Crater rim registration unresolved; catalog polygons are not proven traced rims.",
+    "Earthshine is approximate and omits eclipses.",
+    "Browser integration and coordinate-axis handling remain unverified.",
+    "The raw source DEM and Dip's master archive are not included."
+  ],
+  "files": [
+    {
+      "name": "Copernicus overview terrain preview.png",
+      "source_folder": "REGION-COPERNICUS",
+      "id": "1kn_Zwt1F9TOnsO9xB1PSkvVOSS0cDTQM",
+      "url": "https://drive.google.com/file/d/1kn_Zwt1F9TOnsO9xB1PSkvVOSS0cDTQM/view?usp=drivesdk"
+    },
+    {
+      "name": "Clavius overview terrain metadata.json",
+      "source_folder": "REGION-CLAVIUS",
+      "id": "1TcAFSEwBliAkcrFMq3UerHJ-NF7fYe74",
+      "url": "https://drive.google.com/file/d/1TcAFSEwBliAkcrFMq3UerHJ-NF7fYe74/view?usp=drivesdk"
+    },
+    {
+      "name": "Copernicus - Overview terrain.blend",
+      "source_folder": "REGION-COPERNICUS",
+      "id": "12bGNBd6PD4Ryg_cZUr1kwYV4Q08idZiK",
+      "url": "https://drive.google.com/file/d/12bGNBd6PD4Ryg_cZUr1kwYV4Q08idZiK/view?usp=drivesdk"
+    },
+    {
+      "name": "Clavius - Overview terrain candidate.glb",
+      "source_folder": "REGION-CLAVIUS",
+      "id": "1kLihEVrxYU0X0rEnLVPx7-6raUxDT6k-",
+      "url": "https://drive.google.com/file/d/1kLihEVrxYU0X0rEnLVPx7-6raUxDT6k-/view?usp=drivesdk"
+    },
+    {
+      "name": "Clavius - Overview terrain.blend",
+      "source_folder": "REGION-CLAVIUS",
+      "id": "14tmPwrwyz3gJnW53g6NYrNmzmnmooUye",
+      "url": "https://drive.google.com/file/d/14tmPwrwyz3gJnW53g6NYrNmzmnmooUye/view?usp=drivesdk"
+    },
+    {
+      "name": "Clavius overview terrain preview.png",
+      "source_folder": "REGION-CLAVIUS",
+      "id": "1DNvYbZqzlAGmcuWR_bfkaJYPes4IRbHp",
+      "url": "https://drive.google.com/file/d/1DNvYbZqzlAGmcuWR_bfkaJYPes4IRbHp/view?usp=drivesdk"
+    },
+    {
+      "name": "Copernicus overview terrain metadata.json",
+      "source_folder": "REGION-COPERNICUS",
+      "id": "1hXRqB2jbOSlDK0KkZCvyBPDbUmuayzEu",
+      "url": "https://drive.google.com/file/d/1hXRqB2jbOSlDK0KkZCvyBPDbUmuayzEu/view?usp=drivesdk"
+    },
+    {
+      "name": "Tycho overview terrain metadata.json",
+      "source_folder": "REGION-TYCHO",
+      "id": "1eyXsNElf6U4BgKY4w8xZC8IC6NIStlFX",
+      "url": "https://drive.google.com/file/d/1eyXsNElf6U4BgKY4w8xZC8IC6NIStlFX/view?usp=drivesdk"
+    },
+    {
+      "name": "Copernicus - Overview terrain candidate.glb",
+      "source_folder": "REGION-COPERNICUS",
+      "id": "16e1fmjy4fIObdScfMJ0CbrmzODGdfrLr",
+      "url": "https://drive.google.com/file/d/16e1fmjy4fIObdScfMJ0CbrmzODGdfrLr/view?usp=drivesdk"
+    },
+    {
+      "name": "Copernicus margin correction.md",
+      "source_folder": "REGION-COPERNICUS",
+      "id": "1f7xkL5NknFWSK7erA0DJ33FmVAxZHRbG",
+      "url": "https://drive.google.com/file/d/1f7xkL5NknFWSK7erA0DJ33FmVAxZHRbG/view?usp=drivesdk"
+    },
+    {
+      "name": "Tycho overview terrain preview.png",
+      "source_folder": "REGION-TYCHO",
+      "id": "1W6tHjCb62X5aQjbnkmNQnsrPZHZzg_k1",
+      "url": "https://drive.google.com/file/d/1W6tHjCb62X5aQjbnkmNQnsrPZHZzg_k1/view?usp=drivesdk"
+    },
+    {
+      "name": "Tycho - Overview terrain.blend",
+      "source_folder": "REGION-TYCHO",
+      "id": "16KBwk5pHlgAUyymuyGLFnhNEYpGVNMRc",
+      "url": "https://drive.google.com/file/d/16KBwk5pHlgAUyymuyGLFnhNEYpGVNMRc/view?usp=drivesdk"
+    },
+    {
+      "name": "Tycho - Overview terrain candidate.glb",
+      "source_folder": "REGION-TYCHO",
+      "id": "1AEllva6Kn-4Ow84B-zfSVcFSz6Dn-SYX",
+      "url": "https://drive.google.com/file/d/1AEllva6Kn-4Ow84B-zfSVcFSz6Dn-SYX/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 14 measured terrain preview.png",
+      "source_folder": "REGION-APOLLO-14",
+      "id": "1jQw7ewEi-dTInygwBNhRz4M6xniNdyXr",
+      "url": "https://drive.google.com/file/d/1jQw7ewEi-dTInygwBNhRz4M6xniNdyXr/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 14 measured terrain metadata.json",
+      "source_folder": "REGION-APOLLO-14",
+      "id": "1z0UPJSVbRXEgScNJ3ltCSE7COmQRjSge",
+      "url": "https://drive.google.com/file/d/1z0UPJSVbRXEgScNJ3ltCSE7COmQRjSge/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 14 - Measured terrain candidate.glb",
+      "source_folder": "REGION-APOLLO-14",
+      "id": "1wjJZUOkyOvTzYUjC3yBsy8YKPlz318AM",
+      "url": "https://drive.google.com/file/d/1wjJZUOkyOvTzYUjC3yBsy8YKPlz318AM/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 14 - Measured terrain.blend",
+      "source_folder": "REGION-APOLLO-14",
+      "id": "1Osanp4TfCF7yP_YLAE5_LCFbT-LXz4QC",
+      "url": "https://drive.google.com/file/d/1Osanp4TfCF7yP_YLAE5_LCFbT-LXz4QC/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 15 measured terrain preview.png",
+      "source_folder": "REGION-APOLLO-15",
+      "id": "1c-c78KN22pFpr2Q1rq6XWkyUufyFlqFx",
+      "url": "https://drive.google.com/file/d/1c-c78KN22pFpr2Q1rq6XWkyUufyFlqFx/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 15 measured terrain metadata.json",
+      "source_folder": "REGION-APOLLO-15",
+      "id": "18KVB3G9gaIFk2-54TAwfUKKp2bVN1B0I",
+      "url": "https://drive.google.com/file/d/18KVB3G9gaIFk2-54TAwfUKKp2bVN1B0I/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 15 - Measured terrain candidate.glb",
+      "source_folder": "REGION-APOLLO-15",
+      "id": "1gtHTv8Gh2fMhkqO9wqwCJoAVinjy5DSs",
+      "url": "https://drive.google.com/file/d/1gtHTv8Gh2fMhkqO9wqwCJoAVinjy5DSs/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 15 - Measured terrain.blend",
+      "source_folder": "REGION-APOLLO-15",
+      "id": "1FUj8F8VTm5U5to2kBZtl2J3zdxyXUBUd",
+      "url": "https://drive.google.com/file/d/1FUj8F8VTm5U5to2kBZtl2J3zdxyXUBUd/view?usp=drivesdk"
+    },
+    {
+      "name": "Lunokhod 2 measured terrain preview.png",
+      "source_folder": "REGION-LUNOKHOD-2",
+      "id": "1_0kjywqTSJIlyLPeKzRj5NZIeA1MGQyO",
+      "url": "https://drive.google.com/file/d/1_0kjywqTSJIlyLPeKzRj5NZIeA1MGQyO/view?usp=drivesdk"
+    },
+    {
+      "name": "Lunokhod 2 measured terrain metadata.json",
+      "source_folder": "REGION-LUNOKHOD-2",
+      "id": "1xSB6rKBGYR98h4wE2noF2WANouACmRyP",
+      "url": "https://drive.google.com/file/d/1xSB6rKBGYR98h4wE2noF2WANouACmRyP/view?usp=drivesdk"
+    },
+    {
+      "name": "Lunokhod 2 - Measured terrain candidate.glb",
+      "source_folder": "REGION-LUNOKHOD-2",
+      "id": "1Rl6v0r_Ap_ShaNHrJ5-HoS5PVQUskm8r",
+      "url": "https://drive.google.com/file/d/1Rl6v0r_Ap_ShaNHrJ5-HoS5PVQUskm8r/view?usp=drivesdk"
+    },
+    {
+      "name": "Lunokhod 2 - Measured terrain.blend",
+      "source_folder": "REGION-LUNOKHOD-2",
+      "id": "1RarSXpW51MHjGXGliCD1AoS4tI1ybFsR",
+      "url": "https://drive.google.com/file/d/1RarSXpW51MHjGXGliCD1AoS4tI1ybFsR/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 11 landing epoch lighting preview.png",
+      "source_folder": "REGION-APOLLO-11",
+      "id": "1nTRYGU4N7WPJFZuD5pj88kBlcoOf8-Ks",
+      "url": "https://drive.google.com/file/d/1nTRYGU4N7WPJFZuD5pj88kBlcoOf8-Ks/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 11 - Ephemeris rigged.lighting.json",
+      "source_folder": "REGION-APOLLO-11",
+      "id": "1ZQaqHiFfPZUWWVW-UTyY5NwxL1qN-dGt",
+      "url": "https://drive.google.com/file/d/1ZQaqHiFfPZUWWVW-UTyY5NwxL1qN-dGt/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 11 - Ephemeris rigged.blend",
+      "source_folder": "REGION-APOLLO-11",
+      "id": "17lp7_hwqC_sv1OSp3lk6BX7NpfaKxanI",
+      "url": "https://drive.google.com/file/d/17lp7_hwqC_sv1OSp3lk6BX7NpfaKxanI/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 11 measured terrain preview.png",
+      "source_folder": "REGION-APOLLO-11",
+      "id": "1lHahTRaE_7NiildJAGT0bGiU2hpz8OAJ",
+      "url": "https://drive.google.com/file/d/1lHahTRaE_7NiildJAGT0bGiU2hpz8OAJ/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 11 measured terrain metadata.json",
+      "source_folder": "REGION-APOLLO-11",
+      "id": "1zAKcO2IuvbuWstUgERdKJl9Lab9bHiRu",
+      "url": "https://drive.google.com/file/d/1zAKcO2IuvbuWstUgERdKJl9Lab9bHiRu/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 7 - Measured terrain.blend",
+      "source_folder": "REGION-SURVEYOR-7",
+      "id": "1_Ip0kW8t1WL4HJu2BVSVJMYmCgHzFVgo",
+      "url": "https://drive.google.com/file/d/1_Ip0kW8t1WL4HJu2BVSVJMYmCgHzFVgo/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 11 - Measured terrain candidate.glb",
+      "source_folder": "REGION-APOLLO-11",
+      "id": "175tC0K0Z6Nw0Dpfq_OF7S0WFEjn7CD5h",
+      "url": "https://drive.google.com/file/d/175tC0K0Z6Nw0Dpfq_OF7S0WFEjn7CD5h/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 12 - Ephemeris rigged.lighting.json",
+      "source_folder": "REGION-APOLLO-12",
+      "id": "1dmyCGt-aSwxvLy9owbnq9O8vNvHTTCqy",
+      "url": "https://drive.google.com/file/d/1dmyCGt-aSwxvLy9owbnq9O8vNvHTTCqy/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 11 - Measured terrain.blend",
+      "source_folder": "REGION-APOLLO-11",
+      "id": "1bl_uuirXWQIy26yVOnnEZoSYvDbPR-aL",
+      "url": "https://drive.google.com/file/d/1bl_uuirXWQIy26yVOnnEZoSYvDbPR-aL/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 12 - Ephemeris rigged.blend",
+      "source_folder": "REGION-APOLLO-12",
+      "id": "1RHdIhEg8cGg0K-Cm0xRYMvpy08wF8T7C",
+      "url": "https://drive.google.com/file/d/1RHdIhEg8cGg0K-Cm0xRYMvpy08wF8T7C/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 7 measured terrain preview.png",
+      "source_folder": "REGION-SURVEYOR-7",
+      "id": "1IgyxFPLeYNUisZP4a_LOkVAL358kLu6M",
+      "url": "https://drive.google.com/file/d/1IgyxFPLeYNUisZP4a_LOkVAL358kLu6M/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 7 measured terrain metadata.json",
+      "source_folder": "REGION-SURVEYOR-7",
+      "id": "1a7hl3aQnpGM1hBed9ATLecB6AKayFx_u",
+      "url": "https://drive.google.com/file/d/1a7hl3aQnpGM1hBed9ATLecB6AKayFx_u/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 12 landing epoch lighting preview.png",
+      "source_folder": "REGION-APOLLO-12",
+      "id": "1ly5-URzO0gZOt9qUHqSoDqXrvkaA5vIX",
+      "url": "https://drive.google.com/file/d/1ly5-URzO0gZOt9qUHqSoDqXrvkaA5vIX/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 7 - Measured terrain candidate.glb",
+      "source_folder": "REGION-SURVEYOR-7",
+      "id": "1KV-gmF9Zn6HyvWJUic7zkT4Ah59Nk1IU",
+      "url": "https://drive.google.com/file/d/1KV-gmF9Zn6HyvWJUic7zkT4Ah59Nk1IU/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 12 measured terrain preview.png",
+      "source_folder": "REGION-APOLLO-12",
+      "id": "1KBWnjUaTNSJn7Y07dg3Z6uyAlYcgsU1I",
+      "url": "https://drive.google.com/file/d/1KBWnjUaTNSJn7Y07dg3Z6uyAlYcgsU1I/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 12 measured terrain metadata.json",
+      "source_folder": "REGION-APOLLO-12",
+      "id": "17KAubvITz4SuD2yvLw6rOPodljzbA1q7",
+      "url": "https://drive.google.com/file/d/17KAubvITz4SuD2yvLw6rOPodljzbA1q7/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 12 - Measured terrain candidate.glb",
+      "source_folder": "REGION-APOLLO-12",
+      "id": "1O5QhewkWQ1-4pqfs7GNb4TbgYUTah8_f",
+      "url": "https://drive.google.com/file/d/1O5QhewkWQ1-4pqfs7GNb4TbgYUTah8_f/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 12 - Measured terrain.blend",
+      "source_folder": "REGION-APOLLO-12",
+      "id": "1P-J0m2HUBLixVmQwBkJu4WuS88zcYblu",
+      "url": "https://drive.google.com/file/d/1P-J0m2HUBLixVmQwBkJu4WuS88zcYblu/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 1 measured terrain preview.png",
+      "source_folder": "REGION-SURVEYOR-1",
+      "id": "1k9xBMNI9sFhnBqOIsJOQpGR6cgVM0q9f",
+      "url": "https://drive.google.com/file/d/1k9xBMNI9sFhnBqOIsJOQpGR6cgVM0q9f/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 1 measured terrain metadata.json",
+      "source_folder": "REGION-SURVEYOR-1",
+      "id": "1L8gIFPtital9PB_RZ7dAsKlT5i5XNxjT",
+      "url": "https://drive.google.com/file/d/1L8gIFPtital9PB_RZ7dAsKlT5i5XNxjT/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 1 - Measured terrain candidate.glb",
+      "source_folder": "REGION-SURVEYOR-1",
+      "id": "1QVpt5ydL5dS_W6Bv6kfrIrPpVoP8MuXc",
+      "url": "https://drive.google.com/file/d/1QVpt5ydL5dS_W6Bv6kfrIrPpVoP8MuXc/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 1 - Measured terrain.blend",
+      "source_folder": "REGION-SURVEYOR-1",
+      "id": "17E8jz-_WTbgtOzuG9IYskHpxiD1qXE_U",
+      "url": "https://drive.google.com/file/d/17E8jz-_WTbgtOzuG9IYskHpxiD1qXE_U/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 6 measured terrain preview.png",
+      "source_folder": "REGION-SURVEYOR-6",
+      "id": "1iT9SNayEE6H8qu8opCh4wymKiNBCwiMw",
+      "url": "https://drive.google.com/file/d/1iT9SNayEE6H8qu8opCh4wymKiNBCwiMw/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 6 measured terrain metadata.json",
+      "source_folder": "REGION-SURVEYOR-6",
+      "id": "1Y5FCVs0-m81j7KXup2PZwyd8qDGgsjzZ",
+      "url": "https://drive.google.com/file/d/1Y5FCVs0-m81j7KXup2PZwyd8qDGgsjzZ/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 6 - Measured terrain candidate.glb",
+      "source_folder": "REGION-SURVEYOR-6",
+      "id": "1Bckqh9_-IwJIc2tNAqkJ6hf_kMjdqhmP",
+      "url": "https://drive.google.com/file/d/1Bckqh9_-IwJIc2tNAqkJ6hf_kMjdqhmP/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 6 - Measured terrain.blend",
+      "source_folder": "REGION-SURVEYOR-6",
+      "id": "1c5041OTJZq03E-bPEbqoKXhgPPdPRye7",
+      "url": "https://drive.google.com/file/d/1c5041OTJZq03E-bPEbqoKXhgPPdPRye7/view?usp=drivesdk"
+    },
+    {
+      "name": "Lunokhod 1 region measured terrain preview.png",
+      "source_folder": "REGION-LUNOKHOD-1",
+      "id": "1UvRm9T_gJ8M28yaunqeftTNNUJwYsF8N",
+      "url": "https://drive.google.com/file/d/1UvRm9T_gJ8M28yaunqeftTNNUJwYsF8N/view?usp=drivesdk"
+    },
+    {
+      "name": "Lunokhod 1 region measured terrain metadata.json",
+      "source_folder": "REGION-LUNOKHOD-1",
+      "id": "1Sx3kE1nL7EhUeKxxz_GHH8SjdIfoLM9J",
+      "url": "https://drive.google.com/file/d/1Sx3kE1nL7EhUeKxxz_GHH8SjdIfoLM9J/view?usp=drivesdk"
+    },
+    {
+      "name": "Lunokhod 1 region - Measured terrain candidate.glb",
+      "source_folder": "REGION-LUNOKHOD-1",
+      "id": "1bjfCFyBF7cdVEpbkb4nBn5GfDotqxupr",
+      "url": "https://drive.google.com/file/d/1bjfCFyBF7cdVEpbkb4nBn5GfDotqxupr/view?usp=drivesdk"
+    },
+    {
+      "name": "Lunokhod 1 region - Measured terrain.blend",
+      "source_folder": "REGION-LUNOKHOD-1",
+      "id": "1S2Mq1G4G6w4REDTlgXwmjLlnyMlaSoNk",
+      "url": "https://drive.google.com/file/d/1S2Mq1G4G6w4REDTlgXwmjLlnyMlaSoNk/view?usp=drivesdk"
+    },
+    {
+      "name": "Luna 21 measured terrain preview.png",
+      "source_folder": "REGION-LUNA-21",
+      "id": "1LzMyWFhu5YIN6FY7GD5ufnKOwRC4Oh2i",
+      "url": "https://drive.google.com/file/d/1LzMyWFhu5YIN6FY7GD5ufnKOwRC4Oh2i/view?usp=drivesdk"
+    },
+    {
+      "name": "Luna 21 measured terrain metadata.json",
+      "source_folder": "REGION-LUNA-21",
+      "id": "13r4Za5Ro2O_LHIXeTWML7lo9wSNfo_3c",
+      "url": "https://drive.google.com/file/d/13r4Za5Ro2O_LHIXeTWML7lo9wSNfo_3c/view?usp=drivesdk"
+    },
+    {
+      "name": "Luna 21 - Measured terrain candidate.glb",
+      "source_folder": "REGION-LUNA-21",
+      "id": "1FHIjjAbB5PSic2xmVTd1_kqUNNvJ99-f",
+      "url": "https://drive.google.com/file/d/1FHIjjAbB5PSic2xmVTd1_kqUNNvJ99-f/view?usp=drivesdk"
+    },
+    {
+      "name": "Luna 21 - Measured terrain.blend",
+      "source_folder": "REGION-LUNA-21",
+      "id": "18kL4WmVkLFBZqL05bkr_dmNor6cwVO11",
+      "url": "https://drive.google.com/file/d/18kL4WmVkLFBZqL05bkr_dmNor6cwVO11/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 block D measured terrain metadata.json",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1k41IvmwlVV2rCW5AzoCHJsb18z8tnhIR",
+      "url": "https://drive.google.com/file/d/1k41IvmwlVV2rCW5AzoCHJsb18z8tnhIR/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 independent importer verification.json",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1ux62oYWLqM7Vr-tg5t_OPnv4Fmz1IG2c",
+      "url": "https://drive.google.com/file/d/1ux62oYWLqM7Vr-tg5t_OPnv4Fmz1IG2c/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 block A measured terrain preview.png",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "18TjuyiTNGDpHW2MdU_Bd4pz_EE4-Np2X",
+      "url": "https://drive.google.com/file/d/18TjuyiTNGDpHW2MdU_Bd4pz_EE4-Np2X/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 block B measured terrain preview.png",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1JQDcNVBaY_7lIcm2ymIsVZUReAlSkiZT",
+      "url": "https://drive.google.com/file/d/1JQDcNVBaY_7lIcm2ymIsVZUReAlSkiZT/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 block C measured terrain preview.png",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1uNEw_e-MRkIq6renWflfUJLHSvPd19cg",
+      "url": "https://drive.google.com/file/d/1uNEw_e-MRkIq6renWflfUJLHSvPd19cg/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 block C measured terrain metadata.json",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1Z4yhISjBmoN6UwsUkS0FTiOQdsFXqfDb",
+      "url": "https://drive.google.com/file/d/1Z4yhISjBmoN6UwsUkS0FTiOQdsFXqfDb/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 block B measured terrain metadata.json",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1oViD4Sxb9j59iOORFgkkKBTtNZTaMt8P",
+      "url": "https://drive.google.com/file/d/1oViD4Sxb9j59iOORFgkkKBTtNZTaMt8P/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 block D measured terrain preview.png",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "19qV9HVfv2VYBjcCBXHUNBSQIOXU98M2Z",
+      "url": "https://drive.google.com/file/d/19qV9HVfv2VYBjcCBXHUNBSQIOXU98M2Z/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 GLB source and alignment verification.json",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1ZZm33d2trVqRSDEtTQQN67zGwd12pf3T",
+      "url": "https://drive.google.com/file/d/1ZZm33d2trVqRSDEtTQQN67zGwd12pf3T/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 - Grid block A - Measured terrain candidate.glb",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1SGYa621XG6p3MPcVHPQwTmiFqWttcTdZ",
+      "url": "https://drive.google.com/file/d/1SGYa621XG6p3MPcVHPQwTmiFqWttcTdZ/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 block A measured terrain metadata.json",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "17GIWsrvAauNIMERq-hx8V5oWHSnA5JeF",
+      "url": "https://drive.google.com/file/d/17GIWsrvAauNIMERq-hx8V5oWHSnA5JeF/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 source elevation verification.json",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1bV5SRmBoCoPm0_45jlKIC9_AZYptJzJK",
+      "url": "https://drive.google.com/file/d/1bV5SRmBoCoPm0_45jlKIC9_AZYptJzJK/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 - Grid block B - Measured terrain candidate.glb",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1xF40ofExFzNkrfzrP1U7sS55X_fSLe3J",
+      "url": "https://drive.google.com/file/d/1xF40ofExFzNkrfzrP1U7sS55X_fSLe3J/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 candidate seam verification.json",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1APPppyZkwC8vmFAwz_ps-MnYWubrzPu7",
+      "url": "https://drive.google.com/file/d/1APPppyZkwC8vmFAwz_ps-MnYWubrzPu7/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 - Grid block D - Measured terrain candidate.glb",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1qIf_sY_UUm0PXAl2QOTaxueCzh2wXCQ8",
+      "url": "https://drive.google.com/file/d/1qIf_sY_UUm0PXAl2QOTaxueCzh2wXCQ8/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 - Grid block C - Measured terrain candidate.glb",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1JEgpkQ-tE7oV_rFzWPjmb28LX_VP1BDD",
+      "url": "https://drive.google.com/file/d/1JEgpkQ-tE7oV_rFzWPjmb28LX_VP1BDD/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 modifier and terrain audit.json",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1JU0DKTriBVWMHZLfLYfKTVgSkf5Cbchg",
+      "url": "https://drive.google.com/file/d/1JU0DKTriBVWMHZLfLYfKTVgSkf5Cbchg/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 - Grid block C scientific candidate.blend",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1KzvH7gq9ztcuJ_oco2UDS2riYf_yv930",
+      "url": "https://drive.google.com/file/d/1KzvH7gq9ztcuJ_oco2UDS2riYf_yv930/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 - Grid block B scientific candidate.blend",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1a-HBTySIGsWtysxm6XHNZ282rISguKiI",
+      "url": "https://drive.google.com/file/d/1a-HBTySIGsWtysxm6XHNZ282rISguKiI/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 - Grid block D scientific candidate.blend",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1REby1dzdGM_zMo-pwW2UEnG_cu-sJqlG",
+      "url": "https://drive.google.com/file/d/1REby1dzdGM_zMo-pwW2UEnG_cu-sJqlG/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 - Grid block A scientific candidate.blend",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "16OcYh3RZTWnkgJ3yYFummwoPy9Hpe5Ue",
+      "url": "https://drive.google.com/file/d/16OcYh3RZTWnkgJ3yYFummwoPy9Hpe5Ue/view?usp=drivesdk"
+    },
+    {
+      "name": "Site04 grid block verification.json",
+      "source_folder": "SITE04-GRID-BLOCKS",
+      "id": "1aS0CDlbQ0hx81Kqm4p_s1dk3OeGUJQgT",
+      "url": "https://drive.google.com/file/d/1aS0CDlbQ0hx81Kqm4p_s1dk3OeGUJQgT/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 17 measured terrain preview.png",
+      "source_folder": "REGION-APOLLO-17",
+      "id": "1HERqLG27-vtuzuNPf2ZSjI1Vlc1iRli5",
+      "url": "https://drive.google.com/file/d/1HERqLG27-vtuzuNPf2ZSjI1Vlc1iRli5/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 17 measured terrain metadata.json",
+      "source_folder": "REGION-APOLLO-17",
+      "id": "1MzWA4mo1OCVKzQsYY1WykFNul5ehoXL1",
+      "url": "https://drive.google.com/file/d/1MzWA4mo1OCVKzQsYY1WykFNul5ehoXL1/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 17 - Measured terrain candidate.glb",
+      "source_folder": "REGION-APOLLO-17",
+      "id": "1EPAsCJb9sxheIBopwazvNwd33aUzd36L",
+      "url": "https://drive.google.com/file/d/1EPAsCJb9sxheIBopwazvNwd33aUzd36L/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 17 - Measured terrain.blend",
+      "source_folder": "REGION-APOLLO-17",
+      "id": "1OgmYlcq_MaoMFURf7g9YvzSyAQe8oe1E",
+      "url": "https://drive.google.com/file/d/1OgmYlcq_MaoMFURf7g9YvzSyAQe8oe1E/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 5 measured terrain preview.png",
+      "source_folder": "REGION-SURVEYOR-5",
+      "id": "1nkXdA08MlNpOMnDatR1CskJ9uAg8rV0G",
+      "url": "https://drive.google.com/file/d/1nkXdA08MlNpOMnDatR1CskJ9uAg8rV0G/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 5 measured terrain metadata.json",
+      "source_folder": "REGION-SURVEYOR-5",
+      "id": "1S4fkjs4dkcxZcTcB9sYp9fBPe4gCt1yM",
+      "url": "https://drive.google.com/file/d/1S4fkjs4dkcxZcTcB9sYp9fBPe4gCt1yM/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 5 - Measured terrain candidate.glb",
+      "source_folder": "REGION-SURVEYOR-5",
+      "id": "1ESV0CYCTPHUL3Nj-kYc9xuwbR6rqBaf_",
+      "url": "https://drive.google.com/file/d/1ESV0CYCTPHUL3Nj-kYc9xuwbR6rqBaf_/view?usp=drivesdk"
+    },
+    {
+      "name": "Surveyor 5 - Measured terrain.blend",
+      "source_folder": "REGION-SURVEYOR-5",
+      "id": "16NLn6lsEetW0yCX5JQXDji5kZwiTBUTy",
+      "url": "https://drive.google.com/file/d/16NLn6lsEetW0yCX5JQXDji5kZwiTBUTy/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 16 measured terrain preview.png",
+      "source_folder": "REGION-APOLLO-16",
+      "id": "1oedFwH_MCCHND6qK3RgEt7WTMwk0rsus",
+      "url": "https://drive.google.com/file/d/1oedFwH_MCCHND6qK3RgEt7WTMwk0rsus/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 16 measured terrain metadata.json",
+      "source_folder": "REGION-APOLLO-16",
+      "id": "16j_MSll0Dx3NE-7-R0RHArg6Tvf9EweB",
+      "url": "https://drive.google.com/file/d/16j_MSll0Dx3NE-7-R0RHArg6Tvf9EweB/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 16 - Measured terrain candidate.glb",
+      "source_folder": "REGION-APOLLO-16",
+      "id": "1eP6S1mXtyNx4-la0m7J5tYNx4YQ4gfSc",
+      "url": "https://drive.google.com/file/d/1eP6S1mXtyNx4-la0m7J5tYNx4YQ4gfSc/view?usp=drivesdk"
+    },
+    {
+      "name": "Apollo 16 - Measured terrain.blend",
+      "source_folder": "REGION-APOLLO-16",
+      "id": "1hcibfnZNKJIKYggy85Vmj-t4foA0fFfk",
+      "url": "https://drive.google.com/file/d/1hcibfnZNKJIKYggy85Vmj-t4foA0fFfk/view?usp=drivesdk"
+    },
+    {
+      "name": "Ephemeris lighting handoff.md",
+      "source_folder": "ROOT",
+      "id": "1VAVLQNyK_lw-ui3B2_LMHZZMpBLcVtoX",
+      "url": "https://drive.google.com/file/d/1VAVLQNyK_lw-ui3B2_LMHZZMpBLcVtoX/view?usp=drivesdk"
+    },
+    {
+      "name": "Regional terrain build progress - 2026-11-14.md",
+      "source_folder": "ROOT",
+      "id": "1MciFmFRVFiHi_XYPI2tcw_fiU-p10TJS",
+      "url": "https://drive.google.com/file/d/1MciFmFRVFiHi_XYPI2tcw_fiU-p10TJS/view?usp=drivesdk"
+    },
+    {
+      "name": "Crater footprint source audit.json",
+      "source_folder": "ROOT",
+      "id": "1XKjV8LTfsqMNj9RzMHIHKP3VZj-WEocK",
+      "url": "https://drive.google.com/file/d/1XKjV8LTfsqMNj9RzMHIHKP3VZj-WEocK/view?usp=drivesdk"
+    },
+    {
+      "name": "README - Regional terrain additions - 2026-11-14.md",
+      "source_folder": "ROOT",
+      "id": "1XT9j3UqTmMsGexs7XHLxl6hd17PS-j8n",
+      "url": "https://drive.google.com/file/d/1XT9j3UqTmMsGexs7XHLxl6hd17PS-j8n/view?usp=drivesdk"
+    },
+    {
+      "name": "Crater envelope margin verification.json",
+      "source_folder": "ROOT",
+      "id": "1dbU-ks4pwtzxMvwhdgJwRGQFPmDmiEvN",
+      "url": "https://drive.google.com/file/d/1dbU-ks4pwtzxMvwhdgJwRGQFPmDmiEvN/view?usp=drivesdk"
+    },
+    {
+      "name": "Crater overview verification.json",
+      "source_folder": "ROOT",
+      "id": "1H-eM4abkvpcv3Mb91GUQ2ztA2N64YSqi",
+      "url": "https://drive.google.com/file/d/1H-eM4abkvpcv3Mb91GUQ2ztA2N64YSqi/view?usp=drivesdk"
+    },
+    {
+      "name": "Regional terrain source height verification.json",
+      "source_folder": "ROOT",
+      "id": "1hbc2KnLjFcPcAmqufdRMUxpg4t1GMniC",
+      "url": "https://drive.google.com/file/d/1hbc2KnLjFcPcAmqufdRMUxpg4t1GMniC/view?usp=drivesdk"
+    },
+    {
+      "name": "Regional terrain coordinate verification.json",
+      "source_folder": "ROOT",
+      "id": "122pnHfElDrJC22auNOSMYhOtco2uEol8",
+      "url": "https://drive.google.com/file/d/122pnHfElDrJC22auNOSMYhOtco2uEol8/view?usp=drivesdk"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "cesium_version": "1.145.0",
+  "axis_correction": "Cesium ModelUtility Z-up/X-forward returns identity",
+  "region_count": 20,
+  "control_count": 220,
+  "max_error_m": 0.008337940499615738,
+  "regions": [
+    {
+      "region": "REGION-APOLLO-11",
+      "controls": 11,
+      "max_error_m": 0.00040215745977406685
+    },
+    {
+      "region": "REGION-APOLLO-12",
+      "controls": 11,
+      "max_error_m": 0.00036592053584520273
+    },
+    {
+      "region": "REGION-APOLLO-14",
+      "controls": 11,
+      "max_error_m": 0.0003808628919284323
+    },
+    {
+      "region": "REGION-APOLLO-15",
+      "controls": 11,
+      "max_error_m": 0.00031174884645145064
+    },
+    {
+      "region": "REGION-APOLLO-16",
+      "controls": 11,
+      "max_error_m": 0.00045492497572137815
+    },
+    {
+      "region": "REGION-APOLLO-17",
+      "controls": 11,
+      "max_error_m": 0.00028175875784135516
+    },
+    {
+      "region": "REGION-CLAVIUS",
+      "controls": 11,
+      "max_error_m": 0.008337940499615738
+    },
+    {
+      "region": "REGION-COPERNICUS",
+      "controls": 11,
+      "max_error_m": 0.0021517112728117525
+    },
+    {
+      "region": "REGION-LUNA-21",
+      "controls": 11,
+      "max_error_m": 0.00038932489631357656
+    },
+    {
+      "region": "REGION-LUNOKHOD-1",
+      "controls": 11,
+      "max_error_m": 0.0003311415227031313
+    },
+    {
+      "region": "REGION-LUNOKHOD-2",
+      "controls": 11,
+      "max_error_m": 0.0002466515650116943
+    },
+    {
+      "region": "SITE04-BLOCK-A",
+      "controls": 11,
+      "max_error_m": 0.000229129748474772
+    },
+    {
+      "region": "SITE04-BLOCK-B",
+      "controls": 11,
+      "max_error_m": 0.0001827262565961838
+    },
+    {
+      "region": "SITE04-BLOCK-C",
+      "controls": 11,
+      "max_error_m": 0.00014983425621993974
+    },
+    {
+      "region": "SITE04-BLOCK-D",
+      "controls": 11,
+      "max_error_m": 0.00018373938422935486
+    },
+    {
+      "region": "REGION-SURVEYOR-1",
+      "controls": 11,
+      "max_error_m": 0.000462876894244131
+    },
+    {
+      "region": "REGION-SURVEYOR-5",
+      "controls": 11,
+      "max_error_m": 0.00035046939957707695
+    },
+    {
+      "region": "REGION-SURVEYOR-6",
+      "controls": 11,
+      "max_error_m": 0.0003785547106457843
+    },
+    {
+      "region": "REGION-SURVEYOR-7",
+      "controls": 11,
+      "max_error_m": 0.0004126516710758787
+    },
+    {
+      "region": "REGION-TYCHO",
+      "controls": 11,
+      "max_error_m": 0.0018905578086544734
+    }
+  ],
+  "scope": "Actual GLB vertex controls compared to source DEM positions via Cesium CPU transforms. Does not render GLBs or validate live viewer integration, performance or lunar globe registration."
+}

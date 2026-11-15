@@ -20,10 +20,10 @@
   "footprint": {
     "kind": "rectangular geographic overview envelope",
     "bounds": {
-      "north": 11.539778862168081,
-      "south": 7.710221137831919,
-      "west": -22.016193007838275,
-      "east": -18.133806992161723
+      "north": 11.555403862168081,
+      "south": 7.680625678235362,
+      "west": -22.032226355743003,
+      "east": -18.117773644256996
     },
     "published_crater_bounds": {
       "north": 11.21,
@@ -32,7 +32,7 @@
       "west": -21.68
     },
     "buffer_m": 10000.0,
-    "buffer_method": "Conservative latitude/longitude expansion of published feature bounds; longitude uses the most poleward published latitude. This is an overview envelope, not an exact geodesic polygon buffer.",
+    "buffer_method": "Conservative rectangle enclosing published bounds and LROC catalog polygon, expanded by 10 km on a 1737400 m sphere plus one raster pixel. This is not an exact geodesic polygon buffer; coordinate registration remains unverified.",
     "registry_rim_polygon_state": "not acquired; conservative planning envelope only",
     "coordinate_alignment_state": "provisional planning placement; validate against Moon ME data before production"
   },
@@ -49,7 +49,7 @@
     "source_url": "https://data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_COPERNICAN_CRATERS",
     "source_file_sha256": "d6d954f47f1888324149016b2f213e7999d205f5a8f4d76da89fab3564f2e65a",
     "coordinate_reference": "IAU Moon 2000 Geographic; the product README documents both -180..180 and 0..360 longitude domains.",
-    "geometry_type": "digitized polygon",
+    "geometry_type": "LROC catalog polygon; traced rim not established",
     "feature_name": "Copernicus",
     "lroc_database_center": {
       "latitude_deg": 9.59115979529,
@@ -77,13 +77,13 @@
       "west_km_at_feature_latitude": 0.0
     },
     "center_offset_from_usgs_km": 1.089239387301351,
-    "alignment_assessment": "Polygon envelope cross-checks the Gazetteer bounds closely; this is not a control-network transformation or proof of pixel-level registration to ME/DE421."
+    "alignment_assessment": "Catalog polygon provides a smooth outline and extent comparison only. Its documentation does not establish a traced rim or its control-network transformation to ME/DE421."
   },
   "mesh": {
-    "vertex_count": 61500,
-    "quad_count": 61005,
-    "triangle_count_in_glb": 122010,
-    "source_pixel_count": 61500,
+    "vertex_count": 62748,
+    "quad_count": 62248,
+    "triangle_count_in_glb": 124496,
+    "source_pixel_count": 62748,
     "height_range_m": [
       -3595.500244140625,
       802.0000610351562
@@ -105,48 +105,48 @@
       "api_minus_lola64_m": 89.6993350982666
     },
     {
-      "latitude_planetocentric_deg": 11.539778862168081,
-      "longitude_east_deg": -22.016193007838275,
-      "grid_id": "MOON-R0237-C0469-r9-c1",
+      "latitude_planetocentric_deg": 11.555403862168081,
+      "longitude_east_deg": -22.032226355743003,
+      "grid_id": "MOON-R0237-C0469-r9-c0",
       "source_id": "sldem2015_512_00n_30n_315_360_float",
-      "elevation_m": -957.2809934616089,
-      "sample_spacing_x_m": 58.02806303316232,
+      "elevation_m": -946.6541409492493,
+      "sample_spacing_x_m": 58.02482978607728,
       "sample_spacing_y_m": 59.225293797166955,
-      "global_lola64_elevation_m": -943.5000610351562,
-      "api_minus_lola64_m": -13.780932426452637
+      "global_lola64_elevation_m": -921.0000610351562,
+      "api_minus_lola64_m": -25.654079914093018
     },
     {
-      "latitude_planetocentric_deg": 11.539778862168081,
-      "longitude_east_deg": -18.133806992161723,
-      "grid_id": "MOON-R0237-C0480-r9-c6",
+      "latitude_planetocentric_deg": 11.555403862168081,
+      "longitude_east_deg": -18.117773644256996,
+      "grid_id": "MOON-R0237-C0480-r9-c7",
       "source_id": "sldem2015_512_00n_30n_315_360_float",
-      "elevation_m": -900.5676507949829,
-      "sample_spacing_x_m": 58.02806303316232,
+      "elevation_m": -947.2792148590088,
+      "sample_spacing_x_m": 58.02482978607728,
       "sample_spacing_y_m": 59.225293797166955,
-      "global_lola64_elevation_m": -900.5000610351562,
-      "api_minus_lola64_m": -0.06758975982666016
+      "global_lola64_elevation_m": -937.5000610351562,
+      "api_minus_lola64_m": -9.779153823852539
     },
     {
-      "latitude_planetocentric_deg": 7.710221137831919,
-      "longitude_east_deg": -22.016193007838275,
-      "grid_id": "MOON-R0249-C0474-r6-c8",
+      "latitude_planetocentric_deg": 7.680625678235362,
+      "longitude_east_deg": -22.032226355743003,
+      "grid_id": "MOON-R0249-C0474-r7-c7",
       "source_id": "sldem2015_512_00n_30n_315_360_float",
-      "elevation_m": -707.481324672699,
-      "sample_spacing_x_m": 58.689890690770206,
+      "elevation_m": -630.4011940956116,
+      "sample_spacing_x_m": 58.69394580447665,
       "sample_spacing_y_m": 59.225293797166955,
-      "global_lola64_elevation_m": -706.5000610351562,
-      "api_minus_lola64_m": -0.9812636375427246
+      "global_lola64_elevation_m": -655.0000610351562,
+      "api_minus_lola64_m": 24.598866939544678
     },
     {
-      "latitude_planetocentric_deg": 7.710221137831919,
-      "longitude_east_deg": -18.133806992161723,
-      "grid_id": "MOON-R0249-C0486-r6-c4",
+      "latitude_planetocentric_deg": 7.680625678235362,
+      "longitude_east_deg": -18.117773644256996,
+      "grid_id": "MOON-R0249-C0486-r7-c5",
       "source_id": "sldem2015_512_00n_30n_315_360_float",
-      "elevation_m": -1099.353551864624,
-      "sample_spacing_x_m": 58.689890690770206,
+      "elevation_m": -1112.443208694458,
+      "sample_spacing_x_m": 58.69394580447665,
       "sample_spacing_y_m": 59.225293797166955,
-      "global_lola64_elevation_m": -1088.5,
-      "api_minus_lola64_m": -10.853551864624023
+      "global_lola64_elevation_m": -1105.0,
+      "api_minus_lola64_m": -7.443208694458008
     }
   ],
   "source_selection_note": "The live API selects higher-priority SLDEM/LOLA products at the sampled locations. This overview mesh intentionally uses only LOLA64-SVS for one consistent global baseline and does not merge higher-priority pixels. Control deltas document that distinction; they are not mesh errors against an identical source.",
@@ -188,8 +188,8 @@
   "candidate_glb": {
     "filename": "Copernicus - Overview terrain candidate.glb",
     "axis_convention": "Z-up; x east, y north, z up",
-    "vertex_count": 61500,
-    "face_count": 122010,
+    "vertex_count": 62748,
+    "face_count": 124496,
     "production_ready": false
   },
   "production_ready": false,

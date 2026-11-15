@@ -1,0 +1,96 @@
+{
+  "source": "Robbins 2018 lunar crater database: https://astrogeology.usgs.gov/search/map/moon_crater_database_v1_robbins",
+  "method": "Nearest likely record scored by center distance and diameter similarity; clearance subtracts half major diameter from spherical center-to-rectangle-edge distance.",
+  "limitations": [
+    "Catalog identity is inferred from proximity and diameter, not a named crosswalk.",
+    "A fitted ellipse and a circumscribing circle are not actual traced rims.",
+    "The calculation assumes coordinate frames align and does not validate control-network registration.",
+    "Clearance is a conservative lower bound, not an exact geodesic buffer."
+  ],
+  "results": [
+    {
+      "name": "Tycho",
+      "catalog_id": "05-1-000975",
+      "gazetteer_center_offset_km": 0.3836224046448228,
+      "circle_diameter_km": 83.2345,
+      "ellipse_center_deg": [
+        -43.308,
+        -11.232999999999947
+      ],
+      "ellipse_major_km": 83.7298,
+      "ellipse_minor_km": 82.6042,
+      "ellipse_angle_deg": 103.398,
+      "visible_rim_fraction": 0.99544,
+      "rim_points_used_in_fit": 1095,
+      "source_window_bounds_deg": {
+        "south": -45.0234375,
+        "north": -41.5546875,
+        "west": -13.6171875,
+        "east": -8.8203125
+      },
+      "conservative_fit_clearance_lower_bound_km": {
+        "south": 10.152912443226931,
+        "north": 11.301409340541582,
+        "west": 10.736492825702037,
+        "east": 11.36510317405591
+      },
+      "fit_and_10km_circle_contained_by_lower_bound": true
+    },
+    {
+      "name": "Copernicus",
+      "catalog_id": "04-1-000623",
+      "gazetteer_center_offset_km": 0.23982105568828888,
+      "circle_diameter_km": 93.0195,
+      "ellipse_center_deg": [
+        9.62164,
+        -20.072000000000003
+      ],
+      "ellipse_major_km": 93.9577,
+      "ellipse_minor_km": 91.9076,
+      "ellipse_angle_deg": 27.6856,
+      "visible_rim_fraction": 0.978354,
+      "rim_points_used_in_fit": 909,
+      "source_window_bounds_deg": {
+        "south": 7.6796875,
+        "north": 11.5546875,
+        "west": -22.0390625,
+        "east": -18.1171875
+      },
+      "conservative_fit_clearance_lower_bound_km": {
+        "south": 11.907656164553124,
+        "north": 11.637626729026117,
+        "west": 11.829684047032451,
+        "east": 11.463454350922014
+      },
+      "fit_and_10km_circle_contained_by_lower_bound": true
+    },
+    {
+      "name": "Clavius",
+      "catalog_id": "05-1-001581",
+      "gazetteer_center_offset_km": 3.043358416255136,
+      "circle_diameter_km": 221.213,
+      "ellipse_center_deg": [
+        -58.5484,
+        -14.625999999999976
+      ],
+      "ellipse_major_km": 222.945,
+      "ellipse_minor_km": 217.769,
+      "ellipse_angle_deg": 136.602,
+      "visible_rim_fraction": 0.7225,
+      "rim_points_used_in_fit": 1844,
+      "source_window_bounds_deg": {
+        "south": -62.7734375,
+        "north": -54.4765625,
+        "west": -22.7734375,
+        "east": -6.6796875
+      },
+      "conservative_fit_clearance_lower_bound_km": {
+        "south": 16.644792667672448,
+        "north": 11.999255382692795,
+        "west": 17.12012614190445,
+        "east": 13.960809286131578
+      },
+      "fit_and_10km_circle_contained_by_lower_bound": true
+    }
+  ]
+}

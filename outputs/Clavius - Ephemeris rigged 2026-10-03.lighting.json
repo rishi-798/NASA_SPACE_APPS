@@ -1,0 +1,41 @@
+{
+  "time_utc": "2026-10-03T18:00:00Z",
+  "frame": "MOON_ME_DE440_ME421",
+  "aberration": "CN+S",
+  "sun": {
+    "direction_enu": [
+      -0.9698921570807414,
+      0.19780376538242408,
+      0.14206644232119545
+    ],
+    "distance_km": 149665434.47022986,
+    "light_time_seconds": 499.23015231500545,
+    "azimuth_deg": 281.52705448154524,
+    "elevation_deg": 8.16744005006149,
+    "angular_diameter_deg": 0.532665641827386
+  },
+  "earth": {
+    "direction_enu": [
+      0.28411136645425356,
+      0.7742882311819004,
+      0.5654718971838486
+    ],
+    "distance_km": 369379.56376613333,
+    "light_time_seconds": 1.232117599723384,
+    "azimuth_deg": 20.14971856408068,
+    "elevation_deg": 34.435067110300835,
+    "angular_diameter_deg": 1.9765550033385568
+  },
+  "anchor_height_m": -2955.000162124634,
+  "solar_irradiance_w_m2": 1359.7714793859745,
+  "earth_sun_angular_separation_deg": 92.41089717807449,
+  "solar_disc_visible_fraction": 1.0,
+  "direct_solar_irradiance_w_m2": 1359.7714793859745,
+  "eclipse_model": "Uniform circular discs in tangent plane; no atmospheric refraction, limb darkening or spatially varying penumbra.",
+  "earth_phase_angle_deg": 87.44782837210884,
+  "earth_lambert_phase": 0.3408900514201303,
+  "earthshine_irradiance_w_m2_approx": 0.050596817329236134,
+  "earthshine_model": "Lambert sphere, geometric albedo 0.367; retarded Earth illumination and topocentric phase approximation excludes atmospheric and surface variation and eclipses",
+  "geometry_limit": "Anchor height is the recorded center sample, if available, otherwise zero; frame realization uncertainty and terrain outside the mesh are not modeled.",
+  "visibility_limit": "The local terrain casts shadows, but distant terrain and the lunar globe outside the mesh are not modeled as occluders."
+}

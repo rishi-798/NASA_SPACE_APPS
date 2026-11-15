@@ -5,6 +5,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import type { TerrainRegion } from './terrainTypes';
 import type { MoonLocation } from '../../MoonMap';
 import { eyePosition, lookDirection, type Vec3 } from '../../lib/surfaceViewMath';
+import { createRegolithTextures, type RegolithTextures } from '../../lib/regolithTexture';
 
 const api = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 type SkyBody = { directional_vector_local_z_up: Vec3; angular_radius_deg: number; elevation_deg: number };
@@ -110,7 +111,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         }
         render();
       },
-      inspect(on) { fill.intensity = on ? .9 : .015; render(); },
+      inspect(on) { fill.intensity = on ? 1.2 : .015; render(); },
     };
     runtime.current = value;
     function render() {
@@ -159,10 +160,30 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       if (cancelled) { dispose(gltf.scene); return; }
       const terrain = new THREE.Group(); terrain.add(gltf.scene);
       if (region.gltf_up === 'Y') gltf.scene.rotation.x = Math.PI / 2;
-      terrain.traverse(child => { if (child instanceof THREE.Mesh) { child.castShadow = true; child.receiveShadow = true; } });
       terrain.updateMatrixWorld(true); value.terrain = terrain; scene.add(terrain);
       const box = new THREE.Box3().setFromObject(terrain), size = box.getSize(new THREE.Vector3());
       box.getCenter(center); extent = Math.max(size.x, size.y);
+      let regolithTextures: RegolithTextures | null = null;
+      try {
+        regolithTextures = createRegolithTextures(extent);
+        terrain.traverse(child => {
+          if (child instanceof THREE.Mesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            if (child.material) {
+              const mat = child.material as THREE.MeshStandardMaterial;
+              mat.map = regolithTextures!.map;
+              mat.normalMap = regolithTextures!.normalMap;
+              mat.normalScale = new THREE.Vector2(0.9, 0.9);
+              mat.roughness = 0.94;
+              mat.metalness = 0.0;
+              mat.needsUpdate = true;
+            }
+          }
+        });
+      } catch {
+        terrain.traverse(child => { if (child instanceof THREE.Mesh) { child.castShadow = true; child.receiveShadow = true; } });
+      }
       skyDistance = Math.max(100000, extent * 4); lightDistance = Math.max(50000, size.length() * 2);
       controls.target.copy(center); controls.maxDistance = extent * 3;
       camera.position.set(center.x, center.y - extent * .6, box.max.z + extent * .32);
@@ -258,8 +279,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     <p>{mode === 'eye' && onMesh ? 'Camera fixed 1.8 m above the selected mesh point. Drag or use arrow keys to look around; switch to Orbit Camera to choose another point.' : 'Drag to orbit, scroll to zoom, and click the mesh to choose an eye-level position.'}</p>
     <div className="local-terrain-canvas" ref={host} />
     <p role="status">{state}</p><p role="status">{lighting}</p>
-    <label><input type="checkbox" checked={inspection} onChange={e => setInspection(e.target.checked)} /> Inspection light (illustrative)</label>
+    <label><input type="checkbox" checked={inspection} onChange={e => setInspection(e.target.checked)} /> Inspection light (illustrative, +1.2 lux)</label>
     <p>{region.source_id} · {region.source_spacing_m.toFixed(1)} m source sampling · 1:1 scale. Horizon and shadows are limited to this exported patch.</p>
+    <p style={{ fontSize: '0.82rem', color: '#8ec5fc', marginTop: '0.35rem' }}>Surface: Illustrative regolith micro-relief (procedural Voronoi &amp; noise bump). Measured 1:1 SLDEM2015 elevation geometry and coordinates are preserved strictly.</p>
     {region.source_mismatch && <p>The elevation API uses a different, higher-resolution source here; this context mesh is not a blend of both datasets.</p>}
     {region.appearance_note && <p>{region.appearance_note}</p>}
   </div>;

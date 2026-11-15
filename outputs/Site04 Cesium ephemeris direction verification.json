@@ -1,0 +1,19 @@
+{
+  "region": "SITE04-BLOCK-A",
+  "viewer": "Cesium 1.145, headless Chrome software WebGL, isolated test scene",
+  "epochs_utc": ["2026-10-01T00:00:00Z", "2026-10-13T00:00:00Z"],
+  "direction_source": "SPICE spkcpo CN+S local east/north/up Sun directions; negated to light travel directions then rotated by the recorded local-to-Moon-fixed matrix.",
+  "result": {
+    "both_models_ready": true,
+    "pixels_with_rgb_channel_difference_greater_than_5": 24275,
+    "maximum_channel_difference_8bit": 45,
+    "mean_max_channel_difference_full_screenshot": 1.0052
+  },
+  "limitations": [
+    "This is a standalone experiment, not production viewer integration or a performance benchmark.",
+    "The diagnostic shader uses a manual diffuse term; it does not reproduce physical irradiance, Earthshine, terrain cast shadows, atmospheric effects or occultation.",
+    "The anchor height is the nearest central source pixel, not a separately surveyed height at the exact anchor.",
+    "Local Sun direction is computed at one anchor and held constant over the block.",
+    "Frame registration to live globe terrain remains unverified."
+  ]
+}

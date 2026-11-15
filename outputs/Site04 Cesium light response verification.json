@@ -1,0 +1,18 @@
+{
+  "asset": "Site04 - Grid block A - Measured terrain candidate.glb",
+  "viewer": "Cesium 1.145 in headless Chrome, software WebGL",
+  "setup": "Isolated scene with metadata Moon-fixed matrix and experimental flat-normal fragment shader. Two illustrative Cesium directional lights use opposite local east/west components.",
+  "local_light_travel_vectors": [[-1, 0, -0.4], [1, 0, -0.4]],
+  "result": {
+    "both_models_ready": true,
+    "pixels_with_rgb_channel_difference_greater_than_5": 24481,
+    "maximum_channel_difference_8bit": 59,
+    "mean_max_channel_difference_full_screenshot": 1.337
+  },
+  "limitations": [
+    "This tests response to an illustrative light, not an ephemeris endpoint or the production application.",
+    "The custom shader is unlit with a manual diffuse term; it does not prove physically calibrated illumination, cast shadows, or mobile/GPU performance.",
+    "Source mesh has no normal attribute; Cesium's default material remains unlit without a viewer-side solution.",
+    "Crater registration and production readiness remain unverified."
+  ]
+}

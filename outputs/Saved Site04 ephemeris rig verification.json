@@ -1,0 +1,29 @@
+{
+  "scope": "Reopened four polar-plane Site04 rigged Blender copies; checked scene mesh coordinate and topology hashes against their source scenes and both light directions and energies against saved SPICE sidecars. This checks implementation fidelity, not Earthshine model accuracy or crater rim registration.",
+  "regions": [
+    {
+      "region": "Site04 - Grid block A",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 64,
+      "maximum_direction_vector_error": 1.271519673308433e-07
+    },
+    {
+      "region": "Site04 - Grid block B",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 64,
+      "maximum_direction_vector_error": 1.8401576631111604e-07
+    },
+    {
+      "region": "Site04 - Grid block C",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 64,
+      "maximum_direction_vector_error": 2.0499254006441838e-07
+    },
+    {
+      "region": "Site04 - Grid block D",
+      "epoch_utc": "2026-10-03T18:00:00Z",
+      "mesh_objects_unchanged": 64,
+      "maximum_direction_vector_error": 2.862540796412174e-07
+    }
+  ]
+}

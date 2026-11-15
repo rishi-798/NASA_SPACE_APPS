@@ -1,0 +1,133 @@
+{
+  "scope": "Retained 16 regional DEM windows compared pixel-for-pixel and coordinate-for-coordinate to pinned mirror rasters; no independent PDS-to-mirror comparison or crater boundary registration.",
+  "regions": [
+    {
+      "region": "REGION-APOLLO-11",
+      "source_cog": "cogs/sldem2015_512_00n_30n_000_045_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 114244,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-APOLLO-15",
+      "source_cog": "cogs/sldem2015_512_00n_30n_000_045_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 127088,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-APOLLO-17",
+      "source_cog": "cogs/sldem2015_512_00n_30n_000_045_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 121680,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-LUNA-21",
+      "source_cog": "cogs/sldem2015_512_00n_30n_000_045_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 127088,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-LUNOKHOD-2",
+      "source_cog": "cogs/sldem2015_512_00n_30n_000_045_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 126750,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-SURVEYOR-5",
+      "source_cog": "cogs/sldem2015_512_00n_30n_000_045_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 114244,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-APOLLO-12",
+      "source_cog": "cogs/sldem2015_512_30s_00s_315_360_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 114244,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-APOLLO-14",
+      "source_cog": "cogs/sldem2015_512_30s_00s_315_360_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 114244,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-SURVEYOR-1",
+      "source_cog": "cogs/sldem2015_512_30s_00s_315_360_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 114244,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-APOLLO-16",
+      "source_cog": "cogs/sldem2015_512_30s_00s_000_045_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 115596,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-CLAVIUS",
+      "source_cog": "cogs/LOLA64-SVS.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 548492,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-COPERNICUS",
+      "source_cog": "cogs/LOLA64-SVS.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 62748,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-TYCHO",
+      "source_cog": "cogs/LOLA64-SVS.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 68684,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-LUNOKHOD-1",
+      "source_cog": "cogs/sldem2015_512_30n_60n_315_360_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 145340,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-SURVEYOR-6",
+      "source_cog": "cogs/sldem2015_512_00n_30n_315_360_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 114244,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    },
+    {
+      "region": "REGION-SURVEYOR-7",
+      "source_cog": "cogs/sldem2015_512_60s_30s_315_360_float.tif",
+      "commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+      "pixels_checked": 151086,
+      "max_abs_height_difference_m": 0.0,
+      "coordinate_arrays_match": true
+    }
+  ]
+}

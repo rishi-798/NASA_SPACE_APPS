@@ -1,0 +1,68 @@
+{
+  "projection_control_max_error_deg": 3.836930773104541e-13,
+  "blocks": [
+    {
+      "block": "A",
+      "vertices_checked": 2563201,
+      "triangles_checked": 5120000,
+      "all_triangle_normals_outward": true,
+      "max_height_error_m": 6.168358959257603e-05,
+      "max_projected_error_m": 0.0002683443844944122
+    },
+    {
+      "block": "B",
+      "vertices_checked": 2561600,
+      "triangles_checked": 5116800,
+      "all_triangle_normals_outward": true,
+      "max_height_error_m": 6.167078390717506e-05,
+      "max_projected_error_m": 0.00027094475535704987
+    },
+    {
+      "block": "C",
+      "vertices_checked": 2561600,
+      "triangles_checked": 5116800,
+      "all_triangle_normals_outward": true,
+      "max_height_error_m": 0.00012276135385036469,
+      "max_projected_error_m": 0.00021570972603512928
+    },
+    {
+      "block": "D",
+      "vertices_checked": 2560000,
+      "triangles_checked": 5113602,
+      "all_triangle_normals_outward": true,
+      "max_height_error_m": 0.00012269383296370506,
+      "max_projected_error_m": 0.00026783423345477786
+    }
+  ],
+  "joins": [
+    {
+      "blocks": [
+        "A",
+        "B"
+      ],
+      "max_moon_fixed_gap_m": 0.0004445544301553031
+    },
+    {
+      "blocks": [
+        "A",
+        "C"
+      ],
+      "max_moon_fixed_gap_m": 0.00041276308496220667
+    },
+    {
+      "blocks": [
+        "B",
+        "D"
+      ],
+      "max_moon_fixed_gap_m": 0.0004481437601249138
+    },
+    {
+      "blocks": [
+        "C",
+        "D"
+      ],
+      "max_moon_fixed_gap_m": 0.00046472904887840484
+    }
+  ],
+  "scope": "Every GLB position checked against DEM pixel location and height; every triangle checked for grid connectivity and outward radial orientation; four shared block edges checked in Moon-fixed coordinates. Does not validate lighting, rendering, glTF client interpretation or production integration."
+}

@@ -20,10 +20,10 @@
   "footprint": {
     "kind": "rectangular geographic overview envelope",
     "bounds": {
-      "north": -54.49022113783192,
-      "south": -62.75977886216808,
-      "west": -22.742523967974268,
-      "east": -6.707476032025732
+      "north": -54.47459613783192,
+      "south": -62.77540386216808,
+      "west": -22.766500143328305,
+      "east": -6.683499856671697
     },
     "published_crater_bounds": {
       "north": -54.82,
@@ -32,7 +32,7 @@
       "west": -22.03
     },
     "buffer_m": 10000.0,
-    "buffer_method": "Conservative latitude/longitude expansion of published feature bounds; longitude uses the most poleward published latitude. This is an overview envelope, not an exact geodesic polygon buffer.",
+    "buffer_method": "Conservative rectangle enclosing published bounds, expanded by 10 km on a 1737400 m sphere plus one raster pixel. Clavius rim geometry and coordinate registration remain unverified; this is not an exact geodesic polygon buffer.",
     "registry_rim_polygon_state": "not acquired; conservative planning envelope only",
     "coordinate_alignment_state": "provisional planning placement; validate against Moon ME data before production"
   },
@@ -71,10 +71,10 @@
     "alignment_assessment": "Ellipse provides a size/center cross-check only. It does not replace a Clavius rim polygon or validate the exact edge/buffer."
   },
   "mesh": {
-    "vertex_count": 544310,
-    "quad_count": 542754,
-    "triangle_count_in_glb": 1085508,
-    "source_pixel_count": 544310,
+    "vertex_count": 548492,
+    "quad_count": 546930,
+    "triangle_count_in_glb": 1093860,
+    "source_pixel_count": 548492,
     "height_range_m": [
       -6056.0,
       2189.5
@@ -96,48 +96,48 @@
       "api_minus_lola64_m": 4.520259857177734
     },
     {
-      "latitude_planetocentric_deg": -54.49022113783192,
-      "longitude_east_deg": -22.742523967974268,
-      "grid_id": "MOON-R0438-C0276-r2-c5",
+      "latitude_planetocentric_deg": -54.47459613783192,
+      "longitude_east_deg": -22.766500143328305,
+      "grid_id": "MOON-R0438-C0276-r2-c4",
       "source_id": "sldem2015_512_60s_30s_315_360_float",
-      "elevation_m": -2546.40531539917,
-      "sample_spacing_x_m": 34.40134245065796,
+      "elevation_m": -2528.6624431610107,
+      "sample_spacing_x_m": 34.41448834979608,
       "sample_spacing_y_m": 59.225293797166955,
-      "global_lola64_elevation_m": -2535.0,
-      "api_minus_lola64_m": -11.405315399169922
+      "global_lola64_elevation_m": -2532.5,
+      "api_minus_lola64_m": 3.837556838989258
     },
     {
-      "latitude_planetocentric_deg": -54.49022113783192,
-      "longitude_east_deg": -6.707476032025732,
+      "latitude_planetocentric_deg": -54.47459613783192,
+      "longitude_east_deg": -6.683499856671697,
       "grid_id": "MOON-R0438-C0304-r2-c7",
       "source_id": "sldem2015_512_60s_30s_315_360_float",
-      "elevation_m": 623.0764389038086,
-      "sample_spacing_x_m": 34.40134245065796,
+      "elevation_m": 647.9063034057617,
+      "sample_spacing_x_m": 34.41448834979608,
       "sample_spacing_y_m": 59.225293797166955,
-      "global_lola64_elevation_m": 605.5000610351562,
-      "api_minus_lola64_m": 17.576377868652344
+      "global_lola64_elevation_m": 650.0000610351562,
+      "api_minus_lola64_m": -2.0937576293945312
     },
     {
-      "latitude_planetocentric_deg": -62.75977886216808,
-      "longitude_east_deg": -22.742523967974268,
-      "grid_id": "MOON-R0463-C0217-r3-c9",
+      "latitude_planetocentric_deg": -62.77540386216808,
+      "longitude_east_deg": -22.766500143328305,
+      "grid_id": "MOON-R0463-C0217-r4-c9",
       "source_id": "ldem_60s_60m_float",
-      "elevation_m": -3581.0000896453857,
-      "sample_spacing_x_m": 56.672858262251104,
-      "sample_spacing_y_m": 56.672858262251104,
-      "global_lola64_elevation_m": -3581.0,
-      "api_minus_lola64_m": -8.96453857421875e-05
+      "elevation_m": -3590.226411819458,
+      "sample_spacing_x_m": 56.676602001184435,
+      "sample_spacing_y_m": 56.676602001184435,
+      "global_lola64_elevation_m": -3588.500244140625,
+      "api_minus_lola64_m": -1.7261676788330078
     },
     {
-      "latitude_planetocentric_deg": -62.75977886216808,
-      "longitude_east_deg": -6.707476032025732,
-      "grid_id": "MOON-R0463-C0240-r3-c2",
+      "latitude_planetocentric_deg": -62.77540386216808,
+      "longitude_east_deg": -6.683499856671697,
+      "grid_id": "MOON-R0463-C0240-r4-c2",
       "source_id": "ldem_60s_60m_float",
-      "elevation_m": -1004.0864944458008,
-      "sample_spacing_x_m": 56.672858262251104,
-      "sample_spacing_y_m": 56.672858262251104,
-      "global_lola64_elevation_m": -998.5000610351562,
-      "api_minus_lola64_m": -5.586433410644531
+      "elevation_m": -1014.9163007736206,
+      "sample_spacing_x_m": 56.676602001184435,
+      "sample_spacing_y_m": 56.676602001184435,
+      "global_lola64_elevation_m": -1009.5,
+      "api_minus_lola64_m": -5.4163007736206055
     }
   ],
   "source_selection_note": "The live API selects higher-priority SLDEM/LOLA products at the sampled locations. This overview mesh intentionally uses only LOLA64-SVS for one consistent global baseline and does not merge higher-priority pixels. Control deltas document that distinction; they are not mesh errors against an identical source.",
@@ -179,8 +179,8 @@
   "candidate_glb": {
     "filename": "Clavius - Overview terrain candidate.glb",
     "axis_convention": "Z-up; x east, y north, z up",
-    "vertex_count": 544310,
-    "face_count": 1085508,
+    "vertex_count": 548492,
+    "face_count": 1093860,
     "production_ready": false
   },
   "production_ready": false,

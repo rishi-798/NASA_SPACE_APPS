@@ -1,0 +1,273 @@
+{
+  "purpose": "Standalone headless Chrome Three.js loader and diagnostic render; local Z-up camera and flat shading when normals absent.",
+  "assets": [
+    {
+      "file": "Apollo 11 - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 356363,
+      "triangles": 178186,
+      "bounds": [
+        19935.66015625,
+        19936.82421875,
+        313.3851318359375
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Apollo 12 - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 356632,
+      "triangles": 178318,
+      "bounds": [
+        19915.5986328125,
+        19883.4404296875,
+        287.2481689453125
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Apollo 14 - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 356660,
+      "triangles": 178330,
+      "bounds": [
+        19905.865234375,
+        19889.0400390625,
+        493.510986328125
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Apollo 15 - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 396949,
+      "triangles": 198476,
+      "bounds": [
+        19922.0625,
+        19950.693359375,
+        2707.368896484375
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Apollo 16 - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 359880,
+      "triangles": 179940,
+      "bounds": [
+        19892.77734375,
+        19904.2138671875,
+        787.8821105957031
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Apollo 17 - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 379770,
+      "triangles": 189886,
+      "bounds": [
+        19932.8095703125,
+        19936.822265625,
+        2169.4447021484375
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Surveyor 1 - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 356683,
+      "triangles": 178342,
+      "bounds": [
+        19919.55859375,
+        19937.3662109375,
+        245.743896484375
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Surveyor 5 - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 356466,
+      "triangles": 178236,
+      "bounds": [
+        19929.5537109375,
+        19935.724609375,
+        297.1904296875
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Surveyor 6 - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 355932,
+      "triangles": 177968,
+      "bounds": [
+        19949.4931640625,
+        19949.4658203125,
+        235.140380859375
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Surveyor 7 - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 471154,
+      "triangles": 235578,
+      "bounds": [
+        19906.3056640625,
+        19906.8408203125,
+        804.7689208984375
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Lunokhod 1 region - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 454620,
+      "triangles": 227312,
+      "bounds": [
+        19913.9931640625,
+        19871.564453125,
+        148.453369140625
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Lunokhod 2 - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 396160,
+      "triangles": 198080,
+      "bounds": [
+        19915.36328125,
+        19933.3046875,
+        1678.555419921875
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Luna 21 - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 396889,
+      "triangles": 198446,
+      "bounds": [
+        19883.123046875,
+        19929.0537109375,
+        401.045166015625
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Tycho - Overview terrain candidate.glb",
+      "passed": true,
+      "vertices": 272616,
+      "triangles": 136308,
+      "bounds": [
+        108767.85546875,
+        105951.828125,
+        4898.40478515625
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Copernicus - Overview terrain candidate.glb",
+      "passed": true,
+      "vertices": 248992,
+      "triangles": 124496,
+      "bounds": [
+        117775.0078125,
+        117602.25390625,
+        3929.941421508789
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Clavius - Overview terrain candidate.glb",
+      "passed": true,
+      "vertices": 2187718,
+      "triangles": 1093860,
+      "bounds": [
+        282470.8125,
+        258033.9453125,
+        10623.857421875
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Site04 - Grid block A - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 2563201,
+      "triangles": 5120000,
+      "bounds": [
+        10978.65087890625,
+        10983.30810546875,
+        2140.5535278320312
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Site04 - Grid block B - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 2561600,
+      "triangles": 5116800,
+      "bounds": [
+        10596.10498046875,
+        10595.03857421875,
+        1077.5438842773438
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Site04 - Grid block C - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 2561600,
+      "triangles": 5116800,
+      "bounds": [
+        11312.13134765625,
+        11304.36474609375,
+        4272.3560791015625
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    },
+    {
+      "file": "Site04 - Grid block D - Measured terrain candidate.glb",
+      "passed": true,
+      "vertices": 2560000,
+      "triangles": 5113602,
+      "bounds": [
+        9811.85400390625,
+        9819.619140625,
+        4268.3292236328125
+      ],
+      "webgl": "WebGL2",
+      "renderer": "WebKit WebGL"
+    }
+  ],
+  "assets_checked": 20,
+  "passed": true,
+  "limitations": [
+    "Software WebGL diagnostic; not the CLPS production viewer or a performance benchmark.",
+    "Uses a diagnostic normal material and a fixed local camera, not ephemeris lighting or Moon-fixed placement.",
+    "Headless Chromium virtual time is not a valid loading-time measurement.",
+    "A pixel-coverage check found non-background diagnostic colors for all 20 screenshots; it is not a photometric or full visual validation."
+  ]
+}

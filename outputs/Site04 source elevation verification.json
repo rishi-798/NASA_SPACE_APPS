@@ -1,0 +1,29 @@
+{
+  "source_url": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site04/Site04_final_adj_5mpp_surf.tif",
+  "source_sha256": "38ff70dbdf2f066c2cfa94a646c3a59d653ce7f6b4528b15fc1b43ee397ce758",
+  "source_shape": [
+    3200,
+    3200
+  ],
+  "source_crs_wkt": "PROJCS[\"unnamed\",GEOGCS[\"unnamed ellipse\",DATUM[\"unknown\",SPHEROID[\"unnamed\",1737400,0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]]],PROJECTION[\"Polar_Stereographic\"],PARAMETER[\"latitude_of_origin\",-90],PARAMETER[\"central_meridian\",0],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1],AXIS[\"Easting\",NORTH],AXIS[\"Northing\",NORTH]]",
+  "source_transform": [
+    5.0,
+    0.0,
+    -9000.0,
+    0.0,
+    -5.0,
+    1000.0
+  ],
+  "packed_image_comparison": "Blender image rows reversed compared with GeoTIFF; source height = packed value + constant offset",
+  "source_minus_packed_offset_m": 1429.2713623046875,
+  "all_pixel_count": 10240000,
+  "max_abs_residual_m": 0.0001220703125,
+  "evaluated_control_count": 2816,
+  "evaluated_control_max_abs_residual_m": 0.0001220703125,
+  "pixel_mapping": "col = (local x + 6000)/5; source row = 3199 - (local y + 9000)/5; samples rounded to nearest pixel center",
+  "limitations": [
+    "Samples cover 11 vertices per grid; not a full evaluated-vertex comparison.",
+    "Local grid is a polar stereographic plane and must be transformed to Moon-fixed or local tangent coordinates before viewer placement.",
+    "Dataset includes interpolated elevations; see NASA product provenance."
+  ]
+}

@@ -1,0 +1,2605 @@
+{
+  "blocks": [
+    {
+      "block": "A",
+      "unit_scale": 1.0,
+      "grids": [
+        {
+          "grid_id": "SITE04-A1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 641601,
+          "evaluated_faces": 640000,
+          "near_detail": true,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [
+            "Fictional rocks only in local view"
+          ],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 641601,
+          "evaluated_faces": 640000,
+          "near_detail": true,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [
+            "Fictional rocks only in local view"
+          ],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 641601,
+          "evaluated_faces": 640000,
+          "near_detail": true,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [
+            "Fictional rocks only in local view"
+          ],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 641601,
+          "evaluated_faces": 640000,
+          "near_detail": true,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [
+            "Fictional rocks only in local view"
+          ],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        }
+      ]
+    },
+    {
+      "block": "B",
+      "unit_scale": 1.0,
+      "grids": [
+        {
+          "grid_id": "SITE04-A9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-A16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-B16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-C16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-D16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-E16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-F16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-G16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-H16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        }
+      ]
+    },
+    {
+      "block": "C",
+      "unit_scale": 1.0,
+      "grids": [
+        {
+          "grid_id": "SITE04-I1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O1",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P1",
+          "saved_vertices": 40000,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O2",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P2",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O3",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P3",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O4",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P4",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O5",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P5",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O6",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P6",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O7",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P7",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O8",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P8",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        }
+      ]
+    },
+    {
+      "block": "D",
+      "unit_scale": 1.0,
+      "grids": [
+        {
+          "grid_id": "SITE04-I9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O9",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P9",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O10",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P10",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O11",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P11",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O12",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P12",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O13",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P13",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O14",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P14",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O15",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P15",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-I16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-J16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-K16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-L16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-M16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-N16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-O16",
+          "saved_vertices": 40401,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        },
+        {
+          "grid_id": "SITE04-P16",
+          "saved_vertices": 40200,
+          "evaluated_vertices": 2601,
+          "evaluated_faces": 2500,
+          "near_detail": false,
+          "source_image": "Site04 original 5m DEM - scientific float heights",
+          "other_enabled_modifiers": [],
+          "source_image_packed": true
+        }
+      ]
+    }
+  ],
+  "source_model": "Saved mesh is a flat grid. Enabled geometry nodes position and displace it using a packed Site04 5 m DEM image. Near detail is disabled in these saved blocks, so evaluated geometry uses the overview grid; raw mesh parity alone does not validate evaluated terrain.",
+  "production_ready": false,
+  "unverified": [
+    "Source image pixels and height units against original DEM",
+    "geographic placement and coordinate frame",
+    "evaluated source heights and seams",
+    "export behavior and browser placement",
+    "decorative modifiers must be excluded from scientific exports"
+  ]
+}

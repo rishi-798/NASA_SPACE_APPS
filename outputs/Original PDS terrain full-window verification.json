@@ -1,0 +1,122 @@
+{
+  "scope": "Every retained elevation pixel and coordinate in 13 landing-site windows compared with the original NASA LOLA PDS float products. Crater models and registration are outside scope.",
+  "regions": [
+    {
+      "region": "REGION-APOLLO-11",
+      "original_pds_product": "SLDEM2015_512_00N_30N_000_045_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_000_045_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_000_045_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 114244,
+      "max_abs_height_difference_m": 0.0
+    },
+    {
+      "region": "REGION-APOLLO-12",
+      "original_pds_product": "SLDEM2015_512_30S_00S_315_360_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_30S_00S_315_360_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_30S_00S_315_360_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 114244,
+      "max_abs_height_difference_m": 0.0
+    },
+    {
+      "region": "REGION-APOLLO-14",
+      "original_pds_product": "SLDEM2015_512_30S_00S_315_360_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_30S_00S_315_360_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_30S_00S_315_360_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 114244,
+      "max_abs_height_difference_m": 0.0
+    },
+    {
+      "region": "REGION-APOLLO-15",
+      "original_pds_product": "SLDEM2015_512_00N_30N_000_045_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_000_045_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_000_045_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 127088,
+      "max_abs_height_difference_m": 0.0
+    },
+    {
+      "region": "REGION-APOLLO-16",
+      "original_pds_product": "SLDEM2015_512_30S_00S_000_045_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_30S_00S_000_045_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_30S_00S_000_045_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 115596,
+      "max_abs_height_difference_m": 0.0
+    },
+    {
+      "region": "REGION-APOLLO-17",
+      "original_pds_product": "SLDEM2015_512_00N_30N_000_045_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_000_045_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_000_045_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 121680,
+      "max_abs_height_difference_m": 0.0
+    },
+    {
+      "region": "REGION-LUNA-21",
+      "original_pds_product": "SLDEM2015_512_00N_30N_000_045_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_000_045_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_000_045_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 127088,
+      "max_abs_height_difference_m": 0.0
+    },
+    {
+      "region": "REGION-LUNOKHOD-1",
+      "original_pds_product": "SLDEM2015_512_30N_60N_315_360_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_30N_60N_315_360_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_30N_60N_315_360_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 145340,
+      "max_abs_height_difference_m": 0.0
+    },
+    {
+      "region": "REGION-LUNOKHOD-2",
+      "original_pds_product": "SLDEM2015_512_00N_30N_000_045_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_000_045_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_000_045_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 126750,
+      "max_abs_height_difference_m": 0.0
+    },
+    {
+      "region": "REGION-SURVEYOR-1",
+      "original_pds_product": "SLDEM2015_512_30S_00S_315_360_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_30S_00S_315_360_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_30S_00S_315_360_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 114244,
+      "max_abs_height_difference_m": 0.0
+    },
+    {
+      "region": "REGION-SURVEYOR-5",
+      "original_pds_product": "SLDEM2015_512_00N_30N_000_045_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_000_045_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_000_045_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 114244,
+      "max_abs_height_difference_m": 0.0
+    },
+    {
+      "region": "REGION-SURVEYOR-6",
+      "original_pds_product": "SLDEM2015_512_00N_30N_315_360_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_315_360_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_00N_30N_315_360_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 114244,
+      "max_abs_height_difference_m": 0.0
+    },
+    {
+      "region": "REGION-SURVEYOR-7",
+      "original_pds_product": "SLDEM2015_512_60S_30S_315_360_FLOAT",
+      "label_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_60S_30S_315_360_FLOAT.LBL",
+      "data_url": "https://imbrium.mit.edu/DATA/SLDEM2015/TILES/FLOAT_IMG/SLDEM2015_512_60S_30S_315_360_FLOAT.IMG",
+      "rows_checked": 338,
+      "pixels_checked": 151086,
+      "max_abs_height_difference_m": 0.0
+    }
+  ]
+}

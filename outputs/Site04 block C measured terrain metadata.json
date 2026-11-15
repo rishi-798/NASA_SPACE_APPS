@@ -1,0 +1,71 @@
+{
+  "region_id": "SITE04-BLOCK-C",
+  "production_ready": false,
+  "source": "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site04/Site04_final_adj_5mpp_surf.tif",
+  "source_sha256": "38ff70dbdf2f066c2cfa94a646c3a59d653ce7f6b4528b15fc1b43ee397ce758",
+  "source_frame": "MOON_ME/DE421",
+  "source_resolution_m": 5,
+  "source_pixel_window": {
+    "row_start": 0,
+    "column_start": 1600,
+    "rows": 1601,
+    "columns": 1600
+  },
+  "anchor": {
+    "latitude_planetocentric_deg": -89.8600284384172,
+    "longitude_east_deg": 135.02386329704294
+  },
+  "vertical_reference_radius_m": 1737400.0,
+  "local_axes": {
+    "x": "east",
+    "y": "north",
+    "z": "up"
+  },
+  "local_to_moon_fixed_matrix_row_major": [
+    [
+      -0.7068122147673909,
+      -0.7073991140352488,
+      -0.0017281544377893475,
+      -3002.4955202152123
+    ],
+    [
+      -0.7074012249463636,
+      0.706810105613904,
+      0.0017267155081991817,
+      2999.9955239452584
+    ],
+    [
+      0.0,
+      0.0024429621788121434,
+      -0.9999970159634443,
+      -1737394.815534888
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "mesh_units": "m",
+  "source_height_range_m": [
+    -2847.877197265625,
+    1424.912353515625
+  ],
+  "vertex_count": 2561600,
+  "triangle_count": 5116800,
+  "glb": "Site04 - Grid block C - Measured terrain candidate.glb",
+  "glb_bytes": 92141512,
+  "axis_convention": "Raw local Z-up; standard glTF viewers expect Y-up and require explicit rotation.",
+  "geometry": "one vertex per original source pixel center, no smoothing or synthetic displacement",
+  "limitations": [
+    "Scientific GLB candidate; viewer placement and browser performance unverified.",
+    "No normals are stored: Cesium 1.145 falls back to unlit material; viewer-side flat normals or another shading solution is required.",
+    "Adjacent blocks share pixel centers; verify converted edge agreement.",
+    "Source DEM is interpolated; 5 m pixels do not imply independent 5 m measurements."
+  ],
+  "preview": "Site04 block C measured terrain preview.png",
+  "preview_lighting": "Illustrative northwest hillshade, 35 degrees elevation; no cast shadows or ephemeris.",
+  "anchor_sample_height_m": -1055.4283447265625,
+  "anchor_sample_note": "Nearest central source pixel; its center may be up to half a pixel from the anchor in each projected axis."
+}
