@@ -330,8 +330,11 @@ Which tree is served: whichever directory uvicorn runs in. The review preview on
   other fields say "No verified record".
 
 ### Mission Control voice guide (optional)
-- **Off by default.** Nothing is spoken until the user presses **Enable mission control** (bottom right). Enabling
-  is not remembered across reloads, so every session starts silent.
+- **On by default in the trip planner, opt-in elsewhere.** Opening `/trip` turns the guide on with its caption.
+  Browsers allow sound only after the user has interacted with the page: arriving by a click (for example "Plan a
+  trip") speaks immediately, and opening the link directly shows "Click anywhere for sound", playing the line on the
+  first click or key press. "Turn off" is remembered in that browser, so the planner won't switch it back on, and
+  "Enable mission control" clears that. The Explorer stays opt-in.
 - **Pre-recorded audio, no voice service at runtime.** All 36 lines exist in English, Spanish, French, Hindi and
   Chinese in `frontend/src/data/voiceLines.json`. They are recorded once into `frontend/public/voice/<lang>/` with
   a `manifest.json`, and the app only plays those files (`lib/voicePlayback.ts`). No API key ships with the app,
@@ -383,7 +386,16 @@ Which tree is served: whichever directory uvicorn runs in. The review preview on
   - Browser checks played the real clips in headless Chrome and confirmed each one played to the end, but nobody
     listened to them.
 
-## Sources and credits
+### Lunar landing simulation (`/landing`)
+An educational final-descent model, documented in [docs/LANDING_SIM.md](LANDING_SIM.md).
+- Physics is in `frontend/src/sim/`, kept separate from rendering: fixed 0.01 s RK4 steps, with fuel exhaustion and
+  terrain contact located inside each step.
+- Vehicle: an adjustable illustrative lander. Touchdown limits are demonstration settings.
+- Terrain: a synthetic training scenario, or real LOLA terrain for Athena and Odysseus from `GET /api/sim/terrain`
+  (needs the local DEM: `python -m scripts.fetch_lola_dem`).
+- Features: manual or assisted descent, replay, one-change comparisons and JSON export.
+
+
 - SPICE toolkit and kernels: NASA/JPL NAIF, https://naif.jpl.nasa.gov. SpiceyPy (A. Annex et al.).
 - LOLA DEM `LDEM_80S_80MPP_ADJ`: NASA GSFC PGDA, https://pgda.gsfc.nasa.gov/products/90.
 - Athena position: LROC, *IM-2 Athena Seen Obliquely*, https://lroc.im-ldi.com/images/1408. Odysseus position:

@@ -45,7 +45,12 @@ export function clipSpeech(base = "/voice/"): SpeechPort | null {
         audio.onended = playNext;
         audio.onerror = () => { if (mine === token) handlers.onerror("clip-failed"); };
         audio.play().then(() => { if (mine === token && index === 1) handlers.onstart(); })
-          .catch((error: unknown) => { if (mine === token) handlers.onerror(error instanceof DOMException && error.name === "AbortError" ? "interrupted" : "clip-failed"); });
+          .catch((error: unknown) => {
+            if (mine !== token) return;
+            const name = error instanceof DOMException ? error.name : "";
+            // NotAllowedError = autoplay policy: no click on the page yet. The guide waits for one and replays.
+            handlers.onerror(name === "AbortError" ? "interrupted" : name === "NotAllowedError" ? "blocked" : "clip-failed");
+          });
       };
       playNext();
     },

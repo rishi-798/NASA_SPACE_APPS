@@ -2,256 +2,256 @@
  "lines": {
   "en": {
    "online": {
-    "file": "en/online.m4a",
-    "hash": "365610afb74d7b92",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/online.mp3",
+    "hash": "8fb9489f40982253",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "departure": {
-    "file": "en/departure.m4a",
-    "hash": "382a1bf6c8fba3cd",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/departure.mp3",
+    "hash": "a6fede6d36995ac2",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "rocket": {
-    "file": "en/rocket.m4a",
-    "hash": "1a8d469ff6e015b3",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/rocket.mp3",
+    "hash": "a4e0da4b7cb9a3ff",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "destination": {
-    "file": "en/destination.m4a",
-    "hash": "77098adcee625081",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/destination.mp3",
+    "hash": "0dc29e6a0fb559f8",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "observation": {
-    "file": "en/observation.m4a",
-    "hash": "6ee921b661c83fdf",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/observation.mp3",
+    "hash": "97cd958b3a62a3b3",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "explorer": {
-    "file": "en/explorer.m4a",
-    "hash": "150ad2c6b27d3776",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/explorer.mp3",
+    "hash": "58003629bb3dcdcb",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "analysis_start": {
-    "file": "en/analysis_start.m4a",
-    "hash": "374e21de1440980e",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/analysis_start.mp3",
+    "hash": "76983b6865ea0c8d",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "analysis_done": {
-    "file": "en/analysis_done.m4a",
-    "hash": "9a1de9d91884953f",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/analysis_done.mp3",
+    "hash": "3b7cc1d79054a723",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "trip_done": {
-    "file": "en/trip_done.m4a",
-    "hash": "b8c96fb369c90c69",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/trip_done.mp3",
+    "hash": "1afb69443cde0331",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "analysis_failed": {
-    "file": "en/analysis_failed.m4a",
-    "hash": "dbd507e4d81ec06f",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/analysis_failed.mp3",
+    "hash": "4af35be457a67f55",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "compare_start": {
-    "file": "en/compare_start.m4a",
-    "hash": "23d5c0a549dc4099",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/compare_start.mp3",
+    "hash": "98cb8897a67f9c97",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "compare_done": {
-    "file": "en/compare_done.m4a",
-    "hash": "8d799e3898d77712",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/compare_done.mp3",
+    "hash": "47cfe0a8367b10f4",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "compare_failed": {
-    "file": "en/compare_failed.m4a",
-    "hash": "6f8b2f92e24b01b9",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/compare_failed.mp3",
+    "hash": "6621d8fa04f22950",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "mission_record": {
-    "file": "en/mission_record.m4a",
-    "hash": "5624d05f22c74475",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/mission_record.mp3",
+    "hash": "3fb2733ae2e18f94",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "site_athena": {
-    "file": "en/site_athena.m4a",
-    "hash": "8e1adac1ce7d2280",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/site_athena.mp3",
+    "hash": "52d180c0fc026ce0",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "site_odysseus": {
-    "file": "en/site_odysseus.m4a",
-    "hash": "90b1d7340a46dad1",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/site_odysseus.mp3",
+    "hash": "c12dc971655b7688",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "site_custom": {
-    "file": "en/site_custom.m4a",
-    "hash": "b05be6f5577d7ce5",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/site_custom.mp3",
+    "hash": "65fcb5cc5c2cd00a",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "earth_visible_terrain": {
-    "file": "en/earth_visible_terrain.m4a",
-    "hash": "d182e9987d70f82b",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/earth_visible_terrain.mp3",
+    "hash": "f4f5cb0219ff5e50",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "earth_above_flat": {
-    "file": "en/earth_above_flat.m4a",
-    "hash": "03e274fc64e8723c",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/earth_above_flat.mp3",
+    "hash": "538a2f938ba2063c",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "earth_blocked_terrain": {
-    "file": "en/earth_blocked_terrain.m4a",
-    "hash": "dbda54223bf6910f",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/earth_blocked_terrain.mp3",
+    "hash": "cd795c05651ce323",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "earth_below_horizon": {
-    "file": "en/earth_below_horizon.m4a",
-    "hash": "e4d5c7fd8e916718",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/earth_below_horizon.mp3",
+    "hash": "19de41554094eed1",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "earth_not_visible": {
-    "file": "en/earth_not_visible.m4a",
-    "hash": "0251129ef51eff7f",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/earth_not_visible.mp3",
+    "hash": "7dab992162b80d53",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "earth_below_flat": {
-    "file": "en/earth_below_flat.m4a",
-    "hash": "f8fa39a1933551e3",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/earth_below_flat.mp3",
+    "hash": "5710b619b464fde4",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "sun_visible_terrain": {
-    "file": "en/sun_visible_terrain.m4a",
-    "hash": "c5c2703f20f24307",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/sun_visible_terrain.mp3",
+    "hash": "3b0f31a29a8737a1",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "sun_above_flat": {
-    "file": "en/sun_above_flat.m4a",
-    "hash": "053e982940a43e48",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/sun_above_flat.mp3",
+    "hash": "7479d61e0755906f",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "sun_blocked_terrain": {
-    "file": "en/sun_blocked_terrain.m4a",
-    "hash": "b2e828619ef5b43f",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/sun_blocked_terrain.mp3",
+    "hash": "51bee4528a225b50",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "sun_below_horizon": {
-    "file": "en/sun_below_horizon.m4a",
-    "hash": "53b9f62e2293ce08",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/sun_below_horizon.mp3",
+    "hash": "725a219394816af6",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "sun_not_visible": {
-    "file": "en/sun_not_visible.m4a",
-    "hash": "2a9d226038b04e88",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/sun_not_visible.mp3",
+    "hash": "ed9095f1f2c054a0",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "sun_below_flat": {
-    "file": "en/sun_below_flat.m4a",
-    "hash": "de0bf743df91c029",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/sun_below_flat.mp3",
+    "hash": "f78e1b6b9fca7fbd",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "terrain_included": {
-    "file": "en/terrain_included.m4a",
-    "hash": "e60cc990f7dd113a",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/terrain_included.mp3",
+    "hash": "1c8495206cea159c",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "res_80": {
-    "file": "en/res_80.m4a",
-    "hash": "12b7f49be7bb2be4",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/res_80.mp3",
+    "hash": "d327ae0c3c2887e6",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "res_generic": {
-    "file": "en/res_generic.m4a",
-    "hash": "314fa3a8238844a1",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/res_generic.mp3",
+    "hash": "d3e0a527786b81db",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "flat_not_included": {
-    "file": "en/flat_not_included.m4a",
-    "hash": "362155153fba7559",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/flat_not_included.mp3",
+    "hash": "a6b8acd0e466506a",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "degraded": {
-    "file": "en/degraded.m4a",
-    "hash": "60c4936785df34a4",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/degraded.mp3",
+    "hash": "b8664b207f90c18c",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "horizon_unknown": {
-    "file": "en/horizon_unknown.m4a",
-    "hash": "e8d00302c68d617c",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/horizon_unknown.mp3",
+    "hash": "90eb8500d8e5d4fb",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    },
    "not_power": {
-    "file": "en/not_power.m4a",
-    "hash": "a6c46db751c5b8a2",
-    "engine": "say",
-    "voice": "Samantha",
-    "placeholder": true
+    "file": "en/not_power.mp3",
+    "hash": "8f6dfe5a73087456",
+    "engine": "elevenlabs",
+    "voice": "EXAVITQu4vr4xnSDxMaL",
+    "placeholder": false
    }
   },
   "es": {

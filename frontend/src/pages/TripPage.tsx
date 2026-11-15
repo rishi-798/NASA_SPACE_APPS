@@ -10,7 +10,7 @@ import { TerrainContext } from "../components/explorer/TerrainContext";
 import { LocalSurfacePane } from "../components/explorer/LocalSurfacePane";
 import { LoadingScreen } from "../components/ui/LoadingScreen";
 import { useLoadingScreen } from "../components/ui/useLoadingScreen";
-import { useAnnounce, useCancelOnLeave, useVoiceGuide } from "../components/voice/voiceContext";
+import { useAnnounce, useAutoEnableVoice, useCancelOnLeave, useVoiceGuide } from "../components/voice/voiceContext";
 import { explainResult, PROMPTS } from "../lib/explainResult";
 import { useTerrainCatalogue } from "../components/explorer/useTerrainCatalogue";
 import { pointElevation } from "../lib/terrainFacts";
@@ -81,6 +81,8 @@ export function TripPage() {
   const stagePrompt = { earth: PROMPTS.departure, rocket: PROMPTS.rocket, moon: PROMPTS.destination, landing: PROMPTS.observation, preparing: null, reveal: PROMPTS.missionRecord }[mission.stage];
   // Key on the stage only: rerenders within a stage never repeat the prompt; a new stage replaces old speech.
   useAnnounce("stage", stagePrompt ? `trip:${mission.stage}` : null, stagePrompt);
+  // On by default in the trip planner (after the stage is known, so it opens with the right prompt).
+  useAutoEnableVoice();
   useCancelOnLeave();
   useEffect(() => { guide.cancel("explain"); }, [guide, mission.revision, analysis]);
   const stageIndex = mission.stage === "preparing" ? 3 : stages.findIndex((stage) => stage.id === mission.stage);

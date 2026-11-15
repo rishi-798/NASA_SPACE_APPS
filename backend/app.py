@@ -196,6 +196,15 @@ def site_horizon(site_id: str):
         return load_profile(get_landing_site(site_id))
 
 
+@app.get("/api/sim/terrain", tags=["simulation"], responses=ERRORS,
+         summary="Local LOLA terrain patch (ENU grid at native 80 m) for the landing simulation")
+def sim_terrain(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-180, le=180),
+                half_size_m: float = Query(2000, ge=320, le=3000)):
+    with api_errors():
+        from backend.terrain.patch import build_patch
+        return build_patch(lat, lon, half_size_m)
+
+
 # ------------------------------------------- existing calculation routes ---
 
 @app.get("/api/sites/{site_id}/visibility", tags=["legacy"], responses=ERRORS)

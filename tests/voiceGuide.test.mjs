@@ -133,3 +133,15 @@ test('every line exists in every language, and every recorded clip in the manife
     assert.ok(existsSync(new URL(`../frontend/public/voice/${entry.file}`, import.meta.url)), entry.file);
   }
 });
+
+test('autoplay refusal keeps the line, shows a hint, and the next replay plays it', () => {
+  const f = fakePort(); const g = createVoiceGuide(f.port, () => {});
+  g.say('stage', 'trip:earth', PROMPTS.departure);
+  g.enable(); f.fail('blocked');
+  assert.equal(g.getState().blocked, true);
+  assert.match(g.getState().error, /only after a click/);
+  assert.equal(g.getState().caption.text, 'Mission control online. Select your departure location.');   // caption still there
+  g.replay();                                                   // what the first click triggers
+  assert.equal(g.getState().blocked, false);
+  assert.deepEqual(spoken(f.log).at(-1).ids, ['online', 'departure']);
+});

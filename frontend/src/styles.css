@@ -2631,3 +2631,4 @@ a {
   to { opacity: 1; transform: translateY(0); }
 }
 
+.mc-hint { margin: 0.4rem 0 0; color: var(--sun); font-size: 0.72rem; line-height: 1.5; }

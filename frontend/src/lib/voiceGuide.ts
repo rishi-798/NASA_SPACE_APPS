@@ -19,6 +19,8 @@ export type VoiceState = {
   lang: Lang;
   caption: Caption | null;
   error: string | null;
+  /** The browser refused to play sound until the user interacts with the page. The line is kept for replay. */
+  blocked: boolean;
 };
 export type SayOptions = {
   /** Repeat even if this key was the last prompt (Replay, a second Explain click). */
@@ -28,11 +30,12 @@ export type SayOptions = {
 };
 
 const ERRORS: Record<string, string> = {
+  blocked: "Your browser plays sound only after a click. Click anywhere or press a key to hear mission control.",
   "no-recording": "No recording for this line in the selected language yet. Captions continue.",
 };
 
 export function createVoiceGuide(port: SpeechPort | null, onState: (state: VoiceState) => void, lang: Lang = "en") {
-  let state: VoiceState = { enabled: false, muted: false, available: !!port, speaking: false, lang, caption: null, error: null };
+  let state: VoiceState = { enabled: false, muted: false, available: !!port, speaking: false, lang, caption: null, error: null, blocked: false };
   let lastKey: string | null = null;
   let last: { tag: string; utterance: Utterance } | null = null;
   let current: { tag: string; utterance: Utterance } | null = null;
@@ -43,15 +46,16 @@ export function createVoiceGuide(port: SpeechPort | null, onState: (state: Voice
     const id = ++serial;
     current = { tag, utterance };
     const text = captionText(utterance, state.lang);
-    emit({ caption: { id, tag, text }, error: null, speaking: false });
+    emit({ caption: { id, tag, text }, error: null, speaking: false, blocked: false });
     if (!state.enabled || state.muted || !port) return;
     port.cancel();                                   // never overlap: the newest line replaces the old one
     port.speak({ ids: utterance.ids, lang: state.lang, text }, {
-      onstart: () => { if (state.caption?.id === id) emit({ speaking: true }); },
+      onstart: () => { if (state.caption?.id === id) emit({ speaking: true, blocked: false }); },
       onend: () => { if (state.caption?.id === id) emit({ speaking: false }); },
       onerror: (error) => {
         if (state.caption?.id !== id) return;
         // "interrupted"/"canceled" are our own cancellations, not failures.
+        if (error === "blocked" || error === "not-allowed") { emit({ speaking: false, blocked: true, error: ERRORS.blocked! }); return; }
         emit({ speaking: false, error: error === "interrupted" || error === "canceled" ? null : ERRORS[error] ?? "Voice playback failed. Captions continue." });
       },
     });
@@ -83,7 +87,7 @@ export function createVoiceGuide(port: SpeechPort | null, onState: (state: Voice
       port?.cancel();
       serial++;
       current = null;
-      emit({ enabled: false, speaking: false, caption: null, error: null });
+      emit({ enabled: false, speaking: false, caption: null, error: null, blocked: false });
     },
     setMuted(muted: boolean) {
       if (muted) { port?.cancel(); serial++; }

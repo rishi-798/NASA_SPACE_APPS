@@ -6,6 +6,7 @@ export type LangPreference = "auto" | Lang;
 
 export const VoiceContext = createContext<{
   guide: VoiceGuide; state: VoiceState; preference: LangPreference; deviceLang: Lang; setPreference: (next: LangPreference) => void;
+  autoEnable: () => void; setOn: (on: boolean) => void;
 } | null>(null);
 
 export function useVoiceGuide() {
@@ -24,4 +25,10 @@ export function useAnnounce(tag: string, key: string | null, utterance: Utteranc
 export function useCancelOnLeave() {
   const { guide } = useVoiceGuide();
   useEffect(() => () => guide.cancel(), [guide]);
+}
+
+/** Turn the guide on when this page opens (unless the user turned it off before). */
+export function useAutoEnableVoice() {
+  const { autoEnable } = useVoiceGuide();
+  useEffect(() => { autoEnable(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 }

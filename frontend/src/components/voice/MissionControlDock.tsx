@@ -4,7 +4,7 @@ import { useVoiceGuide, type LangPreference } from "./voiceContext";
 
 /** Enable/mute/replay controls and captions carrying exactly what is spoken. */
 export function MissionControlDock() {
-  const { guide, state, preference, deviceLang, setPreference } = useVoiceGuide();
+  const { guide, state, preference, deviceLang, setPreference, setOn } = useVoiceGuide();
   const languagePicker = (
     <label className="mc-lang">
       <span className="visually-hidden">Voice language</span>
@@ -24,7 +24,7 @@ export function MissionControlDock() {
           <small>Enable mission control to hear explanations.</small>
           <button type="button" className="mc-icon" aria-label="Close caption" onClick={() => guide.cancel()}><X /></button>
         </div>}
-        <button type="button" className="mc-enable" onClick={() => guide.enable()}>
+        <button type="button" className="mc-enable" onClick={() => setOn(true)}>
           <Headset aria-hidden="true" /> Enable mission control
         </button>
       </aside>
@@ -36,16 +36,16 @@ export function MissionControlDock() {
         <div className="mc-head">
           <span className={`mc-signal${speaking ? " mc-signal-on" : ""}`} aria-hidden="true"><i /><i /><i /></span>
           <strong>Mission control</strong>
-          <span className="mc-status">{!available ? "Captions only: voice unavailable" : muted ? "Muted: captions only" : speaking ? "Speaking" : "Listening for events"}</span>
+          <span className="mc-status">{!available ? "Captions only: voice unavailable" : muted ? "Muted: captions only" : state.blocked ? "Click anywhere for sound" : speaking ? "Speaking" : "Listening for events"}</span>
         </div>
         <p className="mc-text" role="status" aria-live="polite" lang={state.lang}>{caption?.text ?? "Standing by."}</p>
-        {error && <p className="mc-error" role="alert">{error}</p>}
+        {error && <p className={state.blocked ? "mc-hint" : "mc-error"} role={state.blocked ? "status" : "alert"}>{error}</p>}
         <div className="mc-actions">
           <button type="button" onClick={() => guide.replay()} disabled={!caption}><ArrowCounterClockwise aria-hidden="true" /> Replay</button>
           {available && <button type="button" aria-pressed={muted} onClick={() => guide.setMuted(!muted)}>
             {muted ? <SpeakerSlash aria-hidden="true" /> : <SpeakerHigh aria-hidden="true" />} {muted ? "Unmute" : "Mute"}
           </button>}
-          <button type="button" onClick={() => guide.disable()}><X aria-hidden="true" /> Turn off</button>
+          <button type="button" onClick={() => setOn(false)}><X aria-hidden="true" /> Turn off</button>
           {languagePicker}
         </div>
         <span className="visually-hidden">{audible ? "Voice on" : "Voice off"}</span>
