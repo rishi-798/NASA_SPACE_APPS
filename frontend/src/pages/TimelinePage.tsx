@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { RouteIntro } from "../components/ui/RouteIntro";
-import { landingSites, missionRecordCount } from "../data/landingSites";
+import { missions, missionRecordCount } from "../data/landingSites";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -50,8 +50,8 @@ export function TimelinePage() {
       <RouteIntro
         eyebrow="Mission chronology"
         title={<>LUNAR<br />CHRONOLOGY.</>}
-        description="Dated mission records have not been imported yet. Explore the available mission-linked landing sites below while the chronology takes shape."
-        side={<span className="archive-status"><CalendarDots /> {missionRecordCount} dated events loaded</span>}
+        description="Multi-year flight manifest for NASA's Commercial Lunar Payload Services (CLPS) and Artemis lunar surface exploration from 2024 through 2028."
+        side={<span className="archive-status"><CalendarDots /> {missionRecordCount} flight programs tracked</span>}
       />
 
       <section className="chronology" aria-labelledby="chronology-title">
@@ -60,29 +60,45 @@ export function TimelinePage() {
           <span className="chronology-progress" />
         </div>
         <div className="chronology-years">
-          {years.map((year) => (
-            <div key={year}>
-              <span>{year}</span>
-              <i aria-hidden="true" />
-              <small>NO DATED RECORDS</small>
-            </div>
-          ))}
+          {years.map((year) => {
+            const yearMissions = missions.filter((m) => m.year === year);
+            return (
+              <div key={year}>
+                <span>{year}</span>
+                <i aria-hidden="true" />
+                <small style={{ lineHeight: "1.4", color: yearMissions.length ? "var(--text)" : "var(--quiet)" }}>
+                  {yearMissions.length
+                    ? yearMissions.map((m) => m.name.replace(" Mission 1", " 1")).join(" · ")
+                    : "DEVELOPMENT"}
+                </small>
+              </div>
+            );
+          })}
         </div>
       </section>
 
       <section className="unscheduled" aria-labelledby="unscheduled-title">
         <div className="unscheduled-heading">
-          <p className="eyebrow">Unscheduled in current dataset</p>
-          <h2 id="unscheduled-title">Mission-linked sites</h2>
+          <p className="eyebrow">Flight manifest & roadmap</p>
+          <h2 id="unscheduled-title">Surface Missions (2024–2028)</h2>
+          <p style={{ color: "var(--muted)", marginTop: "12px", lineHeight: "1.6" }}>
+            Each mission carries scientific payloads to investigate lunar volatile extraction, polar illumination, radio astronomy, and crewed exploration viability.
+          </p>
         </div>
         <div className="unscheduled-list">
-          {landingSites.map((site) => (
-            <article className="unscheduled-record" key={site.id}>
-              <span>{site.id.toUpperCase()}</span>
-              <h3>{site.mission}</h3>
-              <p>{site.name}</p>
-              <Link to={`/explorer?site=${site.id}`} aria-label={`Analyze ${site.mission}`}>
-                Analyze <ArrowRight />
+          {missions.map((m) => (
+            <article className="unscheduled-record" key={m.id}>
+              <span>{m.year} · {m.status.toUpperCase()}</span>
+              <h3>{m.name}</h3>
+              <p>{m.landingArea}</p>
+              <p style={{ fontSize: "13px", color: "var(--muted)", margin: "8px 0 16px" }}>
+                {m.objective}
+              </p>
+              <Link
+                to={m.siteId ? `/explorer?site=${m.siteId}` : `/explorer`}
+                aria-label={`Analyze ${m.name}`}
+              >
+                Analyze landing conditions <ArrowRight />
               </Link>
             </article>
           ))}

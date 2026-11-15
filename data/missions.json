@@ -1,1 +1,179 @@
-[]
+[
+  {
+    "id": "im-1",
+    "name": "IM-1 Odysseus",
+    "provider": "Intuitive Machines",
+    "lander": "Nova-C",
+    "launchVehicle": "SpaceX Falcon 9",
+    "year": 2024,
+    "landingDate": "2024-02-22",
+    "siteId": "odysseus-im1",
+    "landingArea": "Malapert A (80.13° S, 1.44° E)",
+    "status": "Completed",
+    "objective": "First commercial lunar landing in history; precision soft touchdown near the lunar South Pole.",
+    "payloads": [
+      "ROLSES (Radio Wave Observations)",
+      "LRA (Laser Retroreflector Array)",
+      "NDL (Navigation Doppler Lidar)",
+      "SCALPACS (Stereo Cameras)",
+      "LN-1 (Lunar Node 1 Navigation Beacon)"
+    ],
+    "description": "Intuitive Machines' Nova-C lander reached Malapert A crater rim on Feb 22, 2024, delivering 6 NASA payloads and validating commercial lunar delivery architecture.",
+    "source": "https://www.nasa.gov/missions/lro/nasas-lro-images-intuitive-machines-odysseus-lander/"
+  },
+  {
+    "id": "im-2",
+    "name": "IM-2 Athena (PRIME-1)",
+    "provider": "Intuitive Machines",
+    "lander": "Nova-C",
+    "launchVehicle": "SpaceX Falcon 9",
+    "year": 2025,
+    "landingDate": "2025-Q1",
+    "siteId": "athena-im2",
+    "landingArea": "Mons Mouton plateau (84.79° S, 29.20° E)",
+    "status": "Scheduled",
+    "objective": "First in-situ resource utilization (ISRU) drill operation into permanently shadowed polar volatiles.",
+    "payloads": [
+      "TRIDENT (1-meter Regolith Ice Drill)",
+      "MSolo (Mass Spectrometer)",
+      "Micro-Nova Deployable Hopper",
+      "Nokia 4G/LTE Lunar Communications Network"
+    ],
+    "description": "Carries NASA's Polar Resources Ice Mining Experiment-1 (PRIME-1) to drill 1 meter into lunar South Pole regolith searching for water ice.",
+    "source": "https://pds.nasa.gov/ds-view/pds/viewContext.jsp?identifier=urn:nasa:pds:context:instrument_host:spacecraft.clps_to_prime1_athena&version=1.0"
+  },
+  {
+    "id": "blue-ghost-1",
+    "name": "Blue Ghost Mission 1",
+    "provider": "Firefly Aerospace",
+    "lander": "Blue Ghost",
+    "launchVehicle": "SpaceX Falcon 9",
+    "year": 2025,
+    "landingDate": "2025-Q1",
+    "siteId": null,
+    "latitude": 18.5,
+    "longitude": 61.8,
+    "landingArea": "Mare Crisium (18.5° N, 61.8° E)",
+    "status": "Scheduled",
+    "objective": "Study lunar regolith thermal properties, cosmic radiation exposure, and solar wind interactions.",
+    "payloads": [
+      "LISTER (Subsurface Heat Flow Probe)",
+      "LMS (Lunar Magnetotelluric Sounder)",
+      "LPV (Pneumatic Regolith Sampler)",
+      "SCALP (Stereo Surface Cameras)",
+      "RAC (Radiation Tolerant Computer)"
+    ],
+    "description": "Firefly's lander will deliver 10 NASA instruments to Mare Crisium, characterizing lunar geophysics and volatile transport mechanisms.",
+    "source": "https://www.nasa.gov/clps/"
+  },
+  {
+    "id": "griffin-1",
+    "name": "Griffin Mission 1",
+    "provider": "Astrobotic Technology",
+    "lander": "Griffin",
+    "launchVehicle": "SpaceX Falcon Heavy",
+    "year": 2026,
+    "landingDate": "2026",
+    "siteId": null,
+    "latitude": -85.0,
+    "longitude": 31.0,
+    "landingArea": "Nobile Crater Rim (85.0° S, 31.0° E)",
+    "status": "In Development",
+    "objective": "Deliver large-class payloads and explore shadowed volatile deposits at the South Pole.",
+    "payloads": [
+      "Heavy Cargo Delivery System (500 kg capacity)",
+      "Lunar Surface Radiation Monitor",
+      "Direct-to-Earth S-Band Communication Array"
+    ],
+    "description": "Astrobotic's heavy lander capable of delivering up to 500 kg to the lunar South Pole, targeting volatile-rich terrain near Nobile Crater.",
+    "source": "https://www.nasa.gov/clps/"
+  },
+  {
+    "id": "im-3",
+    "name": "IM-3 (Reiner Gamma)",
+    "provider": "Intuitive Machines",
+    "lander": "Nova-C",
+    "launchVehicle": "SpaceX Falcon 9",
+    "year": 2026,
+    "landingDate": "2026",
+    "siteId": null,
+    "latitude": 7.5,
+    "longitude": -59.0,
+    "landingArea": "Reiner Gamma (7.5° N, 59.0° W)",
+    "status": "In Development",
+    "objective": "Investigate the mysterious lunar magnetic anomaly and lunar swirl formation.",
+    "payloads": [
+      "Lunar Vertex (Mini-Rover & Magnetometer Suite)",
+      "CADRE (Autonomous Swarm Mini-Rovers)",
+      "MoonLIGHT (Laser Retroreflector)"
+    ],
+    "description": "Dispatches a cooperative team of autonomous rovers (CADRE) and magnetometers to study the enigmatic mini-magnetosphere of Reiner Gamma.",
+    "source": "https://www.nasa.gov/clps/"
+  },
+  {
+    "id": "artemis-2",
+    "name": "Artemis II",
+    "provider": "NASA / CSA",
+    "lander": "Crewed Orion Spacecraft (Lunar Flyby)",
+    "launchVehicle": "NASA SLS Block 1",
+    "year": 2025,
+    "landingDate": "2025 / 2026",
+    "siteId": null,
+    "latitude": 0.0,
+    "longitude": 0.0,
+    "landingArea": "Free-Return Lunar Orbital Trajectory",
+    "status": "Scheduled",
+    "objective": "First crewed flight test of the Space Launch System and Orion spacecraft beyond low-Earth orbit.",
+    "payloads": [
+      "Crew of 4 Astronauts (Wiseman, Glover, Koch, Hansen)",
+      "Orion Environmental Life Support Systems",
+      "Optical Communications System (O2O)"
+    ],
+    "description": "A 10-day crewed mission around the Moon, testing environmental controls and deep-space communications before the Artemis III surface landing.",
+    "source": "https://www.nasa.gov/artemis-ii/"
+  },
+  {
+    "id": "artemis-3",
+    "name": "Artemis III",
+    "provider": "NASA / SpaceX",
+    "lander": "Starship Human Landing System (HLS)",
+    "launchVehicle": "SLS Block 1B + Starship HLS",
+    "year": 2027,
+    "landingDate": "2027",
+    "siteId": null,
+    "latitude": -89.5,
+    "longitude": 0.0,
+    "landingArea": "Lunar South Pole (Shackleton / Faustini)",
+    "status": "In Development",
+    "objective": "First crewed landing on the lunar surface since Apollo 17 (1972); first humans at the lunar South Pole.",
+    "payloads": [
+      "AxEMU Exploration Extravehicular Mobility Suits",
+      "LEAP (Lunar Environment & Agriculture)",
+      "LEMS (Lunar Environment Monitoring Station)"
+    ],
+    "description": "Marks humanity's return to the lunar surface. Two astronauts spend up to one week conducting geological surveys and ice sampling near the South Pole.",
+    "source": "https://www.nasa.gov/artemis-iii/"
+  },
+  {
+    "id": "apex-1",
+    "name": "Draper APEX 1.0",
+    "provider": "Draper / ispace",
+    "lander": "APEX 1.0 (Series-2)",
+    "launchVehicle": "SpaceX Falcon 9",
+    "year": 2026,
+    "landingDate": "2026",
+    "siteId": null,
+    "latitude": -75.0,
+    "longitude": 132.4,
+    "landingArea": "Schrödinger Basin (Far Side)",
+    "status": "In Development",
+    "objective": "Explore the lunar far side; measure seismic activity and mantle heat flow inside a deep impact basin.",
+    "payloads": [
+      "FSS (Farside Seismic Suite)",
+      "LITMS (Lunar Interior Temperature & Materials)",
+      "MAG (Lunar Magnetometer)"
+    ],
+    "description": "Delivers the first long-duration seismometer to the lunar far side to listen for moonquakes and map the internal lunar crust and mantle.",
+    "source": "https://www.nasa.gov/clps/"
+  }
+]

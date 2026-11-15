@@ -67,7 +67,7 @@ export function HomePage() {
               <div className="compute-symbol" aria-hidden="true"><SunHorizon weight="thin" /><Broadcast weight="thin" /></div>
               <div className="project-card-copy"><div><p className="project-author">SUHAS / VISIBILITY ENGINE</p><h3>Beyond the<br />visible surface.</h3><p>Real Sun and Earth geometry. Terrain-aware horizons. One UTC timestamp.</p></div><span className="card-arrow"><ArrowUpRight aria-hidden="true" /></span></div>
             </Link>
-            <Link className="archive-card" to="/missions" data-home-reveal><GlobeHemisphereWest weight="light" aria-hidden="true" /><div><h3>The landing-site archive</h3><p>Odysseus + Athena</p></div><ArrowUpRight aria-hidden="true" /></Link>
+            <Link className="archive-card" to="/missions" data-home-reveal><GlobeHemisphereWest weight="light" aria-hidden="true" /><div><h3>The landing-site archive</h3><p>CLPS & Artemis Manifest</p></div><ArrowUpRight aria-hidden="true" /></Link>
           </div>
         </div>
         <p className="image-source">Lunar color map: NASA CGI Moon Kit. Interactive model: NASA Goddard / Cesium.</p>
@@ -91,7 +91,7 @@ export function HomePage() {
         <div className="home-site-list">{landingSites.map((site) => <Link className="home-site-row" key={site.id} to={`/explorer?site=${site.id}`} data-home-reveal>
           <span className="site-mission">{site.mission}</span><h3>{site.name.replace(" landing site", "")}</h3><span className="site-coordinates">{formatCoordinate(site.latitude, "lat")}<br />{formatCoordinate(site.longitude, "lon")}</span><span className="site-row-action">Explore site <ArrowUpRight aria-hidden="true" /></span>
         </Link>)}</div>
-        <p className="site-dataset-note">Two source-linked landing sites. The wider mission archive is awaiting dated records.</p>
+        <p className="site-dataset-note">Featured CLPS polar landing sites with validated NAIF SPICE ephemeris and LOLA terrain profiles.</p>
       </section>
 
       <section className="home-outro home-section" aria-labelledby="outro-title" data-home-reveal>

@@ -7,6 +7,25 @@ export type LandingSite = {
   source: string;
 };
 
+export type Mission = {
+  id: string;
+  name: string;
+  provider: string;
+  lander?: string;
+  launchVehicle?: string;
+  year: number;
+  landingDate: string;
+  siteId: string | null;
+  latitude?: number;
+  longitude?: number;
+  landingArea: string;
+  status: "Completed" | "Scheduled" | "In Development";
+  objective: string;
+  payloads: string[];
+  description: string;
+  source: string;
+};
+
 export type CelestialPosition = {
   azimuth: number;
   elevation: number;

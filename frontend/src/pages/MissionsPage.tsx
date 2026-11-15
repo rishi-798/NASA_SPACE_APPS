@@ -7,24 +7,22 @@ import {
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { RouteIntro } from "../components/ui/RouteIntro";
-import { landingSites, missionRecordCount } from "../data/landingSites";
-import { formatCoordinate } from "../lib/format";
+import { missions, landingSites, missionRecordCount } from "../data/landingSites";
 
 export function MissionsPage() {
-  const [selectedId, setSelectedId] = useState(landingSites[0]!.id);
-  const selected =
-    landingSites.find((site) => site.id === selectedId) ?? landingSites[0]!;
+  const [selectedId, setSelectedId] = useState(missions[0]?.id ?? "");
+  const selected = missions.find((m) => m.id === selectedId) ?? missions[0]!;
 
   return (
     <article className="editorial-page missions-page">
       <RouteIntro
-        eyebrow="CLPS mission archive"
+        eyebrow="CLPS & Artemis mission archive"
         title={<>THE LANDING<br />ARCHIVE.</>}
-        description="Explore Odysseus and Athena, the two lunar landing sites currently available in the project."
+        description="Comprehensive manifest of NASA Commercial Lunar Payload Services (CLPS) and Artemis lunar landing missions, scientific instruments, and landing areas."
         side={
           <div className="dataset-readout">
             <Database aria-hidden="true" />
-            <span>{missionRecordCount} mission records · {landingSites.length} site records</span>
+            <span>{missionRecordCount} mission records · {landingSites.length} primary sites</span>
           </div>
         }
       />
@@ -33,67 +31,77 @@ export function MissionsPage() {
         <section className="mission-index" aria-label="Mission-linked landing sites">
           <div className="mission-columns" aria-hidden="true">
             <span>Mission</span>
-            <span>Landing area</span>
-            <span>Record</span>
+            <span>Target area</span>
+            <span>Status</span>
           </div>
-          {landingSites.map((site) => (
+          {missions.map((m) => (
             <button
-              className={`mission-row${site.id === selected.id ? " mission-row-selected" : ""}`}
-              key={site.id}
+              className={`mission-row${m.id === selected.id ? " mission-row-selected" : ""}`}
+              key={m.id}
               type="button"
-              aria-pressed={site.id === selected.id}
-              onClick={() => setSelectedId(site.id)}
+              aria-pressed={m.id === selected.id}
+              onClick={() => setSelectedId(m.id)}
             >
-              <strong>{site.mission}</strong>
-              <span>{site.name}</span>
-              <span className="mission-row-status">SITE DATA</span>
+              <strong>{m.name}</strong>
+              <span>{m.landingArea}</span>
+              <span className="mission-row-status" style={{
+                color: m.status === "Completed" ? "#a2ecd3" : "#ffb578"
+              }}>
+                {m.status.toUpperCase()}
+              </span>
               <ArrowRight aria-hidden="true" />
             </button>
           ))}
-          {missionRecordCount === 0 && (
-            <div className="mission-empty-note">
-              <span>ARCHIVE NOTICE</span>
-              <p>
-                Mission details are still being added. Provider, payload, and schedule
-                information will appear when the mission dataset is populated.
-              </p>
-            </div>
-          )}
         </section>
 
         <aside className="mission-detail" aria-live="polite">
           <div className="mission-detail-topline">
-            <span>SELECTED RECORD</span>
-            <span>{selected.id.toUpperCase()}</span>
+            <span>{selected.provider.toUpperCase()}</span>
+            <span>{selected.year} · {selected.status.toUpperCase()}</span>
           </div>
-          <h2>{selected.mission}</h2>
-          <p className="mission-location"><MapPin weight="fill" /> {selected.name}</p>
+          <h2>{selected.name}</h2>
+          <p className="mission-location"><MapPin weight="fill" /> {selected.landingArea}</p>
+
+          <p className="mission-description" style={{ color: "var(--muted)", margin: "16px 0 24px", lineHeight: "1.6" }}>
+            {selected.description}
+          </p>
 
           <dl className="mission-data-list">
             <div>
-              <dt>Latitude</dt>
-              <dd>{formatCoordinate(selected.latitude, "lat")}</dd>
+              <dt>Target Date</dt>
+              <dd>{selected.landingDate}</dd>
             </div>
             <div>
-              <dt>Longitude</dt>
-              <dd>{formatCoordinate(selected.longitude, "lon")}</dd>
+              <dt>Flight Provider</dt>
+              <dd>{selected.provider}</dd>
             </div>
             <div>
-              <dt>Reference frame</dt>
-              <dd>MOON_ME</dd>
+              <dt>Spacecraft / Lander</dt>
+              <dd>{selected.lander ?? "Commercial Lander"}</dd>
             </div>
             <div>
-              <dt>Mission metadata</dt>
-              <dd>Awaiting dataset</dd>
+              <dt>Launch Vehicle</dt>
+              <dd>{selected.launchVehicle ?? "Falcon 9 / Heavy"}</dd>
+            </div>
+            <div>
+              <dt>Mission Objective</dt>
+              <dd>{selected.objective}</dd>
+            </div>
+            <div>
+              <dt>Key Payloads</dt>
+              <dd>{selected.payloads.join(", ")}</dd>
             </div>
           </dl>
 
-          <div className="mission-actions">
-            <Link className="primary-text-link" to={`/explorer?site=${selected.id}`}>
+          <div className="mission-actions" style={{ marginTop: "28px" }}>
+            <Link
+              className="primary-text-link"
+              to={selected.siteId ? `/explorer?site=${selected.siteId}` : `/explorer`}
+            >
               Analyze landing conditions <ArrowRight />
             </Link>
             <a className="source-link" href={selected.source} target="_blank" rel="noreferrer">
-              View source record <ArrowUpRight />
+              Official NASA Record <ArrowUpRight />
             </a>
           </div>
         </aside>
