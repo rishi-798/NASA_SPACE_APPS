@@ -7,21 +7,22 @@ import { surfaceTime } from '../../lib/surfaceViewMath';
 const Viewer = lazy(() => import('./LocalTerrainViewer'));
 const base = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 
-export function LocalSurfacePane({ latitude, longitude, observationTime, onPick }: {
+export function LocalSurfacePane({ latitude, longitude, observationTime, onPick, onOpenGlobal }: {
   latitude: number; longitude: number; observationTime: string; onPick: (point: MoonLocation) => void;
+  onOpenGlobal?: () => void;
 }) {
   const key = `${latitude},${longitude}`;
   const [regions, setRegions] = useState<TerrainRegion[]>([]);
   const [choice, setChoice] = useState<{ key: string; data: TerrainChoice } | null>(null);
-  const [active, setActive] = useState<TerrainRegion | null>(null);
-  const [error, setError] = useState('');
+  const [catalogueError, setCatalogueError] = useState('');
+  const [matchError, setMatchError] = useState<{ key: string; message: string } | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
     void fetch(`${base}/api/terrain/local-scenes`, { signal: controller.signal })
       .then(r => { if (!r.ok) throw new Error('Surface view catalogue unavailable.'); return r.json(); })
       .then(data => setRegions(data.scenes))
-      .catch(e => { if (!controller.signal.aborted) setError(String(e.message)); });
+      .catch(() => { if (!controller.signal.aborted) setCatalogueError('Surface patch catalogue unavailable.'); });
     return () => controller.abort();
   }, []);
 
@@ -31,17 +32,17 @@ export function LocalSurfacePane({ latitude, longitude, observationTime, onPick 
     void fetch(`${base}/api/terrain/local-scene?${params}`, { signal: controller.signal })
       .then(r => { if (!r.ok) throw new Error('Could not match coordinate.'); return r.json(); })
       .then((data: TerrainChoice) => {
+        if (controller.signal.aborted) return;
         setChoice({ key, data });
-        setError('');
-        if (data.scene) {
-          setActive(data.scene);
-        }
+        setMatchError(null);
       })
-      .catch(e => { if (!controller.signal.aborted) setError(String(e.message)); });
+      .catch(() => { if (!controller.signal.aborted) setMatchError({ key, message: 'Could not match this location to a surface patch. Reload the page to try again.' }); });
     return () => controller.abort();
   }, [latitude, longitude, key]);
 
   const current = choice?.key === key ? choice.data : null;
+  const active = current?.scene ?? null;
+  const error = matchError?.key === key ? matchError.message : '';
 
   return (
     <section className="local-surface" aria-label="Moon surface view">
@@ -55,15 +56,15 @@ export function LocalSurfacePane({ latitude, longitude, observationTime, onPick 
             <span>Landing Site Patch:</span>
             <select
               aria-label="Choose surface patch"
-              value={active?.id ?? (current?.scene?.id ?? '')}
+              value={active?.id ?? ''}
               onChange={event => {
                 const region = regions.find(r => r.id === event.target.value);
                 if (region) {
-                  setActive(region);
                   onPick({ ...region.anchor, name: region.name });
                 }
               }}
             >
+              <option value="" disabled>Choose a surface patch</option>
               {regions.map(r => (
                 <option key={r.id} value={r.id}>
                   {r.name} ({r.source_spacing_m.toFixed(0)}m/px)
@@ -74,8 +75,9 @@ export function LocalSurfacePane({ latitude, longitude, observationTime, onPick 
         </div>
       </div>
 
+      {catalogueError && <p role="status" className="surface-status-msg">{catalogueError}</p>}
       {error && <p role="status" className="surface-status-msg">{error}</p>}
-      {!current && !error && <p role="status" className="surface-status-msg">Matching coordinates to high-resolution SLDEM terrain...</p>}
+      {!current && !error && <p role="status" className="surface-status-msg">Matching coordinates to available terrain...</p>}
 
       {active && (
         <Suspense fallback={<div className="surface-loading-box">Loading 1:1 measured lunar topography...</div>}>
@@ -86,7 +88,8 @@ export function LocalSurfacePane({ latitude, longitude, observationTime, onPick 
 
       {!active && current && !current.scene && (
         <div className="surface-uncovered-box">
-          <p>No regional 1:1 elevation mesh exists for this exact point. Select any measured landing patch from the dropdown above (e.g. Apollo 11, G7 South Pole, Lunokhod 1).</p>
+          <p>No local terrain model is available for this location yet. Use the global Moon view, or choose another available surface patch above.</p>
+          {onOpenGlobal && <button type="button" onClick={onOpenGlobal}>Open global Moon view</button>}
         </div>
       )}
     </section>

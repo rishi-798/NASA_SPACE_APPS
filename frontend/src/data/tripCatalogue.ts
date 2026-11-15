@@ -26,6 +26,7 @@ export const rockets = [
   })),
   { id: "ares-i-a", name: "Ares I · Variant A", category: "Canceled-program crew launcher", mission: "Constellation concept", note: "Official NASA model. Historical concept only: this configuration did not carry astronauts to the Moon. Not a standalone lunar mission vehicle.", model: "/ares-i-a.glb", isNasa: true, modelCredit: "NASA · Ares I variant A", modelLabel: "NASA GLB / canceled programme", source: "https://github.com/nasa/NASA-3D-Resources/tree/master/3D%20Models/Ares%201%20(A)" },
   { id: "ares-i-b", name: "Ares I · Variant B", category: "Canceled-program crew launcher", mission: "Constellation concept", note: "Official NASA model. Historical concept only: this configuration did not carry astronauts to the Moon. Not a standalone lunar mission vehicle.", model: "/ares-i-b.glb", isNasa: true, modelCredit: "NASA · Ares I variant B", modelLabel: "NASA GLB / canceled programme", source: "https://github.com/nasa/NASA-3D-Resources/tree/master/3D%20Models/Ares%201%20(B)" },
+  { id: "jupiter-c", name: "Jupiter-C · Explorer 1", category: "Historical orbital launcher", mission: "Explorer 1", note: "Historical satellite launcher; this vehicle is not a lunar transport vehicle.", model: "/jupiter-c.glb", isNasa: true, modelCredit: "NASA · Explorer Jupiter-C Rocket", modelLabel: "NASA GLB / historical", source: "https://github.com/nasa/NASA-3D-Resources/tree/master/3D%20Models/Explorer%20Jupiter-C%20Rocket" },
 ];
 
 export const destinations = moonMapSites.map((site) => ({ ...site,

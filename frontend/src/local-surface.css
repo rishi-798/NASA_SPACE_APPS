@@ -253,6 +253,21 @@
   margin-top: 12px;
 }
 
+.surface-uncovered-box button {
+  min-height: 44px;
+  padding: 9px 16px;
+  border: 1px solid #38bdf8;
+  border-radius: 8px;
+  background: #153146;
+  color: #f1f5f9;
+  cursor: pointer;
+}
+
+.surface-uncovered-box button:focus-visible {
+  outline: 2px solid #a2ecd3;
+  outline-offset: 3px;
+}
+
 @media (max-width: 768px) {
   .local-terrain-canvas {
     height: 420px;
