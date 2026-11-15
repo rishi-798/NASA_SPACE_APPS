@@ -65,6 +65,8 @@ function ExplorerWorkspace() {
   const analysisGate = useRef(createRequestGate());
   const comparisonGate = useRef(createRequestGate());
 
+  const [activeView, setActiveView] = useState<"surface" | "globe">("surface");
+  const [telemetryTab, setTelemetryTab] = useState<"timeline" | "observer" | "windows" | "compare">("timeline");
   const selectedSite = landingSites.find((site) => site.id === selectedId) ?? firstSite;
   const location = pickedLocation ?? selectedSite;
   const check = useMemo(() => checkRange(input), [input]);
@@ -222,21 +224,73 @@ function ExplorerWorkspace() {
       </header>
 
       {searchParams.get("context") && <p className="trip-notice" role="note">{searchParams.get("context")?.slice(0, 500)}</p>}
+
+      {/* Primary Mode Selector: 3D Surface View vs 3D Orbit Map */}
+      <div className="explorer-mode-bar" data-reveal>
+        <div className="explorer-mode-pills" role="tablist" aria-label="Visual Explorer Mode">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === "surface"}
+            className={`explorer-mode-btn ${activeView === "surface" ? "active" : ""}`}
+            onClick={() => setActiveView("surface")}
+          >
+            🏔️ 3D Surface View (1:1 Topography)
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === "globe"}
+            className={`explorer-mode-btn ${activeView === "globe" ? "active" : ""}`}
+            onClick={() => setActiveView("globe")}
+          >
+            🌐 Global 3D Moon Orbit (Cesium)
+          </button>
+        </div>
+        <div className="explorer-mode-badge">
+          {activeView === "surface" ? "SLDEM2015 High-Resolution Mesh" : "NASA / USGS Lunar Basemap"}
+        </div>
+      </div>
+
       <div className="explorer-grid">
         <div className="explorer-visual" data-reveal>
-          <MoonExplorer
-            focusOnMount={Boolean(destination.siteId || destination.location)}
-            observationTime={sceneTime}
-            selectedSite={selectedSite}
-            pickedLocation={pickedLocation}
-            onLocationSelect={pickLocation}
-            onSiteSelect={selectSite}
-          />
-          {result && active && <PlaybackControls playback={playback} activeTime={active.time} requestedStart={result.summary.start}
-            speed={speed} onSpeed={setSpeed} dispatch={dispatchPlayback} />}
-          <TerrainContext latitude={location.latitude} longitude={location.longitude}
-            catalogue={catalogue.state} onRetry={catalogue.retry}
-            terrain={result?.terrain ?? null} horizon={result?.horizon ?? null} />
+          {activeView === "surface" ? (
+            <LocalSurfacePane
+              latitude={location.latitude}
+              longitude={location.longitude}
+              observationTime={sceneTime ?? `${DEFAULT_INPUT.startDate}T${DEFAULT_INPUT.startTime}:00Z`}
+              onPick={pickLocation}
+            />
+          ) : (
+            <>
+              <MoonExplorer
+                focusOnMount={Boolean(destination.siteId || destination.location)}
+                observationTime={sceneTime}
+                selectedSite={selectedSite}
+                pickedLocation={pickedLocation}
+                onLocationSelect={pickLocation}
+                onSiteSelect={selectSite}
+              />
+              {result && active && (
+                <PlaybackControls
+                  playback={playback}
+                  activeTime={active.time}
+                  requestedStart={result.summary.start}
+                  speed={speed}
+                  onSpeed={setSpeed}
+                  dispatch={dispatchPlayback}
+                />
+              )}
+              <TerrainContext
+                latitude={location.latitude}
+                longitude={location.longitude}
+                catalogue={catalogue.state}
+                onRetry={catalogue.retry}
+                terrain={result?.terrain ?? null}
+                horizon={result?.horizon ?? null}
+              />
+            </>
+          )}
         </div>
         <aside className="explorer-sidebar" data-reveal>
           <ExplorerControls
@@ -267,18 +321,63 @@ function ExplorerWorkspace() {
         </aside>
       </div>
 
-      <LocalSurfacePane latitude={location.latitude} longitude={location.longitude}
-        observationTime={sceneTime ?? `${DEFAULT_INPUT.startDate}T${DEFAULT_INPUT.startTime}:00Z`} onPick={pickLocation} />
+      {/* Condensed Mission Telemetry & Analysis Dock */}
+      <section className="telemetry-tabs-container" data-reveal aria-label="Mission Telemetry and Analysis">
+        <div className="telemetry-tabs-nav" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={telemetryTab === "timeline"}
+            className={`telemetry-tab-btn ${telemetryTab === "timeline" ? "active" : ""}`}
+            onClick={() => setTelemetryTab("timeline")}
+          >
+            ☀️ Solar &amp; Earth Visibility Timeline
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={telemetryTab === "observer"}
+            className={`telemetry-tab-btn ${telemetryTab === "observer" ? "active" : ""}`}
+            onClick={() => setTelemetryTab("observer")}
+          >
+            📐 Sky Observer Plane
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={telemetryTab === "windows"}
+            className={`telemetry-tab-btn ${telemetryTab === "windows" ? "active" : ""}`}
+            onClick={() => setTelemetryTab("windows")}
+          >
+            ⏱️ Illumination Windows
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={telemetryTab === "compare"}
+            className={`telemetry-tab-btn ${telemetryTab === "compare" ? "active" : ""}`}
+            onClick={() => setTelemetryTab("compare")}
+          >
+            ⚖️ Site Comparison
+          </button>
+        </div>
 
-      <div className="analysis-grid" data-reveal>
-        <HorizonContainer data={active} profile={result?.horizon ?? null} />
-        <VisibilityTimeline data={active} summary={result?.summary ?? null} sampleCount={result?.samples.length ?? 0} />
-      </div>
-
-      <WindowFinder result={result} activeIndex={playback.index} onSelect={(index) => dispatchPlayback({ type: "seek", index })} />
-
-      <SiteComparison result={comparison} state={comparisonState} errorMessage={comparisonError}
-        onCompare={compare} disabled={!check.ok} />
+        <div className="telemetry-tab-panel">
+          {telemetryTab === "timeline" && (
+            <VisibilityTimeline data={active} summary={result?.summary ?? null} sampleCount={result?.samples.length ?? 0} />
+          )}
+          {telemetryTab === "observer" && (
+            <HorizonContainer data={active} profile={result?.horizon ?? null} />
+          )}
+          {telemetryTab === "windows" && (
+            <WindowFinder result={result} activeIndex={playback.index} onSelect={(index) => dispatchPlayback({ type: "seek", index })} />
+          )}
+          {telemetryTab === "compare" && (
+            <SiteComparison result={comparison} state={comparisonState} errorMessage={comparisonError}
+              onCompare={compare} disabled={!check.ok} />
+          )}
+        </div>
+      </section>
     </article>
   );
 }

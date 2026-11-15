@@ -20,7 +20,7 @@ type Runtime = {
 };
 
 function createStarfield(skyRadius: number) {
-  const count = 2400;
+  const count = 3200;
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
   let seed = 12345;
@@ -28,9 +28,9 @@ function createStarfield(skyRadius: number) {
   const palette = [
     new THREE.Color(0xdce9ff),
     new THREE.Color(0xffffff),
-    new THREE.Color(0xfff3e0),
-    new THREE.Color(0xffdcb4),
-    new THREE.Color(0xffbe9e),
+    new THREE.Color(0xfff5ea),
+    new THREE.Color(0xffe8d0),
+    new THREE.Color(0x99bbff),
   ];
   for (let i = 0; i < count; i++) {
     const u = rnd(), v = rnd();
@@ -40,15 +40,15 @@ function createStarfield(skyRadius: number) {
     positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
     positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
     positions[i * 3 + 2] = r * Math.cos(phi);
-    const c = palette[Math.floor(rnd() * palette.length)];
+    const c = palette[Math.floor(rnd() * palette.length)]!;
     colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
   }
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   const mat = new THREE.PointsMaterial({
-    size: 1.15, sizeAttenuation: false, vertexColors: true,
-    transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending,
+    size: 1.25, sizeAttenuation: false, vertexColors: true,
+    transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending,
     depthWrite: false, toneMapped: false,
   });
   const stars = new THREE.Points(geo, mat);
@@ -96,7 +96,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
   const pickRef = useRef(onPick);
   const [state, setState] = useState('Loading measured terrain…');
   const [lighting, setLighting] = useState('Calculating SPICE sky…');
-  const [inspection, setInspection] = useState(true);
+  const [inspection, setInspection] = useState(false);
   const [loaded, setLoaded] = useState(0);
   const [mode, setMode] = useState<CameraMode>('orbit');
   const [onMesh, setOnMesh] = useState(false);
@@ -113,20 +113,22 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     catch { queueMicrotask(() => setState('WebGL could not start. Try another browser.')); return; }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
-    renderer.setClearColor(0x020306);
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setClearColor(0x010204);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.25;
     container.appendChild(renderer.domElement);
     const canvas = renderer.domElement;
     canvas.setAttribute('aria-label', `${region.name} terrain. In eye-level mode drag or use arrow keys to look around.`);
     canvas.tabIndex = 0;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(55, 1, .05, 1000000);
+    const camera = new THREE.PerspectiveCamera(62, 1, 0.1, 2000000);
     camera.up.set(0, 0, 1);
     const controls = new OrbitControls(camera, canvas);
-    controls.minDistance = 3; controls.maxPolarAngle = Math.PI * .49;
+    controls.minDistance = 3; controls.maxPolarAngle = Math.PI * 0.49;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
 
     const world = new THREE.Matrix4().set(...region.local_to_moon_fixed.flat() as Parameters<THREE.Matrix4['set']>);
     const inverse = world.clone().invert();
@@ -134,16 +136,19 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     // Primary astronomical Sun
     const sunLight = new THREE.DirectionalLight(0xfffaec, 0);
     sunLight.castShadow = true; sunLight.shadow.mapSize.set(2048, 2048);
-    sunLight.shadow.bias = -.0001; sunLight.shadow.normalBias = .08;
+    sunLight.shadow.bias = -0.00012; sunLight.shadow.normalBias = 0.05;
 
     // Earthshine directional light
     const earthLight = new THREE.DirectionalLight(0x8cb5df, 0);
 
-    // Baseline ambient light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
+    // Baseline ambient light (deep space high-contrast)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.08);
     scene.add(sunLight, sunLight.target, earthLight, earthLight.target, ambientLight);
 
-    const marker = new THREE.Mesh(new THREE.SphereGeometry(1, 14, 10), new THREE.MeshBasicMaterial({ color: 0x76ffd0 }));
+    const marker = new THREE.Mesh(
+      new THREE.SphereGeometry(1, 16, 12),
+      new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+    );
     marker.visible = false; scene.add(marker);
 
     // Solar visual with corona glare
@@ -172,7 +177,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     const center = new THREE.Vector3();
     const savedPosition = new THREE.Vector3(), savedTarget = new THREE.Vector3();
     let starfield: THREE.Points | null = null;
-    let inspectActive = true;
+    let inspectActive = false;
 
     const value: Runtime = {
       terrain: null, inverse, marker, up: new THREE.Vector3(0, 0, 1), mode: 'orbit',
@@ -192,7 +197,11 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         }
         if (next === 'eye' && !value.selectedPoint) return false;
         if (next === value.mode) { render(); return true; }
-        if (next === 'eye') { savedPosition.copy(camera.position); savedTarget.copy(controls.target); }
+        if (next === 'eye') {
+          savedPosition.copy(camera.position); savedTarget.copy(controls.target);
+          yaw = 0; pitch = -0.08;
+          setCamHeading(0); setCamPitch(-5);
+        }
         value.mode = next;
         controls.enabled = next === 'orbit';
         marker.visible = next === 'orbit' && !!value.selectedPoint;
@@ -229,12 +238,12 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           const sunDir = new THREE.Vector3(...data.sun.directional_vector_local_z_up);
           sunLight.target.position.copy(center);
           sunLight.position.copy(center).addScaledVector(sunDir, lightDistance);
-          sunLight.intensity = data.sun.elevation_deg > 0 ? 3.0 : 0.0;
+          sunLight.intensity = data.sun.elevation_deg > 0 ? 3.2 : 0.0;
 
           const earthDir = new THREE.Vector3(...data.earth.directional_vector_local_z_up);
           earthLight.target.position.copy(center);
           earthLight.position.copy(center).addScaledVector(earthDir, lightDistance);
-          earthLight.intensity = data.earth.elevation_deg > 0 ? (0.05 + data.earth.illuminated_fraction * 0.15) : 0.0;
+          earthLight.intensity = data.earth.elevation_deg > 0 ? (0.04 + data.earth.illuminated_fraction * 0.16) : 0.0;
           earthMaterial.uniforms.sunDirection!.value.set(...data.earth.sun_direction_local_z_up);
         } else {
           sunLight.intensity = 0;
@@ -245,7 +254,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       },
       inspect(on) {
         inspectActive = on;
-        ambientLight.intensity = on ? 0.28 : 0.04;
+        ambientLight.intensity = on ? 0.22 : 0.08;
         render();
       },
     };
@@ -346,24 +355,27 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         `${import.meta.env.BASE_URL}terrain/lunar-detail-color.png`,
         colTex => {
           if (cancelled) { colTex.dispose(); return; }
+          const repeats = Math.max(32, Math.round(extent / 25));
           colTex.wrapS = colTex.wrapT = THREE.RepeatWrapping;
+          colTex.repeat.set(repeats, repeats);
           colTex.colorSpace = THREE.SRGBColorSpace;
-          colTex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+          colTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
           texLoader.load(
             `${import.meta.env.BASE_URL}terrain/lunar-detail-normal.png`,
             normTex => {
               if (cancelled) { normTex.dispose(); return; }
               normTex.wrapS = normTex.wrapT = THREE.RepeatWrapping;
-              normTex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+              normTex.repeat.set(repeats, repeats);
+              normTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
               terrain.traverse(child => {
                 if (child instanceof THREE.Mesh && child.material) {
                   const mat = new THREE.MeshStandardMaterial({
                     map: colTex,
-                    color: new THREE.Color(0xa2a5aa),
+                    color: new THREE.Color(0xb2b6bc),
                     normalMap: normTex,
-                    normalScale: new THREE.Vector2(0.45, 0.45),
+                    normalScale: new THREE.Vector2(0.85, 0.85),
                     roughness: 0.95,
-                    metalness: 0.0,
+                    metalness: 0.02,
                   });
                   child.material = mat;
                   mat.needsUpdate = true;
@@ -381,9 +393,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
               if (child instanceof THREE.Mesh && child.material) {
                 const mat = new THREE.MeshStandardMaterial({
                   map: regolithTextures.map,
-                  color: new THREE.Color(0xa2a5aa),
+                  color: new THREE.Color(0xa8acb2),
                   normalMap: regolithTextures.normalMap,
-                  normalScale: new THREE.Vector2(0.45, 0.45),
+                  normalScale: new THREE.Vector2(0.75, 0.75),
                   roughness: 0.95,
                   metalness: 0.0,
                 });
@@ -424,7 +436,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       value.setLighting(sky);
       controls.update();
       resize();
-      setState('Measured terrain ready. Choose a point in Orbit Camera, then switch to Lander Eye-Level.');
+      setState('Ready. Click mesh to set eye-level position.');
       setLoaded(v => v + 1);
     }).catch(error => {
       if (!cancelled) setState(error instanceof Error ? error.message : 'Could not load terrain.');
@@ -440,8 +452,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     };
     const move = (event: PointerEvent) => {
       if (value.mode !== 'eye' || !down || down.id !== event.pointerId) return;
-      yaw -= (event.clientX - down.lastX) * .004;
-      pitch = THREE.MathUtils.clamp(pitch + (event.clientY - down.lastY) * .004, -1.45, 1.45);
+      yaw -= (event.clientX - down.lastX) * 0.004;
+      pitch = THREE.MathUtils.clamp(pitch + (event.clientY - down.lastY) * 0.004, -1.45, 1.45);
       down.lastX = event.clientX; down.lastY = event.clientY;
       setCamHeading(Math.round(((yaw * 180 / Math.PI) % 360 + 360) % 360));
       setCamPitch(Math.round(pitch * 180 / Math.PI));
@@ -466,8 +478,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     const key = (event: KeyboardEvent) => {
       if (value.mode !== 'eye' || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
       event.preventDefault();
-      yaw += event.key === 'ArrowRight' ? .06 : event.key === 'ArrowLeft' ? -.06 : 0;
-      pitch = THREE.MathUtils.clamp(pitch + (event.key === 'ArrowUp' ? .04 : event.key === 'ArrowDown' ? -.04 : 0), -1.45, 1.45);
+      yaw += event.key === 'ArrowRight' ? 0.06 : event.key === 'ArrowLeft' ? -0.06 : 0;
+      pitch = THREE.MathUtils.clamp(pitch + (event.key === 'ArrowUp' ? 0.04 : event.key === 'ArrowDown' ? -0.04 : 0), -1.45, 1.45);
       setCamHeading(Math.round(((yaw * 180 / Math.PI) % 360 + 360) % 360));
       setCamPitch(Math.round(pitch * 180 / Math.PI));
       render();
@@ -509,10 +521,10 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
   useEffect(() => {
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      setLighting('Updating SPICE sky… previous frame retained until the calculation completes.');
+      setLighting('Updating SPICE sky…');
       void fetch(`${api}/api/terrain/models/${encodeURIComponent(region.id)}/lighting?${new URLSearchParams({ time: observationTime })}`, { signal: controller.signal })
         .then(async response => {
-          if (!response.ok) throw new Error('SPICE sky unavailable. Sunlight is off; inspection light remains optional.');
+          if (!response.ok) throw new Error('SPICE sky unavailable.');
           return response.json();
         })
         .then((data: Lighting) => {
@@ -522,7 +534,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             !Number.isFinite(data.earth.illuminated_fraction) || data.earth.illuminated_fraction < 0 || data.earth.illuminated_fraction > 1 ||
             data.earth.sun_direction_local_z_up?.length !== 3 || !data.earth.sun_direction_local_z_up.every(Number.isFinite)) throw new Error('Invalid SPICE sky response.');
           runtime.current?.setLighting(data);
-          setLighting(`Sun ${data.sun.elevation_deg.toFixed(2)}° · Earth ${data.earth.elevation_deg.toFixed(2)}° · Earth illuminated ${(data.earth.illuminated_fraction * 100).toFixed(1)}% · ${data.time}`);
+          setLighting(`☀️ Sun ${data.sun.elevation_deg.toFixed(1)}° · 🌍 Earth ${data.earth.elevation_deg.toFixed(1)}° (${(data.earth.illuminated_fraction * 100).toFixed(0)}% lit)`);
         }).catch(error => {
           if (!controller.signal.aborted) {
             runtime.current?.setLighting(null);
@@ -533,26 +545,65 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     return () => { window.clearTimeout(timer); controller.abort(); };
   }, [region, observationTime]);
 
-  return <div className="local-terrain-viewer">
-    <div className="local-view-modes" role="group" aria-label="Surface camera mode">
-      <button type="button" aria-pressed={mode === 'orbit' || !onMesh} onClick={() => setMode('orbit')}>Orbit Camera</button>
-      <button type="button" disabled={!onMesh} aria-pressed={mode === 'eye' && onMesh} onClick={() => setMode('eye')}>Lander Eye-Level (1.8m)</button>
+  return (
+    <div className="local-terrain-viewer">
+      {/* Top HUD Controls Overlay Bar */}
+      <div className="surface-hud-bar">
+        <div className="surface-hud-modes" role="group" aria-label="Surface camera mode">
+          <button
+            type="button"
+            className={`hud-mode-btn ${mode === 'orbit' || !onMesh ? 'hud-mode-active' : ''}`}
+            aria-pressed={mode === 'orbit' || !onMesh}
+            onClick={() => setMode('orbit')}
+          >
+            🛰️ Orbit View
+          </button>
+          <button
+            type="button"
+            className={`hud-mode-btn ${mode === 'eye' && onMesh ? 'hud-mode-active' : ''}`}
+            disabled={!onMesh}
+            aria-pressed={mode === 'eye' && onMesh}
+            onClick={() => setMode('eye')}
+          >
+            👨‍🚀 Lander Eye-Level (1.8m)
+          </button>
+        </div>
+
+        {mode === 'eye' && onMesh && (
+          <div className="surface-hud-targets">
+            <button type="button" className="hud-target-btn" onClick={() => runtime.current?.faceBody('sun')}>
+              ☀️ Face Sun
+            </button>
+            <button type="button" className="hud-target-btn" onClick={() => runtime.current?.faceBody('earth')}>
+              🌍 Face Earth
+            </button>
+            <button type="button" className="hud-target-btn" onClick={() => runtime.current?.faceBody('north')}>
+              🧭 North (0°)
+            </button>
+          </div>
+        )}
+
+        <div className="surface-hud-telemetry">
+          {mode === 'eye' && onMesh ? (
+            <span>🔭 Heading {camHeading.toString().padStart(3, '0')}° · Pitch {camPitch}°</span>
+          ) : (
+            <span>🖱️ Click mesh to pick eye-level position · Drag to orbit</span>
+          )}
+        </div>
+      </div>
+
+      {/* Main 3D Canvas */}
+      <div className="local-terrain-canvas" ref={host} />
+
+      {/* Sleek Bottom Metadata & Ephemeris Strip */}
+      <div className="surface-footer-strip">
+        <span className="surface-meta-tag">
+          {region.name} · {region.source_spacing_m.toFixed(1)}m SLDEM2015 Topography (1:1 scale)
+        </span>
+        <span className="surface-sky-tag">
+          {lighting.includes('Sun') ? lighting : 'SPICE DE440 Solar & Earth Ephemeris'}
+        </span>
+      </div>
     </div>
-    {mode === 'eye' && onMesh && <div className="local-sky-tools" style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '10px' }}>
-      <button type="button" onClick={() => runtime.current?.faceBody('sun')}>Look toward Sun</button>
-      <button type="button" onClick={() => runtime.current?.faceBody('earth')}>Look toward Earth</button>
-      <button type="button" onClick={() => runtime.current?.faceBody('north')}>Horizon North (0°)</button>
-      <span style={{ fontSize: '0.85rem', color: '#76ffd0', marginLeft: 'auto', fontFamily: 'monospace' }}>
-        🔭 1.8m Eye-Level · Heading {camHeading.toString().padStart(3, '0')}° · Pitch {camPitch}°
-      </span>
-    </div>}
-    <p>{mode === 'eye' && onMesh ? 'Camera fixed 1.8 m above the selected mesh point. Drag or use arrow keys to look around; switch to Orbit Camera to choose another point.' : 'Drag to orbit, scroll to zoom, and click the mesh to choose an eye-level position.'}</p>
-    <div className="local-terrain-canvas" ref={host} style={{ position: 'relative', border: '1px solid rgba(118, 255, 208, 0.22)', borderRadius: '16px', overflow: 'hidden' }} />
-    <p role="status">{state}</p><p role="status">{lighting}</p>
-    <label><input type="checkbox" checked={inspection} onChange={e => setInspection(e.target.checked)} /> Topographic relief light (illustrative, +1.2 lux)</label>
-    <p>{region.source_id} · {region.source_spacing_m.toFixed(1)} m source sampling · 1:1 scale. Horizon and shadows are limited to this exported patch.</p>
-    <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginTop: '0.35rem' }}>Source elevation: 1:1 SLDEM2015 topography · Solar &amp; Earth ephemeris from NAIF SPICE DE440</p>
-    {region.source_mismatch && <p>The elevation API uses a different, higher-resolution source here; this context mesh is not a blend of both datasets.</p>}
-    {region.appearance_note && <p>{region.appearance_note}</p>}
-  </div>;
+  );
 }
