@@ -400,7 +400,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     sunLight.castShadow = true;
     const shadowResolution = detailedRegions.has(region.id) ? 4096 : 2048;
     sunLight.shadow.mapSize.set(shadowResolution, shadowResolution);
-    sunLight.shadow.bias = -0.000002; sunLight.shadow.normalBias = 0.05;
+    sunLight.shadow.bias = -0.00001; sunLight.shadow.normalBias = 0.05;
 
     // Earthshine directional light
     const earthLight = new THREE.DirectionalLight(0x8cb5df, 0);
@@ -580,7 +580,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           const earthElev = data.earth.elevation_deg;
           const earthIllum = Math.max(0.18, data.earth.illuminated_fraction);
           earthLight.intensity = detailedRegions.has(region.id)
-            ? (earthElev > 0 ? .12 * data.earth.illuminated_fraction : 0)
+            ? (earthElev > 0 ? .004 * data.earth.illuminated_fraction : 0)
             : (earthElev > -10 ? (0.24 + earthIllum * 0.45) : 0.08);
           earthMaterial.uniforms.sunDirection!.value.set(...data.earth.sun_direction_local_z_up);
         } else {
@@ -609,7 +609,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       shadow.left = shadow.bottom = -radius; shadow.right = shadow.top = radius;
       const depthSpan = Math.max(1000, radius * 3);
       shadow.near = Math.max(10, lightDistance - depthSpan); shadow.far = lightDistance + depthSpan;
-      sunLight.shadow.normalBias = value.mode === 'eye' ? .003 : .08;
+      sunLight.shadow.normalBias = value.mode === 'eye' ? .035 : .08;
       shadow.updateProjectionMatrix();
     }
 
@@ -755,6 +755,22 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         child.castShadow = true;
         child.receiveShadow = true;
         const positions = child.geometry.getAttribute('position');
+        if (positions && detailedRegions.has(region.id)) {
+          // Smooth duplicated GLB seam vertices through normals only. Keep positions,
+          // indices and all coordinate transforms byte-for-byte unchanged.
+          child.geometry.computeVertexNormals();
+          const normals = child.geometry.getAttribute('normal');
+          const sums = new Map<string,THREE.Vector3>();
+          const keys:string[]=[];
+          for(let i=0;i<positions.count;i++) {
+            const key=`${positions.getX(i).toFixed(3)},${positions.getY(i).toFixed(3)},${positions.getZ(i).toFixed(3)}`;
+            keys.push(key);const sum=sums.get(key) ?? new THREE.Vector3();
+            sum.add(new THREE.Vector3().fromBufferAttribute(normals,i));sums.set(key,sum);
+          }
+          sums.forEach(normal=>normal.normalize());
+          keys.forEach((key,i)=>{const normal=sums.get(key)!;normals.setXYZ(i,normal.x,normal.y,normal.z);});
+          normals.needsUpdate=true;
+        }
         if (positions) {
           const uv = new Float32Array(positions.count * 2);
           for (let i = 0; i < positions.count; i++) {
@@ -818,7 +834,12 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
             const positions=context.geometry.getAttribute('position');
             const uv=new Float32Array(positions.count*2);
             for(let i=0;i<positions.count;i++){uv[i*2]=positions.getX(i)/24;uv[i*2+1]=positions.getY(i)/24;}
-            context.geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));context.material=material;
+            context.geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));
+            const distantMaterial=material.clone();
+            distantMaterial.normalMap=null;distantMaterial.roughnessMap=null;
+            distantMaterial.onBeforeCompile=material.onBeforeCompile;
+            distantMaterial.customProgramCacheKey=material.customProgramCacheKey;
+            context.material=distantMaterial;
           }
           if(detail) detail.material=material;
           render();
