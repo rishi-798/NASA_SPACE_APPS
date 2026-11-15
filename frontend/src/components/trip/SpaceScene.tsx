@@ -366,11 +366,11 @@ export function SpaceScene({
       ringGeo.rotateX(-Math.PI / 2);
       const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.45 });
       const stagingRing = new THREE.Mesh(ringGeo, ringMat);
-      stagingRing.position.set(0, -3.5, 0);
+      stagingRing.position.set(0, -2.9, 0);
       scene.add(stagingRing);
 
       const gridHelper = new THREE.GridHelper(8, 16, 0x1e3a5f, 0x0c1524);
-      gridHelper.position.set(0, -3.51, 0);
+      gridHelper.position.set(0, -2.91, 0);
       scene.add(gridHelper);
 
       camera.position.set(6.5, 2.2, 9.5);
@@ -397,7 +397,7 @@ export function SpaceScene({
         if (size.z > size.y && size.z > size.x) model.rotateX(-Math.PI / 2);
         else if (size.x > size.y) model.rotateZ(Math.PI / 2);
         bounds = new THREE.Box3().setFromObject(model);
-        model.scale.setScalar(7 / bounds.getSize(new THREE.Vector3()).y);
+        model.scale.setScalar(5.8 / bounds.getSize(new THREE.Vector3()).y);
         bounds = new THREE.Box3().setFromObject(model);
         model.position.sub(bounds.getCenter(new THREE.Vector3()));
         model.traverse((object) => {
