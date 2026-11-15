@@ -727,6 +727,110 @@
       "asset_metadata_url": "https://raw.githubusercontent.com/rishi-798/NASA_SPACE_APPS/fa21e7f373ecc198ee48eac1c79554171de9e7de/outputs/Surveyor%207%20measured%20terrain%20metadata.json",
       "view_state": "measured terrain preview",
       "source_production_ready": false
+    },
+    {
+      "id": "REGION-ATHENA",
+      "name": "Athena landing site",
+      "anchor": {
+        "latitude": -84.79,
+        "longitude": 29.2
+      },
+      "grid_id": "MOON-R0530-C0056-r1-c9",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 9800
+      },
+      "model_url": "/terrain/REGION-ATHENA.glb",
+      "model_bytes": 4166188,
+      "sha256": "095a7770826dcd26c493235a6fc6853423eef971c569b240f4bd0dedcd5b3b94",
+      "local_to_moon_fixed": [
+        [
+          -0.4878596591387327,
+          0.8693156565160495,
+          0.07926690558555595,
+          137718.3217643449
+        ],
+        [
+          0.8729220772698096,
+          0.4858440987061874,
+          0.044300776148199834,
+          76968.1684798824
+        ],
+        [
+          0.0,
+          0.09080639343373545,
+          -0.9958685650785236,
+          -1730222.044967427
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "gltf_up": "Y",
+      "reference_radius_m": 1737400,
+      "coordinate_frame": "MOON_ME / DE421",
+      "source_id": "ldem_60s_60m_float",
+      "source_spacing_m": 60,
+      "source_mismatch": false,
+      "height_delta_m": 5.7220458984375e-05,
+      "view_state": "measured terrain preview",
+      "source_production_ready": false,
+      "appearance_note": "LOLA 60 m polar elevation; smaller rocks and fine surface relief in the viewer are illustrative."
+    },
+    {
+      "id": "REGION-ODYSSEUS",
+      "name": "Odysseus landing site",
+      "anchor": {
+        "latitude": -80.13,
+        "longitude": 1.44
+      },
+      "grid_id": "MOON-R0516-C0093-r0-c2",
+      "coverage": {
+        "kind": "circle",
+        "radius_m": 9800
+      },
+      "model_url": "/terrain/REGION-ODYSSEUS.glb",
+      "model_bytes": 4224968,
+      "sha256": "156a91f31fd2118f4f00856180568fd872ce7261020f3833061544e6081537e3",
+      "local_to_moon_fixed": [
+        [
+          -0.025130095443337476,
+          0.9848880765108584,
+          0.17135914054916943,
+          297719.37079012697
+        ],
+        [
+          0.9996841892832999,
+          0.024758150252898473,
+          0.004307631953423399,
+          7484.079755877814
+        ],
+        [
+          0.0,
+          0.1714132746983038,
+          -0.9851992129804021,
+          -1711685.1126321508
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "gltf_up": "Y",
+      "reference_radius_m": 1737400,
+      "coordinate_frame": "MOON_ME / DE421",
+      "source_id": "ldem_60s_60m_float",
+      "source_spacing_m": 60,
+      "source_mismatch": false,
+      "height_delta_m": -4.38690185546875e-05,
+      "view_state": "measured terrain preview",
+      "source_production_ready": false,
+      "appearance_note": "LOLA 60 m polar elevation; smaller rocks and fine surface relief in the viewer are illustrative."
     }
   ]
 }

@@ -1,0 +1,49 @@
+{
+  "name": "Odysseus",
+  "anchor": [
+    -80.13,
+    1.44
+  ],
+  "source_id": "ldem_60s_60m_float",
+  "source_url": "https://huggingface.co/datasets/Deejee-2-406/brahmos-lunar-terrain-cogs/resolve/a6b2c53f65661fbd5165eae5a83449aeb35abcd8/cogs/ldem_60s_60m_float.tif",
+  "source_spacing_m": 60,
+  "source_center_m": 2593.94140625,
+  "api_center_m": 2593.9414501190186,
+  "matrix": [
+    [
+      -0.025130095443337476,
+      0.9848880765108584,
+      0.17135914054916943,
+      297719.37079012697
+    ],
+    [
+      0.9996841892832999,
+      0.024758150252898473,
+      0.004307631953423399,
+      7484.079755877814
+    ],
+    [
+      0.0,
+      0.1714132746983038,
+      -0.9851992129804021,
+      -1711685.1126321508
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ]
+  ],
+  "vertices": 88328,
+  "faces": 87658,
+  "production_ready": false,
+  "source_pds_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/float_img/ldem_60s_60m_float.lbl",
+  "coordinate_frame": "MOON_ME / DE421",
+  "reference_radius_m": 1737400,
+  "footprint": "10 km radius tangent-frame crop; registered matching radius 9.8 km",
+  "source_units": "kilometres above 1737.4 km sphere; converted to metres",
+  "local_axes": "east, north, up",
+  "material_note": "Blender regolith texture and review light are illustrative; mesh heights are measured. Web materials are separate.",
+  "roundtrip_check": "1000 sampled Blender mesh vertices match imported GLB vertices to less than 0.01 m"
+}
