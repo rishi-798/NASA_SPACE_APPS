@@ -62,7 +62,19 @@ export function TripPage() {
   const [destinationQuery, setDestinationQuery] = useState("");
   const [coordinateText, setCoordinateText] = useState("");
   const [coordinateError, setCoordinateError] = useState("");
-  const [showOtherLaunchers, setShowOtherLaunchers] = useState(() => !!mission.rocketId && !rockets.find((item) => item.id === mission.rocketId)?.isNasa);
+  const [showOtherLaunchers, setShowOtherLaunchers] = useState(() => {
+    try {
+      const saved = localStorage.getItem("clps_show_other_launchers");
+      if (saved !== null) return saved === "true";
+    } catch {}
+    return true; // Always turned on by default
+  });
+  const toggleOtherLaunchers = (enabled: boolean) => {
+    setShowOtherLaunchers(enabled);
+    try {
+      localStorage.setItem("clps_show_other_launchers", String(enabled));
+    } catch {}
+  };
   const [preview, setPreview] = useState<{ revision: number; state: AnalysisState; result: AnalysisResult | null; error?: string } | null>(null);
   const [storageNotice, setStorageNotice] = useState(false);
   const active = useRef<AbortController | null>(null);
@@ -197,7 +209,7 @@ export function TripPage() {
             <p className="trip-note">Injection Δv is calculated from your transfer dates in the Flight step. Vehicle performance, staging and descent Δv are not assessed.</p>
             <button className="trip-primary" disabled={!rocket} onClick={() => go("moon")}>Choose rocket <ArrowRight /></button><button className="trip-secondary" onClick={() => go("earth")}>Back to Earth</button></aside></div>
         <div className="trip-rocket-gallery" aria-label="Rocket model catalogue">{allowedRockets.map((item) => <button key={item.id} aria-pressed={mission.rocketId === item.id} onClick={() => dispatch({ type: "rocket", id: item.id })}><RocketLaunch weight="light" /><span>{item.modelLabel}</span><strong>{item.name}</strong><small>{item.category}</small></button>)}</div>
-        <label className="trip-catalogue-toggle"><input type="checkbox" checked={showOtherLaunchers} onChange={(event) => setShowOtherLaunchers(event.target.checked)} />Include international and commercial catalogue entries</label>
+        <label className="trip-catalogue-toggle"><input type="checkbox" checked={showOtherLaunchers} onChange={(event) => toggleOtherLaunchers(event.target.checked)} />Include international and commercial catalogue entries</label>
         <p className="trip-note">The collection includes NASA meshes and clearly labelled community or project reference models. Pad associations are historical context, not flight approval.</p>
       </>}
       {mission.stage === "moon" && <div className="trip-layout"><div className="trip-visual trip-moon-visual">
