@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Play, Pause, ArrowCounterClockwise, ArrowRight, Compass, Gauge, RocketLaunch, Planet, ShieldCheck, Sparkle } from "@phosphor-icons/react";
+import { Play, Pause, ArrowCounterClockwise, ArrowRight, Compass, Gauge, RocketLaunch, Planet } from "@phosphor-icons/react";
 import { MISSION_PHASES, type MissionPhase } from "./missionPhaseData";
 import "./planner.css";
 
@@ -60,8 +60,8 @@ export function MissionPhasePlanner() {
     const currentDeltaV = prevDeltaV + p.deltaVBudgetMS * progress;
 
     // Distance to Earth / Moon
-    let distEarthKm = 0;
-    let distMoonKm = 384400;
+    let distEarthKm: number;
+    let distMoonKm: number;
     if (p.id === "ascent" || p.id === "parking") {
       distEarthKm = 6371 + alt;
       distMoonKm = 384400 - alt;

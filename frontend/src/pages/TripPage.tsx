@@ -1,8 +1,9 @@
-import { ArrowLeft, ArrowRight, ArrowUpRight, Check, CheckCircle, GlobeHemisphereWest, RocketLaunch } from "@phosphor-icons/react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Check, CheckCircle, RocketLaunch } from "@phosphor-icons/react";
 import { lazy, Suspense, useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { MoonMap, type MoonControls, type MoonLocation } from "../MoonMap";
 import { ConditionsPanel } from "../components/explorer/ConditionsPanel";
+import { useTransferCalculation } from "../lib/useTransferCalculation";
 import { TransferPlanner } from "../components/trip/TransferPlanner";
 import { MissionDossierModal } from "../components/trip/MissionDossierModal";
 import { LaunchWeatherPanel } from "../components/trip/LaunchWeatherPanel";
@@ -52,6 +53,10 @@ export function TripPage() {
     return restoreMission(saved, launchSites.map((site) => site.id), rockets.map((rocket) => rocket.id));
   });
   const [liftoffUtc, setLiftoffUtc] = useState("");
+  const [parkingAltitudeText,setParkingAltitudeText] = useState(String(mission.parkingAltitudeKm));
+  const transferInput={departureUtc:mission.transferDepartureUtcTime,arrivalUtc:mission.utcTime,parkingAltitudeKm:parkingAltitudeText.trim()?Number(parkingAltitudeText):NaN};
+  const transfer=useTransferCalculation(transferInput);
+  const changeParkingAltitude=(value:string)=>{setParkingAltitudeText(value);const altitude=Number(value);if(value.trim()&&Number.isFinite(altitude)&&altitude>=160&&altitude<=2000)dispatch({type:"parking-altitude",altitude});};
   const [tripMoonView, setTripMoonView] = useState<"globe" | "surface">("globe");
   const [query, setQuery] = useState("");
   const [destinationQuery, setDestinationQuery] = useState("");
@@ -267,16 +272,17 @@ export function TripPage() {
           <div className="trip-unavailable" style={{ borderLeftColor: "var(--accent)" }}><CheckCircle weight="fill" color="#a2ecd3" /><div><strong>Topographic Navigation Mode</strong><p>Calibrated coordinate projection with real-time NAIF SPICE solar lighting and Earth line-of-sight vectors.</p></div></div>
           <button className="trip-primary" disabled={!landing} onClick={() => go("landing")}>Review landing point <ArrowRight /></button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button></aside></div>}
       {(mission.stage === "landing" || mission.stage === "reveal") && landing && <>
-        <TransferPlanner input={{departureUtc:mission.transferDepartureUtcTime,arrivalUtc:mission.utcTime,parkingAltitudeKm:mission.parkingAltitudeKm}}
-          onDeparture={time=>dispatch({type:"transfer-departure",time})} onArrival={time=>dispatch({type:"time",time})}
-          onAltitude={altitude=>dispatch({type:"parking-altitude",altitude})} frozen={mission.stage==="reveal"} />
         <div className="trip-layout">
-          <div className="trip-visual"><div className="trip-landing-presentation"><img src="/lunar-color-map.webp" alt="NASA lunar color map. Overview only, not a detailed scene of the selected point." /><GlobeHemisphereWest weight="thin" /><span>Selected lunar point</span><strong>{formatCoordinate(landing.latitude, "lat")}<br />{formatCoordinate(landing.longitude, "lon")}</strong><p>{landing.name}</p></div></div>
-          <aside className="trip-panel"><p className="trip-section-label">{mission.stage === "reveal" ? "Mission record" : "Confirm your selection"}</p><h2>{landing.name}</h2><dl className="trip-stat-list"><div><dt>Departure</dt><dd>{departure?.name} / {departure?.pad}</dd></div><div><dt>Rocket</dt><dd>{rocket?.name}</dd></div><div><dt>Latitude</dt><dd>{landing.latitude.toFixed(6)}°</dd></div><div><dt>Longitude</dt><dd>{landing.longitude.toFixed(6)}° east</dd></div><div><dt>Point elevation</dt><dd>{elevation.text}{elevation.state === "unavailable" ? " (see terrain information)" : ""}</dd></div></dl>
+          <div className="trip-visual trip-mission-visual"><Suspense fallback={sceneLoading}><SpaceScene key={transfer.key} transfer={transfer.data} /></Suspense>
+            {transfer.loading && <p className="trip-scene-message" role="status">Calculating the mission flight…</p>}</div>
+          <aside className="trip-panel"><TransferPlanner input={transferInput} altitudeText={parkingAltitudeText} calculation={transfer}
+            onDeparture={time=>dispatch({type:"transfer-departure",time})} onArrival={time=>dispatch({type:"time",time})}
+            onAltitudeText={changeParkingAltitude} frozen={mission.stage==="reveal"} />
+            <p className="trip-section-label">{mission.stage === "reveal" ? "Mission record" : "Confirm your selection"}</p><h2>{landing.name}</h2><dl className="trip-stat-list"><div><dt>Departure</dt><dd>{departure?.name} / {departure?.pad}</dd></div><div><dt>Rocket</dt><dd>{rocket?.name}</dd></div><div><dt>Latitude</dt><dd>{landing.latitude.toFixed(6)}°</dd></div><div><dt>Longitude</dt><dd>{landing.longitude.toFixed(6)}° east</dd></div><div><dt>Point elevation</dt><dd>{elevation.text}{elevation.state === "unavailable" ? " (see terrain information)" : ""}</dd></div></dl>
             <p className="trip-note">Surface observation reference: <time dateTime={mission.utcTime}>{mission.utcTime}</time>. This uses the arrival epoch for planning; it is not a predicted touchdown time.</p>
             <p className="trip-note">Chosen coordinate is retained exactly. Terrain source frames and the ephemeris frame have alignment uncertainty; a single point height is not a landing-safety claim.</p>
             {mission.error && <p role="alert" className="trip-error">{mission.error}</p>}
-            {mission.stage === "landing" ? <><button className="trip-secondary" disabled={currentPreview?.state === "loading"} onClick={() => void analyze(false)}>{currentPreview?.state === "loading" ? "Analyzing..." : currentPreview?.state === "error" ? "Retry analysis" : "Analyze landing"}</button><button className="trip-primary" disabled={!currentPreview?.result} onClick={() => void analyze(true)}>Plan this landing <ArrowRight /></button><button className="trip-secondary" onClick={() => go("moon")}>Change landing point</button></> : <><p className="trip-note">The date-based transfer model above is preliminary. Launch-window feasibility, selected vehicle performance, capture and descent are not validated.</p><button className="trip-secondary" onClick={() => go("landing")}>Edit mission dates</button><button className="trip-secondary" onClick={() => go("earth")}>Edit departure</button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button><button className="trip-primary" onClick={() => go("moon")}>Explore landing site <ArrowRight /></button></>}
+            {mission.stage === "landing" ? <><button className="trip-secondary" disabled={currentPreview?.state === "loading"} onClick={() => void analyze(false)}>{currentPreview?.state === "loading" ? "Analyzing..." : currentPreview?.state === "error" ? "Retry analysis" : "Analyze landing"}</button><button className="trip-primary" disabled={!currentPreview?.result} onClick={() => void analyze(true)}>Plan this landing <ArrowRight /></button><button className="trip-secondary" onClick={() => go("moon")}>Change landing point</button></> : <><p className="trip-note">The mission animation uses a preliminary date-based transfer. Launch-window feasibility, selected vehicle performance, capture and descent are not validated.</p><button className="trip-secondary" onClick={() => go("landing")}>Edit mission dates</button><button className="trip-secondary" onClick={() => go("earth")}>Edit departure</button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button><button className="trip-primary" onClick={() => go("moon")}>Explore landing site <ArrowRight /></button></>}
             {analysis && <MissionDossierModal latitude={landing.latitude} longitude={landing.longitude} start={mission.utcTime}
               launchSiteId={departure?.id} launchVehicle={rocket?.name} liftoffUtc={liftoffUtc ? `${liftoffUtc}:00Z` : undefined} missionName={landing.name} />}
             <TerrainContext latitude={landing.latitude} longitude={landing.longitude} catalogue={catalogue.state} onRetry={catalogue.retry} terrain={analysis?.terrain ?? null} horizon={analysis?.horizon ?? null} onOpenSurface={() => { setTripMoonView("surface"); go("moon"); }} />
@@ -287,6 +293,6 @@ export function TripPage() {
           <div><HorizonContainer data={analysis?.conditions ?? null} profile={analysis?.horizon ?? null} /><VisibilityTimeline data={analysis?.conditions ?? null} summary={analysis?.summary ?? null} sampleCount={analysis?.samples.length ?? 0} /></div></div>
       </>}
     </>}
-    <footer className="trip-footer"><p>Exploration prototype. Geometric visibility is not a communications link budget or landing certification.</p><button onClick={() => { active.current?.abort(); dispatch({ type: "reset" }); setLiftoffUtc(""); }}>Start a new trip</button></footer>
+    <footer className="trip-footer"><p>Exploration prototype. Geometric visibility is not a communications link budget or landing certification.</p><button onClick={() => { active.current?.abort(); dispatch({ type: "reset" }); setLiftoffUtc(""); setParkingAltitudeText("200"); }}>Start a new trip</button></footer>
   </article>;
 }

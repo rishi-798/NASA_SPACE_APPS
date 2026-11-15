@@ -695,7 +695,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       });
 
       const texLoader = new THREE.TextureLoader();
-      const useFallbackTextures = () => {
+      const loadFallbackTextures = () => {
         if (cancelled) return;
         try {
           const isDetailed = detailedRegions.has(region.id);
@@ -724,7 +724,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           render();
         } catch { /* Retain the model's original material if canvas textures are unavailable. */ }
       };
-      if (detailedRegions.has(region.id)) useFallbackTextures();
+      if (detailedRegions.has(region.id)) loadFallbackTextures();
       else texLoader.load(
         `${import.meta.env.BASE_URL}terrain/lunar-detail-color.png`,
         colTex => {
@@ -766,11 +766,11 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
               render();
             },
             undefined,
-            useFallbackTextures
+            loadFallbackTextures
           );
         },
         undefined,
-        useFallbackTextures
+        loadFallbackTextures
       );
 
       // Auto-sample center landing point

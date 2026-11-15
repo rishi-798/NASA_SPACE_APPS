@@ -241,7 +241,7 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
     comboTimer: 0,
   });
 
-  if (!audioRef.current) {
+  if (audioRef.current === null) {
     audioRef.current = new GameAudio();
   }
 
@@ -270,8 +270,8 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
 
     // Velocity scale based on tier and sector
     const speed = (tier === 1 ? 1.9 : tier === 2 ? 1.3 : 0.8) * (1 + (gameRef.current.sector - 1) * 0.12);
-    let vx = (Math.random() * 2 - 1) * speed;
-    let vy = (Math.random() * 2 - 1) * speed;
+    const vx = (Math.random() * 2 - 1) * speed;
+    const vy = (Math.random() * 2 - 1) * speed;
 
     // Ensure spawn is not on top of ship
     let posX = x;
@@ -321,7 +321,7 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
     const asteroidCount = 3 + sectorNum;
     for (let i = 0; i < asteroidCount; i++) {
       const edge = Math.floor(Math.random() * 4);
-      let ax = 0, ay = 0;
+      let ax: number, ay: number;
       if (edge === 0) { ax = Math.random() * w; ay = 20; }
       else if (edge === 1) { ax = w - 20; ay = Math.random() * h; }
       else if (edge === 2) { ax = Math.random() * w; ay = h - 20; }
