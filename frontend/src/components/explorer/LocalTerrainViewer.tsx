@@ -9,6 +9,8 @@ import { eyePosition, lookDirection, type Vec3 } from '../../lib/surfaceViewMath
 import { createRegolithTextures } from '../../lib/regolithTexture';
 import { buildLunarSurfaceDetail, lunarDetailHeight } from '../../lib/lunarSurfaceDetail';
 
+const detailedRegions = new Set(['REGION-APOLLO-17', 'REGION-LUNA-21', 'REGION-LUNOKHOD-1', 'REGION-LUNOKHOD-2', 'REGION-SURVEYOR-1', 'REGION-SURVEYOR-5', 'REGION-SURVEYOR-6', 'REGION-SURVEYOR-7']);
+
 const api = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 type SkyBody = { directional_vector_local_z_up: Vec3; angular_radius_deg: number; elevation_deg: number };
 type Lighting = { model_id: string; time: string; sun: SkyBody; earth: SkyBody & { illuminated_fraction: number; sun_direction_local_z_up: Vec3 } };
@@ -22,7 +24,7 @@ type Runtime = {
   placeRocks: (hit: THREE.Intersection) => void; setRocksVisible: (on: boolean) => void;
 };
 
-function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, hit: THREE.Intersection) {
+function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, hit: THREE.Intersection, enriched = false) {
   if (!(hit.object instanceof THREE.Mesh) || hit.faceIndex == null) return previous;
   const mesh = hit.object, positions = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
   if (!positions || !indices) return previous;
@@ -77,7 +79,10 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
       transform.quaternion.setFromUnitVectors(up, normal);
       transform.quaternion.multiply(spin.setFromAxisAngle(up, random() * Math.PI * 2));
       // Many small fragments and occasional larger rocks, mostly buried in dust.
-      const scale = .035 + Math.pow(random(), 3) * .42;
+      const sizeRoll = random();
+      const scale = enriched
+        ? (sizeRoll < .90 ? .012 + Math.pow(random(), 3) * .13 : sizeRoll < .99 ? .18 + random() * .40 : .65 + random() * .65)
+        : .035 + Math.pow(random(), 3) * .42;
       transform.scale.set(scale, scale * (.65 + random() * .7), scale * (.35 + random() * .38));
       transform.updateMatrix(); rocks.setMatrixAt(slot, transform.matrix);
       const shade = .65 + random() * .35;
@@ -189,7 +194,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setClearColor(0x010204);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 2.6;
+    renderer.toneMappingExposure = detailedRegions.has(region.id) ? 1.35 : 2.6;
     container.appendChild(renderer.domElement);
     const canvas = renderer.domElement;
     canvas.setAttribute('aria-label', `${region.name} terrain. In eye-level mode drag or use arrow keys to look around.`);
@@ -318,7 +323,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       render: () => render(),
       placeRocks(hit) {
         if (detailAnchor.distanceToSquared(hit.point) < .0001 && detailSource === hit.object) return;
-        rocks = scatterRocks(scene, rocks, hit);
+        rocks = scatterRocks(scene, rocks, hit, detailedRegions.has(region.id));
         if (rocks) rocks.visible = rocksVisible;
         if (detail) { scene.remove(detail); detail.geometry.dispose(); detail = null; }
         detailAnchor.copy(hit.point);
@@ -479,8 +484,8 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           const regolithTextures = createRegolithTextures(extent);
           terrainTextures.add(regolithTextures.map);
           terrainTextures.add(regolithTextures.normalMap);
-          regolithTextures.map.repeat.set(1.6, 1.6);
-          regolithTextures.normalMap.repeat.set(1.6, 1.6);
+          regolithTextures.map.repeat.set(extent / 24, extent / 24);
+          regolithTextures.normalMap.repeat.set(extent / 24, extent / 24);
           terrain.traverse(child => {
             if (child instanceof THREE.Mesh && child.material) {
               child.material = new THREE.MeshStandardMaterial({
@@ -505,7 +510,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           colTex.wrapS = colTex.wrapT = THREE.RepeatWrapping;
           colTex.colorSpace = THREE.SRGBColorSpace;
           colTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
-          const repeatScale = Math.max(8, Math.min(64, Math.round(extent / 160)));
+          const repeatScale = detailedRegions.has(region.id) ? extent / 24 : Math.max(8, Math.min(64, Math.round(extent / 160)));
           colTex.repeat.set(repeatScale, repeatScale);
 
           texLoader.load(
@@ -515,7 +520,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
               terrainTextures.add(normTex);
               normTex.wrapS = normTex.wrapT = THREE.RepeatWrapping;
               normTex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
-              normTex.repeat.set(repeatScale * 1.5, repeatScale * 1.5);
+              normTex.repeat.set(repeatScale, repeatScale);
 
               terrain.traverse(child => {
                 if (child instanceof THREE.Mesh && child.material) {
@@ -523,9 +528,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
                     map: colTex,
                     color: new THREE.Color(0xd2d6dc),
                     normalMap: normTex,
-                    normalScale: new THREE.Vector2(1.8, 1.8),
+                    normalScale: new THREE.Vector2(detailedRegions.has(region.id) ? .35 : 1.8, detailedRegions.has(region.id) ? .35 : 1.8),
                     roughness: 0.92,
-                    metalness: 0.02,
+                    metalness: 0,
                   });
                   child.material = mat;
                   if (detail && detailSource === child) detail.material = mat;
