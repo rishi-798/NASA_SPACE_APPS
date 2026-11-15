@@ -180,3 +180,53 @@ test('assisted descent lands within demonstration limits; with too little fuel i
   assert.equal(worse.outcome.kind, 'impact');
   console.log('  demo: 150 kg →', ok.outcome.kind, ok.contact.verticalSpeed.toFixed(2), 'm/s; 30 kg →', bad.outcome.kind, bad.contact.verticalSpeed.toFixed(2), 'm/s; 25 kg →', worse.outcome.kind, worse.contact.verticalSpeed.toFixed(2), 'm/s');
 });
+
+// ------------------------------------------------------------------ mesh terrain (team Blender export)
+import { meshTerrain } from '../frontend/src/sim/terrain.ts';
+import { readFileSync } from 'node:fs';
+
+function planeMesh(gx, gy, h0 = 100, n = 41, span = 6000) {      // SYNTHETIC triangulated plane z = h0 + gx·x + gy·y
+  const e = [], no = [], u = [], tri = [];
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+    const x = -span / 2 + (c * span) / (n - 1), y = -span / 2 + (r * span) / (n - 1);
+    e.push(x); no.push(y); u.push(h0 + gx * x + gy * y);
+  }
+  for (let r = 0; r < n - 1; r++) for (let c = 0; c < n - 1; c++) { const a = r * n + c; tri.push(a, a + 1, a + n, a + 1, a + n + 1, a + n); }
+  return meshTerrain(e, no, u, tri, { siteName: 'SYNTHETIC MESH', source: 'test', sourceSpacingM: 60 });
+}
+
+test('mesh terrain: exact on a triangulated plane, z relative to the target, slope at the 120 m stencil', () => {
+  const t = planeMesh(0.05, -0.02);
+  assert.equal(t.kind, 'blender');
+  near(t.targetDatumHeightM, 100, 1e-9);
+  near(t.heightAt(0, 0), 0, 1e-9);
+  near(t.heightAt(731.3, -412.9), 0.05 * 731.3 - 0.02 * -412.9, 1e-9);
+  const s = t.slopeAt(250, 250);
+  near(s.deg, Math.atan(Math.hypot(0.05, 0.02)) * 180 / Math.PI, 1e-9); assert.equal(s.scaleM, 120);
+  assert.ok(Number.isNaN(t.heightAt(5000, 0)), 'outside the mesh: missing, not filled');
+  assert.equal(t.missingCells, 0);
+});
+
+test('mesh terrain: contact lands exactly on the triangle surface', () => {
+  const t = planeMesh(0.1, 0);
+  const sim = runHeadless(V, { eastM: 0, northM: 0, altitudeM: 25, velocity: [0, 0, -2] }, S, t, L, off);
+  near(sim.contact.pos[2], t.heightAt(sim.contact.pos[0] + V.padRadiusM, sim.contact.pos[1]), 1e-9, 'uphill (east) pad on the mesh');
+  near(sim.contact.slope.deg, Math.atan(0.1) * 180 / Math.PI, 1e-9);
+});
+
+test('team Blender Athena model: centre height matches LOLA, full coverage of the simulation square', () => {
+  const b = readFileSync(new URL('../frontend/public/terrain/REGION-ATHENA.glb', import.meta.url));
+  const jsonLen = b.readUInt32LE(12), js = JSON.parse(b.subarray(20, 20 + jsonLen).toString());
+  const binStart = 20 + jsonLen + 8;
+  const prim = js.meshes[0].primitives[0], pa = js.accessors[prim.attributes.POSITION], pv = js.bufferViews[pa.bufferView];
+  const pos = new Float32Array(b.buffer.slice(b.byteOffset + binStart + (pv.byteOffset ?? 0) + (pa.byteOffset ?? 0), b.byteOffset + binStart + (pv.byteOffset ?? 0) + (pa.byteOffset ?? 0) + pa.count * 12));
+  const ia = js.accessors[prim.indices], iv = js.bufferViews[ia.bufferView];
+  const Arr = ia.componentType === 5125 ? Uint32Array : Uint16Array;
+  const idx = new Arr(b.buffer.slice(b.byteOffset + binStart + (iv.byteOffset ?? 0) + (ia.byteOffset ?? 0), b.byteOffset + binStart + (iv.byteOffset ?? 0) + (ia.byteOffset ?? 0) + ia.count * Arr.BYTES_PER_ELEMENT));
+  const e = [], n = [], u = [];
+  for (let i = 0; i < pa.count; i++) { e.push(pos[i * 3]); u.push(pos[i * 3 + 1]); n.push(-pos[i * 3 + 2]); }
+  const t = meshTerrain(e, n, u, idx, { siteName: 'Athena', source: 'REGION-ATHENA.glb', sourceSpacingM: 60 });
+  near(t.targetDatumHeightM, 5320.8, 1.0, 'vs LOLA 80 m bilinear at the target');   // independent DEM products: ≤ 1 m
+  assert.equal(t.missingCells, 0);
+  assert.ok(t.slopeAt(0, 0).deg < 15);
+});

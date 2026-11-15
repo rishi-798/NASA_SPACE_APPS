@@ -77,15 +77,39 @@ also re-simulated from its recorded inputs, and the report confirms the trajecto
 | Scenario | Source | Spacing | Slope estimate |
 |---|---|---|---|
 | **Synthetic training scenario** (flat or tilted plane) | synthetic, labelled in the UI, the report and exported file names | exact plane | the exact configured slope |
-| **Real terrain:** Athena or Odysseus | LOLA `LDEM_80S_80MPP_ADJ`, NASA GSFC PGDA (local copy, `scripts/fetch_lola_dem.py`) | 80 m (native; bilinear between samples, no added resolution) | least-squares plane through the 3×3 DEM samples around the point: **160 m across** |
+| **Real terrain (default): Athena or Odysseus, team Blender model** | `frontend/public/terrain/REGION-*.glb` from the team repo (LOLA `ldem_60s_60m_float`, MOON_ME/DE421, 10 km radius; SHA-256 checked against `src/data/blenderTerrain.json` before use) | ~60 m triangle mesh. Contact uses the same triangles that are drawn | least-squares plane through 3×3 samples of the mesh at 60 m: **120 m across** |
+| Real terrain: Athena or Odysseus, LOLA 80 m grid | LOLA `LDEM_80S_80MPP_ADJ`, NASA GSFC PGDA (local copy, `scripts/fetch_lola_dem.py`) | 80 m (native; bilinear between samples, no added resolution) | least-squares plane through the 3×3 DEM samples around the point: **160 m across** |
+
+**Blender terrain alignment** (`components/landing/blenderTerrain.ts`, `sim/terrain.ts → meshTerrain`):
+- glTF axes are x = east, y = height above the 1,737,400 m sphere, z = −north. The `local_to_moon_fixed` matrix in
+  the metadata confirms the frame: its columns are exactly east, north and up at each site.
+- The simulation's z = 0 is the mesh surface under the target. The model is drawn shifted by that height, with the
+  same visual exaggeration as everything else.
+- The mesh already includes lunar curvature. Against the independent 80 m DEM, the median difference stays at 0.1–0.6 m
+  out to 2.9 km, instead of growing by the 1–2 m that a curvature mismatch would add.
+- The target heights agree to about 0.2 m (Athena: 5,320.96 m mesh, 5,320.8 m DEM) and about 0.9 m (Odysseus).
+- Points without mesh coverage are reported and never filled. The surface texture and colour variation are
+  illustrative only.
 
 - Missing DEM cells are returned as `null`, drawn red, and never filled.
 - A start over missing data is refused. Flying over missing data ends the run with "terrain assessment unavailable".
 - If the 3×3 slope neighbourhood touches a gap, the slope is "not assessed".
+- If the Blender model fails to load or fails its checksum, the error is shown with explicit choices: the 80 m grid or
+  the synthetic scenario. Nothing is substituted silently.
 - Real terrain exists only inside the LOLA 80° S map. Elsewhere the endpoint returns an explicit error, and the UI
   offers to switch to the synthetic scenario. It is never substituted silently.
 - An 80 m DEM supports **regional** slope only. Boulders and craters smaller than ~200 m (such as Athena's ~20 m
   crater) are not resolved, so a slope that meets the limit is **not** proof of a safe landing area.
+
+## 3D vehicle model (visual only)
+
+The vehicle is drawn with NASA's Saturn V 3D model (`/saturn-v.glb`, NASA 3D Resources), labelled **"Visual only: Saturn V"**
+on the page.
+- It is scaled to a display height of 6 m × the "Model size" setting (24 m by default) and stands on the contact plane.
+  Small discs mark the four contact points the physics uses.
+- **It does not affect the physics.** The mass, thrust, fuel and engine come only from the illustrative lander in
+  Preflight. A Saturn V's real mass (about 2.9 million kg) and engines do not describe a lunar descent vehicle.
+  There is no rocket picker, so nothing implies the choice changes the result.
 
 ## Vehicle and parameters
 
@@ -169,9 +193,13 @@ Synthetic flat scenario with the defaults:
 2. Under **Compare runs**, choose *Propellant (kg)* = **30** and press **Run**.
    - **Result:** "Touchdown exceeded configured limits". The propellant runs out at T+45.8 s, 0.8 s before contact,
      and touchdown is 2.07 m/s down against the 2 m/s limit. With 25 kg the result is an impact at 5.47 m/s.
-3. Switch the terrain to **Real terrain: Athena** and run assisted again.
-   - **Result:** within limits, with a regional slope of 1.94° over 160 m, plus the "not a landing-hazard
+3. Switch the terrain to **Real terrain: Athena (team Blender model)** and run assisted again.
+   - **Result:** within limits, with a regional slope of 1.97° over 120 m, plus the "not a landing-hazard
      assessment" note.
+4. Switch to **Odysseus (team Blender model)** and run the same autopilot.
+   - **Result:** the ground rises under the approach. Contact comes at T+32 s, 21.5 m from the target, at 2.25 m/s
+     across, on an 11.9° regional slope. The report flags those two limits as exceeded: a difference caused by the
+     measured terrain.
 
 Use **Replay** to watch any run again, **Export JSON** to save it, and **Manual** to fly it yourself (W/S throttle,
 arrow keys tilt, Z full, X cut, C centre tilt, Space start/pause).
@@ -185,4 +213,4 @@ arrow keys tilt, Z full, X cut, C centre tilt, Space start/pause).
 - Variable gravity and mascons.
 - Terrain finer than 80 m.
 - Guidance from orbit.
-- The Blender surface scene is not used here; the 3D view is drawn from the DEM grid itself.
+- Terrain finer than the 60 m mesh (rocks and small craters) is not in the physics. The detail texture is cosmetic.
