@@ -39,6 +39,8 @@ export interface MissionPhase {
     name: string;
     latex: string;
     meaning: string;
+    formula?: string;
+    variables?: { symbol: string; label: string }[];
   }[];
 }
 
@@ -84,12 +86,25 @@ export const MISSION_PHASES: MissionPhase[] = [
       {
         name: "Tsiolkovsky Rocket Equation",
         latex: "\\Delta v = v_e \\ln\\left(\\frac{m_0}{m_f}\\right) - \\Delta v_{\\text{grav}} - \\Delta v_{\\text{drag}}",
+        formula: "Δv = ve · ln(m₀ / mf) - Δvgrav - Δvdrag",
         meaning: "Determines total achievable velocity based on engine effective exhaust velocity and propellant mass fraction, minus gravity and atmospheric drag losses (~1,400 m/s total losses).",
+        variables: [
+          { symbol: "ve", label: "Effective exhaust velocity (Isp · g₀)" },
+          { symbol: "m₀ / mf", label: "Initial wet mass to final dry mass ratio" },
+          { symbol: "Δvgrav", label: "Gravity steering losses (∫ g·sin θ dt)" },
+          { symbol: "Δvdrag", label: "Aerodynamic drag loss (∫ D/m dt)" },
+        ],
       },
       {
-        name: "Dynamic Pressure",
+        name: "Dynamic Pressure (Max-Q)",
         latex: "q = \\frac{1}{2} \\rho v^2",
+        formula: "q = ½ · ρ · v²",
         meaning: "Quantifies structural stress from air resistance, peaking at Max-Q as velocity increases while atmospheric density exponentially decays.",
+        variables: [
+          { symbol: "ρ", label: "Atmospheric density (kg/m³)" },
+          { symbol: "v", label: "Vehicle airspeed relative to atmosphere (m/s)" },
+          { symbol: "q_max", label: "Peak stress reached (~34.2 kPa at T+1:15)" },
+        ],
       },
     ],
   },
@@ -133,12 +148,23 @@ export const MISSION_PHASES: MissionPhase[] = [
       {
         name: "Circular Orbital Velocity",
         latex: "v_c = \\sqrt{\\frac{\\mu_E}{R_E + h}} = \\sqrt{\\frac{398600.4}{6563}} \\approx 7.794 \\text{ km/s}",
+        formula: "vc = √(μE / r) = √(398,600.4 / 6,563) ≈ 7.794 km/s",
         meaning: "Exact speed needed to maintain altitude where gravitational fall precisely matches the curvature of the Earth.",
+        variables: [
+          { symbol: "μE", label: "Earth standard gravitational parameter (398,600.4 km³/s²)" },
+          { symbol: "r", label: "Orbital radius from Earth center (RE + h = 6,563 km)" },
+          { symbol: "vc", label: "Circular speed in LEO (7.794 km/s = 28,058 km/h)" },
+        ],
       },
       {
         name: "Orbital Period",
         latex: "T = 2\\pi \\sqrt{\\frac{r^3}{\\mu_E}} = 2\\pi \\sqrt{\\frac{6563^3}{398600.4}} \\approx 5294 \\text{ s} \\approx 88.24 \\text{ min}",
+        formula: "T = 2π · √(r³ / μE) ≈ 5,294 s ≈ 88.24 min",
         meaning: "Time elapsed per full revolution around the planet.",
+        variables: [
+          { symbol: "r", label: "Semi-major axis of circular orbit (6,563 km)" },
+          { symbol: "T", label: "Orbital period (88.24 min, ~16 orbits per 24 hours)" },
+        ],
       },
     ],
   },
@@ -182,12 +208,24 @@ export const MISSION_PHASES: MissionPhase[] = [
       {
         name: "Vis-Viva Equation for TLI",
         latex: "v^2 = \\mu_E \\left(\\frac{2}{r} - \\frac{1}{a}\\right)",
+        formula: "v² = μE · (2/r - 1/a)",
         meaning: "Relates spacecraft speed to its distance from Earth and the semi-major axis of the translunar ellipse.",
+        variables: [
+          { symbol: "r", label: "Perigee distance at burn ignition (6,556 km)" },
+          { symbol: "a", label: "Transfer ellipse semi-major axis (~195,480 km)" },
+          { symbol: "v", label: "Cutoff velocity (10.94 km/s near Earth escape)" },
+        ],
       },
       {
         name: "Oberth Effect Energy Gain",
         latex: "\\Delta E_k = v \\cdot \\Delta v + \\frac{1}{2}(\\Delta v)^2",
+        formula: "ΔEk = v · Δv + ½ · (Δv)²",
         meaning: "Because kinetic energy scales with v², burning at the highest possible orbital velocity (perigee) generates vastly more orbital mechanical energy.",
+        variables: [
+          { symbol: "v", label: "High initial perigee speed (7.79 km/s)" },
+          { symbol: "Δv", label: "Propulsion burn velocity increment (+3,150 m/s)" },
+          { symbol: "ΔEk", label: "Total specific kinetic energy gained (MJ/kg)" },
+        ],
       },
     ],
   },
@@ -231,12 +269,24 @@ export const MISSION_PHASES: MissionPhase[] = [
       {
         name: "Laplace Sphere of Influence",
         latex: "r_{\\text{SOI}} = D \\left(\\frac{M_{\\text{Moon}}}{M_{\\text{Earth}}}\\right)^{2/5} \\approx 384400 \\left(\\frac{7.348\\times 10^{22}}{5.972\\times 10^{24}}\\right)^{2/5} \\approx 66180 \\text{ km}",
+        formula: "r_SOI = D · (M_Moon / M_Earth)^(2/5) ≈ 66,180 km",
         meaning: "The boundary where the Moon's gravitational acceleration on the spacecraft exceeds Earth's tidal perturbation.",
+        variables: [
+          { symbol: "D", label: "Earth-Moon orbital separation distance (384,400 km)" },
+          { symbol: "M_Moon / M_Earth", label: "Mass ratio between Moon and Earth (1 / 81.3)" },
+          { symbol: "r_SOI", label: "Radius of lunar sphere of influence (~66,180 km)" },
+        ],
       },
       {
         name: "Jacobi Energy Integral (CR3BP)",
         latex: "C_J = 2\\Omega(x,y,z) - (\\dot{x}^2 + \\dot{y}^2 + \\dot{z}^2)",
+        formula: "CJ = 2·Ω(x, y, z) - (ẋ² + ẏ² + ż²)",
         meaning: "The invariant conserved energy quantity in rotating frame orbital mechanics across the Earth-Moon system.",
+        variables: [
+          { symbol: "Ω(x,y,z)", label: "Effective combined gravitational + centrifugal potential" },
+          { symbol: "ẋ, ẏ, ż", label: "Rotating frame spacecraft velocity components" },
+          { symbol: "CJ", label: "Jacobi constant defining forbidden zero-velocity regions" },
+        ],
       },
     ],
   },
@@ -280,12 +330,23 @@ export const MISSION_PHASES: MissionPhase[] = [
       {
         name: "Lunar Capture Delta-V",
         latex: "\\Delta v_{\\text{LOI}} = \\sqrt{v_\\infty^2 + \\frac{2\\mu_M}{r_p}} - \\sqrt{\\frac{\\mu_M}{r_p}}",
+        formula: "Δv_LOI = √(v∞² + 2μM / rp) - √(μM / rp) ≈ 890 m/s",
         meaning: "Calculates the exact retrograde impulse needed to brake from hyperbolic arrival trajectory down to circular orbital capture velocity.",
+        variables: [
+          { symbol: "v∞", label: "Hyperbolic arrival excess velocity (~0.85 km/s)" },
+          { symbol: "rp", label: "Periselene radius at burn altitude (1,737.4 + 100 km)" },
+          { symbol: "μM", label: "Moon gravitational parameter (4,902.8 km³/s²)" },
+        ],
       },
       {
         name: "Low Lunar Orbit Period",
         latex: "T_M = 2\\pi \\sqrt{\\frac{(R_M + h)^3}{\\mu_M}} = 2\\pi \\sqrt{\\frac{(1737.4 + 100)^3}{4902.8}} \\approx 7096 \\text{ s} \\approx 118.3 \\text{ min}",
+        formula: "TM = 2π · √((RM + h)³ / μM) ≈ 7,096 s ≈ 118.3 min",
         meaning: "One complete orbital revolution around the Moon takes slightly under two hours.",
+        variables: [
+          { symbol: "RM + h", label: "Radius of 100 km circular lunar orbit (1,837.4 km)" },
+          { symbol: "TM", label: "Orbital period (1 hr 58 min)" },
+        ],
       },
     ],
   },
@@ -330,12 +391,25 @@ export const MISSION_PHASES: MissionPhase[] = [
       {
         name: "Constant Gravity Braking",
         latex: "a_{\\text{req}} = \\frac{v_0^2}{2 \\Delta x} + g_M \\sin\\theta",
+        formula: "areq = v₀² / (2 · Δx) + gM · sin θ",
         meaning: "Determines the necessary deceleration to halt horizontal velocity before reaching the target landing coordinate.",
+        variables: [
+          { symbol: "v₀", label: "Initial horizontal velocity at PDI (~1,690 m/s)" },
+          { symbol: "Δx", label: "Downrange distance to landing zone (~450 km)" },
+          { symbol: "gM", label: "Lunar surface gravity (1.62 m/s²)" },
+        ],
       },
       {
         name: "Descent Mass Depletion",
         latex: "m(t) = m_0 - \\dot{m} t = m_0 - \\left(\\frac{T(t)}{I_{\\text{sp}} g_0}\\right) t",
+        formula: "m(t) = m₀ - ṁ · t = m₀ - [T(t) / (Isp · g₀)] · t",
         meaning: "As propellant burns, lander mass plummets, causing acceleration to surge unless the engine is continuously throttled down.",
+        variables: [
+          { symbol: "m₀", label: "Initial lander wet mass with full fuel tanks" },
+          { symbol: "ṁ", label: "Propellant mass flow rate (kg/s)" },
+          { symbol: "T(t)", label: "Engine throttle level (deep throttle 10% to 100%)" },
+          { symbol: "Isp", label: "Engine specific impulse (310 s storable / 450 s hydrolox)" },
+        ],
       },
     ],
   },
