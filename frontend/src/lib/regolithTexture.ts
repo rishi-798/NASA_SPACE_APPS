@@ -111,8 +111,8 @@ export function createRegolithTextures(extent: number, enriched = false): Regoli
 
   if (enriched) {
     // Seeded shallow pits and rims affect shading only, never measured vertices.
-    for (let crater = 0; crater < 450; crater++) {
-      const cx = lcg() * size, cy = lcg() * size, radius = 1.5 + Math.pow(lcg(), 2) * 24;
+    for (let crater = 0; crater < 120; crater++) {
+      const cx = lcg() * size, cy = lcg() * size, radius = 1.5 + Math.pow(lcg(), 4) * 24;
       for (let oy = -Math.ceil(radius * 1.5); oy <= radius * 1.5; oy++) {
         for (let ox = -Math.ceil(radius * 1.5); ox <= radius * 1.5; ox++) {
           const d = Math.hypot(ox, oy) / radius;
