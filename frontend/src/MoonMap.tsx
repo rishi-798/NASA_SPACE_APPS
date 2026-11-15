@@ -31,6 +31,7 @@ import {
   Viewer,
   VerticalOrigin,
   type Entity,
+  EasingFunction,
 } from "cesium";
 import { createMoonGuides, lunarPosition, MOON, RADIUS } from "./moonGuides";
 import { featuredMoonSites, moonMapSites, MOON_TERRAIN_ASSET_ID } from "./data/moonMapSites";
@@ -59,6 +60,8 @@ export interface MoonControls {
   zoom: (direction: number) => void;
   flyToSite: (id: string, mode?: "aerial" | "orbit") => void;
   setAerialView: (siteId?: string) => void;
+  /** Smooth, high-altitude approach toward a point (stays above Cesium's close-range terrain); calls done on arrival. */
+  zoomToLocation: (latitude: number, longitude: number, done: () => void) => void;
 }
 
 interface MoonMapProps {
@@ -328,6 +331,19 @@ export function MoonMap({
       setView,
       flyToSite,
       setAerialView,
+      zoomToLocation: (latitude, longitude, done) => {
+        viewer.camera.cancelFlight();
+        let finished = false;
+        const finish = () => { if (!finished) { finished = true; done(); } };
+        viewer.camera.flyToBoundingSphere(new BoundingSphere(lunarPosition(longitude, latitude), 1), {
+          offset: new HeadingPitchRange(0, -CesiumMath.toRadians(62), 45000),
+          duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 2.4,
+          easingFunction: EasingFunction.QUADRATIC_IN_OUT,
+          complete: finish,
+          cancel: finish,
+        });
+        viewer.scene.requestRender();
+      },
       zoom: (direction) => {
         viewer.camera.cancelFlight();
         const height = viewer.camera.positionCartographic.height;

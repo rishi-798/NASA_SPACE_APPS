@@ -10,6 +10,7 @@ import { LaunchWeatherPanel } from "../components/trip/LaunchWeatherPanel";
 import { LandingSimPage } from "./LandingSimPage";
 import { TerrainContext } from "../components/explorer/TerrainContext";
 import { LocalSurfacePane } from "../components/explorer/LocalSurfacePane";
+import { sceneForLanding } from "../sim/terrainScenes";
 import { LoadingScreen } from "../components/ui/LoadingScreen";
 import { useLoadingScreen } from "../components/ui/useLoadingScreen";
 import { useAnnounce, useAutoEnableVoice, useCancelOnLeave, useVoiceGuide } from "../components/voice/voiceContext";
@@ -127,6 +128,43 @@ export function TripPage() {
     const site = destinations.find((candidate) => candidate.id === id);
     if (site) selectLocation({ latitude: site.latitude, longitude: site.longitude, name: site.name });
   }, [selectLocation]);
+  /**
+   * Arrival at a site with a measured Blender model: the globe zooms in from high above while the Blender terrain loads
+   * hidden underneath; once both are done the view cross-fades to the terrain, whose camera dives to lander eye level.
+   */
+  const [arrival, setArrival] = useState<{ flightDone: boolean; ready: boolean } | null>(null);
+  const markSurfaceReady = useCallback(() => setArrival((current) => current && { ...current, ready: true }), []);
+  const beginArrival = useCallback((latitude: number, longitude: number) => {
+    setArrival({ flightDone: false, ready: false });
+    // Deferred so it replaces any fly-in the globe itself starts for the same click.
+    window.setTimeout(() => {
+      const arrived = () => setArrival((current) => current && { ...current, flightDone: true });
+      if (controls.current) controls.current.zoomToLocation(latitude, longitude, arrived); else arrived();
+      window.setTimeout(arrived, 5000);   // safety: never wait on the globe for longer than this
+    }, 0);
+  }, []);
+  useEffect(() => {
+    if (!arrival?.flightDone) return;
+    const reveal = () => { setTripMoonView("surface"); setArrival(null); };
+    if (arrival.ready) { reveal(); return; }
+    const timer = window.setTimeout(reveal, 8000);   // slow download: reveal anyway; the dive starts once loaded
+    return () => window.clearTimeout(timer);
+  }, [arrival]);
+  /** Destinations with a measured Blender model zoom into the 3D surface at lander eye level. */
+  const openDestination = useCallback((id: string) => {
+    const site = destinations.find((candidate) => candidate.id === id);
+    if (!site) return;
+    if (sceneForLanding(site.latitude, site.longitude)) {
+      selectSite(id);
+      if (tripMoonView === "globe") beginArrival(site.latitude, site.longitude);   // in the surface view the new site dives in by itself
+    } else if (controls.current) controls.current.flyToSite(id);   // no surface model: keep the globe fly-in
+    else selectSite(id);
+  }, [selectSite, beginArrival, tripMoonView]);
+  /** Globe clicks: a point with a measured Blender model also zooms into the eye-level surface view. */
+  const pickOnGlobe = useCallback((location: MoonLocation) => {
+    selectLocation(location);
+    if (sceneForLanding(location.latitude, location.longitude)) beginArrival(location.latitude, location.longitude);
+  }, [selectLocation, beginArrival]);
   function enterCoordinates(event: React.FormEvent) {
     event.preventDefault();
     const parts = coordinateText.split(",").map((part) => part.trim());
@@ -235,9 +273,9 @@ export function TripPage() {
           )}
         </div>
 
-        {tripMoonView === "globe" ? (
+        {tripMoonView === "globe" && (
           <>
-            <div className="trip-moon-canvas"><MoonMap onLocationSelect={selectLocation} onSiteSelect={selectSite} selectedLocation={landing} showGrid={false} showAxis={false} controlsRef={controls} /></div>
+            <div className="trip-moon-canvas"><MoonMap onLocationSelect={pickOnGlobe} onSiteSelect={openDestination} selectedLocation={landing} showGrid={false} showAxis={false} controlsRef={controls} /></div>
             <div className="trip-map-tools">
 
               <button onClick={() => controls.current?.zoom(1)} aria-label="Zoom in">+</button>
@@ -245,8 +283,9 @@ export function TripPage() {
               <button onClick={() => controls.current?.setView("near")}>Reset view</button>
             </div>
           </>
-        ) : (
-          <div className="trip-surface-full-view">
+        )}
+        {(tripMoonView === "surface" || arrival) && (
+          <div className={`trip-surface-full-view ${tripMoonView === "globe" ? "trip-surface-preload" : "trip-surface-reveal"}`} aria-hidden={tripMoonView === "globe" || undefined}>
             <LocalSurfacePane
               latitude={landing?.latitude ?? 26.1322}
               longitude={landing?.longitude ?? 3.6339}
@@ -255,12 +294,15 @@ export function TripPage() {
                 selectLocation({ latitude: pt.latitude, longitude: pt.longitude, name: pt.name });
               }}
               onOpenGlobal={() => setTripMoonView("globe")}
+              initialMode="eye"
+              diveWhen={tripMoonView === "surface"}
+              onReady={markSurfaceReady}
             />
           </div>
         )}
       </div>
         <aside className="trip-panel"><label className="trip-field">Find a Moon destination<input value={destinationQuery} onChange={(event) => setDestinationQuery(event.target.value)} placeholder="Apollo, Lunokhod, Athena..." /></label>
-          <div className="trip-site-list">{filteredDestinations.map((site) => <button className="trip-site-option" key={site.id} aria-pressed={landing?.destinationId === site.id} onClick={() => { if (controls.current) controls.current.flyToSite(site.id); else selectSite(site.id); }}><span>{site.category}</span><strong>{site.name}</strong><small>{formatCoordinate(site.latitude, "lat")} / {formatCoordinate(site.longitude, "lon")}</small></button>)}</div>
+          <div className="trip-site-list">{filteredDestinations.map((site) => <button className="trip-site-option" key={site.id} aria-pressed={landing?.destinationId === site.id} onClick={() => openDestination(site.id)}><span>{site.category}</span><strong>{site.name}</strong><small>{formatCoordinate(site.latitude, "lat")} / {formatCoordinate(site.longitude, "lon")}</small></button>)}</div>
           {!filteredDestinations.length && <p role="status">No matching destinations. Try a mission name or enter coordinates below.</p>}
           <form onSubmit={enterCoordinates}><label className="trip-field">Or enter exact lunar coordinates<input value={coordinateText} onChange={(event) => setCoordinateText(event.target.value)} placeholder="Latitude, longitude" aria-describedby="trip-coordinate-note" /></label><button className="trip-secondary" type="submit">Select coordinates</button><p id="trip-coordinate-note" className="trip-note" role={coordinateError ? "alert" : undefined}>{coordinateError || "Planetocentric latitude, east-positive longitude."}</p></form>
           {landing && <div className="trip-selected"><strong>{landing.name}</strong><p>{landing.latitude.toFixed(6)}°, {landing.longitude.toFixed(6)}°</p></div>}

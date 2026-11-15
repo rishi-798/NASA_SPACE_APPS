@@ -22,6 +22,8 @@ type Runtime = {
   mode: CameraMode; setMode: (mode: CameraMode) => boolean;
   render: () => void; setLighting: (data: Lighting | null) => void; inspect: (on: boolean) => void;
   placeRocks: (hit: THREE.Intersection) => void; setRocksVisible: (on: boolean) => void;
+  /** Cinematic arrival: park the camera high above the selected point, then dive down to lander eye level. */
+  prepareDive: () => void; flyToEye: (durationMs: number) => void; animating: boolean;
 };
 
 function createStarfield(skyRadius: number) {
@@ -325,25 +327,36 @@ function buildSeamlessContinuousLandscape(
   return geometry;
 }
 
-export default function LocalTerrainViewer({ region, latitude, longitude, observationTime, onPick }: {
+export default function LocalTerrainViewer({ region, latitude, longitude, observationTime, onPick, initialMode = 'aerial', diveWhen, onReady }: {
   region: TerrainRegion; latitude: number; longitude: number; observationTime: string;
   onPick: (point: MoonLocation) => void;
+  /** Camera mode to open in; 'eye' arrives at lander eye level at the selected point with an animated dive. */
+  initialMode?: CameraMode;
+  /** With initialMode 'eye': hold the dive until this is true (e.g. while the view is still hidden). Default: dive on load. */
+  diveWhen?: boolean;
+  /** Called once the terrain is loaded and the selected point is on the mesh. */
+  onReady?: () => void;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const runtime = useRef<Runtime | null>(null);
   const pickRef = useRef(onPick);
+  const readyRef = useRef(onReady);
+  const diveKey = useRef<string | null>(null);
+  const pendingDive = useRef(false);
+  const [arriving, setArriving] = useState(false);
   const [state, setState] = useState('Loading measured terrain…');
   const [lighting, setLighting] = useState('Calculating SPICE sky…');
   const [skyReady, setSkyReady] = useState(false);
   const [inspection, setInspection] = useState(!detailedRegions.has(region.id));
   const [showRocks, setShowRocks] = useState(true);
   const [loaded, setLoaded] = useState(0);
-  const [mode, setMode] = useState<CameraMode>('aerial');
+  const [mode, setMode] = useState<CameraMode>(initialMode);
   const [onMesh, setOnMesh] = useState(false);
   const [camHeading, setCamHeading] = useState(0);
   const [camPitch, setCamPitch] = useState(0);
 
   useEffect(() => { pickRef.current = onPick; }, [onPick]);
+  useEffect(() => { readyRef.current = onReady; }, [onReady]);
 
   useEffect(() => {
     const container = host.current;
@@ -462,6 +475,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
 
     const value: Runtime = {
       terrain: null, inverse, marker, up: new THREE.Vector3(0, 0, 1), mode: 'aerial',
+      animating: false, prepareDive: () => {}, flyToEye: () => {},   // set below
       setMode(next) {
         if (next === 'eye' && !value.selectedPoint) {
           if (value.terrain) {
@@ -583,6 +597,43 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         hemiLight.intensity = on ? 0.18 : 0.04;
         render();
       },
+    };
+    value.prepareDive = () => {
+      if (!value.selectedPoint) return;
+      const p = value.selectedPoint;
+      camera.up.set(0, 0, 1);
+      camera.position.set(p.x, p.y - 1700, p.z + 2600);   // high above and behind the landing point
+      controls.target.copy(p);
+      controls.enabled = false;
+      camera.lookAt(p);
+      render();
+    };
+    value.flyToEye = (durationMs: number) => {
+      if (!value.selectedPoint) return;
+      const startPos = camera.position.clone(), startTarget = controls.target.clone();
+      const endPos = new THREE.Vector3(...eyePosition(value.selectedPoint.toArray() as Vec3, value.up.toArray() as Vec3));
+      const look = new THREE.Vector3(...lookDirection(0, -0.08)).applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), value.up));
+      const endTarget = endPos.clone().addScaledVector(look, 60);
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) durationMs = 0;
+      value.animating = true; controls.enabled = false;
+      if (host.current) host.current.dataset.arrival = 'diving';
+      const t0 = performance.now(), tmp = new THREE.Vector3();
+      const tick = (now: number) => {
+        if (cancelled || !value.animating) return;
+        const f = durationMs > 0 ? Math.min(1, (now - t0) / durationMs) : 1;
+        const e = f < 0.5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2;   // ease in-out
+        camera.position.lerpVectors(startPos, endPos, e);
+        tmp.lerpVectors(startTarget, endTarget, Math.min(1, e * 1.15));
+        camera.up.set(0, 0, 1); camera.lookAt(tmp); controls.target.copy(tmp);
+        render();
+        if (f < 1) { requestAnimationFrame(tick); return; }
+        value.animating = false;
+        value.setMode('eye');
+        savedPosition.copy(startPos); savedTarget.copy(startTarget);   // "Return to terrain view" goes back up
+        if (host.current) host.current.dataset.arrival = 'eye-level';
+        setArriving(false);
+      };
+      requestAnimationFrame(tick);
     };
     runtime.current = value;
 
@@ -1000,15 +1051,32 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     if (hit) value.placeRocks(hit); else value.setRocksVisible(false);
     if (hit) value.marker.position.copy(hit.point).addScaledVector(direction, -value.marker.scale.x);
     value.marker.visible = !!hit && value.mode !== 'eye';
-    value.setMode(hit ? mode : 'aerial');
+    const key = `${region.id}:${latitude},${longitude}`;
+    if (hit && mode === 'eye' && initialMode === 'eye' && diveKey.current !== key) {
+      diveKey.current = key;                 // arrive with a dive, once per selected point
+      value.setMode('aerial');
+      value.prepareDive();
+      pendingDive.current = true;
+      if (host.current) host.current.dataset.arrival = 'waiting';
+      setArriving(true);
+    } else if (!pendingDive.current && !value.animating) {
+      value.setMode(hit ? mode : 'aerial');
+    }
     setOnMesh(!!hit); value.render();
-  }, [latitude, longitude, loaded, region, mode]);
+    if (hit) readyRef.current?.();
+  }, [latitude, longitude, loaded, region, mode, initialMode]);
+
+  useEffect(() => {
+    if (!loaded || !pendingDive.current || diveWhen === false) return;
+    pendingDive.current = false;
+    runtime.current?.flyToEye(3600);
+  }, [loaded, diveWhen, latitude, longitude]);
 
   useEffect(() => { runtime.current?.setRocksVisible(showRocks && onMesh); }, [showRocks, onMesh, loaded]);
 
   useEffect(() => {
     if (loaded) {
-      runtime.current?.setMode(mode);
+      if (!pendingDive.current && !runtime.current?.animating) runtime.current?.setMode(mode);
       runtime.current?.inspect(inspection);
     }
   }, [mode, loaded, inspection]);
@@ -1090,7 +1158,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
 
       <label><input type="checkbox" checked={showRocks} onChange={e => setShowRocks(e.target.checked)} /> Illustrative rocks and fine relief</label>
       <p>Nearby rocks and fine surface relief are illustrative. Selected coordinates use the measured terrain.</p>
-      <p role="status">{mode === 'eye' && state.startsWith('Ready.') ? 'Eye-level view · 1.8 m above the selected point' : state}</p>
+      <p role="status">{arriving ? 'Descending to lander eye level…' : mode === 'eye' && state.startsWith('Ready.') ? 'Eye-level view · 1.8 m above the selected point' : state}</p>
       <label><input type="checkbox" checked={inspection} onChange={e => setInspection(e.target.checked)} /> Topographic relief light (illustrative)</label>
       {/* Sleek Bottom Metadata & Ephemeris Strip */}
       <div className="surface-footer-strip">

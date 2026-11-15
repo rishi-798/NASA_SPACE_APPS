@@ -7,9 +7,15 @@ import { surfaceTime } from '../../lib/surfaceViewMath';
 const Viewer = lazy(() => import('./LocalTerrainViewer'));
 const base = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 
-export function LocalSurfacePane({ latitude, longitude, observationTime, onPick, onOpenGlobal }: {
+export function LocalSurfacePane({ latitude, longitude, observationTime, onPick, onOpenGlobal, initialMode, diveWhen, onReady }: {
   latitude: number; longitude: number; observationTime: string; onPick: (point: MoonLocation) => void;
   onOpenGlobal?: () => void;
+  /** Open the 3D surface in this camera mode ('eye' = lander eye level, arriving with a dive). */
+  initialMode?: 'aerial' | 'orbit' | 'eye';
+  /** Hold the eye-level dive until true (used while the view is preloading behind the globe). */
+  diveWhen?: boolean;
+  /** The terrain is loaded and the selected point is on it. */
+  onReady?: () => void;
 }) {
   const key = `${latitude},${longitude}`;
   const [regions, setRegions] = useState<TerrainRegion[]>([]);
@@ -102,7 +108,7 @@ export function LocalSurfacePane({ latitude, longitude, observationTime, onPick,
       {active && (
         <Suspense fallback={<div className="surface-loading-box">Loading 1:1 measured lunar topography...</div>}>
           <SurfaceSession key={active.id} region={active} latitude={latitude} longitude={longitude}
-            observationTime={observationTime} onPick={onPick} />
+            observationTime={observationTime} onPick={onPick} initialMode={initialMode} diveWhen={diveWhen} onReady={onReady} />
         </Suspense>
       )}
 
@@ -119,6 +125,9 @@ export function LocalSurfacePane({ latitude, longitude, observationTime, onPick,
 function SurfaceSession(props: {
   region: TerrainRegion; latitude: number; longitude: number; observationTime: string;
   onPick: (point: MoonLocation) => void;
+  initialMode?: 'aerial' | 'orbit' | 'eye';
+  diveWhen?: boolean;
+  onReady?: () => void;
 }) {
   const [clock, setClock] = useState({start: props.observationTime, minutes: 0});
   const minutes = clock.start === props.observationTime ? clock.minutes : 0;
