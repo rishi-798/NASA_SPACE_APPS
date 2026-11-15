@@ -19,6 +19,7 @@ type Focus='cinematic'|'rocket'|'system'|'earth'|'moon';
 /** Original mission visuals, animated exclusively by the calculated transfer's shared clock. */
 export function MissionFlightAnimation({data}:{data:TransferResult}) {
   const host=useRef<HTMLDivElement>(null);
+  const controlsHost=useRef<HTMLDivElement>(null);
   const cursorRef=useRef(0);
   const [cursor,setCursor]=useState(0);
   const [playing,setPlaying]=useState(()=>!window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -99,8 +100,8 @@ export function MissionFlightAnimation({data}:{data:TransferResult}) {
     const cinematicOffset=new THREE.Vector3(),cinematicTarget=new THREE.Vector3();
     // A user gesture releases the directed camera while retaining playback.
     controls.addEventListener('start',()=>{manualCamera=true;});
-    const resize=()=>{const w=element.clientWidth,h=element.clientHeight;renderer.setSize(w,h);labels.setSize(w,h);camera.aspect=w/Math.max(h,1);camera.updateProjectionMatrix();if(focusRef.current.mode==='system')fitSystem();};
-    const observer=new ResizeObserver(resize);observer.observe(element);resize();
+    const resize=()=>{element.parentElement?.style.setProperty('--flight-controls-height',`${controlsHost.current?.getBoundingClientRect().height??205}px`);const w=element.clientWidth,h=element.clientHeight;renderer.setSize(w,h);labels.setSize(w,h);camera.aspect=w/Math.max(h,1);camera.updateProjectionMatrix();if(focusRef.current.mode==='system')fitSystem();};
+    const observer=new ResizeObserver(resize);observer.observe(element);if(controlsHost.current)observer.observe(controlsHost.current);resize();
     let animation=0;
     const frame=(now:number)=>{
       if(cancelled)return;
@@ -170,7 +171,7 @@ export function MissionFlightAnimation({data}:{data:TransferResult}) {
     <div className="trip-space-data"><span>EARTH–MOON · {distance.toLocaleString(undefined,{maximumFractionDigits:0})} km</span><span>{presentation.phase.toUpperCase()}</span><span>TO MOON · {presentation.moonRangeKm.toLocaleString(undefined,{maximumFractionDigits:0})} km</span></div>
     {atEnd&&<div className="mission-arrival-card" role="status"><span>LUNAR VICINITY · TRANSFER COMPLETE</span><strong>Lunar arrival reached</strong><p>{presentation.lunarAltitudeKm.toLocaleString(undefined,{maximumFractionDigits:0})} km above the Moon. This is the calculated approach reference; capture and descent are not simulated.</p></div>}
     {failed&&<p className="trip-scene-message" role="alert">3D rendering is unavailable. Calculated metrics and dates remain available in the mission panel.</p>}
-    <div className="mission-animation-controls">
+    <div ref={controlsHost} className="mission-animation-controls">
       <div role="group" aria-label="Mission camera">{([['cinematic','Cinematic flight'],['rocket','Follow rocket'],['system','Whole journey'],['earth','Earth'],['moon','Moon']] as [Focus,string][]).map(([mode,label])=><button key={mode} type="button" aria-pressed={cameraMode===mode} onClick={()=>focus(mode)}>{label}</button>)}</div>
       <div className="mission-flight-progress"><span>EARTH DEPARTURE</span><strong>{Math.round(presentation.progress*100)}%</strong><span>LUNAR ARRIVAL</span></div>
       <div className="mission-animation-timeline"><button type="button" onClick={play}>{atEnd?'Replay flight':playing?'Pause flight':'Play flight'}</button><input type="range" aria-label="Mission flight time" min={0} max={last} step={.01} value={cursor} onChange={e=>scrub(Number(e.target.value))}/></div>

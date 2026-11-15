@@ -167,3 +167,8 @@
 
 .calculated-mission-animation .trip-space-canvas {bottom:205px}
 @media(max-width:600px){.calculated-mission-animation .trip-space-canvas {bottom:220px}.mission-arrival-card {top:auto;bottom:230px;padding:10px 12px}.mission-arrival-card>span {font-size:7px}.mission-arrival-card strong {font-size:17px;margin:5px 0}.mission-arrival-card p {font-size:9px;line-height:1.4}}
+
+/* Reserve the measured control height so labels and the arrival card never sit underneath it. */
+.calculated-mission-animation .trip-space-canvas {bottom:calc(var(--flight-controls-height,205px) + 28px)}
+.mission-arrival-card {top:auto;bottom:calc(var(--flight-controls-height,205px) + 30px)}
+@media(max-width:600px){.trip-mission-visual,.trip-mission-visual .calculated-mission-animation {height:760px;min-height:760px}.mission-arrival-card {bottom:calc(var(--flight-controls-height,270px) + 25px)}}
