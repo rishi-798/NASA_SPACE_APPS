@@ -79,5 +79,5 @@ The automated pipeline scripts that extracted, built, and verified all 3D assets
 
 - **Regional terrain additions Drive folder**: [Google Drive Folder](https://drive.google.com/drive/folders/1fg5q9CP0LnPM6cUUP8iYCwp9ir-7_e6c)
 - **Technical Documentation**:
-  - [`Regional terrain additions README - 2026-11-14.md`](./Regional%20terrain%20additions%20README%20-%202026-11-14.md)
-  - [`Regional terrain build progress - 2026-11-14.md`](./Regional%20terrain%20build%20progress%20-%202026-11-14.md)
+  - [`Regional terrain additions README`](../docs/archive/Regional%20terrain%20additions%20README%20-%202026-11-14.md)
+  - [`Regional terrain build progress`](../docs/archive/Regional%20terrain%20build%20progress%20-%202026-11-14.md)
