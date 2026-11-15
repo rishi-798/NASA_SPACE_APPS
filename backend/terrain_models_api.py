@@ -326,6 +326,29 @@ def get_all_models() -> List[Dict[str, Any]]:
 
 def find_model(model_id: str) -> Optional[Dict[str, Any]]:
     clean_id = model_id.strip().lower()
+    if clean_id in ("site04-g7", "g7"):
+        glb_path = Path(__file__).resolve().parents[1] / "frontend" / "public" / "terrain" / "SITE04-G7.glb"
+        outputs = get_outputs_dir()
+        blend_path = outputs / "G7 - Terrain only.blend"
+        return {
+            "id": "site04-g7",
+            "name": "Site04 - Grid G7",
+            "kind": "polar_stereographic_block",
+            "latitude_deg": -89.80076,
+            "longitude_deg": -155.55605,
+            "radius_km": 5.0,
+            "source": "Site04 polar stereographic measured master (5m)",
+            "coordinate_frame": "MOON_ME / DE421",
+            "has_glb": glb_path.is_file(),
+            "glb_url": "/api/terrain/models/site04-g7/glb" if glb_path.is_file() else None,
+            "preview_url": None,
+            "metadata_url": "/api/terrain/models/site04-g7/metadata",
+            "blend_file": "G7 - Terrain only.blend" if blend_path.is_file() else None,
+            "blend_size_bytes": blend_path.stat().st_size if blend_path.is_file() else None,
+            "glb_size_bytes": glb_path.stat().st_size if glb_path.is_file() else None,
+            "height_range_m": [1429.3, 1738.2],
+            "production_ready": True,
+        }
     for spec in KNOWN_MODELS:
         if spec["id"] == clean_id:
             return _build_model_entry(spec, get_outputs_dir())
@@ -334,12 +357,14 @@ def find_model(model_id: str) -> Optional[Dict[str, Any]]:
 
 def find_model_for_coordinates(lat: float, lon: float) -> Optional[Dict[str, Any]]:
     """Find the best matching 3D terrain model for a given lunar latitude and longitude."""
-    # Earth-Moon angular distance on a sphere
+    if -90 <= lat <= -89.5:
+        from terrain.grid_scheme import site04_id
+        if site04_id(lat, lon) == "SITE04-G7":
+            return find_model("site04-g7")
     for spec in KNOWN_MODELS:
         if spec["kind"] == "polar_stereographic_block":
             continue
         c_lat, c_lon = spec["center_lat"], spec["center_lon"]
-        # Approximate great-circle distance on 1737.4 km Moon
         dlat = math.radians(lat - c_lat)
         dlon = math.radians(lon - c_lon)
         a = (math.sin(dlat / 2) ** 2 +
@@ -373,7 +398,22 @@ def get_model(model_id: str):
 
 @router.get("/{model_id}/glb", summary="Stream candidate 3D GLB mesh")
 def get_model_glb(model_id: str):
-    spec = next((s for s in KNOWN_MODELS if s["id"] == model_id.strip().lower()), None)
+    clean_id = model_id.strip().lower()
+    if clean_id in ("site04-g7", "g7"):
+        g7_path = Path(__file__).resolve().parents[1] / "frontend" / "public" / "terrain" / "SITE04-G7.glb"
+        if not g7_path.is_file():
+            raise HTTPException(status_code=404, detail=f"GLB asset for model '{model_id}' not found on server")
+        return FileResponse(
+            path=str(g7_path),
+            media_type="model/gltf-binary",
+            filename="SITE04-G7.glb",
+            headers={
+                "Cache-Control": "public, max-age=86400",
+                "Access-Control-Allow-Origin": "*",
+            },
+        )
+
+    spec = next((s for s in KNOWN_MODELS if s["id"] == clean_id), None)
     if not spec:
         raise HTTPException(status_code=404, detail=f"Model '{model_id}' not found")
 

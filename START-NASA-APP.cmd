@@ -14,6 +14,8 @@ if errorlevel 1 (
 if errorlevel 1 goto failed
 ".venv\Scripts\python.exe" -m backend.download_kernels
 if errorlevel 1 goto failed
+".venv\Scripts\python.exe" -m scripts.prepare_cloud_runtime
+if errorlevel 1 goto failed
 if not exist "frontend\dist\index.html" (
     pushd frontend
     if not exist "node_modules\vite\bin\vite.js" (

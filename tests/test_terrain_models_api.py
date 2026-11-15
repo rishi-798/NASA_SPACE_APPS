@@ -140,3 +140,18 @@ def test_terrain_identity_matches_model_and_site04():
     data_far = res_far.json()
     assert data_far["scene_available"] is False
     assert data_far["model_available"] is False
+
+
+def test_g7_model_lookup_and_glb_streaming():
+    res = client.get("/api/terrain/models/site04-g7")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["id"] == "site04-g7"
+    assert data["has_glb"] is True
+    assert data["glb_url"] == "/api/terrain/models/site04-g7/glb"
+
+    res_glb = client.get("/api/terrain/models/site04-g7/glb")
+    assert res_glb.status_code == 200
+    assert res_glb.headers.get("content-type") == "model/gltf-binary"
+    assert res_glb.content[:4] == b"glTF"
+
