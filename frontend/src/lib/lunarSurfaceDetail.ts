@@ -33,13 +33,13 @@ export function lunarDetailHeight(x: number, y: number, anchor: THREE.Vector3, e
         if (d > 1.5) continue;
         const rim = Math.exp(-Math.pow((d - .95) * 5, 2));
         const bowl = Math.exp(-d * d * 4);
-        craters += .055 * rim - .085 * bowl;
+        craters += .09 * rim - .18 * bowl;
       }
     }
     const roughMask = noise(x * .07 + 7, y * .07 - 13);
     const relief = .045 * noise(x * .42, y * .42)
       + .025 * roughMask * noise(x * 1.4 + 19, y * 1.4 - 3);
-    return .015 + fade * Math.max(.005, .10 + craters + relief);
+    return .015 + fade * Math.max(.005, .24 + craters + relief);
   }
   return .015 + fade * (.35 * noise(x * .13, y * .13)
     + .25 * noise(x * .37 + 17, y * .37 - 11)

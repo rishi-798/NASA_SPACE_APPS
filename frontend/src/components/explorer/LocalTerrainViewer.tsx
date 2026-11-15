@@ -109,7 +109,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.Group | null, hit: THR
       const scale = enriched
         ? (sizeRoll < .90 ? .012 + Math.pow(random(), 3) * .13 : sizeRoll < .99 ? .18 + random() * .40 : .65 + random() * .65)
         : .035 + Math.pow(random(), 3) * .42;
-      transform.scale.set(scale, scale * (.65 + random() * .7), scale * (.35 + random() * .38));
+      transform.scale.set(scale, scale * (.65 + random() * .7), scale * (enriched && scans.length ? .75 + random() * .45 : .35 + random() * .38));
       transform.updateMatrix();
       samplesBySlot[slot] = { matrix: transform.matrix.clone(), shade: .65 + random() * .35, scale };
     }

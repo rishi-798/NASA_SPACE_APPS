@@ -41,8 +41,8 @@ test('enriched crater skin stays bounded and deterministic and leaves measured p
     assert.ok(Number.isFinite(points.getZ(i)));
     low = Math.min(low, points.getZ(i)); high = Math.max(high, points.getZ(i));
   }
-  assert.ok(low >= .014 && high < .35);
-  assert.ok(high - low > .03);
+  assert.ok(low >= .014 && high < .55);
+  assert.ok(high - low > .10);
   assert.deepEqual(Array.from(first.getAttribute('position').array), Array.from(second.getAttribute('position').array));
   assert.deepEqual(Array.from(terrain.geometry.getAttribute('position').array), before);
   first.dispose(); second.dispose(); terrain.geometry.dispose();
