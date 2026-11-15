@@ -16,9 +16,11 @@ from backend.spice_kernels import KernelError
 from backend.terrain.horizon import HorizonError, apply_horizon, load_profile
 from backend.frontend import SPAStaticFiles, DIST_DIR
 from backend.terrain_api import router as terrain_router
+from backend.media20261114.routes20261114 import router as discovery_router
 
 app = FastAPI(title="CLPS Lunar Browser API")
 app.include_router(terrain_router)
+app.include_router(discovery_router)
 app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=6)
 app.add_middleware(
     CORSMiddleware,
