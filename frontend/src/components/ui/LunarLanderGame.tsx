@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react";
 export function LunarLanderGame({ onClose }: { onClose?: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [score, setScore] = useState(0);
-  const [gameState, setGameState] = useState<"playing" | "landed" | "crashed">("playing");
-  const [fuel, setFuel] = useState(100);
+  const [, setGameState] = useState<"playing" | "landed" | "crashed">("playing");
+  const [, setFuel] = useState(100);
 
   useEffect(() => {
     const canvas = canvasRef.current;
