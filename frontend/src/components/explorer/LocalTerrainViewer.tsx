@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import type { TerrainRegion } from './terrainTypes';
 import type { MoonLocation } from '../../MoonMap';
 import { eyePosition, lookDirection, type Vec3 } from '../../lib/surfaceViewMath';
@@ -25,42 +26,65 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
   const mesh = hit.object, positions = mesh.geometry.getAttribute('position'), indices = mesh.geometry.index;
   if (!positions || !indices) return previous;
   const makeRockGeometry = () => {
-    const geometry = new THREE.IcosahedronGeometry(1, 1);
+    const source = new THREE.IcosahedronGeometry(1, 2);
+    source.deleteAttribute('normal');
+    source.deleteAttribute('uv');
+    const geometry = mergeVertices(source);
+    source.dispose();
     const vertex = geometry.getAttribute('position');
     for (let i = 0; i < vertex.count; i++) {
       const x = vertex.getX(i), y = vertex.getY(i), z = vertex.getZ(i);
-      const irregularity = .86 + .22 * (.5 + .5 * Math.sin(x * 12.7 + y * 19.3 + z * 8.1));
+      const irregularity = .85 + .16 * Math.sin(x * 3.7 + y * 5.3 + z * 4.1)
+        + .08 * Math.sin(x * 8.1 - y * 6.4 + z * 7.3)
+        + .035 * Math.sin(x * 18.1 + y * 13.4 - z * 16.3);
       vertex.setXYZ(i, x * irregularity, y * irregularity, z * irregularity);
     }
     geometry.computeVertexNormals();
     return geometry;
   };
   const rocks = previous ?? new THREE.InstancedMesh(makeRockGeometry(),
-    new THREE.MeshStandardMaterial({ color: 0x5e5b57, roughness: 1, metalness: 0 }), 900);
+    new THREE.MeshStandardMaterial({ color: 0x41413f, roughness: 1, metalness: 0 }), 1800);
   if (!previous) { rocks.castShadow = true; rocks.receiveShadow = true; rocks.frustumCulled = false; scene.add(rocks); }
   const transform = new THREE.Object3D();
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), point = new THREE.Vector3();
-  let seed = (hit.faceIndex + 1) >>> 0, count = 0;
+  const ab = new THREE.Vector3(), ac = new THREE.Vector3(), normal = new THREE.Vector3();
+  const up = new THREE.Vector3(0, 0, 1), spin = new THREE.Quaternion();
+  const tint = new THREE.Color();
+  let seed = (hit.faceIndex + 1) >>> 0, count = 0, candidates = 0;
   const random = () => { seed = (1664525 * seed + 1013904223) >>> 0; return seed / 4294967296; };
-  const first = Math.max(0, hit.faceIndex - 2048), last = Math.min(indices.count / 3, hit.faceIndex + 2049);
-  for (let face = first; face < last && count < 900; face++) {
+  const first = Math.max(0, hit.faceIndex - 16384), last = Math.min(indices.count / 3, hit.faceIndex + 16385);
+  for (let face = first; face < last; face++) {
     a.fromBufferAttribute(positions, indices.getX(face * 3)).applyMatrix4(mesh.matrixWorld);
     b.fromBufferAttribute(positions, indices.getX(face * 3 + 1)).applyMatrix4(mesh.matrixWorld);
     c.fromBufferAttribute(positions, indices.getX(face * 3 + 2)).applyMatrix4(mesh.matrixWorld);
     if (Math.min(a.distanceToSquared(hit.point), b.distanceToSquared(hit.point), c.distanceToSquared(hit.point)) > 10000) continue;
-    const area = b.clone().sub(a).cross(c.clone().sub(a)).length() / 2;
-    const samples = Math.min(80, Math.max(1, Math.ceil(area * .02)));
-    for (let i = 0; i < samples && count < 900; i++) {
+    normal.crossVectors(ab.subVectors(b, a), ac.subVectors(c, a));
+    const area = normal.length() / 2;
+    normal.normalize();
+    if (normal.z < 0) normal.negate();
+    const samples = Math.min(120, Math.max(1, Math.ceil(area * .09)));
+    for (let i = 0; i < samples; i++) {
       const u = Math.sqrt(random()), v = random();
       point.copy(a).multiplyScalar(1-u).addScaledVector(b, u*(1-v)).addScaledVector(c, u*v);
-      if (point.distanceToSquared(hit.point) > 6400) continue;
-      transform.position.copy(point); transform.rotation.set(0, 0, random() * Math.PI * 2);
-      const scale = .04 + random() * .20;
-      transform.scale.set(scale, scale * (.55 + random() * .8), scale * (.3 + random() * .45));
-      transform.updateMatrix(); rocks.setMatrixAt(count++, transform.matrix);
+      const distance = point.distanceToSquared(hit.point);
+      if (distance > 4900 || distance < 4) continue;
+      candidates++;
+      const slot = count < 1800 ? count++ : Math.floor(random() * candidates);
+      if (slot >= 1800) continue;
+      transform.position.copy(point);
+      transform.quaternion.setFromUnitVectors(up, normal);
+      transform.quaternion.multiply(spin.setFromAxisAngle(up, random() * Math.PI * 2));
+      // Many small fragments and occasional larger rocks, mostly buried in dust.
+      const scale = .035 + Math.pow(random(), 3) * .42;
+      transform.scale.set(scale, scale * (.65 + random() * .7), scale * (.35 + random() * .38));
+      transform.updateMatrix(); rocks.setMatrixAt(slot, transform.matrix);
+      const shade = .65 + random() * .35;
+      tint.setRGB(shade, shade, shade * .98);
+      rocks.setColorAt(slot, tint);
     }
   }
   rocks.count = count; rocks.instanceMatrix.needsUpdate = true;
+  if (rocks.instanceColor) rocks.instanceColor.needsUpdate = true;
   return rocks;
 }
 
@@ -162,7 +186,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.setClearColor(0x020306);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.65;
+    renderer.toneMappingExposure = 2.6;
     container.appendChild(renderer.domElement);
     const canvas = renderer.domElement;
     canvas.setAttribute('aria-label', `${region.name} terrain. In eye-level mode drag or use arrow keys to look around.`);
@@ -393,9 +417,9 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         if (positions) {
           const uv = new Float32Array(positions.count * 2);
           for (let i = 0; i < positions.count; i++) {
-            uv[i * 2] = positions.getX(i) / 64;
+            uv[i * 2] = positions.getX(i) / 24;
             const yCoord = region.gltf_up === 'Y' ? -positions.getZ(i) : positions.getY(i);
-            uv[i * 2 + 1] = yCoord / 64;
+            uv[i * 2 + 1] = yCoord / 24;
           }
           child.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
         }
@@ -410,7 +434,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           colTex.colorSpace = THREE.SRGBColorSpace;
           colTex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
           texLoader.load(
-            `${import.meta.env.BASE_URL}terrain/lunar-detail-normal.png`,
+            `${import.meta.env.BASE_URL}terrain/lunar-regolith-normal.png`,
             normTex => {
               if (cancelled) { normTex.dispose(); return; }
               normTex.wrapS = normTex.wrapT = THREE.RepeatWrapping;
@@ -421,10 +445,25 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
                     map: colTex,
                     color: new THREE.Color(0xa2a5aa),
                     normalMap: normTex,
-                    normalScale: new THREE.Vector2(.35, .35),
+                    normalScale: new THREE.Vector2(1.8, 1.8),
                     roughness: 1,
                     metalness: 0,
                   });
+                  // Two differently scaled samples soften visible repetition while adding
+                  // the fine, illustrative bump used in the reference material tutorials.
+                  mat.onBeforeCompile = shader => {
+                    shader.fragmentShader = shader.fragmentShader.replace(
+                      '#include <normal_fragment_maps>',
+                      `#ifdef USE_NORMALMAP_TANGENTSPACE
+                        vec3 coarse = texture2D(normalMap, vNormalMapUv).xyz * 2.0 - 1.0;
+                        vec3 fine = texture2D(normalMap, vNormalMapUv * 2.73 + vec2(0.17, 0.43)).xyz * 2.0 - 1.0;
+                        vec3 detail = normalize(vec3((coarse.xy * 0.7 + fine.xy * 0.3) * normalScale, 1.0));
+                        normal = normalize(tbn * detail);
+                      #else
+                        #include <normal_fragment_maps>
+                      #endif`
+                    );
+                  };
                   child.material = mat;
                   mat.needsUpdate = true;
                 }
@@ -562,7 +601,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     setOnMesh(!!hit); value.render();
   }, [latitude, longitude, loaded, region, mode]);
 
-  useEffect(() => { runtime.current?.setRocksVisible(showRocks && onMesh); }, [showRocks, onMesh]);
+  useEffect(() => { runtime.current?.setRocksVisible(showRocks && onMesh); }, [showRocks, onMesh, loaded]);
 
   useEffect(() => {
     if (loaded) {
