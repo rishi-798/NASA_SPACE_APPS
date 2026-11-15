@@ -1,0 +1,713 @@
+[
+  {
+    "region_id": "REGION-APOLLO-16",
+    "name": "Apollo 16",
+    "center": [
+      -8.9734,
+      15.5011
+    ],
+    "markers": [
+      {
+        "id": "apollo-16",
+        "name": "Apollo 16",
+        "latitude": -8.9734,
+        "longitude": 15.5011,
+        "grid_id": "MOON-R0300-C0585-r2-c9",
+        "lookup_grid_id": "MOON-R0300-C0585-r2-c9",
+        "source_id": "sldem2015_512_30s_00s_000_045_float",
+        "source_matches_region_mesh": true,
+        "height_m": 10.777288436889648,
+        "api_height_m": 10.777288116514683,
+        "height_delta_m": -3.203749656677246e-07
+      },
+      {
+        "id": "apollo-16-rover",
+        "name": "Apollo 16 rover",
+        "latitude": -8.9729,
+        "longitude": 15.5037,
+        "grid_id": "MOON-R0300-C0585-r2-c9",
+        "lookup_grid_id": "MOON-R0300-C0585-r2-c9",
+        "source_id": "sldem2015_512_30s_00s_000_045_float",
+        "source_matches_region_mesh": true,
+        "height_m": 9.67732048034668,
+        "api_height_m": 9.677320718765259,
+        "height_delta_m": 2.384185791015625e-07
+      }
+    ],
+    "grid_id": "MOON-R0300-C0585-r2-c9",
+    "lookup_grid_id": "MOON-R0300-C0585-r2-c9",
+    "parent_grid_id": "MOON-R0300-C0585",
+    "source_id": "sldem2015_512_30s_00s_000_045_float",
+    "source_pds_url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30s_00s_000_045_float.lbl",
+    "source_sample_spacing_y_m": 59.225293797166955,
+    "api_center_selected_source_id": "sldem2015_512_30s_00s_000_045_float",
+    "api_center_uses_different_source": false,
+    "source_cloud_cog": "cogs/sldem2015_512_30s_00s_000_045_float.tif",
+    "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+    "coordinate_frame": "ME/DE421",
+    "vertical_reference_radius_m": 1737400.0,
+    "sample_spacing_x_m": 58.50042713709918,
+    "sample_spacing_y_m": 59.225293797166955,
+    "anchor_sample_height_m": 10.777288436889648,
+    "api_center_sample_height_m": 10.777288116514683,
+    "api_center_sample_delta_m": -3.203749656677246e-07,
+    "window_shape": [
+      338,
+      342
+    ],
+    "window_valid_pixels": 115596,
+    "height_range_m": [
+      -203.55833435058594,
+      615.6228637695312
+    ],
+    "npz_path": "C:\\Users\\suhas\\Documents\\Codex\\2026-11-14\\https-drive-google-com-drive-u\\work\\blender\\region-apollo-16-window.npz",
+    "control_samples": [
+      {
+        "latitude_deg": -9.0183,
+        "longitude_east_deg": 15.5011,
+        "grid_id": "MOON-R0300-C0585-r3-c9",
+        "source_height_m": -25.498769760131836,
+        "api_height_m": -25.49877017736435,
+        "difference_m": -4.172325134277344e-07
+      },
+      {
+        "latitude_deg": -8.9285,
+        "longitude_east_deg": 15.5011,
+        "grid_id": "MOON-R0300-C0585-r0-c9",
+        "source_height_m": -31.937915802001953,
+        "api_height_m": -31.937915831804276,
+        "difference_m": -2.9802322387695312e-08
+      },
+      {
+        "latitude_deg": -8.9734,
+        "longitude_east_deg": 15.4561,
+        "grid_id": "MOON-R0300-C0585-r2-c8",
+        "source_height_m": 8.137084007263184,
+        "api_height_m": 8.137083612382412,
+        "difference_m": -3.948807716369629e-07
+      },
+      {
+        "latitude_deg": -8.9734,
+        "longitude_east_deg": 15.5461,
+        "grid_id": "MOON-R0300-C0586-r2-c0",
+        "source_height_m": 16.865066528320312,
+        "api_height_m": 16.865067183971405,
+        "difference_m": 6.556510925292969e-07
+      }
+    ]
+  },
+  {
+    "region_id": "REGION-APOLLO-17",
+    "name": "Apollo 17",
+    "center": [
+      20.1911,
+      30.7723
+    ],
+    "markers": [
+      {
+        "id": "apollo-17",
+        "name": "Apollo 17",
+        "latitude": 20.1911,
+        "longitude": 30.7723,
+        "grid_id": "MOON-R0211-C0600-r7-c1",
+        "lookup_grid_id": "MOON-R0211-C0600-r7-c1",
+        "source_id": "sldem2015_512_00n_30n_000_045_float",
+        "source_matches_region_mesh": true,
+        "height_m": -2628.966796875,
+        "api_height_m": -2628.966808319092,
+        "height_delta_m": -1.1444091796875e-05
+      },
+      {
+        "id": "apollo-17-rover",
+        "name": "Apollo 17 rover",
+        "latitude": 20.1896,
+        "longitude": 30.7769,
+        "grid_id": "MOON-R0211-C0600-r7-c1",
+        "lookup_grid_id": "MOON-R0211-C0600-r7-c1",
+        "source_id": "sldem2015_512_00n_30n_000_045_float",
+        "source_matches_region_mesh": true,
+        "height_m": -2631.255615234375,
+        "api_height_m": -2631.255626678467,
+        "height_delta_m": -1.1444091796875e-05
+      }
+    ],
+    "grid_id": "MOON-R0211-C0600-r7-c1",
+    "lookup_grid_id": "MOON-R0211-C0600-r7-c1",
+    "parent_grid_id": "MOON-R0211-C0600",
+    "source_id": "sldem2015_512_00n_30n_000_045_float",
+    "source_pds_url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_000_045_float.lbl",
+    "source_sample_spacing_y_m": 59.225293797166955,
+    "api_center_selected_source_id": "sldem2015_512_00n_30n_000_045_float",
+    "api_center_uses_different_source": false,
+    "source_cloud_cog": "cogs/sldem2015_512_00n_30n_000_045_float.tif",
+    "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+    "coordinate_frame": "ME/DE421",
+    "vertical_reference_radius_m": 1737400.0,
+    "sample_spacing_x_m": 55.58570097560839,
+    "sample_spacing_y_m": 59.225293797166955,
+    "anchor_sample_height_m": -2628.966796875,
+    "api_center_sample_height_m": -2628.966808319092,
+    "api_center_sample_delta_m": -1.1444091796875e-05,
+    "window_shape": [
+      338,
+      360
+    ],
+    "window_valid_pixels": 121680,
+    "height_range_m": [
+      -2934.836181640625,
+      -199.41175842285156
+    ],
+    "npz_path": "C:\\Users\\suhas\\Documents\\Codex\\2026-11-14\\https-drive-google-com-drive-u\\work\\blender\\region-apollo-17-window.npz",
+    "control_samples": [
+      {
+        "latitude_deg": 20.1462,
+        "longitude_east_deg": 30.7723,
+        "grid_id": "MOON-R0211-C0600-r8-c1",
+        "source_height_m": -2634.750244140625,
+        "api_height_m": -2634.7501277923584,
+        "difference_m": 0.0001163482666015625
+      },
+      {
+        "latitude_deg": 20.235999999999997,
+        "longitude_east_deg": 30.7723,
+        "grid_id": "MOON-R0211-C0600-r6-c1",
+        "source_height_m": -2614.124755859375,
+        "api_height_m": -2614.1247749328613,
+        "difference_m": -1.9073486328125e-05
+      },
+      {
+        "latitude_deg": 20.1911,
+        "longitude_east_deg": 30.7273,
+        "grid_id": "MOON-R0211-C0599-r7-c9",
+        "source_height_m": -2632.275390625,
+        "api_height_m": -2632.275342941284,
+        "difference_m": 4.76837158203125e-05
+      },
+      {
+        "latitude_deg": 20.1911,
+        "longitude_east_deg": 30.817300000000003,
+        "grid_id": "MOON-R0211-C0600-r7-c2",
+        "source_height_m": -2666.325927734375,
+        "api_height_m": -2666.3260459899902,
+        "difference_m": -0.000118255615234375
+      }
+    ]
+  },
+  {
+    "region_id": "REGION-SURVEYOR-1",
+    "name": "Surveyor 1",
+    "center": [
+      -2.4745,
+      -43.3398
+    ],
+    "markers": [
+      {
+        "id": "surveyor-1",
+        "name": "Surveyor 1",
+        "latitude": -2.4745,
+        "longitude": -43.3398,
+        "grid_id": "MOON-R0280-C0414-r5-c1",
+        "lookup_grid_id": "MOON-R0280-C0414-r5-c1",
+        "source_id": "sldem2015_512_30s_00s_315_360_float",
+        "source_matches_region_mesh": true,
+        "height_m": -1885.656982421875,
+        "api_height_m": -1885.6569528579712,
+        "height_delta_m": 2.956390380859375e-05
+      }
+    ],
+    "grid_id": "MOON-R0280-C0414-r5-c1",
+    "lookup_grid_id": "MOON-R0280-C0414-r5-c1",
+    "parent_grid_id": "MOON-R0280-C0414",
+    "source_id": "sldem2015_512_30s_00s_315_360_float",
+    "source_pds_url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30s_00s_315_360_float.lbl",
+    "source_sample_spacing_y_m": 59.225293797166955,
+    "api_center_selected_source_id": "sldem2015_512_30s_00s_315_360_float",
+    "api_center_uses_different_source": false,
+    "source_cloud_cog": "cogs/sldem2015_512_30s_00s_315_360_float.tif",
+    "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+    "coordinate_frame": "ME/DE421",
+    "vertical_reference_radius_m": 1737400.0,
+    "sample_spacing_x_m": 59.17006833309204,
+    "sample_spacing_y_m": 59.225293797166955,
+    "anchor_sample_height_m": -1885.656982421875,
+    "api_center_sample_height_m": -1885.6569528579712,
+    "api_center_sample_delta_m": 2.956390380859375e-05,
+    "window_shape": [
+      338,
+      338
+    ],
+    "window_valid_pixels": 114244,
+    "height_range_m": [
+      -1999.828857421875,
+      -1730.4910888671875
+    ],
+    "npz_path": "C:\\Users\\suhas\\Documents\\Codex\\2026-11-14\\https-drive-google-com-drive-u\\work\\blender\\region-surveyor-1-window.npz",
+    "control_samples": [
+      {
+        "latitude_deg": -2.5194,
+        "longitude_east_deg": -43.3398,
+        "grid_id": "MOON-R0280-C0414-r6-c1",
+        "source_height_m": -1896.1070556640625,
+        "api_height_m": -1896.1070775985718,
+        "difference_m": -2.193450927734375e-05
+      },
+      {
+        "latitude_deg": -2.4295999999999998,
+        "longitude_east_deg": -43.3398,
+        "grid_id": "MOON-R0280-C0414-r3-c1",
+        "source_height_m": -1875.2266845703125,
+        "api_height_m": -1875.2267360687256,
+        "difference_m": -5.14984130859375e-05
+      },
+      {
+        "latitude_deg": -2.4745,
+        "longitude_east_deg": -43.3848,
+        "grid_id": "MOON-R0280-C0414-r5-c0",
+        "source_height_m": -1884.0538330078125,
+        "api_height_m": -1884.0538263320923,
+        "difference_m": 6.67572021484375e-06
+      },
+      {
+        "latitude_deg": -2.4745,
+        "longitude_east_deg": -43.294799999999995,
+        "grid_id": "MOON-R0280-C0414-r5-c2",
+        "source_height_m": -1894.1583251953125,
+        "api_height_m": -1894.1583633422852,
+        "difference_m": -3.814697265625e-05
+      }
+    ]
+  },
+  {
+    "region_id": "REGION-SURVEYOR-5",
+    "name": "Surveyor 5",
+    "center": [
+      1.4551,
+      23.1943
+    ],
+    "markers": [
+      {
+        "id": "surveyor-5",
+        "name": "Surveyor 5",
+        "latitude": 1.4551,
+        "longitude": 23.1943,
+        "grid_id": "MOON-R0268-C0616-r5-c3",
+        "lookup_grid_id": "MOON-R0268-C0616-r5-c3",
+        "source_id": "sldem2015_512_00n_30n_000_045_float",
+        "source_matches_region_mesh": true,
+        "height_m": -2047.77783203125,
+        "api_height_m": -2047.7778911590576,
+        "height_delta_m": -5.91278076171875e-05
+      }
+    ],
+    "grid_id": "MOON-R0268-C0616-r5-c3",
+    "lookup_grid_id": "MOON-R0268-C0616-r5-c3",
+    "parent_grid_id": "MOON-R0268-C0616",
+    "source_id": "sldem2015_512_00n_30n_000_045_float",
+    "source_pds_url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_000_045_float.lbl",
+    "source_sample_spacing_y_m": 59.225293797166955,
+    "api_center_selected_source_id": "sldem2015_512_00n_30n_000_045_float",
+    "api_center_uses_different_source": false,
+    "source_cloud_cog": "cogs/sldem2015_512_00n_30n_000_045_float.tif",
+    "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+    "coordinate_frame": "ME/DE421",
+    "vertical_reference_radius_m": 1737400.0,
+    "sample_spacing_x_m": 59.206195515140735,
+    "sample_spacing_y_m": 59.225293797166955,
+    "anchor_sample_height_m": -2047.77783203125,
+    "api_center_sample_height_m": -2047.7778911590576,
+    "api_center_sample_delta_m": -5.91278076171875e-05,
+    "window_shape": [
+      338,
+      338
+    ],
+    "window_valid_pixels": 114244,
+    "height_range_m": [
+      -2204.36572265625,
+      -1790.325439453125
+    ],
+    "npz_path": "C:\\Users\\suhas\\Documents\\Codex\\2026-11-14\\https-drive-google-com-drive-u\\work\\blender\\region-surveyor-5-window.npz",
+    "control_samples": [
+      {
+        "latitude_deg": 1.4102000000000001,
+        "longitude_east_deg": 23.1943,
+        "grid_id": "MOON-R0268-C0616-r7-c3",
+        "source_height_m": -2036.49951171875,
+        "api_height_m": -2036.4995002746582,
+        "difference_m": 1.1444091796875e-05
+      },
+      {
+        "latitude_deg": 1.5,
+        "longitude_east_deg": 23.1943,
+        "grid_id": "MOON-R0268-C0616-r4-c3",
+        "source_height_m": -2057.2197265625,
+        "api_height_m": -2057.2197437286377,
+        "difference_m": -1.71661376953125e-05
+      },
+      {
+        "latitude_deg": 1.4551,
+        "longitude_east_deg": 23.149299999999997,
+        "grid_id": "MOON-R0268-C0616-r5-c2",
+        "source_height_m": -2043.110595703125,
+        "api_height_m": -2043.1106090545654,
+        "difference_m": -1.33514404296875e-05
+      },
+      {
+        "latitude_deg": 1.4551,
+        "longitude_east_deg": 23.2393,
+        "grid_id": "MOON-R0268-C0616-r5-c4",
+        "source_height_m": -2053.30224609375,
+        "api_height_m": -2053.30228805542,
+        "difference_m": -4.1961669921875e-05
+      }
+    ]
+  },
+  {
+    "region_id": "REGION-SURVEYOR-6",
+    "name": "Surveyor 6",
+    "center": [
+      0.4742,
+      -1.4275
+    ],
+    "markers": [
+      {
+        "id": "surveyor-6",
+        "name": "Surveyor 6",
+        "latitude": 0.4742,
+        "longitude": -1.4275,
+        "grid_id": "MOON-R0271-C0541-r5-c6",
+        "lookup_grid_id": "MOON-R0271-C0541-r5-c6",
+        "source_id": "sldem2015_512_00n_30n_315_360_float",
+        "source_matches_region_mesh": true,
+        "height_m": -765.6864624023438,
+        "api_height_m": -765.6864523887634,
+        "height_delta_m": 1.0013580322265625e-05
+      }
+    ],
+    "grid_id": "MOON-R0271-C0541-r5-c6",
+    "lookup_grid_id": "MOON-R0271-C0541-r5-c6",
+    "parent_grid_id": "MOON-R0271-C0541",
+    "source_id": "sldem2015_512_00n_30n_315_360_float",
+    "source_pds_url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_315_360_float.lbl",
+    "source_sample_spacing_y_m": 59.225293797166955,
+    "api_center_selected_source_id": "sldem2015_512_00n_30n_315_360_float",
+    "api_center_uses_different_source": false,
+    "source_cloud_cog": "cogs/sldem2015_512_00n_30n_315_360_float.tif",
+    "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+    "coordinate_frame": "ME/DE421",
+    "vertical_reference_radius_m": 1737400.0,
+    "sample_spacing_x_m": 59.22326540192302,
+    "sample_spacing_y_m": 59.225293797166955,
+    "anchor_sample_height_m": -765.6864624023438,
+    "api_center_sample_height_m": -765.6864523887634,
+    "api_center_sample_delta_m": 1.0013580322265625e-05,
+    "window_shape": [
+      338,
+      338
+    ],
+    "window_valid_pixels": 114244,
+    "height_range_m": [
+      -936.0782470703125,
+      -698.0849609375
+    ],
+    "npz_path": "C:\\Users\\suhas\\Documents\\Codex\\2026-11-14\\https-drive-google-com-drive-u\\work\\blender\\region-surveyor-6-window.npz",
+    "control_samples": [
+      {
+        "latitude_deg": 0.4293,
+        "longitude_east_deg": -1.4275,
+        "grid_id": "MOON-R0271-C0541-r6-c6",
+        "source_height_m": -745.052001953125,
+        "api_height_m": -745.0519800186157,
+        "difference_m": 2.193450927734375e-05
+      },
+      {
+        "latitude_deg": 0.5191,
+        "longitude_east_deg": -1.4275,
+        "grid_id": "MOON-R0271-C0541-r4-c6",
+        "source_height_m": -767.9332275390625,
+        "api_height_m": -767.9332494735718,
+        "difference_m": -2.193450927734375e-05
+      },
+      {
+        "latitude_deg": 0.4742,
+        "longitude_east_deg": -1.4725,
+        "grid_id": "MOON-R0271-C0541-r5-c5",
+        "source_height_m": -765.8863525390625,
+        "api_height_m": -765.8863663673401,
+        "difference_m": -1.3828277587890625e-05
+      },
+      {
+        "latitude_deg": 0.4742,
+        "longitude_east_deg": -1.3825,
+        "grid_id": "MOON-R0271-C0541-r5-c8",
+        "source_height_m": -741.4422607421875,
+        "api_height_m": -741.4422631263733,
+        "difference_m": -2.384185791015625e-06
+      }
+    ]
+  },
+  {
+    "region_id": "REGION-SURVEYOR-7",
+    "name": "Surveyor 7",
+    "center": [
+      -40.9812,
+      -11.5127
+    ],
+    "markers": [
+      {
+        "id": "surveyor-7",
+        "name": "Surveyor 7",
+        "latitude": -40.9812,
+        "longitude": -11.5127,
+        "grid_id": "MOON-R0397-C0385-r3-c6",
+        "lookup_grid_id": "MOON-R0397-C0385-r3-c6",
+        "source_id": "sldem2015_512_60s_30s_315_360_float",
+        "source_matches_region_mesh": true,
+        "height_m": 72.38995361328125,
+        "api_height_m": 72.38995283842087,
+        "height_delta_m": -7.748603820800781e-07
+      }
+    ],
+    "grid_id": "MOON-R0397-C0385-r3-c6",
+    "lookup_grid_id": "MOON-R0397-C0385-r3-c6",
+    "parent_grid_id": "MOON-R0397-C0385",
+    "source_id": "sldem2015_512_60s_30s_315_360_float",
+    "source_pds_url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_60s_30s_315_360_float.lbl",
+    "source_sample_spacing_y_m": 59.225293797166955,
+    "api_center_selected_source_id": "sldem2015_512_60s_30s_315_360_float",
+    "api_center_uses_different_source": false,
+    "source_cloud_cog": "cogs/sldem2015_512_60s_30s_315_360_float.tif",
+    "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+    "coordinate_frame": "ME/DE421",
+    "vertical_reference_radius_m": 1737400.0,
+    "sample_spacing_x_m": 44.71064348496693,
+    "sample_spacing_y_m": 59.225293797166955,
+    "anchor_sample_height_m": 72.38995361328125,
+    "api_center_sample_height_m": 72.38995283842087,
+    "api_center_sample_delta_m": -7.748603820800781e-07,
+    "window_shape": [
+      338,
+      447
+    ],
+    "window_valid_pixels": 151086,
+    "height_range_m": [
+      -336.69940185546875,
+      736.7461547851562
+    ],
+    "npz_path": "C:\\Users\\suhas\\Documents\\Codex\\2026-11-14\\https-drive-google-com-drive-u\\work\\blender\\region-surveyor-7-window.npz",
+    "control_samples": [
+      {
+        "latitude_deg": -41.0261,
+        "longitude_east_deg": -11.5127,
+        "grid_id": "MOON-R0397-C0385-r4-c6",
+        "source_height_m": 139.42140197753906,
+        "api_height_m": 139.42140340805054,
+        "difference_m": 1.430511474609375e-06
+      },
+      {
+        "latitude_deg": -40.9363,
+        "longitude_east_deg": -11.5127,
+        "grid_id": "MOON-R0397-C0385-r1-c6",
+        "source_height_m": 108.65968322753906,
+        "api_height_m": 108.65968465805054,
+        "difference_m": 1.430511474609375e-06
+      },
+      {
+        "latitude_deg": -40.9812,
+        "longitude_east_deg": -11.5577,
+        "grid_id": "MOON-R0397-C0385-r3-c5",
+        "source_height_m": 120.44974517822266,
+        "api_height_m": 120.4497441649437,
+        "difference_m": -1.0132789611816406e-06
+      },
+      {
+        "latitude_deg": -40.9812,
+        "longitude_east_deg": -11.4677,
+        "grid_id": "MOON-R0397-C0385-r3-c7",
+        "source_height_m": 18.536802291870117,
+        "api_height_m": 18.536802381277084,
+        "difference_m": 8.940696716308594e-08
+      }
+    ]
+  },
+  {
+    "region_id": "REGION-LUNOKHOD-1",
+    "name": "Lunokhod 1 region",
+    "center": [
+      38.315,
+      -35.0081
+    ],
+    "markers": [
+      {
+        "id": "lunokhod-1",
+        "name": "Lunokhod 1",
+        "latitude": 38.315,
+        "longitude": -35.0081,
+        "grid_id": "MOON-R0156-C0344-r7-c7",
+        "lookup_grid_id": "MISSION-LUNOKHOD-1",
+        "source_id": "LUNOKHOD1-NATIVE-CROP",
+        "source_matches_region_mesh": false,
+        "height_m": -2478.896728515625,
+        "api_height_m": -2478.896728515625,
+        "height_delta_m": 0.0
+      },
+      {
+        "id": "luna-17",
+        "name": "Luna 17 lander",
+        "latitude": 38.23764,
+        "longitude": -35.00163,
+        "grid_id": "MOON-R0157-C0346-r0-c3",
+        "lookup_grid_id": "MOON-R0157-C0346-r0-c3",
+        "source_id": "sldem2015_512_30n_60n_315_360_float",
+        "source_matches_region_mesh": true,
+        "height_m": -2473.633544921875,
+        "api_height_m": -2473.6335277557373,
+        "height_delta_m": 1.71661376953125e-05
+      }
+    ],
+    "grid_id": "MOON-R0156-C0344-r7-c7",
+    "lookup_grid_id": "MISSION-LUNOKHOD-1",
+    "parent_grid_id": "MOON-R0156-C0344",
+    "source_id": "sldem2015_512_30n_60n_315_360_float",
+    "source_pds_url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_30n_60n_315_360_float.lbl",
+    "source_sample_spacing_y_m": 59.225293797166955,
+    "api_center_selected_source_id": "LUNOKHOD1-NATIVE-CROP",
+    "api_center_uses_different_source": true,
+    "source_cloud_cog": "cogs/sldem2015_512_30n_60n_315_360_float.tif",
+    "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+    "coordinate_frame": "ME/DE421",
+    "vertical_reference_radius_m": 1737400.0,
+    "sample_spacing_x_m": 46.46899975304513,
+    "sample_spacing_y_m": 59.225293797166955,
+    "anchor_sample_height_m": -2478.896728515625,
+    "api_center_sample_height_m": -2478.896728515625,
+    "api_center_sample_delta_m": 0.0,
+    "window_shape": [
+      338,
+      430
+    ],
+    "window_valid_pixels": 145340,
+    "height_range_m": [
+      -2558.105712890625,
+      -2413.7119140625
+    ],
+    "npz_path": "C:\\Users\\suhas\\Documents\\Codex\\2026-11-14\\https-drive-google-com-drive-u\\work\\blender\\region-lunokhod-1-window.npz",
+    "control_samples": [
+      {
+        "latitude_deg": 38.2701,
+        "longitude_east_deg": -35.0081,
+        "grid_id": "MOON-R0156-C0344-r9-c7",
+        "source_height_m": -2472.486083984375,
+        "api_height_m": -2472.4860191345215,
+        "difference_m": 6.4849853515625e-05
+      },
+      {
+        "latitude_deg": 38.359899999999996,
+        "longitude_east_deg": -35.0081,
+        "grid_id": "MOON-R0156-C0344-r6-c7",
+        "source_height_m": -2473.369140625,
+        "api_height_m": -2473.3691215515137,
+        "difference_m": 1.9073486328125e-05
+      },
+      {
+        "latitude_deg": 38.315,
+        "longitude_east_deg": -35.0531,
+        "grid_id": "MOON-R0156-C0344-r7-c6",
+        "source_height_m": -2474.5380859375,
+        "api_height_m": -2474.5380878448486,
+        "difference_m": -1.9073486328125e-06
+      },
+      {
+        "latitude_deg": 38.315,
+        "longitude_east_deg": -34.9631,
+        "grid_id": "MOON-R0156-C0344-r7-c8",
+        "source_height_m": -2472.6123046875,
+        "api_height_m": -2472.6123809814453,
+        "difference_m": -7.62939453125e-05
+      }
+    ]
+  },
+  {
+    "region_id": "REGION-LUNA-21",
+    "name": "Luna 21",
+    "center": [
+      25.9994,
+      30.4076
+    ],
+    "markers": [
+      {
+        "id": "luna-21",
+        "name": "Luna 21 lander",
+        "latitude": 25.9994,
+        "longitude": 30.4076,
+        "grid_id": "MOON-R0194-C0574-r1-c5",
+        "lookup_grid_id": "MOON-R0194-C0574-r1-c5",
+        "source_id": "sldem2015_512_00n_30n_000_045_float",
+        "source_matches_region_mesh": true,
+        "height_m": -2687.3134765625,
+        "api_height_m": -2687.3135566711426,
+        "height_delta_m": -8.0108642578125e-05
+      }
+    ],
+    "grid_id": "MOON-R0194-C0574-r1-c5",
+    "lookup_grid_id": "MOON-R0194-C0574-r1-c5",
+    "parent_grid_id": "MOON-R0194-C0574",
+    "source_id": "sldem2015_512_00n_30n_000_045_float",
+    "source_pds_url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/sldem2015/tiles/float_img/sldem2015_512_00n_30n_000_045_float.lbl",
+    "source_sample_spacing_y_m": 59.225293797166955,
+    "api_center_selected_source_id": "sldem2015_512_00n_30n_000_045_float",
+    "api_center_uses_different_source": false,
+    "source_cloud_cog": "cogs/sldem2015_512_00n_30n_000_045_float.tif",
+    "dataset_release_commit": "a6b2c53f65661fbd5165eae5a83449aeb35abcd8",
+    "coordinate_frame": "ME/DE421",
+    "vertical_reference_radius_m": 1737400.0,
+    "sample_spacing_x_m": 53.23161333263324,
+    "sample_spacing_y_m": 59.225293797166955,
+    "anchor_sample_height_m": -2687.3134765625,
+    "api_center_sample_height_m": -2687.3135566711426,
+    "api_center_sample_delta_m": -8.0108642578125e-05,
+    "window_shape": [
+      338,
+      376
+    ],
+    "window_valid_pixels": 127088,
+    "height_range_m": [
+      -2819.13427734375,
+      -1992.5592041015625
+    ],
+    "npz_path": "C:\\Users\\suhas\\Documents\\Codex\\2026-11-14\\https-drive-google-com-drive-u\\work\\blender\\region-luna-21-window.npz",
+    "control_samples": [
+      {
+        "latitude_deg": 25.954500000000003,
+        "longitude_east_deg": 30.4076,
+        "grid_id": "MOON-R0194-C0574-r2-c5",
+        "source_height_m": -2681.8681640625,
+        "api_height_m": -2681.868076324463,
+        "difference_m": 8.7738037109375e-05
+      },
+      {
+        "latitude_deg": 26.0443,
+        "longitude_east_deg": 30.4076,
+        "grid_id": "MOON-R0193-C0572-r9-c7",
+        "source_height_m": -2696.173095703125,
+        "api_height_m": -2696.1731910705566,
+        "difference_m": -9.5367431640625e-05
+      },
+      {
+        "latitude_deg": 25.9994,
+        "longitude_east_deg": 30.362599999999997,
+        "grid_id": "MOON-R0194-C0574-r1-c4",
+        "source_height_m": -2678.8662109375,
+        "api_height_m": -2678.866147994995,
+        "difference_m": 6.29425048828125e-05
+      },
+      {
+        "latitude_deg": 25.9994,
+        "longitude_east_deg": 30.4526,
+        "grid_id": "MOON-R0194-C0574-r1-c6",
+        "source_height_m": -2694.4931640625,
+        "api_height_m": -2694.493055343628,
+        "difference_m": 0.0001087188720703125
+      }
+    ]
+  }
+]

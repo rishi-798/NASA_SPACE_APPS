@@ -19,3 +19,4 @@ data/lunar/
 !metadata/handoff-20261011/moon-dataset.json
 START-LOCAL-RASTERS.cmd
 local-raster-check.json
+*.blend1

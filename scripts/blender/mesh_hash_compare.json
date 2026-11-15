@@ -1,0 +1,3758 @@
+{
+  "original": [
+    {
+      "name": "Apollo 11 - measured terrain samples",
+      "vertices": 251001,
+      "loops": 1000000,
+      "polygons": 250000,
+      "sha256": "18108484081d58400c0d1051c8c8f3174ce22b8ef8abf75fd0fe8783eb03d326"
+    },
+    {
+      "name": "Apollo 14 - measured terrain samples",
+      "vertices": 251001,
+      "loops": 1000000,
+      "polygons": 250000,
+      "sha256": "982062e98a495fa07b3485c09d436cec4bcfe271535cb2d45b2ba00f803fdaac"
+    },
+    {
+      "name": "Apollo 15 - measured terrain samples",
+      "vertices": 251001,
+      "loops": 1000000,
+      "polygons": 250000,
+      "sha256": "a31e1c5cc18a8f5db5340e6452349e89306b213c19e6a00374ae5d4679f350c1"
+    },
+    {
+      "name": "Cube.001",
+      "vertices": 1649,
+      "loops": 9216,
+      "polygons": 3072,
+      "sha256": "4b9889b6c5392da23a8890894e66ae58666e76a24e50f2741a158a542cea2a0f"
+    },
+    {
+      "name": "Cube.002",
+      "vertices": 1778,
+      "loops": 9216,
+      "polygons": 3072,
+      "sha256": "359759b32ebb85d782c6b3aced6ab8d596c7a4f860517f0f8efefbdb20443d24"
+    },
+    {
+      "name": "Cube.003",
+      "vertices": 1778,
+      "loops": 9216,
+      "polygons": 3072,
+      "sha256": "359759b32ebb85d782c6b3aced6ab8d596c7a4f860517f0f8efefbdb20443d24"
+    },
+    {
+      "name": "Data-aligned inter-grid connector strips",
+      "vertices": 4784,
+      "loops": 9568,
+      "polygons": 2392,
+      "sha256": "885e408f5f63013e78645e32850883536750d72f5d10776f1ad2409f989cbf86"
+    },
+    {
+      "name": "Extra cosmetic rocks - F6 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "db99b4e14ee0890f94785328a5364851a62edbbb765df49ff98b7d016ada4307"
+    },
+    {
+      "name": "Extra cosmetic rocks - F7 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "b8b71b92854bd4b359051de25d2604153ae0deb3e666150a2dab7dc49dcd966e"
+    },
+    {
+      "name": "Extra cosmetic rocks - F8 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "0604761645965d2dfa3d7a8dae89ed77cafc3e5f548e3b7b7192eba16546993c"
+    },
+    {
+      "name": "Extra cosmetic rocks - G6 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "05d9a5b8491ae247f8dc3c2a244a74d679ae0f5c31305c47eacf83071638d172"
+    },
+    {
+      "name": "Extra cosmetic rocks - G7 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "1bab9a57c79d315a8060f868f25b7090c9c25df69b923b9a24c4951e1e933998"
+    },
+    {
+      "name": "Extra cosmetic rocks - G8 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "806b6c3867805815d8db1c97a433c847cb12e32982b5d22d2da30b0d346d03cf"
+    },
+    {
+      "name": "Extra cosmetic rocks - H6 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "da72c1ab9fba4004e823ce79dcb286eaaa78fa2b3269ac8a5cb4857eb80a64ab"
+    },
+    {
+      "name": "Extra cosmetic rocks - H7 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "ef6a11330639c13356b57f5085e8b2c4f3b9f99c345f30d180ef0e9675c87ca2"
+    },
+    {
+      "name": "Extra cosmetic rocks - H8 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "950f72c1423c1ccd2b80d011b4e38847728a872597a1847168b71ea595424678"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "0cc77c6d72e67d749ad3abfe83fdc63d8a88490407eacf3ff285e258a2cc88ce"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "6e77f8efed226d3140bb26db8eedece336e89036899b9893542bb888bc16cfe2"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "74932761aa4fcb2401b20ce392b9ff6cf2851c72933d0d6923c3f78ed5255986"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "0a49c3e06f9c61472ab1a10e3a0ed60a5e306ccf4ac3b0b7fc9f96ac721c61f1"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "c17211c3ec3c270569c93dc6353d5c726b07f1a44cd2d65b9d19eb7ec0388ce3"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "57ef3f0f267b29317185b8b20f66ef50c717a6e1fb9d8a0492c2b7debd4a8b8b"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b21fecec555fbca942f32d4c4d829d1c0bdc2f540740ff0e17adaaf092629bbb"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "695f5003296bb84fcd208b6a8c85f5e86a3e23bcf180a9f9a347301a1471a594"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "26557c1a8259db423038e40d0bdd461f19a53a0852184d6d2888aa78d736b727"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "94c7b6177005d4864f8faa833f5647b8828639079216232c8a4857206035f713"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "c6e80216a16d5281498076232fb1a51ebc419b64a259102dc6a38604df33bb3b"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "d80745c3c75b3b4720b8985135ed759646efc7d1da68593ab565e7f09e411f33"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "2fbe75f6b91b3a18d1161538b17bc64dc284560295963f4189f0420ba8d9cdf9"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5e5fb31e1961855d2ba99277c9bf9cadaffc7ff257c6f16c1c2386efc862697d"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "2b91c63c25edc62df93d5e7bd9936d6ccb91807b4a9bc29076bc2bda0ff5ec63"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "9583299b36449e1c8fe98e5f3c074dd137f90129dfa1c3d6d9c2fdbc204bfe93"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5129022d6fb0a370d56b11b797810b509b3202e7f1d0f1dcc1efa6653e087bc8"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "f38b6d8176a82fb8b09b42140c19d028deb7b7f187ef33c7fd0faf1fa401f6e4"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ea36990eefa31e088cd5a509d6b7976bc626ea31a6e4f74a1308a0793d41c465"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b6f155356d130b37a3426f4454615eb50aeac26b4b0a6fa90326142290459fa7"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "f18af228bec683cb0f0e2c9e54ea23f22ebdbcaf09659123e77868f309ff0bb8"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "4bf64f203eb557b16a339255de45a2f1384b2b601945cc94a74901d14f1444fe"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "523ba0df035c7507b56d5aacecc6d338eafc02867612cca703c402d2765df4f9"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "d13fa7177510cdb4627f3e351059331655d9cbfa680755c580da0a08aeda486c"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "1493b58f1cba5931a3dc99d0f348ecdcee69369437a61c37c793d1095b90b376"
+    },
+    {
+      "name": "F6 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "3058fdfba08640f3763dc40ee8abbd7f47afe94d87b6741902e953900b17a0d5"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7185f0fece751c315cdfee39d2a6ca25c3b130abf98801b52fddd042d1fc503c"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ee515c65b50af16fd6734d002357c294941c6ec605532c668da4963b647ab103"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "87e606d25f78197cbcb9a48b604fafb062662ba442dbc2490db29a299cfe68ef"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "1b6d705f9a11c63cb8b7527cdd36aec1f3a78bc6681bb503f3fe6080af793932"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "bfdc751e08898baeeb06877309a32e114a72cbbfa4791a3923899678f192e6c8"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5c293a1769d3af080d1662b4afe972203ae54c882618b6f43081038651cf84d1"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "3003bce49bc11b4974000758955a2dffcb372c3fa4684df3d64a1f3fbacc8ec9"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "9f536215cfe47384ab27bafce3995f121ca9c40668914272d4c4980db8e37406"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "a9104c784415fe6476e9d4a3e936b579e8152b3d85da0e54aaf1a4d06964d760"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "8b289fe2b809375624e239a6eb4c61d76d25978e8bd26a8d2b431dd034caabe7"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "df724fac8054dcd746c4e3a172b736f531923b3b0da5d675064bc743b0f4a9ff"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "271b80ebe39df19f4cfd99d1d2082497f19dc19e48eaa171022f68d4df224a4f"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "f77b60b28622ab0d3a38fd633333dafdd801633ec05529507af5801e7d29db9e"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "19bf1da43270b5e3dce78f0a89b7686c9cc2aa4399fe7f9d23851d34620ba4ff"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "cf242722ddc36f7f9afe76a10ec0fcd56bc6ab3b07239769fd3f8790772d517f"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b57d76b0aecee1a4cd6d8e7ddddaa62384afa38598952105530abca64a57a6c8"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "a796d5dbe892fc35d20e188013ce5060f521408128c20a77d288483010c54773"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "4a7b92e7f292861de6efc89f711fdc87f21b07f928c95cc790e21cfea08d4131"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "d01b2222336a2a2abecd4af1315a09542f606145a3e27149e888785e4f684b11"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "ca145a8e75c760f52abc34457a11f1c35fb6e102ffa6e5b4ebd17b5a964f81ee"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "968d44d494cd9c0348ade9434afb8eb8508a9d6489d75911c4f82f36f784dace"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "443e3f88821d57f76cf4f6d619635aba0e8972f6a8982622bfd6af4e1d1d8ce3"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "3da03543595be8a25db9a7fa739be0542e31b9b66db06d22c4aa1cf961a75dbb"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b6a22f0211bb27c420941a2fcaca1c175c5c4ed578e253e75bc51bdf0e4bca8b"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "473d95f3b2c18fe51a41407e90079b7aaaafa00d111db95d501118cc95ea297f"
+    },
+    {
+      "name": "F7 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "da1265460c44344d890c2d507fc965458574f9ca921af03af52e78e769d83c8e"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "70cd034f4df00e885156b6c3a5866d03acd84d6cf6b1265269371d3a664272c6"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ef3cf1a0e408bc16760c8b9a749b37a0db40f0549e80808cb6487939b0e6de97"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "bf67c46730acc08dd29c783abc93a608f22640265cc4c7951f493a537aa8fa73"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "a840810d1082ac4b92bdc06109e8f13da8b0f243a38ebcd9c2443cdef8a63869"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "581fce53263a9dd2eaf33ca1ab634ffd3c0f29e405484fcbe4e989bcb2ad9efc"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "cb91d2bd1c1f45accf8486291445d246800ce3bf041bda36cb5bdf587cec4550"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "a7fc6166a27e9b8a8a4b0a99cd0bffacf3030d8a15c0e1874f5d570e35726e31"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "96b40de5e4c89ebfb891025dd58c7679a80b3d2fc17d22f22744dd7256dab808"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ad7f94d2d0d934e8312e111b8822cd39ba95b2549efe87fc4283f5f83e3c2813"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "3d3c0200e96a77ad298ef51fe40534511a0a551e479d11f30f7c5ff5e7d25e2e"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "0ce5623f8945ffccc18fff3528e165ed6dc7a4ca618aa06b329d6b05193de9c6"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5bad23f3759b236a27166ac76e360cf08feba075a874680bf8b45e467d3e79ac"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "4d2d8e54f419d2e5542bdaa5f6ceb29fce4381e99be1b5b935d8ca9dd100c248"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "dc8854f1fdefcd35c6869f4cc10990ffdb381008e41b9e9625f13320bb1963a0"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "fe16937b6009aa02860de4ca605974bd13dd45c8a822a1b6287cba6696906ada"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "37e41a75c484db0aaebf6e7b005b5ef8fd3f83a93df7454f40cedf8386408b2e"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "637c296fa4df1848b564d589143d17da41e193b1296f9114cff18fd62bc1966f"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b5b8ca0939805819700265d298503c0a2b4e935d6cbd6395cadc5b1d869c4493"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ca61b88bf4ed8aebd7e1a54f69b75faa5bf69604c6506e693505d6ab0cc021f9"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "3599deabd36bd9cdc6ffb1b68965da715954d609917c8f28785baf38d5a225d3"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "2c5e71b1db433edfa5902e04fbc67abf6e10fbba854065bdd10179a1830a3f52"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "e699f7d083602316aa3c92b0efd66f17022127d663cefbdb97ae90a190bdcd6b"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b1214898e554ff0feb45ebf3b8e9b3b5972213a01429c86e09461f209b92602c"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b1296fa3a7a9d6b18d5077ae4c52f9973fbf70688b6811dbb71416f007f4e597"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "3ff944d0d6a817ada0a3ff39271c703d96a8bd1bed94485587b6bc75ee0d5dbb"
+    },
+    {
+      "name": "F8 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "701db49f5d49f4f67e89dfd1784a265eabadbb7e71cddd0323f8b023111cf0fe"
+    },
+    {
+      "name": "Full G7 fictional rock locations",
+      "vertices": 21376,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "a27a4bcca59a9f239efc0ea21116f9a44238edb5bd8b207247dc3d765c93e56d"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7c5c679749de9f608c5d8d3313c93178aac4a39978de7a3f03a16bb911d5b160"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7ab12c1e200b796969b64d2a8f6002cf9eb3483036ad23b8f119316b31b7eca5"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "be2aa151307691f24907ee3e158cd62f21703064eb9af27b16e8657afef4bd11"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "495ec15a84834b43e6b66127e13bef72cee5dd41eeb44f91150fbd8b9f644310"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "e573937b353ec125917c2b0fb9d8d52aa1bbdb1061d407c0ea36eb7c95178aa7"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "2cd9dc97a83d4dc3a345a5cd14b896a88f991df74fc6c3d24f3b39b0659ace50"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b3a4bbbb05681945934b10d59955d53ecda0a14b8b7d1a704b0c2126e2aa9eb8"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "12e509ae0890e94b577b8e05b9b4e9a211d28dc7d69fc82e17f2107a1c580355"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "750aa0cd03219b5913f907eac1afc3995fd2b54a40ecfc7f0c94a9f5be024ece"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "adee5b2beff2247be7318bc1af77c18036b8cfd81e85224095b51e3ecebd2006"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "f5f47030efa188bf666f2ffc1d27628653f33c6681c3037eb5c63217a6e45e10"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "1b680713b97d5aa7beb8758a458e3762f8c3b7de7012fdbe0944f3dbd523731d"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "07386a26be3f86d9cda7435bcdded61fd7e1db13029a440b2d8f6a5242af5c3e"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "3e116e6981cd74d7a8bf031a5d01a1ac2079d846477ad863334dfd1393322ca5"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "72e56cf49c7a81208156fe801ddfcb8bdf619a3492e971ff875da50e24cb8679"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5e90144834b7ee4cf2560a07ffe39c14ec23557d99d089b5a80afd213933809b"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "9887ab7049fd9107859bdcb4a5a01bf91518e89f69d3cbbcb2b3dcaeb8d9c146"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5080104c7c4d53ff349f3caf080b545af6cbcb562fc420f57d5dd9e9f78e76fc"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "072cd60d228eb41a8b08a7304208627e9200bb090d1bc3161060da9f110f3b9f"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "846c838d2d400423679ba59dd0e9ff11c9549c63818f9c1dcb6be235c5a4ff94"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "d57693d8c7c4ccbc2488c59dddbd7427317a77c2f7d4492d7d906785317f0264"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "9d8b753989d46e6b3499b2f6c16d091438c6f1c917bef317525599ea67bbf5c3"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "c21c8109a01c022169aa636b567dadea0836582f19b1e7f2cb1fedbc8f4c156a"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "25363002365bc21ca4c89b24be5cf3cbd9678e0122a1d81873594e0b5e7b0a49"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "145ac65d72310fc73ea155c60e5e96d003b43f7955544278fbc54f71273c1e9e"
+    },
+    {
+      "name": "G6 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "48aaf972a548fac5a208853e56d702fcdfbc617f49638377448fa5384f882361"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 00",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "e47713a82896bfb579921d08c753c6b764c267134d30da73abf1aa5d7d5fd15c"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 01",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "d2c1ebceaa8dcdddcf1d8a9c0728c855bd6b35dbac9ae70c135114643d97829b"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 02",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "495484e7cf8bc3561d929d06c5a437359b6714348b520951f4554f8d30ab5f80"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 03",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "e6bf72e75b671ed2ebdace1272a0a38aad9a42ce09f4db526f12bfb94d568595"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 04",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "77eec2197e1b148460c06b37525be33e9869871b24a35c5a82823da8d629ceb8"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 10",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "12d5f3f5b0baaab1c39e0be952538e3b1b65f6e3675ec55b950278acc60ac9b9"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 11",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "81b6185ff5dc6834f9c74e75ded86d30505daaf758acc2381adb17f29a1f146a"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 12",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ec675bf62e43b112ac5d45ab4ce4085d515de3451b8afe9c0d7604da3a3d7a99"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 13",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "8b4a5ef3bdf9456b9bbfa6f70f3f8cf3633a5814100c7218e677219465635464"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 14",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "beddcefe6b176dd9cccac991ffaf4622942dbcf4d86c2028b50fb98d907ab266"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 20",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "a4701dc01f2a60bb967dbcb3f84cfdd151c61ae57accea0164b3280d6189af41"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 21",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ec04dff3bdc88b243c9c179a570cd82181948ddb35bbc3e7273f48a4d1229f2c"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 22",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "847ed8781e7b1132a7f15acc557016e387727d876a711afb21c8202816191bfa"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 23",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "463fcc01894b42824e27936e4b8e5def28251ccc3a5c6fd63127d8a0ba767033"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 24",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "4a028fbf0c09db32c112b078348c81370eaa6fceb666b02a5964ef40968f516b"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 30",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "c0dc82eda0fe5a42f3071e6232a1d3f81f773c5d37dfb512a0f730664702ecf8"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 31",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "fac8bc4aa2155ec64c6f459d478b5b33b0982be84f1ae568e883a48646a2d7a9"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 32",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "71becd7219e502547eef7f9b2a71cbd7929456afa8515ffddff737fa9ff80a14"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 33",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5c9b6cf44b1f4baf08ab9399d40e1930031bc848f1baa3ee856317d67c30ba68"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 34",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "22e0939eb10562a44bedd9691e10cadf0d327ed7788e6e14779a2d3f63bb5a2e"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 40",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b53c4e451db44108e227cb7090515312863be3ed20328d9110e04e630f8d76c7"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 41",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "6705bca5e5f9082946c151a52372042e63e27e80554c4ab8ffffa54c260f3e86"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 42",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "a4d816aa95aa4df53bb6c0607d79492d7ddaba6db4b509552010c5501949dff6"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 43",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "0a466dfc11124925d8962543fed984f519b44af6ec687d55701e799a1d936c12"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 44",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "89f1fd12bd4e3aace29c81eb990620b099274fb2a10a197f1045e7a0fe318c12"
+    },
+    {
+      "name": "G7 interpolated 200m crop - decorative copy",
+      "vertices": 40401,
+      "loops": 160000,
+      "polygons": 40000,
+      "sha256": "8bf7bb78439830daa39276a2746b7f5c3df1f21ce5b98bdf411519abdbc43fd9"
+    },
+    {
+      "name": "G7 measured DEM mesh",
+      "vertices": 40000,
+      "loops": 237606,
+      "polygons": 79202,
+      "sha256": "0698c50ab06c9e15b38eda5d766b72af1b0bbbde6f767c1674a394b853ab4451"
+    },
+    {
+      "name": "G7 measured DEM mesh.001",
+      "vertices": 40000,
+      "loops": 228006,
+      "polygons": 76002,
+      "sha256": "1c87e53a78aec10c8a4ccf6841c5f66131db24a9e95032a0190712331a0bc49a"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "57f318e650735d4512fe2ff10c476e311b224a7f9a5a69b678bdf25dc30aef94"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5f1092ac84810738e78092abd5015dd5f4a9faf3f1a000fe0ed7c0e197539370"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "f49c155f4581811bde30057543a61cb4da23acdfdad5cc41aa3ebe819b3e273b"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "6671857b2afad3ca16252fadc7ed31515a414e29a7e21664556d3bc6627322f0"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "3ab343fb508085b782788b34b20057132523dfc7a571f00f872273752218baeb"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7e3262f6ffb0358ea1b58da466f791223dfdb9207d06aeca3ea06d79db35e285"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "80e5d99af2a358a14ef2958d8a201cbd61141ba47c3da8589f77eb9b710150ad"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "3c612a872adc8d2e2aae0b980723cbd06fe62a9b6875a77993f7174a321ffc91"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "6a380b7aed9dab37fbbcb95ccf187de9e78978872bba1983448adbe800c69777"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "11becdabf1fdfb684423a3d10c0e4764b7a011ab604234ffc8c5e6435fb0b6a9"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "3b8ca37191ea1aaf5c2077ce292dfd6cbed817432b93254cb8f69bc908a550d6"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "c972649d5329ff97558419f7991931193f8d4b4f0c53aa94f340d8ca4d0e5206"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "bee19359b814a4e8f244fa547917ca69c8725a1573ce6aa9cc9b6d2280507bb7"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "bdbfa46d292e2f59f5447b49c2082dfd1d721d90b1f29dabfb6865487f997150"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "c79f5929a0c596a82b749acd3a5033334c4cf80dce1e3be790a0af6eee3e768a"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "58230653dff4dcc5a79415edb8f74ecf3cefc46aa9f13c96a5fd0d035bcfb363"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "eb494559913be8ce479b2e392b0b769cb6f5289b6f49d402bf5f79408c2ebfde"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "c434d140617cc6aee4c063043e7aef986fe84e234bd43a70445da47b496997ee"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "94dd91f0e08627c689ec6b1ac163783a14f9a64eac2c19b1b8c51efa5efa3a25"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "aa7131626ec02c51968878c7cebf03c67717c9a713e7101ae7bdd78c5a3c74b5"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "7861307b79d23dce375d1be61bb079597296f918b998f740aa8bdaa101d229a1"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "6a74113a6db69def12a74bb314d790782b8c97b35b977f9294b77d11db237bce"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "d4475f56e9ca607890190875dc3e74121bd2ffb7ec2f9994e636e4aa951bce2e"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "8be4f97393676260ef09152c8d3eb3241e86dfeb3c80849edc6b1e162ce62edd"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "e951d1d23489364d356d6ada4c514fdfa1d78fb33b22ba0f7c206cc0ab221388"
+    },
+    {
+      "name": "G8 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "32d9417e3fa61232907138d44a99eacb2c36e3c08e4a5e51b722a479b8887866"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "de4e0db095a1597be588bc38839af53355852057d0c3784d35ef428b7603dbdc"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "935516312f08e7b8ec096de32344156136bc9d29440d49b1291baf57e19924eb"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "e77846ddf319f2d50c7f9e006a6d209802b6b77365dbe999f9e38956f9a3b4b7"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "17e84660bdbb37c68d67fc85e05a56fa01a0c2dc4d85997940428ebf6c14ca7e"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "a29781441ebeebf207d9f3bb821d2af5a0be13bc634ab232313ad89b6780df4b"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7bf737cc42403003189d01485c990506d7ce65bfe24b27fd18a5cc1420e79365"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7a54cf218ec368732a71747ef744cd0e3489909c252dfb99068edf0412ba2b1b"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "0801dda27acfee3edf4f988a1cd198504fb3c802885b1fc35155fb3937474be2"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "38098b97250196825f3f39b2950990a3ee6361bdf89d15d6f70891a77e7782fe"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "75f7a451aa63272111158c49b476e11e2b89d4ac4971e344235cb20b3af94f92"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "6c302ea42240490c7bb703c8a0de2bf274ef73556914d342b53320a3c3556800"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "a3a3d114e2e9a20e0ea13a8be9013028062c2b0d27a64a9e223bc815befc5513"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "949520e0d6c9927b38a56daf9c387cf9a6b885ca9c811d119ed9035b20091b18"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "579d8b65fd45bad11a63b07dc78030b496ced9a6c102da671f8b07ef3967dff4"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "267f9ba8ad70c2b954a5af5be9183e32309f19dcb8ca274075a5d9ddae07dace"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "433684ad5370e6388ffa51e32784d7e80d8a0bddbd5cec9a1b6e0e32b6c2f51d"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "1859bd1f06374c43a5aaffb2f98da7f8bd486350cd1da0b09f71d396d2b0d5ae"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b71eb3919ada55d6e03578cb46867dcba1dd729649e07d57257c59435f0dc378"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "73a918d0ec257d53096b722b83a6b82f4cafba9f73eb1e3f1bd2d7f2cbceaa59"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "945c4c3a678223ce919ed50433e1cf21d43e5e74b861718279e35d28a76eebc4"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "fab612a5f1c1e97935ee49b1ea3cae0e4d04c8f352492a1ae08b42468df36078"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "7cf22ed59d4d4ba28be0539905ea4e5e75204dfe0639cdcb40726f36250b0975"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b93178981fc9e2f8fe3f59b8ee003c9e27a59414496b5db41595ea3c4f79b9c2"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "776128057afb9b4d88f1d0673d6446e8507e956ebb2ca057efbda8b6a068fbb8"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "a99ae5c2a8843c88064bb615b114e7cc48ce5bf3005535dc66b481fadbb1d6c1"
+    },
+    {
+      "name": "H6 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "48e9162f2cf55ed804ce8aab483f3414834a97577c13b8569c01ee1d35848f90"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "471c0fa7272e60d67460345c64b4b2c4dd46e94562eac2121846a3871405ce1f"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b671c92dc17978d00cb7e30ef962ebd9f42ffd14b613383d04ec2899e3c3ca2e"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "925870af2d5550264d2554bb6cf5f48825f1cc9984e8fd8d4860988aa5925f53"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "0d70fdb863d77cbff3f0cef0a2fed803ab7be8bbcfcea39c1c1cd61d9fe1a1b6"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "1c707e7cee92328db1d655bdcfa024119ef3cb27fbabd183e42561eca59315f0"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "f8b0e0b3a807425091a0555c178d6b8b4c3c405ed0b3fa6071674d14d6422551"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "095a756467deb48720f0dee1cd1380258d6c50efba526517ea270407ac78b5c9"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7e97cfacc7bd7232edb44ea5c5c2f18f4d032a5b61c740908bddc844f797dbd7"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "9e654ba833788f3a0008d4568c172d757ac4a99cdf6f54f34c05ff549c92c9e5"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "3575205b41bf24536d751799910fc9d8ec8dedfbe45abcc7592ad30268234dfc"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "aadcb48a7f6a0a5eb22ba18f62e91d48811abad7be981f69e77d9101474f4f38"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ff13e7630ff1bfb2eae7daae5cb5aaf86c83644a9a5be7edb126f2189ff9b155"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "73731fe7e7815f4b417bd1d384bfe8e9db89c6aaf725b6aedc3c03878b3b2a61"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "d13e31e79b6177d0ea80c6faebf55c3f5eb952c0f3cbc5feb545166c16ffba18"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "12b1b8f85d93c522e904ba1a0531b5d6988342c656a0d11cf3268edac7fba83d"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5d5374154b60faad4cd66f523c3c6e63a46c2a8271567fb2677ecdc82449705c"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "79c8d6da1362d9ed876cf10dd9b9844d416b2028aa311c934936e554c72b63bd"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "73afbe298de762c4167986ac54fb2c33f8c96f1279929b124324d781192d9e15"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "609048821d2e2a29f3e236416cb3d7f1fcd1c98c009d20c62c7f6b4298124d0d"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b27ce66904bc2175bd8e5e39284a152a39a40fa7ef93660c3d66c833d678dea4"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "c2c276c8153546c63967727aff16abea1b7c07304e5c1b32f86d44a8861f3e03"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "d47b9bb64d862b7e1ba6a30e7108341ca77d433ad91ecd9d62c65fb7853bb7c0"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "26ac3c33fbeb3f3528332a69fcd12591bd69f72216dc70c343d316f359c7f00e"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "48143cafdbb027146e99cec3294b79ff39c477d8238326ba6abecda5db47472a"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "d7c3ef561b6f1a9d249deddb09d693de299d22046b50b7985ed0e1a020a24636"
+    },
+    {
+      "name": "H7 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "97fca9e0598f8e1f68e5adc1ec6aa7ceea185f358c13a73a073c38c1897834bf"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "25ebb48ce1047f6ee0719ae35a3477b5381da2cc7c6711f6e427f0003983b40c"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "84476e55f73cbfdc79e063c645740ec4b518aa2d31f2bbcfddc3a42fa3d50752"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "4be9773a01beb5b121ddecba10456f84500ac65584d26c43a3967ef186cf8f85"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "f5154074a6467814490db5bb0b8ccbb1dda51c4d45a8f018dd048b8bad0fdc0d"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "d88e3367319f4b66962f814043d5f2cd75793bea2387f7766b9ae30291da13e9"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7f4b219ebc40e132b472fb24933906c28f00a648cf7fb1dffc65e7251850a004"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "4cc1149237858812aec2bca29832b0c034793af648f20a81fd9a66e3fdf59e56"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "cb9eb94d3ed3478d8b74a29dcc6d682eb602436c674d43aa9269b4ecf2029374"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "6289c28354676b591ef40f12c6b81b0b361de6ce62a5dd186bf26e0b56b96254"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "1d15c97068dc371b40ff30af0c7eea90662594517bc4509be0abac8f7f5991a3"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "6f5d940108bc3f6fa50337789f020230bee99c9b32a67d1cf0fc159788f78437"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "808d1a8b5bf0e49aa55307565ba5215abc85d8469ea1e4ce82540763ff2152d7"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "c452413e020c2d175dff55ebd4905628188f4c036a5ce64fa0dcec8f03aa5ce8"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "63ade7639950d1b8547cb5e0d8e0c0f9453f67e0846b2486e20cc7ed6d7d17af"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "16728717872550b872633b780d4c8792cc523200f15f1ad8d9bc21370c4ce8b1"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b44ffdf6e392f39f2cbab66ead29f51b968a9e7aa32ee8e77b938a50fa653c7f"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "c235b1b053990a2ef51354bd006ba70a60a2a1ad8d48272affb7c3aa4364fab9"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "22aa4bf46dd09178a96eeae181af6eab1fec4b7bed23b88de1dfbbe9c874ac95"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b17d24311020c4a9eaf1e52e2b8929f4914775b77bc9f9ff55cb5ad4f83b53f1"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "0e92e90d92d51e700570029393d05155e226c7265b5134c75ef124e4e64e8cc9"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "d51dca806b72de85ebe0114ad462cb3c289c317ab1ac25d043cce64f6d578afb"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "7a469eaf38128edf97210db5731340ef842dd0c8e043232c00a85f3d1185f1aa"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "0ae46ff701b85ca8e3ac5140e8b3dd612bf0a656633e145f73bd9ba605b9524a"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "79b0ea538ce99139b266a21816ca2069a17c9b522103f1a2465813feac807ed4"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "fd7d95bc0c07512f9b5166dbc9a5c3cecece0da8261f209a96ec2c31b579337f"
+    },
+    {
+      "name": "H8 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "c0233db3e0ef6b72e1cd9fdcc31fa101ea56f11b35fe1db9666b8b7506164dc8"
+    },
+    {
+      "name": "Icosphere",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "3b4429de3c628dd3a7a8c41b21a56fc7a508c696a652bad2e011f53290145685"
+    },
+    {
+      "name": "Icosphere.001",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "d10ceb000e009210adad8f076f3f1c440c7f38438aeaf505231c04ee80a0dbb1"
+    },
+    {
+      "name": "Icosphere.002",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "ee93add9efd1e4b38aededb970ec039f21408ef9ec1926f1a4e5a14cef583242"
+    },
+    {
+      "name": "Icosphere.003",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "d94c7e6c1edf934e3637048e95b3ea1b2e27b1f6dc72ee1b95d4d66be40b72fb"
+    },
+    {
+      "name": "Icosphere.004",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "e74c69545dfb3717f7251727f98a77558813aa4414049f3e0e2896253d8e8d1d"
+    },
+    {
+      "name": "Icosphere.005",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "d608ba437a60b59b2f4d18c3b9a0b1515eae427551de64370e701ffb5e6214c8"
+    },
+    {
+      "name": "Icosphere.006",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "22216f58e8fa8f216f5a376916765a6f671d9ca037fe0532a3ff8dd7f637ab20"
+    },
+    {
+      "name": "Icosphere.007",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "a4cf6a241cf8dd58456919092ec4565415e7a0c552a3c36b4ad4d648f352209f"
+    },
+    {
+      "name": "Lunokhod 1 - measured terrain samples",
+      "vertices": 525,
+      "loops": 1920,
+      "polygons": 480,
+      "sha256": "0e6015e725687050b4fc81c83f9d7d718d7114fe68a83becb34545358a008981"
+    },
+    {
+      "name": "Lunokhod 2 - measured terrain samples",
+      "vertices": 40401,
+      "loops": 160000,
+      "polygons": 40000,
+      "sha256": "9d356d6667bcbb6ad2a6f2a76c34989f195a59b07cf48005303221aff4864437"
+    },
+    {
+      "name": "Nine-grid original LOLA raster - common frame",
+      "vertices": 360000,
+      "loops": 1435204,
+      "polygons": 358801,
+      "sha256": "317dcc69d30db70489a649b686fd5d3e3cb812930793f4317d3766bd3befd24d"
+    },
+    {
+      "name": "Shared 5m sample grid 200x200",
+      "vertices": 40000,
+      "loops": 158404,
+      "polygons": 39601,
+      "sha256": "8315c2f5ff938928c2137dd9e482b3c6ef0a43f1acf358cbc2560a789d3683d6"
+    },
+    {
+      "name": "Shared 5m sample grid 200x201",
+      "vertices": 40200,
+      "loops": 159200,
+      "polygons": 39800,
+      "sha256": "9ae8d4ae7bc2753120b171db2eba09e6d439518a2dd70085bf387d4f776edaca"
+    },
+    {
+      "name": "Shared 5m sample grid 201x200",
+      "vertices": 40200,
+      "loops": 159200,
+      "polygons": 39800,
+      "sha256": "9a3883ac7a3fa82aae5b2e03933efa7fcca570d717cff8dc2b7810f0e0e01b15"
+    },
+    {
+      "name": "Shared 5m sample grid 201x201",
+      "vertices": 40401,
+      "loops": 160000,
+      "polygons": 40000,
+      "sha256": "73ffa1c805e4b8bc7de50999d811d1bdc7228970a704538e212ba96ab7ffdbc5"
+    }
+  ],
+  "snapshot": [
+    {
+      "name": "Apollo 11 - measured terrain samples",
+      "vertices": 251001,
+      "loops": 1000000,
+      "polygons": 250000,
+      "sha256": "18108484081d58400c0d1051c8c8f3174ce22b8ef8abf75fd0fe8783eb03d326"
+    },
+    {
+      "name": "Apollo 14 - measured terrain samples",
+      "vertices": 251001,
+      "loops": 1000000,
+      "polygons": 250000,
+      "sha256": "982062e98a495fa07b3485c09d436cec4bcfe271535cb2d45b2ba00f803fdaac"
+    },
+    {
+      "name": "Apollo 15 - measured terrain samples",
+      "vertices": 251001,
+      "loops": 1000000,
+      "polygons": 250000,
+      "sha256": "a31e1c5cc18a8f5db5340e6452349e89306b213c19e6a00374ae5d4679f350c1"
+    },
+    {
+      "name": "Cube.001",
+      "vertices": 1649,
+      "loops": 9216,
+      "polygons": 3072,
+      "sha256": "4b9889b6c5392da23a8890894e66ae58666e76a24e50f2741a158a542cea2a0f"
+    },
+    {
+      "name": "Cube.002",
+      "vertices": 1778,
+      "loops": 9216,
+      "polygons": 3072,
+      "sha256": "359759b32ebb85d782c6b3aced6ab8d596c7a4f860517f0f8efefbdb20443d24"
+    },
+    {
+      "name": "Cube.003",
+      "vertices": 1778,
+      "loops": 9216,
+      "polygons": 3072,
+      "sha256": "359759b32ebb85d782c6b3aced6ab8d596c7a4f860517f0f8efefbdb20443d24"
+    },
+    {
+      "name": "Data-aligned inter-grid connector strips",
+      "vertices": 4784,
+      "loops": 9568,
+      "polygons": 2392,
+      "sha256": "885e408f5f63013e78645e32850883536750d72f5d10776f1ad2409f989cbf86"
+    },
+    {
+      "name": "Extra cosmetic rocks - F6 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "db99b4e14ee0890f94785328a5364851a62edbbb765df49ff98b7d016ada4307"
+    },
+    {
+      "name": "Extra cosmetic rocks - F7 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "b8b71b92854bd4b359051de25d2604153ae0deb3e666150a2dab7dc49dcd966e"
+    },
+    {
+      "name": "Extra cosmetic rocks - F8 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "0604761645965d2dfa3d7a8dae89ed77cafc3e5f548e3b7b7192eba16546993c"
+    },
+    {
+      "name": "Extra cosmetic rocks - G6 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "05d9a5b8491ae247f8dc3c2a244a74d679ae0f5c31305c47eacf83071638d172"
+    },
+    {
+      "name": "Extra cosmetic rocks - G7 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "1bab9a57c79d315a8060f868f25b7090c9c25df69b923b9a24c4951e1e933998"
+    },
+    {
+      "name": "Extra cosmetic rocks - G8 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "806b6c3867805815d8db1c97a433c847cb12e32982b5d22d2da30b0d346d03cf"
+    },
+    {
+      "name": "Extra cosmetic rocks - H6 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "da72c1ab9fba4004e823ce79dcb286eaaa78fa2b3269ac8a5cb4857eb80a64ab"
+    },
+    {
+      "name": "Extra cosmetic rocks - H7 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "ef6a11330639c13356b57f5085e8b2c4f3b9f99c345f30d180ef0e9675c87ca2"
+    },
+    {
+      "name": "Extra cosmetic rocks - H8 locations",
+      "vertices": 5924,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "950f72c1423c1ccd2b80d011b4e38847728a872597a1847168b71ea595424678"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "0cc77c6d72e67d749ad3abfe83fdc63d8a88490407eacf3ff285e258a2cc88ce"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "6e77f8efed226d3140bb26db8eedece336e89036899b9893542bb888bc16cfe2"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "74932761aa4fcb2401b20ce392b9ff6cf2851c72933d0d6923c3f78ed5255986"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "0a49c3e06f9c61472ab1a10e3a0ed60a5e306ccf4ac3b0b7fc9f96ac721c61f1"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "c17211c3ec3c270569c93dc6353d5c726b07f1a44cd2d65b9d19eb7ec0388ce3"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "57ef3f0f267b29317185b8b20f66ef50c717a6e1fb9d8a0492c2b7debd4a8b8b"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b21fecec555fbca942f32d4c4d829d1c0bdc2f540740ff0e17adaaf092629bbb"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "695f5003296bb84fcd208b6a8c85f5e86a3e23bcf180a9f9a347301a1471a594"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "26557c1a8259db423038e40d0bdd461f19a53a0852184d6d2888aa78d736b727"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "94c7b6177005d4864f8faa833f5647b8828639079216232c8a4857206035f713"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "c6e80216a16d5281498076232fb1a51ebc419b64a259102dc6a38604df33bb3b"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "d80745c3c75b3b4720b8985135ed759646efc7d1da68593ab565e7f09e411f33"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "2fbe75f6b91b3a18d1161538b17bc64dc284560295963f4189f0420ba8d9cdf9"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5e5fb31e1961855d2ba99277c9bf9cadaffc7ff257c6f16c1c2386efc862697d"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "2b91c63c25edc62df93d5e7bd9936d6ccb91807b4a9bc29076bc2bda0ff5ec63"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "9583299b36449e1c8fe98e5f3c074dd137f90129dfa1c3d6d9c2fdbc204bfe93"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5129022d6fb0a370d56b11b797810b509b3202e7f1d0f1dcc1efa6653e087bc8"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "f38b6d8176a82fb8b09b42140c19d028deb7b7f187ef33c7fd0faf1fa401f6e4"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ea36990eefa31e088cd5a509d6b7976bc626ea31a6e4f74a1308a0793d41c465"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b6f155356d130b37a3426f4454615eb50aeac26b4b0a6fa90326142290459fa7"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "f18af228bec683cb0f0e2c9e54ea23f22ebdbcaf09659123e77868f309ff0bb8"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "4bf64f203eb557b16a339255de45a2f1384b2b601945cc94a74901d14f1444fe"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "523ba0df035c7507b56d5aacecc6d338eafc02867612cca703c402d2765df4f9"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "d13fa7177510cdb4627f3e351059331655d9cbfa680755c580da0a08aeda486c"
+    },
+    {
+      "name": "F6 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "1493b58f1cba5931a3dc99d0f348ecdcee69369437a61c37c793d1095b90b376"
+    },
+    {
+      "name": "F6 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "3058fdfba08640f3763dc40ee8abbd7f47afe94d87b6741902e953900b17a0d5"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7185f0fece751c315cdfee39d2a6ca25c3b130abf98801b52fddd042d1fc503c"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ee515c65b50af16fd6734d002357c294941c6ec605532c668da4963b647ab103"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "87e606d25f78197cbcb9a48b604fafb062662ba442dbc2490db29a299cfe68ef"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "1b6d705f9a11c63cb8b7527cdd36aec1f3a78bc6681bb503f3fe6080af793932"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "bfdc751e08898baeeb06877309a32e114a72cbbfa4791a3923899678f192e6c8"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5c293a1769d3af080d1662b4afe972203ae54c882618b6f43081038651cf84d1"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "3003bce49bc11b4974000758955a2dffcb372c3fa4684df3d64a1f3fbacc8ec9"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "9f536215cfe47384ab27bafce3995f121ca9c40668914272d4c4980db8e37406"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "a9104c784415fe6476e9d4a3e936b579e8152b3d85da0e54aaf1a4d06964d760"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "8b289fe2b809375624e239a6eb4c61d76d25978e8bd26a8d2b431dd034caabe7"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "df724fac8054dcd746c4e3a172b736f531923b3b0da5d675064bc743b0f4a9ff"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "271b80ebe39df19f4cfd99d1d2082497f19dc19e48eaa171022f68d4df224a4f"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "f77b60b28622ab0d3a38fd633333dafdd801633ec05529507af5801e7d29db9e"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "19bf1da43270b5e3dce78f0a89b7686c9cc2aa4399fe7f9d23851d34620ba4ff"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "cf242722ddc36f7f9afe76a10ec0fcd56bc6ab3b07239769fd3f8790772d517f"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b57d76b0aecee1a4cd6d8e7ddddaa62384afa38598952105530abca64a57a6c8"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "a796d5dbe892fc35d20e188013ce5060f521408128c20a77d288483010c54773"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "4a7b92e7f292861de6efc89f711fdc87f21b07f928c95cc790e21cfea08d4131"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "d01b2222336a2a2abecd4af1315a09542f606145a3e27149e888785e4f684b11"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "ca145a8e75c760f52abc34457a11f1c35fb6e102ffa6e5b4ebd17b5a964f81ee"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "968d44d494cd9c0348ade9434afb8eb8508a9d6489d75911c4f82f36f784dace"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "443e3f88821d57f76cf4f6d619635aba0e8972f6a8982622bfd6af4e1d1d8ce3"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "3da03543595be8a25db9a7fa739be0542e31b9b66db06d22c4aa1cf961a75dbb"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b6a22f0211bb27c420941a2fcaca1c175c5c4ed578e253e75bc51bdf0e4bca8b"
+    },
+    {
+      "name": "F7 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "473d95f3b2c18fe51a41407e90079b7aaaafa00d111db95d501118cc95ea297f"
+    },
+    {
+      "name": "F7 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "da1265460c44344d890c2d507fc965458574f9ca921af03af52e78e769d83c8e"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "70cd034f4df00e885156b6c3a5866d03acd84d6cf6b1265269371d3a664272c6"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ef3cf1a0e408bc16760c8b9a749b37a0db40f0549e80808cb6487939b0e6de97"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "bf67c46730acc08dd29c783abc93a608f22640265cc4c7951f493a537aa8fa73"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "a840810d1082ac4b92bdc06109e8f13da8b0f243a38ebcd9c2443cdef8a63869"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "581fce53263a9dd2eaf33ca1ab634ffd3c0f29e405484fcbe4e989bcb2ad9efc"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "cb91d2bd1c1f45accf8486291445d246800ce3bf041bda36cb5bdf587cec4550"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "a7fc6166a27e9b8a8a4b0a99cd0bffacf3030d8a15c0e1874f5d570e35726e31"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "96b40de5e4c89ebfb891025dd58c7679a80b3d2fc17d22f22744dd7256dab808"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ad7f94d2d0d934e8312e111b8822cd39ba95b2549efe87fc4283f5f83e3c2813"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "3d3c0200e96a77ad298ef51fe40534511a0a551e479d11f30f7c5ff5e7d25e2e"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "0ce5623f8945ffccc18fff3528e165ed6dc7a4ca618aa06b329d6b05193de9c6"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5bad23f3759b236a27166ac76e360cf08feba075a874680bf8b45e467d3e79ac"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "4d2d8e54f419d2e5542bdaa5f6ceb29fce4381e99be1b5b935d8ca9dd100c248"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "dc8854f1fdefcd35c6869f4cc10990ffdb381008e41b9e9625f13320bb1963a0"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "fe16937b6009aa02860de4ca605974bd13dd45c8a822a1b6287cba6696906ada"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "37e41a75c484db0aaebf6e7b005b5ef8fd3f83a93df7454f40cedf8386408b2e"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "637c296fa4df1848b564d589143d17da41e193b1296f9114cff18fd62bc1966f"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b5b8ca0939805819700265d298503c0a2b4e935d6cbd6395cadc5b1d869c4493"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ca61b88bf4ed8aebd7e1a54f69b75faa5bf69604c6506e693505d6ab0cc021f9"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "3599deabd36bd9cdc6ffb1b68965da715954d609917c8f28785baf38d5a225d3"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "2c5e71b1db433edfa5902e04fbc67abf6e10fbba854065bdd10179a1830a3f52"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "e699f7d083602316aa3c92b0efd66f17022127d663cefbdb97ae90a190bdcd6b"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b1214898e554ff0feb45ebf3b8e9b3b5972213a01429c86e09461f209b92602c"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b1296fa3a7a9d6b18d5077ae4c52f9973fbf70688b6811dbb71416f007f4e597"
+    },
+    {
+      "name": "F8 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "3ff944d0d6a817ada0a3ff39271c703d96a8bd1bed94485587b6bc75ee0d5dbb"
+    },
+    {
+      "name": "F8 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "701db49f5d49f4f67e89dfd1784a265eabadbb7e71cddd0323f8b023111cf0fe"
+    },
+    {
+      "name": "Full G7 fictional rock locations",
+      "vertices": 21376,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "a27a4bcca59a9f239efc0ea21116f9a44238edb5bd8b207247dc3d765c93e56d"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7c5c679749de9f608c5d8d3313c93178aac4a39978de7a3f03a16bb911d5b160"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7ab12c1e200b796969b64d2a8f6002cf9eb3483036ad23b8f119316b31b7eca5"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "be2aa151307691f24907ee3e158cd62f21703064eb9af27b16e8657afef4bd11"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "495ec15a84834b43e6b66127e13bef72cee5dd41eeb44f91150fbd8b9f644310"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "e573937b353ec125917c2b0fb9d8d52aa1bbdb1061d407c0ea36eb7c95178aa7"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "2cd9dc97a83d4dc3a345a5cd14b896a88f991df74fc6c3d24f3b39b0659ace50"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b3a4bbbb05681945934b10d59955d53ecda0a14b8b7d1a704b0c2126e2aa9eb8"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "12e509ae0890e94b577b8e05b9b4e9a211d28dc7d69fc82e17f2107a1c580355"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "750aa0cd03219b5913f907eac1afc3995fd2b54a40ecfc7f0c94a9f5be024ece"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "adee5b2beff2247be7318bc1af77c18036b8cfd81e85224095b51e3ecebd2006"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "f5f47030efa188bf666f2ffc1d27628653f33c6681c3037eb5c63217a6e45e10"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "1b680713b97d5aa7beb8758a458e3762f8c3b7de7012fdbe0944f3dbd523731d"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "07386a26be3f86d9cda7435bcdded61fd7e1db13029a440b2d8f6a5242af5c3e"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "3e116e6981cd74d7a8bf031a5d01a1ac2079d846477ad863334dfd1393322ca5"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "72e56cf49c7a81208156fe801ddfcb8bdf619a3492e971ff875da50e24cb8679"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5e90144834b7ee4cf2560a07ffe39c14ec23557d99d089b5a80afd213933809b"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "9887ab7049fd9107859bdcb4a5a01bf91518e89f69d3cbbcb2b3dcaeb8d9c146"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5080104c7c4d53ff349f3caf080b545af6cbcb562fc420f57d5dd9e9f78e76fc"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "072cd60d228eb41a8b08a7304208627e9200bb090d1bc3161060da9f110f3b9f"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "846c838d2d400423679ba59dd0e9ff11c9549c63818f9c1dcb6be235c5a4ff94"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "d57693d8c7c4ccbc2488c59dddbd7427317a77c2f7d4492d7d906785317f0264"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "9d8b753989d46e6b3499b2f6c16d091438c6f1c917bef317525599ea67bbf5c3"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "c21c8109a01c022169aa636b567dadea0836582f19b1e7f2cb1fedbc8f4c156a"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "25363002365bc21ca4c89b24be5cf3cbd9678e0122a1d81873594e0b5e7b0a49"
+    },
+    {
+      "name": "G6 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "145ac65d72310fc73ea155c60e5e96d003b43f7955544278fbc54f71273c1e9e"
+    },
+    {
+      "name": "G6 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "48aaf972a548fac5a208853e56d702fcdfbc617f49638377448fa5384f882361"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 00",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "e47713a82896bfb579921d08c753c6b764c267134d30da73abf1aa5d7d5fd15c"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 01",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "d2c1ebceaa8dcdddcf1d8a9c0728c855bd6b35dbac9ae70c135114643d97829b"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 02",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "495484e7cf8bc3561d929d06c5a437359b6714348b520951f4554f8d30ab5f80"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 03",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "e6bf72e75b671ed2ebdace1272a0a38aad9a42ce09f4db526f12bfb94d568595"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 04",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "77eec2197e1b148460c06b37525be33e9869871b24a35c5a82823da8d629ceb8"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 10",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "12d5f3f5b0baaab1c39e0be952538e3b1b65f6e3675ec55b950278acc60ac9b9"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 11",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "81b6185ff5dc6834f9c74e75ded86d30505daaf758acc2381adb17f29a1f146a"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 12",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ec675bf62e43b112ac5d45ab4ce4085d515de3451b8afe9c0d7604da3a3d7a99"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 13",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "8b4a5ef3bdf9456b9bbfa6f70f3f8cf3633a5814100c7218e677219465635464"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 14",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "beddcefe6b176dd9cccac991ffaf4622942dbcf4d86c2028b50fb98d907ab266"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 20",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "a4701dc01f2a60bb967dbcb3f84cfdd151c61ae57accea0164b3280d6189af41"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 21",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ec04dff3bdc88b243c9c179a570cd82181948ddb35bbc3e7273f48a4d1229f2c"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 22",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "847ed8781e7b1132a7f15acc557016e387727d876a711afb21c8202816191bfa"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 23",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "463fcc01894b42824e27936e4b8e5def28251ccc3a5c6fd63127d8a0ba767033"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 24",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "4a028fbf0c09db32c112b078348c81370eaa6fceb666b02a5964ef40968f516b"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 30",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "c0dc82eda0fe5a42f3071e6232a1d3f81f773c5d37dfb512a0f730664702ecf8"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 31",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "fac8bc4aa2155ec64c6f459d478b5b33b0982be84f1ae568e883a48646a2d7a9"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 32",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "71becd7219e502547eef7f9b2a71cbd7929456afa8515ffddff737fa9ff80a14"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 33",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5c9b6cf44b1f4baf08ab9399d40e1930031bc848f1baa3ee856317d67c30ba68"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 34",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "22e0939eb10562a44bedd9691e10cadf0d327ed7788e6e14779a2d3f63bb5a2e"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 40",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b53c4e451db44108e227cb7090515312863be3ed20328d9110e04e630f8d76c7"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 41",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "6705bca5e5f9082946c151a52372042e63e27e80554c4ab8ffffa54c260f3e86"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 42",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "a4d816aa95aa4df53bb6c0607d79492d7ddaba6db4b509552010c5501949dff6"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 43",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "0a466dfc11124925d8962543fed984f519b44af6ec687d55701e799a1d936c12"
+    },
+    {
+      "name": "G7 data-derived cosmetic tile 44",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "89f1fd12bd4e3aace29c81eb990620b099274fb2a10a197f1045e7a0fe318c12"
+    },
+    {
+      "name": "G7 interpolated 200m crop - decorative copy",
+      "vertices": 40401,
+      "loops": 160000,
+      "polygons": 40000,
+      "sha256": "8bf7bb78439830daa39276a2746b7f5c3df1f21ce5b98bdf411519abdbc43fd9"
+    },
+    {
+      "name": "G7 measured DEM mesh",
+      "vertices": 40000,
+      "loops": 237606,
+      "polygons": 79202,
+      "sha256": "0698c50ab06c9e15b38eda5d766b72af1b0bbbde6f767c1674a394b853ab4451"
+    },
+    {
+      "name": "G7 measured DEM mesh.001",
+      "vertices": 40000,
+      "loops": 228006,
+      "polygons": 76002,
+      "sha256": "1c87e53a78aec10c8a4ccf6841c5f66131db24a9e95032a0190712331a0bc49a"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "57f318e650735d4512fe2ff10c476e311b224a7f9a5a69b678bdf25dc30aef94"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5f1092ac84810738e78092abd5015dd5f4a9faf3f1a000fe0ed7c0e197539370"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "f49c155f4581811bde30057543a61cb4da23acdfdad5cc41aa3ebe819b3e273b"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "6671857b2afad3ca16252fadc7ed31515a414e29a7e21664556d3bc6627322f0"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "3ab343fb508085b782788b34b20057132523dfc7a571f00f872273752218baeb"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7e3262f6ffb0358ea1b58da466f791223dfdb9207d06aeca3ea06d79db35e285"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "80e5d99af2a358a14ef2958d8a201cbd61141ba47c3da8589f77eb9b710150ad"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "3c612a872adc8d2e2aae0b980723cbd06fe62a9b6875a77993f7174a321ffc91"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "6a380b7aed9dab37fbbcb95ccf187de9e78978872bba1983448adbe800c69777"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "11becdabf1fdfb684423a3d10c0e4764b7a011ab604234ffc8c5e6435fb0b6a9"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "3b8ca37191ea1aaf5c2077ce292dfd6cbed817432b93254cb8f69bc908a550d6"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "c972649d5329ff97558419f7991931193f8d4b4f0c53aa94f340d8ca4d0e5206"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "bee19359b814a4e8f244fa547917ca69c8725a1573ce6aa9cc9b6d2280507bb7"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "bdbfa46d292e2f59f5447b49c2082dfd1d721d90b1f29dabfb6865487f997150"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "c79f5929a0c596a82b749acd3a5033334c4cf80dce1e3be790a0af6eee3e768a"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "58230653dff4dcc5a79415edb8f74ecf3cefc46aa9f13c96a5fd0d035bcfb363"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "eb494559913be8ce479b2e392b0b769cb6f5289b6f49d402bf5f79408c2ebfde"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "c434d140617cc6aee4c063043e7aef986fe84e234bd43a70445da47b496997ee"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "94dd91f0e08627c689ec6b1ac163783a14f9a64eac2c19b1b8c51efa5efa3a25"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "aa7131626ec02c51968878c7cebf03c67717c9a713e7101ae7bdd78c5a3c74b5"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "7861307b79d23dce375d1be61bb079597296f918b998f740aa8bdaa101d229a1"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "6a74113a6db69def12a74bb314d790782b8c97b35b977f9294b77d11db237bce"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "d4475f56e9ca607890190875dc3e74121bd2ffb7ec2f9994e636e4aa951bce2e"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "8be4f97393676260ef09152c8d3eb3241e86dfeb3c80849edc6b1e162ce62edd"
+    },
+    {
+      "name": "G8 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "e951d1d23489364d356d6ada4c514fdfa1d78fb33b22ba0f7c206cc0ab221388"
+    },
+    {
+      "name": "G8 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "32d9417e3fa61232907138d44a99eacb2c36e3c08e4a5e51b722a479b8887866"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "de4e0db095a1597be588bc38839af53355852057d0c3784d35ef428b7603dbdc"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "935516312f08e7b8ec096de32344156136bc9d29440d49b1291baf57e19924eb"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "e77846ddf319f2d50c7f9e006a6d209802b6b77365dbe999f9e38956f9a3b4b7"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "17e84660bdbb37c68d67fc85e05a56fa01a0c2dc4d85997940428ebf6c14ca7e"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "a29781441ebeebf207d9f3bb821d2af5a0be13bc634ab232313ad89b6780df4b"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7bf737cc42403003189d01485c990506d7ce65bfe24b27fd18a5cc1420e79365"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7a54cf218ec368732a71747ef744cd0e3489909c252dfb99068edf0412ba2b1b"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "0801dda27acfee3edf4f988a1cd198504fb3c802885b1fc35155fb3937474be2"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "38098b97250196825f3f39b2950990a3ee6361bdf89d15d6f70891a77e7782fe"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "75f7a451aa63272111158c49b476e11e2b89d4ac4971e344235cb20b3af94f92"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "6c302ea42240490c7bb703c8a0de2bf274ef73556914d342b53320a3c3556800"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "a3a3d114e2e9a20e0ea13a8be9013028062c2b0d27a64a9e223bc815befc5513"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "949520e0d6c9927b38a56daf9c387cf9a6b885ca9c811d119ed9035b20091b18"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "579d8b65fd45bad11a63b07dc78030b496ced9a6c102da671f8b07ef3967dff4"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "267f9ba8ad70c2b954a5af5be9183e32309f19dcb8ca274075a5d9ddae07dace"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "433684ad5370e6388ffa51e32784d7e80d8a0bddbd5cec9a1b6e0e32b6c2f51d"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "1859bd1f06374c43a5aaffb2f98da7f8bd486350cd1da0b09f71d396d2b0d5ae"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b71eb3919ada55d6e03578cb46867dcba1dd729649e07d57257c59435f0dc378"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "73a918d0ec257d53096b722b83a6b82f4cafba9f73eb1e3f1bd2d7f2cbceaa59"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "945c4c3a678223ce919ed50433e1cf21d43e5e74b861718279e35d28a76eebc4"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "fab612a5f1c1e97935ee49b1ea3cae0e4d04c8f352492a1ae08b42468df36078"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "7cf22ed59d4d4ba28be0539905ea4e5e75204dfe0639cdcb40726f36250b0975"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b93178981fc9e2f8fe3f59b8ee003c9e27a59414496b5db41595ea3c4f79b9c2"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "776128057afb9b4d88f1d0673d6446e8507e956ebb2ca057efbda8b6a068fbb8"
+    },
+    {
+      "name": "H6 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "a99ae5c2a8843c88064bb615b114e7cc48ce5bf3005535dc66b481fadbb1d6c1"
+    },
+    {
+      "name": "H6 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "48e9162f2cf55ed804ce8aab483f3414834a97577c13b8569c01ee1d35848f90"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "471c0fa7272e60d67460345c64b4b2c4dd46e94562eac2121846a3871405ce1f"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b671c92dc17978d00cb7e30ef962ebd9f42ffd14b613383d04ec2899e3c3ca2e"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "925870af2d5550264d2554bb6cf5f48825f1cc9984e8fd8d4860988aa5925f53"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "0d70fdb863d77cbff3f0cef0a2fed803ab7be8bbcfcea39c1c1cd61d9fe1a1b6"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "1c707e7cee92328db1d655bdcfa024119ef3cb27fbabd183e42561eca59315f0"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "f8b0e0b3a807425091a0555c178d6b8b4c3c405ed0b3fa6071674d14d6422551"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "095a756467deb48720f0dee1cd1380258d6c50efba526517ea270407ac78b5c9"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7e97cfacc7bd7232edb44ea5c5c2f18f4d032a5b61c740908bddc844f797dbd7"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "9e654ba833788f3a0008d4568c172d757ac4a99cdf6f54f34c05ff549c92c9e5"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "3575205b41bf24536d751799910fc9d8ec8dedfbe45abcc7592ad30268234dfc"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "aadcb48a7f6a0a5eb22ba18f62e91d48811abad7be981f69e77d9101474f4f38"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "ff13e7630ff1bfb2eae7daae5cb5aaf86c83644a9a5be7edb126f2189ff9b155"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "73731fe7e7815f4b417bd1d384bfe8e9db89c6aaf725b6aedc3c03878b3b2a61"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "d13e31e79b6177d0ea80c6faebf55c3f5eb952c0f3cbc5feb545166c16ffba18"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "12b1b8f85d93c522e904ba1a0531b5d6988342c656a0d11cf3268edac7fba83d"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "5d5374154b60faad4cd66f523c3c6e63a46c2a8271567fb2677ecdc82449705c"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "79c8d6da1362d9ed876cf10dd9b9844d416b2028aa311c934936e554c72b63bd"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "73afbe298de762c4167986ac54fb2c33f8c96f1279929b124324d781192d9e15"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "609048821d2e2a29f3e236416cb3d7f1fcd1c98c009d20c62c7f6b4298124d0d"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "b27ce66904bc2175bd8e5e39284a152a39a40fa7ef93660c3d66c833d678dea4"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "c2c276c8153546c63967727aff16abea1b7c07304e5c1b32f86d44a8861f3e03"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "d47b9bb64d862b7e1ba6a30e7108341ca77d433ad91ecd9d62c65fb7853bb7c0"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "26ac3c33fbeb3f3528332a69fcd12591bd69f72216dc70c343d316f359c7f00e"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "48143cafdbb027146e99cec3294b79ff39c477d8238326ba6abecda5db47472a"
+    },
+    {
+      "name": "H7 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "d7c3ef561b6f1a9d249deddb09d693de299d22046b50b7985ed0e1a020a24636"
+    },
+    {
+      "name": "H7 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "97fca9e0598f8e1f68e5adc1ec6aa7ceea185f358c13a73a073c38c1897834bf"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "25ebb48ce1047f6ee0719ae35a3477b5381da2cc7c6711f6e427f0003983b40c"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.001",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "84476e55f73cbfdc79e063c645740ec4b518aa2d31f2bbcfddc3a42fa3d50752"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.002",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "4be9773a01beb5b121ddecba10456f84500ac65584d26c43a3967ef186cf8f85"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.003",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "f5154074a6467814490db5bb0b8ccbb1dda51c4d45a8f018dd048b8bad0fdc0d"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.004",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "d88e3367319f4b66962f814043d5f2cd75793bea2387f7766b9ae30291da13e9"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.005",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "7f4b219ebc40e132b472fb24933906c28f00a648cf7fb1dffc65e7251850a004"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.006",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "4cc1149237858812aec2bca29832b0c034793af648f20a81fd9a66e3fdf59e56"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.007",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "cb9eb94d3ed3478d8b74a29dcc6d682eb602436c674d43aa9269b4ecf2029374"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.008",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "6289c28354676b591ef40f12c6b81b0b361de6ce62a5dd186bf26e0b56b96254"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.009",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "1d15c97068dc371b40ff30af0c7eea90662594517bc4509be0abac8f7f5991a3"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.010",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "6f5d940108bc3f6fa50337789f020230bee99c9b32a67d1cf0fc159788f78437"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.011",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "808d1a8b5bf0e49aa55307565ba5215abc85d8469ea1e4ce82540763ff2152d7"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.012",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "c452413e020c2d175dff55ebd4905628188f4c036a5ce64fa0dcec8f03aa5ce8"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.013",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "63ade7639950d1b8547cb5e0d8e0c0f9453f67e0846b2486e20cc7ed6d7d17af"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.014",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "16728717872550b872633b780d4c8792cc523200f15f1ad8d9bc21370c4ce8b1"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.015",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b44ffdf6e392f39f2cbab66ead29f51b968a9e7aa32ee8e77b938a50fa653c7f"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.016",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "c235b1b053990a2ef51354bd006ba70a60a2a1ad8d48272affb7c3aa4364fab9"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.017",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "22aa4bf46dd09178a96eeae181af6eab1fec4b7bed23b88de1dfbbe9c874ac95"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.018",
+      "vertices": 1681,
+      "loops": 6400,
+      "polygons": 1600,
+      "sha256": "b17d24311020c4a9eaf1e52e2b8929f4914775b77bc9f9ff55cb5ad4f83b53f1"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.019",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "0e92e90d92d51e700570029393d05155e226c7265b5134c75ef124e4e64e8cc9"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.020",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "d51dca806b72de85ebe0114ad462cb3c289c317ab1ac25d043cce64f6d578afb"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.021",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "7a469eaf38128edf97210db5731340ef842dd0c8e043232c00a85f3d1185f1aa"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.022",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "0ae46ff701b85ca8e3ac5140e8b3dd612bf0a656633e145f73bd9ba605b9524a"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.023",
+      "vertices": 1640,
+      "loops": 6240,
+      "polygons": 1560,
+      "sha256": "79b0ea538ce99139b266a21816ca2069a17c9b522103f1a2465813feac807ed4"
+    },
+    {
+      "name": "H8 data-derived cosmetic tile.024",
+      "vertices": 1600,
+      "loops": 6084,
+      "polygons": 1521,
+      "sha256": "fd7d95bc0c07512f9b5166dbc9a5c3cecece0da8261f209a96ec2c31b579337f"
+    },
+    {
+      "name": "H8 fictional rock points",
+      "vertices": 22276,
+      "loops": 0,
+      "polygons": 0,
+      "sha256": "c0233db3e0ef6b72e1cd9fdcc31fa101ea56f11b35fe1db9666b8b7506164dc8"
+    },
+    {
+      "name": "Icosphere",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "3b4429de3c628dd3a7a8c41b21a56fc7a508c696a652bad2e011f53290145685"
+    },
+    {
+      "name": "Icosphere.001",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "d10ceb000e009210adad8f076f3f1c440c7f38438aeaf505231c04ee80a0dbb1"
+    },
+    {
+      "name": "Icosphere.002",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "ee93add9efd1e4b38aededb970ec039f21408ef9ec1926f1a4e5a14cef583242"
+    },
+    {
+      "name": "Icosphere.003",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "d94c7e6c1edf934e3637048e95b3ea1b2e27b1f6dc72ee1b95d4d66be40b72fb"
+    },
+    {
+      "name": "Icosphere.004",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "e74c69545dfb3717f7251727f98a77558813aa4414049f3e0e2896253d8e8d1d"
+    },
+    {
+      "name": "Icosphere.005",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "d608ba437a60b59b2f4d18c3b9a0b1515eae427551de64370e701ffb5e6214c8"
+    },
+    {
+      "name": "Icosphere.006",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "22216f58e8fa8f216f5a376916765a6f671d9ca037fe0532a3ff8dd7f637ab20"
+    },
+    {
+      "name": "Icosphere.007",
+      "vertices": 42,
+      "loops": 240,
+      "polygons": 80,
+      "sha256": "a4cf6a241cf8dd58456919092ec4565415e7a0c552a3c36b4ad4d648f352209f"
+    },
+    {
+      "name": "Lunokhod 1 - measured terrain samples",
+      "vertices": 525,
+      "loops": 1920,
+      "polygons": 480,
+      "sha256": "0e6015e725687050b4fc81c83f9d7d718d7114fe68a83becb34545358a008981"
+    },
+    {
+      "name": "Lunokhod 2 - measured terrain samples",
+      "vertices": 40401,
+      "loops": 160000,
+      "polygons": 40000,
+      "sha256": "9d356d6667bcbb6ad2a6f2a76c34989f195a59b07cf48005303221aff4864437"
+    },
+    {
+      "name": "Nine-grid original LOLA raster - common frame",
+      "vertices": 360000,
+      "loops": 1435204,
+      "polygons": 358801,
+      "sha256": "317dcc69d30db70489a649b686fd5d3e3cb812930793f4317d3766bd3befd24d"
+    },
+    {
+      "name": "Shared 5m sample grid 200x200",
+      "vertices": 40000,
+      "loops": 158404,
+      "polygons": 39601,
+      "sha256": "8315c2f5ff938928c2137dd9e482b3c6ef0a43f1acf358cbc2560a789d3683d6"
+    },
+    {
+      "name": "Shared 5m sample grid 200x201",
+      "vertices": 40200,
+      "loops": 159200,
+      "polygons": 39800,
+      "sha256": "9ae8d4ae7bc2753120b171db2eba09e6d439518a2dd70085bf387d4f776edaca"
+    },
+    {
+      "name": "Shared 5m sample grid 201x200",
+      "vertices": 40200,
+      "loops": 159200,
+      "polygons": 39800,
+      "sha256": "9a3883ac7a3fa82aae5b2e03933efa7fcca570d717cff8dc2b7810f0e0e01b15"
+    },
+    {
+      "name": "Shared 5m sample grid 201x201",
+      "vertices": 40401,
+      "loops": 160000,
+      "polygons": 40000,
+      "sha256": "73ffa1c805e4b8bc7de50999d811d1bdc7228970a704538e212ba96ab7ffdbc5"
+    }
+  ]
+}
