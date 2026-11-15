@@ -33,6 +33,7 @@ export function AppShell() {
             <Link to="/missions">Missions</Link>
             <Link to="/timeline">Timeline</Link>
             <Link to="/about">About</Link>
+            <Link to="/planner">Flight phases</Link>
             <Link to="/game">🚀 Asteroid Game</Link>
           </nav>
         </div>

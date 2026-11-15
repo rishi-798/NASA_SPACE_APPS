@@ -158,7 +158,15 @@ export function TripPage() {
 
   return <article className="trip-page">
     <LoadingScreen visible={loadingScreen.visible} ready={loadingScreen.ready} onDismiss={loadingScreen.dismiss} message="Analyzing your landing site" />
-    <div className="trip-topline"><Link to="/"><ArrowLeft /> Back to website</Link><span>TEAM BRAHMOS / MISSION PROTOTYPE</span></div>
+    <div className="trip-topline">
+      <Link to="/"><ArrowLeft /> Back to website</Link>
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <Link to="/planner" style={{ color: "#38bdf8", textDecoration: "none", fontSize: "0.82rem", fontWeight: 600 }}>
+          🚀 Mission Phase Planner
+        </Link>
+        <span>TEAM BRAHMOS / MISSION PROTOTYPE</span>
+      </div>
+    </div>
     <nav className="trip-progress" aria-label="Trip progress">{stages.map((stage, index) => <button key={stage.id} type="button" aria-current={mission.stage === stage.id ? "step" : undefined}
       disabled={mission.stage === "preparing" || index > stageIndex} onClick={() => go(stage.id)}>{index < stageIndex ? <Check aria-hidden="true" /> : <span className="trip-step-number">{index + 1}</span>}{stage.label}</button>)}</nav>
     {storageNotice && <p className="trip-notice">Browser storage is unavailable. Your choices will last only while this planner is open.</p>}
