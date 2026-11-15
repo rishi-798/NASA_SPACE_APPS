@@ -66,6 +66,20 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     const surfaceMaterial = new THREE.MeshStandardMaterial({map: dust.map, normalMap: dust.normalMap,
       normalScale: new THREE.Vector2(.85, .85), color: 0x858585, roughness: .97, metalness: 0});
     disposables.push(dust, surfaceMaterial);
+    // Actual Blender shader-node bakes, with procedural fallback while loading.
+    const nodeLoader = new THREE.TextureLoader();
+    for (const [filename, normal] of [['landing-node-color.png', false], ['landing-node-normal.png', true]] as const) {
+      const texture = nodeLoader.load(`${import.meta.env.BASE_URL}terrain/${filename}`, loaded => {
+        if (normal) surfaceMaterial.normalMap = loaded;
+        else surfaceMaterial.map = loaded;
+        surfaceMaterial.needsUpdate = true;
+      });
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      texture.colorSpace = normal ? THREE.NoColorSpace : THREE.SRGBColorSpace;
+      texture.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
+      disposables.push(texture);
+    }
+
     let holder: THREE.Group | null = null;
     if (terrain.grid) {
       // Terrain mesh: sampled from terrain.heightAt — the SAME surface the physics uses — on a 4× finer grid,
