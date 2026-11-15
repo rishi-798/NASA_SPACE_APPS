@@ -6,6 +6,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { thrustDirection, type Vec3 } from "../../sim/physics";
 import type { SnapshotStore } from "../../sim/store";
 import type { Terrain } from "../../sim/terrain";
+import { prepareRocketModel, disposeObjects } from "../trip/spaceVisuals";
 import { createDustEffect } from "./dustEffect";
 import { macroAlbedo, starField } from "./regolith";
 
@@ -17,7 +18,7 @@ type Props = { terrain: Terrain; store: SnapshotStore; exaggeration: number; tar
   /** Prepared terrain mesh in glTF axes (x east, y = height above datum, z = −north), when the terrain is a model. */
   terrainModel?: THREE.Object3D | null;
   /** Real 3D vehicle model (NASA GLB) drawn at the simulated position. Display only. */
-  vehicleModelUrl: string;
+  vehicleModelUrl: string | null;
   onVehicleStatus?: (status: "loading" | "ready" | "failed") => void };
 
 /**
@@ -193,23 +194,18 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     }
     const tiltGroup = new THREE.Group();
     lander.add(tiltGroup);
-    const displayHeight = 6 * landerScale;      // metres on screen; 1× ≈ the lander's real size
+    const displayHeight = 6 * landerScale;      // Visual display height, independent of the selected rocket’s real dimensions.
     const loader = new GLTFLoader().setDRACOLoader(new DRACOLoader().setDecoderPath("/draco/"));
     let vehicle: THREE.Object3D | null = null;
     let cancelledLoad = false;
     onVehicleStatus?.("loading");
-    loader.load(vehicleModelUrl, (asset) => {
-      if (cancelledLoad) return;
+    if (vehicleModelUrl) loader.load(vehicleModelUrl, (asset) => {
+      if (cancelledLoad) { disposeObjects(asset.scene); return; }
       const model = asset.scene;
-      let box = new THREE.Box3().setFromObject(model);
-      const size = box.getSize(new THREE.Vector3());
-      if (size.z > size.y && size.z > size.x) model.rotateX(-Math.PI / 2);      // stand the long axis upright
-      else if (size.x > size.y) model.rotateZ(Math.PI / 2);
-      box = new THREE.Box3().setFromObject(model);
-      model.scale.setScalar(displayHeight / box.getSize(new THREE.Vector3()).y);
-      box = new THREE.Box3().setFromObject(model);
-      const centre = box.getCenter(new THREE.Vector3());
-      model.position.sub(new THREE.Vector3(centre.x, box.min.y, centre.z));   // base centre at the contact plane
+      try { prepareRocketModel(model, vehicleModelUrl, displayHeight); }
+      catch { disposeObjects(model); onVehicleStatus?.("failed"); return; }
+      const box = new THREE.Box3().setFromObject(model);
+      model.position.y -= box.min.y; // Same flight asset/orientation, with its base on the contact plane.
       model.traverse((o) => { if (o instanceof THREE.Mesh) { o.castShadow = true; o.receiveShadow = true; } });
       const holder = new THREE.Group();
       holder.add(model);
@@ -217,6 +213,7 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
       vehicle = holder;
       onVehicleStatus?.("ready");
     }, undefined, () => { if (!cancelledLoad) onVehicleStatus?.("failed"); });
+    else onVehicleStatus?.("failed");
     // Plume from the base of the model: bright core + soft glow (additive), plus a light on the ground.
     const additive = (color: number, opacity: number) => new THREE.MeshBasicMaterial({ color, transparent: true, opacity, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false });
     const plumeScale = Math.max(1, displayHeight / 6);
@@ -320,6 +317,8 @@ export function LandingScene({ terrain, store, exaggeration, targetRadiusM, padR
     return () => {
       plumeDust.dispose();
       cancelledLoad = true;
+      if (vehicle) disposeObjects(vehicle);
+      loader.dracoLoader?.dispose();
       cancelAnimationFrame(frame);
       observer.disconnect();
       controls.dispose();

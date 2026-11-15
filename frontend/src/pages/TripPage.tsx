@@ -66,14 +66,14 @@ export function TripPage() {
     try {
       const saved = localStorage.getItem("clps_show_other_launchers");
       if (saved !== null) return saved === "true";
-    } catch {}
+    } catch { /* Storage may be unavailable; keep the in-memory preference. */ }
     return true; // Always turned on by default
   });
   const toggleOtherLaunchers = (enabled: boolean) => {
     setShowOtherLaunchers(enabled);
     try {
       localStorage.setItem("clps_show_other_launchers", String(enabled));
-    } catch {}
+    } catch { /* Storage may be unavailable; keep the in-memory preference. */ }
   };
   const [preview, setPreview] = useState<{ revision: number; state: AnalysisState; result: AnalysisResult | null; error?: string } | null>(null);
   const [storageNotice, setStorageNotice] = useState(false);
@@ -267,7 +267,7 @@ export function TripPage() {
           {landing && <TerrainContext catalogue={catalogue.state} onRetry={catalogue.retry} />}
           <div className="trip-unavailable" style={{ borderLeftColor: "var(--accent)" }}><CheckCircle weight="fill" color="#a2ecd3" /><div><strong>Topographic Navigation Mode</strong><p>Calibrated coordinate projection with real-time NAIF SPICE solar lighting and Earth line-of-sight vectors.</p></div></div>
           <button className="trip-primary" disabled={!landing} onClick={() => go("landing")}>Review landing point <ArrowRight /></button><button className="trip-secondary" onClick={() => go("rocket")}>Change rocket</button></aside></div>}
-      {mission.stage === "simulate" && landing && <LandingSimPage key={`${landing.latitude},${landing.longitude}`}
+      {mission.stage === "simulate" && landing && rocket && <LandingSimPage key={`${landing.latitude},${landing.longitude}:${rocket.id}`} rocket={rocket}
         landing={{ latitude: landing.latitude, longitude: landing.longitude, name: landing.name ?? "your landing point" }}
         onBack={() => go("flight")} onContinue={() => go("reveal")} />}
       {(mission.stage === "landing" || mission.stage === "flight" || mission.stage === "reveal") && landing && <>

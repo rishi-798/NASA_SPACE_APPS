@@ -125,17 +125,16 @@ equatorial and mid-latitude models are 10–14 MB each. They are loaded on deman
 
 ## 3D vehicle model (visual only)
 
-The vehicle is drawn with NASA's Saturn V 3D model (`/saturn-v.glb`, NASA 3D Resources), labelled **"Visual only: Saturn V"**
-on the page.
+The vehicle uses the exact rocket model selected in Plan a trip, shared with the flight animation. Its name and model credit appear in the visual-only caption. Model orientation and preparation also use the shared flight/gallery helper; no alternate rocket is substituted if the asset fails.
 - It is scaled to a display height of 6 m × the "Model size" setting (24 m by default) and stands on the contact plane.
   Small discs mark the four contact points the physics uses.
 - **It does not affect the physics.** The mass, thrust, fuel and engine come only from the illustrative lander in
   Preflight. A Saturn V's real mass (about 2.9 million kg) and engines do not describe a lunar descent vehicle.
-  There is no rocket picker, so nothing implies the choice changes the result.
+  Change the rocket in the trip’s Rocket step; its visual selection does not change descent physics.
 
 ## Vehicle and parameters
 
-No verified lander specifications exist in the project. The trip catalogue holds launch rockets, which are not used.
+No verified lander specifications exist in the project. The trip catalogue holds launch rockets, used here only as visual markers.
 The default vehicle is an **Illustrative lander**, adjustable in the preflight panel:
 
 | Parameter | Default | Unit |

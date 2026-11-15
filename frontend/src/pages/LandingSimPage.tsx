@@ -11,6 +11,7 @@ import { DEFAULT_INITIAL, DEFAULT_SETTINGS, DEMO_LIMITS, G0, ILLUSTRATIVE_LANDER
 import { createSim, recordedInputs, runHeadless, stepsFor, type RunRecord } from "../sim/runner";
 import { createSnapshotStore, type SimPhase } from "../sim/store";
 import { gridTerrain, syntheticPlane, type Terrain, type TerrainPatch } from "../sim/terrain";
+import type { RocketChoice } from "../data/tripCatalogue";
 import "../components/landing/landing.css";
 
 /** Where the terrain comes from: a team measured-terrain model at this point, the LOLA 80 m grid, or a synthetic plane. */
@@ -25,8 +26,6 @@ function initialScenario(landing: SimLanding): { scenario: Scenario; note: strin
   return { scenario: "synthetic", note: `Measured terrain is not available at ${landing.name}: the team's terrain models cover ${TERRAIN_SCENES.length} specific sites, and the LOLA elevation grid covers south of 80° S. You are on a synthetic training surface, not your chosen point.` };
 }
 
-/** VISUAL ONLY: the NASA Saturn V model is drawn at the simulated position. It never affects the physics. */
-const VISUAL_MODEL = { name: "Saturn V", url: "/saturn-v.glb", credit: "NASA 3D Resources" } as const;
 const TARGET_RADIUS_M = 50;
 const SPEEDS = [0.5, 1, 2, 4];
 const fmt = (v: number, d = 1) => (Number.isFinite(v) ? v.toFixed(d) : "—");
@@ -40,7 +39,7 @@ function NumberField({ label, unit, value, onChange, step = 1, min, max, hint }:
   </label>;
 }
 
-export function LandingSimPage({ landing, onContinue, onBack }: { landing: SimLanding; onContinue?: () => void; onBack?: () => void }) {
+export function LandingSimPage({ landing, rocket, onContinue, onBack }: { landing: SimLanding; rocket: RocketChoice; onContinue?: () => void; onBack?: () => void }) {
   // ---------------------------------------------------------------- preflight configuration
   const [entry] = useState(() => initialScenario(landing));
   const scene = useMemo(() => sceneForLanding(landing.latitude, landing.longitude), [landing.latitude, landing.longitude]);
@@ -329,9 +328,9 @@ export function LandingSimPage({ landing, onContinue, onBack }: { landing: SimLa
         <div className="sim-stage">
           {terrain ? <LandingScene terrain={terrain} store={store} exaggeration={exaggeration} targetRadiusM={TARGET_RADIUS_M} padRadiusM={vehicle.padRadiusM} overview={overview} landerScale={landerScale}
             terrainModel={scenario === "scene" ? currentPatch?.model ?? null : null}
-            vehicleModelUrl={VISUAL_MODEL.url} onVehicleStatus={setVehicleStatus} />
+            vehicleModelUrl={rocket.model} onVehicleStatus={setVehicleStatus} />
             : <div className="sim-scene sim-scene-empty">{terrainError ?? "Loading terrain…"}</div>}
-          {vehicleStatus !== "ready" && terrain && <p className="sim-model-status" role="status">{vehicleStatus === "loading" ? "Loading 3D vehicle model…" : "The 3D vehicle model could not be loaded; the simulation still runs (contact discs show the position)."}</p>}
+          {vehicleStatus !== "ready" && terrain && <p className="sim-model-status" role="status">{vehicleStatus === "loading" ? `Loading selected ${rocket.name} model…` : `The selected ${rocket.name} model is unavailable; contact discs show the position. No substitute rocket is shown.`}</p>}
           {terrain && <p className={`sim-badge ${terrain.kind === "synthetic" ? "sim-badge-synthetic" : ""}`}>{terrain.kind === "synthetic" ? "SYNTHETIC TRAINING SCENARIO · not a real site" : terrain.label}</p>}
           <dl className="sim-hud" aria-live="off">
             <div><dt>Sim time</dt><dd>{simClock(s.t)}</dd></div>
@@ -356,12 +355,12 @@ export function LandingSimPage({ landing, onContinue, onBack }: { landing: SimLa
           <button type="button" onClick={reset} disabled={phase === "replay"}><ArrowCounterClockwise aria-hidden="true" /> Reset</button>
           <label className="sim-inline">Speed <select value={speed} onChange={(e) => setSpeed(Number(e.target.value))}>{SPEEDS.map((v) => <option key={v} value={v}>{v}×</option>)}</select></label>
           <label className="sim-inline">Height exaggeration <select value={exaggeration} onChange={(e) => setExaggeration(Number(e.target.value))}>{[1, 2, 5].map((v) => <option key={v} value={v}>{v}× {v === 1 ? "(true scale)" : "(visual only)"}</option>)}</select></label>
-          <label className="sim-inline">Model size <select value={landerScale} onChange={(e) => setLanderScale(Number(e.target.value))}>{[1, 2, 4, 6].map((v) => <option key={v} value={v}>{v === 1 ? "1× (≈ lander size)" : `${v}× (visual only)`}</option>)}</select></label>
+          <label className="sim-inline">Model size <select value={landerScale} onChange={(e) => setLanderScale(Number(e.target.value))}>{[1, 2, 4, 6].map((v) => <option key={v} value={v}>{v === 1 ? "1× (6 m display height)" : `${v}× (visual only)`}</option>)}</select></label>
           <label className="sim-inline"><input type="checkbox" checked={overview} onChange={(e) => setOverview(e.target.checked)} /> Overview camera</label>
         </div>
 
         <p className="analysis-note">Neutral-gray dust and clustered gravel are illustrative shading and decoration; contact uses the underlying terrain. Low-angle sunlight in this simulator is illustrative, not date-calculated.</p>
-        <p className="analysis-note sim-model-note"><strong>Visual only: {VISUAL_MODEL.name}</strong> ({VISUAL_MODEL.credit}), drawn {6 * landerScale} m tall. It does not set the mass, thrust or fuel. The physics always uses the illustrative lander in Preflight.</p>
+        <p className="analysis-note sim-model-note"><strong>Visual only: {rocket.name}</strong> ({rocket.modelCredit}), the same selected model as the flight, drawn {6 * landerScale} m tall. It does not set the mass, thrust or fuel. The physics always uses the illustrative lander in Preflight.</p>
 
         {mode === "manual" && <div className="sim-manual" aria-label="Manual controls">
           <label>Throttle <strong>{fmt(manualView.throttle * 100, 0)}%</strong>
@@ -461,5 +460,5 @@ const modelSummary = (halfSizeM: number | null) => [
   "Contact: four rigid footpads held level; the run stops at the first pad contact, found inside the timestep. No leg suspension, bounce, tipping, structural damage, plume–surface interaction, dust or sensor uncertainty.",
   `Supported domain: ${halfSizeM ? (2 * halfSizeM) / 1000 : 4} km × ${halfSizeM ? (2 * halfSizeM) / 1000 : 4} km around the target (smaller where a terrain model covers less), altitude up to 3 km, up to 600 s.`,
   "Real terrain: the team's measured-terrain Blender models (LOLA 60 m near the south pole, SLDEM2015 59 m elsewhere, a 5 m DEM at G7; each checksum-verified; contact uses the drawn triangles) or the LOLA 80 m grid (NASA GSFC PGDA). All include lunar curvature. Slope is regional (two sample spacings across) and does not resolve footprint-scale hazards.",
-  "Vehicle physics: an illustrative lander, not any real spacecraft. The 3D picture (NASA Saturn V) is visual only; its mass and engines are not used. Touchdown limits are demonstration settings.",
+  "Vehicle physics: an illustrative lander, not any real spacecraft. The selected rocket model is visual only; its mass and engines are not used. Touchdown limits are demonstration settings.",
 ];
