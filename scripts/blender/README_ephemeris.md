@@ -28,6 +28,12 @@ python scripts/blender/earthshine_reanalysis.py --metadata METADATA.json --time 
 
 NOAA defines these fluxes as means for the six hours after the file's reference time. Low-illumination or invalid reflectance cells use a documented fallback, whose weighted contribution is reported. The model assumes an Earth sphere and reports broadband scalar irradiance, not an RGB light. Run `python -m pytest tests/test_earthshine_reanalysis.py -q` for mathematical checks; these do not validate atmospheric or cloud physics.
 
+### Clementine narrow-band phase diagnostic
+
+`clementine_phase.spectral_phase_diagnostic` evaluates the five narrow-band apparent-albedo fits in Table 3 of Cooper et al. (2026), [arXiv:2609.36291](https://arxiv.org/abs/2609.36291), CC BY 4.0. The paper is a preprint based on 1994 lunar-orbiter observations. The function accepts only 3.4–139.1 degrees, the conservative range reported in the abstract, and does not extrapolate to thinner crescents. Apparent albedo can exceed one at high phase because it is a Lambert-equivalent quantity, not a fraction of total reflected energy.
+
+These narrow-band, population-average fits cannot establish historical weather, bolometric irradiance, or Blender RGB. They are a diagnostic and do not change the Blender lights. Run `python -m pytest tests/test_clementine_phase.py -q` for the formula and range checks.
+
 ## Site04 source pixels
 
 `build_site04_glb.py SOURCE.tif OUTPUT_DIR` exports four direct source-pixel terrain candidates. The files deliberately store local Z-up coordinates, unlike standard glTF Y-up; consumers must use the documented conversion and frame metadata. They contain no synthetic displacement or smoothing. `verify_site04_glb.py` checks source heights and geometry; `build_site04_enu_blend.py` and `verify_site04_enu_blend.py` construct and check corresponding Blender scenes. Refer to each script's invocation and the generated sidecars before use. The original DEM must be supplied separately.
