@@ -17,6 +17,7 @@ from backend.terrain.horizon import HorizonError, apply_horizon, load_profile
 from backend.frontend import SPAStaticFiles, DIST_DIR
 from backend.terrain_api import router as terrain_router
 from backend.media20261114.routes20261114 import router as discovery_router
+from backend.media20261114 import apod20261114  # Registers the 2026-11-14 APOD route.
 
 app = FastAPI(title="CLPS Lunar Browser API")
 app.include_router(terrain_router)
