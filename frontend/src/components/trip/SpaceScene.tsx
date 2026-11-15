@@ -445,7 +445,6 @@ export function SpaceScene({
     let transferPath: THREE.CubicBezierCurve3 | undefined;
     let transferLine: THREE.Line | undefined;
     let vehicle: THREE.Object3D | undefined;
-    let sunVisualPosition: THREE.Vector3 | undefined;
     const moonCenter = new THREE.Vector3(0, 0, 0);
     const moonRadius = 0.72;
     const earthRadius = moonRadius * 6371 / MOON_RADIUS_KM;
@@ -589,7 +588,6 @@ export function SpaceScene({
     const initialSunDirection = getSunDirection();
     const initialEarthDirection = getEarthDirection();
     const earthCenter = initialEarthDirection.clone().multiplyScalar(EARTH_MOON_VIEW_DISTANCE);
-    sunVisualPosition = initialSunDirection.clone().multiplyScalar(SUN_VIEW_DISTANCE);
     const targetEarthCenter = earthCenter.clone();
     const currentEarthCenter = earthCenter.clone();
     const targetSunDirection = initialSunDirection.clone();
@@ -619,7 +617,7 @@ export function SpaceScene({
       const to = moonCenter.clone().add(landingPoint);
       const chord = to.clone().sub(from);
       const chordLen = chord.length();
-      let transferPlaneNormal = chord.clone().cross(viewNormal).normalize();
+      const transferPlaneNormal = chord.clone().cross(viewNormal).normalize();
       if (transferPlaneNormal.lengthSq() < 0.1) transferPlaneNormal.set(0, 1, 0);
       const arcHeight = chordLen * 0.14;
       const controlA = from.clone().lerp(to, 0.32).addScaledVector(transferPlaneNormal, arcHeight);
@@ -673,7 +671,7 @@ export function SpaceScene({
 
     const sunRoot = new THREE.Group();
     sunRoot.name = "Visible Sun - true apparent diameter";
-    sunVisualPosition = initialSunDirection.clone().multiplyScalar(SUN_VIEW_DISTANCE);
+    const sunVisualPosition = initialSunDirection.clone().multiplyScalar(SUN_VIEW_DISTANCE);
     sunRoot.position.copy(sunVisualPosition);
     scene.add(sunRoot);
     scene.add(createSunGlow());
@@ -810,11 +808,11 @@ export function SpaceScene({
           const cycleTime = elapsed % cycleDuration;
           const phase = cycleTime / cycleDuration; // 0.0 to 1.0
 
-          let vehiclePos = new THREE.Vector3();
-          let forwardTangent = new THREE.Vector3(0, 1, 0);
-          let vehicleOpacity = 1.0;
-          let isThrusting = true;
-          let flameIntensity = 1.0;
+          let vehiclePos: THREE.Vector3;
+          let forwardTangent: THREE.Vector3;
+          let vehicleOpacity: number;
+          let isThrusting: boolean;
+          let flameIntensity: number;
 
           if (phase < 0.74) {
             // PHASE 1: Translunar Injection & Coast (Earth to Moon)
