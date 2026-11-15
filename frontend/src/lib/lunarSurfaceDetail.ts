@@ -16,7 +16,22 @@ function noise(x: number, y: number): number {
 
 export function lunarDetailHeight(x: number, y: number, anchor: THREE.Vector3): number {
   const fade = THREE.MathUtils.smoothstep(45 - Math.hypot(x - anchor.x, y - anchor.y), 0, 12);
-  return .015 + fade * (.35 * noise(x * .13, y * .13)
+  const cell = 12, ix = Math.floor(x / cell), iy = Math.floor(y / cell);
+  let rim = 0;
+  for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
+    const cx = ix + dx, cy = iy + dy;
+    const px = (cx + .15 + .7 * noise(cx * 7 + 13, cy * 7 - 9)) * cell;
+    const py = (cy + .15 + .7 * noise(cx * 9 - 21, cy * 9 + 5)) * cell;
+    const radius = 2 + 2.5 * noise(cx * 5 + 3, cy * 5 + 19);
+    const d = Math.hypot(x - px, y - py) / radius;
+    if (d < 1.6) {
+      const raisedRim = .38 * Math.exp(-(((d - 1) * 4) ** 2));
+      const shoulder = .20 * (1 - THREE.MathUtils.smoothstep(d, 1.1, 1.6));
+      const interior = .20 * (1 - THREE.MathUtils.smoothstep(d, .35, .95));
+      rim = Math.max(rim, raisedRim + shoulder - interior);
+    }
+  }
+  return .015 + fade * (rim + .35 * noise(x * .13, y * .13)
     + .25 * noise(x * .37 + 17, y * .37 - 11)
     + .06 * noise(x * .9 - 9, y * .9 + 4));
 }
@@ -29,7 +44,11 @@ export function buildLunarSurfaceDetail(hit: THREE.Intersection): THREE.BufferGe
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), point = new THREE.Vector3();
   const first = Math.max(0, hit.faceIndex - 16384), last = Math.min(indices.count / 3, hit.faceIndex + 16385);
   const radius = 45, maxVertices = 90000;
-  for (let face = first; face < last; face++) {
+  // Build near the selected triangle first so the vertex budget cannot be
+  // exhausted by earlier, distant faces in the source mesh's index order.
+  for (let offset = 0; offset <= (last - first) * 2; offset++) {
+    const face = hit.faceIndex + (offset % 2 ? -(offset + 1) / 2 : offset / 2);
+    if (face < first || face >= last) continue;
     a.fromBufferAttribute(source, indices.getX(face * 3)).applyMatrix4(mesh.matrixWorld);
     b.fromBufferAttribute(source, indices.getX(face * 3 + 1)).applyMatrix4(mesh.matrixWorld);
     c.fromBufferAttribute(source, indices.getX(face * 3 + 2)).applyMatrix4(mesh.matrixWorld);

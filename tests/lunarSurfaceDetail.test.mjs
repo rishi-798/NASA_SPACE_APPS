@@ -14,7 +14,7 @@ test('detail adds bounded geometry without changing the measured mesh', () => {
   const positions = detail.getAttribute('position');
   assert.ok(positions.count > terrain.geometry.getAttribute('position').count);
   for (let i = 0; i < positions.count; i++) {
-    assert.ok(positions.getZ(i) >= .014 && positions.getZ(i) <= .676);
+    assert.ok(positions.getZ(i) >= .014 && positions.getZ(i) <= 1.256);
   }
   assert.deepEqual(Array.from(terrain.geometry.getAttribute('position').array), before);
   assert.equal(detail.getAttribute('uv').count, positions.count);
@@ -24,6 +24,11 @@ test('detail adds bounded geometry without changing the measured mesh', () => {
     assert.ok(Math.abs(uvs.getY(i) - positions.getY(i) / 3.1) < 1e-5);
   }
   assert.ok(detail.index.count > 0);
+  const overlay = new THREE.Mesh(detail, new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
+  overlay.updateMatrixWorld(true);
+  const overlayHit = new THREE.Raycaster(new THREE.Vector3(hit.point.x, hit.point.y, 10), new THREE.Vector3(0, 0, -1)).intersectObject(overlay)[0];
+  assert.ok(overlayHit, 'visual detail covers the selected point');
+  overlay.material.dispose();
   detail.dispose(); terrain.geometry.dispose();
 });
 

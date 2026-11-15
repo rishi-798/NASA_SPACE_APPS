@@ -10,6 +10,48 @@ import { createRegolithTextures } from '../../lib/regolithTexture';
 import { buildLunarSurfaceDetail, lunarDetailHeight } from '../../lib/lunarSurfaceDetail';
 
 const api = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
+
+// Sub-pixel craters are illustrative shading, not alterations to the DEM.
+// Use the existing metre-scaled UVs so the pattern is stable as the camera moves.
+function addCraterShading(shader: THREE.WebGLProgramParametersWithUniforms, enabled: THREE.IUniform<number>) {
+  shader.uniforms.lunarCratersEnabled = enabled;
+  shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 lunarMetres;');
+  shader.vertexShader = shader.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\nlunarMetres = uv * 3.1;');
+  shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `#include <common>
+    varying vec2 lunarMetres;
+    uniform float lunarCratersEnabled;
+    vec2 craterHash(vec2 p) {
+      return fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453);
+    }
+    float craterLayer(vec2 p, float cellSize) {
+      vec2 cell = floor(p / cellSize);
+      float height = 0.0;
+      for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) {
+        vec2 id = cell + vec2(float(x), float(y));
+        vec2 random = craterHash(id);
+        if (craterHash(id + 43.1).x < 0.72) continue;
+        vec2 centre = (id + 0.15 + 0.7 * random) * cellSize;
+        float radius = cellSize * mix(0.12, 0.31, craterHash(id + 19.7).x);
+        vec2 delta = p - centre;
+        float angle = atan(delta.y, delta.x);
+        // Weathered rims are slightly irregular; they are not perfect rings.
+        float shape = 1.0 + 0.055 * sin(3.0 * angle + random.x * 6.283)
+                          + 0.025 * sin(7.0 * angle + random.y * 6.283);
+        delta.x *= mix(0.91, 1.09, random.y);
+        float d = length(delta) / (radius * shape);
+        float bowl = 1.0 - smoothstep(0.35, 1.0, d);
+        float rim = exp(-pow((d - 1.0) * mix(3.8, 6.0, random.x), 2.0));
+        height += radius * (-mix(0.09, 0.15, random.y) * bowl + 0.035 * rim);
+      }
+      return height;
+    }`);
+  shader.fragmentShader = shader.fragmentShader.replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
+    float craterHeight = lunarCratersEnabled * (craterLayer(lunarMetres, 350.0) + craterLayer(lunarMetres + 137.0, 1600.0));
+    vec3 sx = dFdx(-vViewPosition), sy = dFdy(-vViewPosition);
+    vec3 r1 = cross(sy, normal), r2 = cross(normal, sx);
+    float det = dot(sx, r1) * faceDirection;
+    normal = normalize(abs(det) * normal - sign(det) * (dFdx(craterHeight) * r1 + dFdy(craterHeight) * r2));`);
+}
 type SkyBody = { directional_vector_local_z_up: Vec3; angular_radius_deg: number; elevation_deg: number };
 type Lighting = { model_id: string; time: string; sun: SkyBody; earth: SkyBody & { illuminated_fraction: number; sun_direction_local_z_up: Vec3 } };
 type CameraMode = 'orbit' | 'eye';
@@ -19,6 +61,8 @@ type Runtime = {
   faceBody: (name: 'sun' | 'earth' | 'north') => void;
   mode: CameraMode; setMode: (mode: CameraMode) => boolean;
   render: () => void; setLighting: (data: Lighting | null) => void; inspect: (on: boolean) => void;
+  dust: () => void;
+  setCraterShading: (on: boolean) => void;
   placeRocks: (hit: THREE.Intersection) => void; setRocksVisible: (on: boolean) => void;
 };
 
@@ -53,7 +97,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
     const context = canvas.getContext('2d');
     if (context) {
       const gradient = context.createRadialGradient(32, 32, 4, 32, 32, 32);
-      gradient.addColorStop(0, 'rgba(0,0,0,0.55)'); gradient.addColorStop(1, 'rgba(0,0,0,0)');
+      gradient.addColorStop(0, 'rgba(0,0,0,0.35)'); gradient.addColorStop(1, 'rgba(0,0,0,0)');
       context.fillStyle = gradient; context.fillRect(0, 0, 64, 64);
       const texture = new THREE.CanvasTexture(canvas);
       const shadows = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1),
@@ -103,7 +147,7 @@ function scatterRocks(scene: THREE.Scene, previous: THREE.InstancedMesh | null, 
         const shadow = new THREE.Object3D();
         shadow.position.copy(transform.position).addScaledVector(normal, .025);
         shadow.quaternion.copy(transform.quaternion);
-        shadow.scale.set(scale * 2.7, scale * 2.7, 1);
+        shadow.scale.set(scale * 2.1, scale * 2.1, 1);
         shadow.updateMatrix(); shadows.setMatrixAt(slot, shadow.matrix);
       }
       const shade = .85 + random() * .15;
@@ -197,6 +241,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
   const [skyReady, setSkyReady] = useState(false);
   const [inspection, setInspection] = useState(true);
   const [showRocks, setShowRocks] = useState(true);
+  const [showCraters, setShowCraters] = useState(true);
   const [loaded, setLoaded] = useState(0);
   const [mode, setMode] = useState<CameraMode>('orbit');
   const [onMesh, setOnMesh] = useState(false);
@@ -223,6 +268,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     canvas.tabIndex = 0;
 
     const scene = new THREE.Scene();
+    const craterShading = { value: 1 };
     const terrainTextures = new Set<THREE.Texture>();
     const camera = new THREE.PerspectiveCamera(62, 1, 0.1, 2000000);
     camera.up.set(0, 0, 1);
@@ -289,6 +335,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
     let rocksVisible = true;
     let detail: THREE.Mesh | null = null;
     let detailSource: THREE.Mesh | null = null;
+    let dustFrame = 0;
     const detailAnchor = new THREE.Vector3(Infinity, Infinity, Infinity);
 
     const value: Runtime = {
@@ -349,6 +396,50 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         render();
       },
       render: () => render(),
+      dust() {
+        if (!value.selectedPoint || dustFrame) return;
+        const origin = value.selectedPoint.clone();
+        if (value.mode === 'eye' && value.terrain) {
+          const forward = new THREE.Vector3(...lookDirection(yaw, 0));
+          origin.addScaledVector(forward, 4);
+          const ground = new THREE.Raycaster(new THREE.Vector3(origin.x, origin.y, origin.z + 1000), new THREE.Vector3(0, 0, -1)).intersectObject(value.terrain, true)[0];
+          if (ground) origin.copy(ground.point);
+          origin.z += lunarDetailHeight(origin.x, origin.y, value.selectedPoint);
+        }
+        const count = 240, positions = new Float32Array(count * 3);
+        const velocities = Array.from({ length: count }, (_, i) => {
+          const random = (n: number) => { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v); };
+          const angle = random(i + 1) * Math.PI * 2, speed = .35 + random(i + 241) * 1.2;
+          return new THREE.Vector3(Math.cos(angle) * speed, Math.sin(angle) * speed, .5 + random(i + 481) * 1.2);
+        });
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const dustCanvas = document.createElement('canvas'); dustCanvas.width = dustCanvas.height = 32;
+        const dustContext = dustCanvas.getContext('2d');
+        if (!dustContext) { geometry.dispose(); return; }
+        const dustGradient = dustContext.createRadialGradient(16, 16, 0, 16, 16, 16);
+        dustGradient.addColorStop(0, 'rgba(255,255,255,.8)'); dustGradient.addColorStop(1, 'rgba(255,255,255,0)');
+        dustContext.fillStyle = dustGradient; dustContext.fillRect(0, 0, 32, 32);
+        const dustTexture = new THREE.CanvasTexture(dustCanvas);
+        const material = new THREE.PointsMaterial({ color: 0xaaa69c, map: dustTexture, size: .075, transparent: true, opacity: .55, depthWrite: false });
+        material.addEventListener('dispose', () => dustTexture.dispose());
+        const points = new THREE.Points(geometry, material); points.frustumCulled = false; scene.add(points);
+        const start = performance.now();
+        const tick = (now: number) => {
+          if (cancelled) { scene.remove(points); geometry.dispose(); material.dispose(); dustFrame = 0; return; }
+          const t = (now - start) / 1000;
+          if (t >= 2.5) { scene.remove(points); geometry.dispose(); material.dispose(); dustFrame = 0; render(); return; }
+          for (let i = 0; i < count; i++) {
+            const v = velocities[i]!;
+            positions[i * 3] = origin.x + v.x * t;
+            positions[i * 3 + 1] = origin.y + v.y * t;
+            positions[i * 3 + 2] = origin.z + Math.max(0, v.z * t - .81 * t * t);
+          }
+          geometry.attributes.position!.needsUpdate = true; material.opacity = .55 * (1 - t / 2.5);
+          render(); dustFrame = requestAnimationFrame(tick);
+        };
+        dustFrame = requestAnimationFrame(tick);
+      },
       placeRocks(hit) {
         if (detailAnchor.distanceToSquared(hit.point) < .0001 && detailSource === hit.object) return;
         latestRockHit = hit;
@@ -372,6 +463,10 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         if (rocks) rocks.visible = on;
         if (rocks2) rocks2.visible = on;
         if (detail) detail.visible = on && value.mode === 'eye' && !!value.selectedPoint;
+        render();
+      },
+      setCraterShading(on) {
+        craterShading.value = on ? 1 : 0;
         render();
       },
       setLighting(data) {
@@ -562,7 +657,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
           regolithTextures.normalMap.repeat.set(1.6, 1.6);
           terrain.traverse(child => {
             if (child instanceof THREE.Mesh && child.material) {
-              child.material = new THREE.MeshStandardMaterial({
+              const fallbackMaterial = new THREE.MeshStandardMaterial({
                 map: regolithTextures.map,
                 color: new THREE.Color(0xb0b4bc),
                 normalMap: regolithTextures.normalMap,
@@ -570,6 +665,13 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
                 roughness: 0.95,
                 metalness: 0.0,
               });
+              fallbackMaterial.onBeforeCompile = shader => {
+                addCraterShading(shader, craterShading);
+                if (region.id === 'REGION-APOLLO-17') shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>',
+                  `#include <begin_vertex>
+                   if (distance(position.xy, vec2(-6539.201, 6848.298)) < 2.0) transformed.z -= 350.0;`);
+              };
+              child.material = fallbackMaterial;
               if (detail && detailSource === child) detail.material = child.material;
             }
           });
@@ -609,6 +711,17 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
                   // The terrestrial simulant scan is warm under its capture
                   // lighting; use its detail without tinting the Moon brown.
                   mat.onBeforeCompile = shader => {
+                    addCraterShading(shader, craterShading);
+                    if (region.id === 'REGION-APOLLO-17') {
+                      // One isolated SLDEM pixel is ~350 m above its immediate
+                      // neighbours. Correct only the display vertex; CPU picks
+                      // and the source elevation remain unchanged.
+                      shader.vertexShader = shader.vertexShader.replace(
+                        '#include <begin_vertex>',
+                        `#include <begin_vertex>
+                         if (distance(position.xy, vec2(-6539.201, 6848.298)) < 2.0) transformed.z -= 350.0;`
+                      );
+                    }
                     shader.fragmentShader = shader.fragmentShader.replace(
                       '#include <map_fragment>',
                       `#include <map_fragment>
@@ -713,6 +826,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
 
     return () => {
       cancelled = true; download.abort(); resizeObserver.disconnect(); controls.dispose();
+      if (dustFrame) { cancelAnimationFrame(dustFrame); dustFrame = 0; }
       canvas.removeEventListener('pointerdown', start); canvas.removeEventListener('pointermove', move);
       canvas.removeEventListener('pointerup', pick); canvas.removeEventListener('pointercancel', cancelPointer); canvas.removeEventListener('keydown', key);
       dispose(scene);
@@ -739,6 +853,7 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
   }, [latitude, longitude, loaded, region, mode]);
 
   useEffect(() => { runtime.current?.setRocksVisible(showRocks && onMesh); }, [showRocks, onMesh, loaded]);
+  useEffect(() => { runtime.current?.setCraterShading(showCraters); }, [showCraters, loaded]);
 
   useEffect(() => {
     if (loaded) {
@@ -827,7 +942,10 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
       <div className="local-terrain-canvas" ref={host} />
 
       <label><input type="checkbox" checked={showRocks} onChange={e => setShowRocks(e.target.checked)} /> Illustrative rocks and fine relief</label>
-      <p>Nearby rocks, their contact shading, and fine surface relief are illustrative. Selected coordinates use the measured terrain; the patch ends at the data boundary. Surface detail uses <a href="https://polyhaven.com/collections/moon" target="_blank" rel="noreferrer">Poly Haven regolith simulant scans</a> when available.</p>
+      <label><input type="checkbox" checked={showCraters} onChange={e => setShowCraters(e.target.checked)} /> Illustrative crater shading</label>
+      <button type="button" disabled={!onMesh || mode !== 'eye'} onClick={() => runtime.current?.dust()}>Show illustrative dust burst (eye-level view)</button>
+      <p>Nearby rocks, their contact shading, fine surface relief and crater shading are illustrative. Selected coordinates use the measured terrain; the patch ends at the data boundary. Surface detail uses <a href="https://polyhaven.com/collections/moon" target="_blank" rel="noreferrer">Poly Haven regolith simulant scans</a> when available.</p>
+      {region.id === 'REGION-APOLLO-17' && <p>One isolated source elevation outlier is softened visually; coordinate and elevation lookup retain the original data.</p>}
       <p role="status">{mode === 'eye' && state.startsWith('Ready.') ? 'Eye-level view · 1.8 m above the selected point' : state}</p>
       <label><input type="checkbox" checked={inspection} onChange={e => setInspection(e.target.checked)} /> Topographic relief light (illustrative)</label>
       {inspection && mode === 'eye' && <p>Relief lighting adds a viewing light and suppresses terrain cast shadows. Switch it off to show calculated Sun and Earth lighting with terrain shadows.</p>}
