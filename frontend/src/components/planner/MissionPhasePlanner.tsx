@@ -5,7 +5,7 @@ import { MISSION_PHASES, type MissionPhase } from "./missionPhaseData";
 import { CislunarOrbitalCanvas } from "./CislunarOrbitalCanvas";
 import "./planner.css";
 
-const TOTAL_MISSION_SECONDS = 288000; // 80 hours in seconds
+const TOTAL_MISSION_SECONDS = MISSION_PHASES.at(-1)!.endMetSeconds; // 80 hours in seconds
 
 export function MissionPhasePlanner() {
   const [activePhaseId, setActivePhaseId] = useState<MissionPhase["id"]>("ascent");
@@ -15,6 +15,7 @@ export function MissionPhasePlanner() {
   const [activeTab, setActiveTab] = useState<"overview" | "mechanics" | "milestones" | "equations">("overview");
   const [cameraPreset, setCameraPreset] = useState<"system" | "earth" | "vehicle" | "moon">("earth");
 
+  const timeRef = useRef(0);
   const lastTimestampRef = useRef<number>(0);
   const animFrameRef = useRef<number | null>(null);
 
@@ -25,9 +26,11 @@ export function MissionPhasePlanner() {
 
   // Jump to start of phase when selecting from rail
   const selectPhase = useCallback((phaseId: MissionPhase["id"]) => {
+    setIsPlaying(false);
     setActivePhaseId(phaseId);
     const phase = MISSION_PHASES.find((p) => p.id === phaseId);
     if (phase) {
+      timeRef.current = phase.startMetSeconds;
       setSimMetSeconds(phase.startMetSeconds);
     }
   }, []);
@@ -91,35 +94,26 @@ export function MissionPhasePlanner() {
 
     const step = (timestamp: number) => {
       if (!lastTimestampRef.current) lastTimestampRef.current = timestamp;
-      const deltaMs = timestamp - lastTimestampRef.current;
+      // Avoid a hidden-tab jump; all telemetry reads the same elapsed-time cursor.
+      const deltaMs = Math.min(100, timestamp - lastTimestampRef.current);
       lastTimestampRef.current = timestamp;
-
       const speedMultiplier = playbackSpeed === 100 ? 7500 : playbackSpeed === 20 ? 1400 : playbackSpeed === 5 ? 280 : 60;
-      const stepSeconds = (deltaMs / 1000) * speedMultiplier;
-
-      setSimMetSeconds((prev) => {
-        const next = prev + stepSeconds;
-        if (next >= TOTAL_MISSION_SECONDS) {
-          setIsPlaying(false);
-          return TOTAL_MISSION_SECONDS;
-        }
-
-        const matchingPhase = MISSION_PHASES.find((p) => next >= p.startMetSeconds && next < p.endMetSeconds);
-        if (matchingPhase && matchingPhase.id !== activePhaseId) {
-          setActivePhaseId(matchingPhase.id);
-        }
-
-        return next;
-      });
+      const next = Math.min(TOTAL_MISSION_SECONDS, timeRef.current + (deltaMs / 1000) * speedMultiplier);
+      timeRef.current = next;
+      setSimMetSeconds(next);
+      const matchingPhase = MISSION_PHASES.find((p) => next >= p.startMetSeconds && next < p.endMetSeconds) ?? MISSION_PHASES.at(-1)!;
+      setActivePhaseId(matchingPhase.id);
+      if (next >= TOTAL_MISSION_SECONDS) { setIsPlaying(false); return; }
 
       animFrameRef.current = requestAnimationFrame(step);
     };
 
     animFrameRef.current = requestAnimationFrame(step);
     return () => {
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      if (animFrameRef.current !== null) cancelAnimationFrame(animFrameRef.current);
+      lastTimestampRef.current = 0;
     };
-  }, [isPlaying, playbackSpeed, activePhaseId]);
+  }, [isPlaying, playbackSpeed]);
 
   return (
     <div className="planner-container">
@@ -159,7 +153,7 @@ export function MissionPhasePlanner() {
 
           {/* Top Viewport Header */}
           <div className="planner-vp-top">
-            <div className="planner-vp-badge">
+            <div className="planner-vp-badge" aria-label="Illustrative flight scenario">
               <span className="vp-dot" />
               <span className="vp-label">
                 Phase 0{activePhase.phaseNumber} · {activePhase.shortName.toUpperCase()} · {activePhase.durationLabel}
@@ -173,6 +167,7 @@ export function MissionPhasePlanner() {
                   key={preset}
                   type="button"
                   className={`cam-btn ${cameraPreset === preset ? "active" : ""}`}
+                  aria-pressed={cameraPreset === preset}
                   onClick={() => setCameraPreset(preset)}
                 >
                   {preset === "system" && "System"}
@@ -187,7 +182,7 @@ export function MissionPhasePlanner() {
           {/* Floating Lower Telemetry Strip */}
           <div className="planner-vp-hud" aria-label="Illustrative flight telemetry">
             <div className="hud-metric">
-              <span className="hud-title">MET CLOCK</span>
+              <span className="hud-title">REFERENCE MET</span>
               <span className="hud-val">{formatMet(simMetSeconds)}</span>
             </div>
             <div className="hud-metric">
@@ -216,7 +211,7 @@ export function MissionPhasePlanner() {
               <button
                 type="button"
                 className="btn-play"
-                onClick={() => setIsPlaying((p) => !p)}
+                onClick={() => { if (timeRef.current >= TOTAL_MISSION_SECONDS) { timeRef.current = 0; setSimMetSeconds(0); setActivePhaseId("ascent"); } setIsPlaying((p) => !p); }}
                 aria-label={isPlaying ? "Pause simulation" : "Play flight simulation"}
               >
                 {isPlaying ? <Pause size={14} weight="fill" /> : <Play size={14} weight="fill" />}
@@ -225,7 +220,8 @@ export function MissionPhasePlanner() {
               <button
                 type="button"
                 className="btn-reset"
-                onClick={() => setSimMetSeconds(activePhase.startMetSeconds)}
+                onClick={() => { setIsPlaying(false); timeRef.current = activePhase.startMetSeconds; setSimMetSeconds(activePhase.startMetSeconds); }}
+                aria-label="Reset to start of active phase"
                 title="Reset to start of active phase"
               >
                 <ArrowCounterClockwise size={14} />
@@ -242,8 +238,10 @@ export function MissionPhasePlanner() {
                 value={simMetSeconds}
                 onChange={(e) => {
                   const val = Number(e.target.value);
+                  setIsPlaying(false);
+                  timeRef.current = val;
                   setSimMetSeconds(val);
-                  const matching = MISSION_PHASES.find((p) => val >= p.startMetSeconds && val < p.endMetSeconds);
+                  const matching = MISSION_PHASES.find((p) => val >= p.startMetSeconds && val < p.endMetSeconds) ?? MISSION_PHASES.at(-1);
                   if (matching && matching.id !== activePhaseId) {
                     setActivePhaseId(matching.id);
                   }
@@ -258,6 +256,7 @@ export function MissionPhasePlanner() {
                   key={spd}
                   type="button"
                   className={`rate-btn ${playbackSpeed === spd ? "active" : ""}`}
+                  aria-pressed={playbackSpeed === spd}
                   onClick={() => setPlaybackSpeed(spd)}
                 >
                   {spd}×
@@ -270,6 +269,7 @@ export function MissionPhasePlanner() {
         {/* Right Column: Mission Intelligence & Telemetry Dossier */}
         <aside className="planner-dossier">
           {/* Header */}
+          <p className="pw-reference-note">REFERENCE SCENARIO · Estimates below are educational. The date-based SPICE transfer is available in Plan a trip.</p>
           <div className="dossier-head">
             <span className="dossier-tag">
               FLIGHT STAGE 0{activePhase.phaseNumber} · CISLUNAR ARCHITECTURE
@@ -320,10 +320,11 @@ export function MissionPhasePlanner() {
           </div>
 
           {/* Segmented Scientific Tabs */}
-          <div className="dossier-tabs" role="tablist" aria-label="Dossier categories">
+          <div className="dossier-tabs" role="group" aria-label="Dossier categories">
             <button
               type="button"
               className={`tab-btn ${activeTab === "overview" ? "active" : ""}`}
+              aria-pressed={activeTab === "overview"}
               onClick={() => setActiveTab("overview")}
             >
               Overview
@@ -331,6 +332,7 @@ export function MissionPhasePlanner() {
             <button
               type="button"
               className={`tab-btn ${activeTab === "mechanics" ? "active" : ""}`}
+              aria-pressed={activeTab === "mechanics"}
               onClick={() => setActiveTab("mechanics")}
             >
               Mechanics
@@ -338,6 +340,7 @@ export function MissionPhasePlanner() {
             <button
               type="button"
               className={`tab-btn ${activeTab === "milestones" ? "active" : ""}`}
+              aria-pressed={activeTab === "milestones"}
               onClick={() => setActiveTab("milestones")}
             >
               Milestones
@@ -345,6 +348,7 @@ export function MissionPhasePlanner() {
             <button
               type="button"
               className={`tab-btn ${activeTab === "equations" ? "active" : ""}`}
+              aria-pressed={activeTab === "equations"}
               onClick={() => setActiveTab("equations")}
             >
               Equations

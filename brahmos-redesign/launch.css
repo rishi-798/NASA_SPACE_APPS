@@ -1,0 +1,115 @@
+:root[data-launching] { overflow: hidden; }
+.launch-screen[hidden] { display: none; }
+.launch-screen:focus { outline: none; }
+.launch-screen {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  isolation: isolate;
+  overflow: clip;
+  background: #000;
+  color: #fbf7ef;
+  touch-action: none;
+}
+.launch-screen__field, .launch-screen__flare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.launch-screen__field {
+  background:
+    radial-gradient(circle at 24% 29%, #ffedda76 .6px, transparent 1.5px),
+    radial-gradient(circle at 70% 23%, #fff2df8f .5px, transparent 1.3px),
+    radial-gradient(circle at 78% 66%, #ffedda76 .55px, transparent 1.4px),
+    radial-gradient(circle at 9% 58%, #fff2df53 .5px, transparent 1.3px),
+    radial-gradient(circle at 68% 49%, #fff2df39 .55px, transparent 1.3px) -25px 37px / 214px 189px,
+    radial-gradient(ellipse 24% 59% at 50% 67%, #23150d98, transparent);
+}
+.launch-screen__brand {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  z-index: 2;
+  font-size: clamp(3.45rem, 10.5vw, 9rem);
+  font-weight: 560;
+  line-height: .91;
+  letter-spacing: -.065em;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+}
+.launch-screen__vehicle {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  height: min(35svh, 316px);
+  transform: translate(-50%, -50%);
+}
+.launch-screen__vehicle img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: 100%;
+  width: auto;
+  filter: saturate(.38) contrast(1.12) drop-shadow(0 0 14px #ffd1b05e);
+}
+.launch-screen__plume {
+  position: absolute;
+  left: 50%;
+  top: 98%;
+  width: 90%;
+  height: 42svh;
+  transform-origin: 50% 0;
+  transform: translateX(-50%) scaleY(.04);
+  opacity: 0;
+  background: radial-gradient(ellipse at 50% 0, #fffdf2 0, #ffda9c 9%, #ef832c 24%, #df59143d 47%, transparent 70%);
+}
+.launch-screen__shader {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: clamp(136px, 30vw, 340px);
+  height: 100%;
+  object-fit: cover;
+  object-position: 49% 52%;
+  transform: translateX(-50%);
+  mask-image: linear-gradient(transparent, #000 12%), radial-gradient(ellipse 48% 83% at 50% 2%, #000 7%, #000d 28%, transparent 81%);
+  mask-composite: intersect;
+  opacity: 0;
+  pointer-events: none;
+}
+.launch-screen__shader[data-frame] { opacity: .82; }
+.launch-screen__flare {
+  opacity: 0;
+  background:
+    radial-gradient(ellipse 12% 37% at 50% 69%, #fff5d6b3, #dd783574 25%, #c9611720 61%, transparent 100%),
+    radial-gradient(ellipse 59% 32% at 50% 92%, #a7552c72, #3a1a10bd 47%, transparent);
+}
+.launch-screen__status {
+  position: absolute;
+  left: 50%;
+  bottom: max(39px, calc(env(safe-area-inset-bottom) + 28px));
+  width: min(46vw, 204px);
+  transform: translateX(-50%);
+}
+.launch-screen__measure {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 9px;
+  color: #eee2d3;
+  font: 450 .67rem/1 var(--mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.launch-screen__rail {
+  position: relative;
+  height: 4px;
+  overflow: clip;
+  border-radius: 100px;
+  background: #fff2;
+}
+.launch-screen__rail .halo-fill { transform: scaleX(0); transform-origin: 0 center; }
+@media (max-width: 560px) {
+  .launch-screen__status { bottom: max(80px, calc(env(safe-area-inset-bottom) + 57px)); }
+  .launch-screen__brand { top: 28%; }
+  .launch-screen__vehicle { top: 54%; }
+}

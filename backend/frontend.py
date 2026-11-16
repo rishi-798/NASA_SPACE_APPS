@@ -4,7 +4,7 @@ import mimetypes
 from pathlib import Path
 
 from starlette.exceptions import HTTPException
-from starlette.responses import FileResponse, JSONResponse
+from starlette.responses import FileResponse, JSONResponse, RedirectResponse
 from starlette.staticfiles import StaticFiles
 
 
@@ -13,7 +13,7 @@ mimetypes.add_type("audio/mp4", ".m4a")
 mimetypes.add_type("audio/mpeg", ".mp3")
 
 DIST_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
-PAGES = {".", "explorer", "missions", "timeline", "about", "trip", "discover", "landing", "planner", "phases", "game"}
+PAGES = {".", "explorer", "missions", "timeline", "about", "trip", "discover", "landing", "planner", "phases", "game", "workspace.html", "analyze"}
 
 
 class SPAStaticFiles(StaticFiles):
@@ -26,6 +26,11 @@ class SPAStaticFiles(StaticFiles):
                 {"detail": "Frontend not built. Run npm ci and npm run build in frontend/."},
                 status_code=503,
             )
+        cinematic = Path(self.directory) / "brahmos" / "index.html"
+        if path in (".", "", "/") and cinematic.is_file():
+            query = scope.get("query_string", b"").decode("ascii", errors="replace")
+            destination = "/brahmos/index.html" + ("?" + query if query else "")
+            return RedirectResponse(destination, status_code=302, headers={"Cache-Control": "no-cache"})
         home = Path(self.directory) / "home.html"
         if path in (".", "", "/") and home.is_file():
             return FileResponse(home, headers={"Cache-Control": "no-cache"})

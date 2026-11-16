@@ -91,6 +91,19 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // The handoff uses stable filenames. Fetch them first so a release cannot mix
+  // an old navigation script with a new landing page.
+  if (url.origin === self.location.origin && url.pathname.startsWith('/brahmos/')) {
+    event.respondWith(fetch(request, {cache: 'no-cache'}).then(response => {
+      if (response.ok) {
+        const copy = response.clone();
+        event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(request, copy)));
+      }
+      return response;
+    }).catch(async () => (await caches.match(request)) || new Response('Asset unavailable offline', {status: 503})));
+    return;
+  }
+
   // Hashed assets may use the cached copy while refreshing in the background.
   event.respondWith(
     caches.match(request).then((cachedResponse) => {

@@ -4,6 +4,7 @@ WORKDIR /build/frontend
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY frontend/ ./
+COPY brahmos-redesign/ /build/brahmos-redesign/
 COPY data/ /build/data/
 COPY metadata/ /build/metadata/
 COPY scripts/prerender.mjs /build/scripts/prerender.mjs

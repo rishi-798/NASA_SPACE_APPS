@@ -11,7 +11,7 @@ function worker(network){
     match:async r=>{for(const store of stores.values())if(store.has(key(r)))return store.get(key(r)).clone();},
     keys:async()=>[...stores.keys()],delete:async name=>stores.delete(name),
   };
-  vm.runInNewContext(source,{self:{addEventListener:(n,f)=>handlers.set(n,f),skipWaiting:async()=>{},clients:{claim:async()=>{}}},caches,fetch:network,URL,Response,console});
+  vm.runInNewContext(source,{self:{location:{origin:'https://app.test'},addEventListener:(n,f)=>handlers.set(n,f),skipWaiting:async()=>{},clients:{claim:async()=>{}}},caches,fetch:network,URL,Response,console});
   return {handlers,caches,stores,request:async(path,mode='navigate')=>{
     let response;const pending=[];
     handlers.get('fetch')({request:{method:'GET',url:new URL(path,'https://app.test').href,mode},respondWith:p=>{response=p;},waitUntil:p=>pending.push(p)});
@@ -42,4 +42,18 @@ test('activation clears obsolete app caches while preserving unrelated caches',a
   await w.caches.open('clps-lunar-offline-v1');await w.caches.open('clps-lunar-offline-v2');await w.caches.open('unrelated');
   let pending;w.handlers.get('activate')({waitUntil:p=>{pending=p;}});await pending;
   assert.deepEqual(await w.caches.keys(),['clps-lunar-offline-v2','unrelated']);
+});
+
+test('unhashed redesign scripts replace old cached navigation code online',async()=>{
+  const w=worker(async(_r,options)=>{assert.equal(options.cache,'no-cache');return new Response('current routes');});
+  const cache=await w.caches.open('clps-lunar-offline-v2');await cache.put('/brahmos/app-links.js',new Response('old routes'));
+  assert.equal(await (await w.request('/brahmos/app-links.js','cors')).text(),'current routes');
+  assert.equal(await (await w.caches.match('/brahmos/app-links.js')).text(),'current routes');
+});
+
+test('redesign assets use the saved file offline and return 503 for missing files',async()=>{
+  const w=worker(async()=>{throw Error('offline');});
+  const cache=await w.caches.open('clps-lunar-offline-v2');await cache.put('/brahmos/hero.css',new Response('saved style'));
+  assert.equal(await (await w.request('/brahmos/hero.css','cors')).text(),'saved style');
+  assert.equal((await w.request('/brahmos/app-links.js','cors')).status,503);
 });

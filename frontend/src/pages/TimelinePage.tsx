@@ -1,18 +1,16 @@
-import { useGSAP } from "@gsap/react";
 import { ArrowRight, CalendarDots } from "@phosphor-icons/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { RouteIntro } from "../components/ui/RouteIntro";
 import { missionExplorerUrl, missionTypeLabel } from "../lib/missionNavigation";
 import { missions, missionRecordCount } from "../data/landingSites";
 
+import "../components/redesign/mission-workspace.css";
+import { formatCoordinate } from "../lib/format";
 import { missionEvents } from "../data/missionEvents";
 
-gsap.registerPlugin(ScrollTrigger);
 
-const years = [...new Set(missions.filter((m) => m.status !== "Cancelled").map((m) => m.year))].sort((a, b) => a - b);
+const years = [...new Set([...missions.filter((m) => m.status !== "Cancelled").map((m) => m.year), ...missionEvents.map((event) => Number(event.time.slice(0, 4)))])].sort((a, b) => a - b);
 const groups = [
   { title: "Lunar surface missions", records: missions.filter((m) => m.missionType === "surface" && m.status !== "Cancelled") },
   { title: "Flybys and orbital demonstrations", records: missions.filter((m) => m.missionType !== "surface" && m.status !== "Cancelled") },
@@ -20,7 +18,6 @@ const groups = [
 ];
 
 export function TimelinePage() {
-  const root = useRef<HTMLElement>(null);
   const [filterType, setFilterType] = useState<"all" | "surface" | "orbit">("all");
 
   const filteredGroups = useMemo(() => {
@@ -34,42 +31,12 @@ export function TimelinePage() {
     })).filter((g) => g.records.length > 0);
   }, [filterType]);
 
-  useGSAP(
-    () => {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-      gsap.fromTo(
-        ".chronology-progress",
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".chronology",
-            start: "top 78%",
-            end: "bottom 42%",
-            scrub: 0.5,
-          },
-        },
-      );
-      gsap.from(".unscheduled-record", {
-        y: 32,
-        opacity: 0,
-        stagger: 0.14,
-        scrollTrigger: {
-          trigger: ".unscheduled-record",
-          start: "top 82%",
-        },
-      });
-    },
-    { scope: root },
-  );
 
   return (
-    <article ref={root} className="editorial-page timeline-page">
+    <article className="editorial-page timeline-page mission-workspace">
       <RouteIntro
-        eyebrow="Mission chronology"
-        title={<>LUNAR<br />CHRONOLOGY.</>}
+        eyebrow="BRAHMOS / FLIGHT HISTORY"
+        title={<>Mission timeline<span className="mw-title-dot">.</span></>}
         description="Selected CLPS deliveries, crewed flybys, and orbital demonstrations. Future dates are targets; cancelled task orders are archived separately."
         side={<span className="archive-status"><CalendarDots /> {missionRecordCount} flight programs tracked</span>}
       />
@@ -88,10 +55,10 @@ export function TimelinePage() {
                 <i aria-hidden="true" />
                 <small style={{ lineHeight: "1.4", color: yearMissions.length ? "var(--text)" : "var(--quiet)" }}>
                   {yearMissions.length
-                    ? yearMissions.map((m) => m.name.replace(" Mission 1", " 1")).join(" · ")
+                    ? yearMissions.map((m) => m.name).join(" · ")
                     : "DEVELOPMENT"}
                 </small>
-                {missionEvents.filter((event) => event.time.startsWith(String(year))).map((event) => <div className="chronology-event" key={event.time}>
+                {missionEvents.filter((event) => event.time.startsWith(String(year))).map((event) => <div className="chronology-event" key={`${event.siteId}:${event.time}:${event.label}`}>
                   <time dateTime={event.time}>{event.time.slice(0, 10)}{event.approximate ? " ≈" : ""}</time>
                   <p>{event.label}</p>
                   <small><a href={event.source.url} target="_blank" rel="noreferrer">{event.source.name}</a></small>
@@ -142,13 +109,14 @@ export function TimelinePage() {
               <p>{missionTypeLabel(m)}</p>
               <h4>{m.name}</h4>
               <p>{m.landingArea}</p>
+              {Number.isFinite(m.latitude) && Number.isFinite(m.longitude) && <p className="mw-coordinate">{formatCoordinate(m.latitude!, "lat")} / {formatCoordinate(m.longitude!, "lon")}</p>}
               <p style={{ fontSize: "13px", color: "var(--muted)", margin: "8px 0 16px" }}>
                 {m.objective}
               </p>
               <p className="trip-note">{m.scheduleNote}</p>
               <p>Last verified <time dateTime={m.lastVerified}>{m.lastVerified}</time></p>
               {missionExplorerUrl(m) && <Link to={missionExplorerUrl(m)!} aria-label={`Explore ${m.name} on Moon`}>{m.missionType === "surface" && m.status !== "Cancelled" ? "Explore on Moon" : "Explore lunar context"} <ArrowRight /></Link>}
-              <a className="source-link" href={m.source} target="_blank" rel="noreferrer">Mission source</a>
+              {(m.sources.length ? m.sources : [m.source]).map((source, index) => <a key={source} className="source-link" href={source} target="_blank" rel="noreferrer">{index ? `Supporting source ${index}` : "Mission source"}</a>)}
             </article>
           ))}
           </section>)}
