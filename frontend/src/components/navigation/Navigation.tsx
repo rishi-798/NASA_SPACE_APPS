@@ -1,6 +1,6 @@
 import { ArrowUpRight, List, Moon, X } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const links = [
   { to: "/explorer", label: "Analyze a site" },
@@ -10,10 +10,8 @@ const links = [
 ];
 
 export function Navigation() {
-  const { pathname } = useLocation();
   const home = "/brahmos/index.html?return=1#top";
   const [open, setOpen] = useState(false);
-  useEffect(() => setOpen(false), [pathname]);
 
   useEffect(() => {
     if (!open) return;
