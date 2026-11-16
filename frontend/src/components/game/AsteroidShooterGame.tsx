@@ -209,6 +209,9 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
   const [highScore, setHighScore] = useState(() => {
     try { return parseInt(localStorage.getItem("nasa-asteroid-highscore") || "0", 10); } catch { return 0; }
   });
+  const highScoreRef = useRef(highScore);
+  highScoreRef.current = highScore;
+  const [hudCombo, setHudCombo] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState(() => {
     try { return localStorage.getItem("nasa-asteroid-muted") !== "true"; } catch { return true; }
   });
@@ -514,6 +517,7 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
           g.comboTimer -= dt;
           if (g.comboTimer <= 0) {
             g.combo = 1;
+            setHudCombo(1);
           }
         }
 
@@ -587,7 +591,10 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
                 maxLife: 0.85,
               });
 
-              if (g.score > highScore) {
+              if (g.combo !== hudCombo) setHudCombo(g.combo);
+
+              if (g.score > highScoreRef.current) {
+                highScoreRef.current = g.score;
                 setHighScore(g.score);
                 try { localStorage.setItem("nasa-asteroid-highscore", String(g.score)); } catch { /* Ignore */ }
               }
@@ -852,7 +859,7 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
       cancelAnimationFrame(animId);
       audioRef.current?.stopAll();
     };
-  }, [gameState, highScore]);
+  }, [gameState]);
 
   // Touch handlers for mobile/onscreen controls
   const handleTouchThrust = (down: boolean) => {
@@ -894,6 +901,12 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
             <span className="stat-label">SECTOR</span>
             <strong className="stat-val">{sector}</strong>
           </div>
+          {hudCombo > 1 && (
+            <div className="stat-pill" style={{ borderColor: "#f59e0b", color: "#f59e0b" }}>
+              <span className="stat-label">COMBO</span>
+              <strong className="stat-val">{hudCombo}x</strong>
+            </div>
+          )}
           <div className="stat-pill shield-pill">
             <span className="stat-label">SHIELDS</span>
             <div className="shield-bar-bg">

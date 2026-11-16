@@ -256,7 +256,11 @@ export function CislunarOrbitalCanvas({
     controls.maxDistance = 24.0;
     controls.target.set(0, 0.05, 0);
     controls.addEventListener("start", () => { isUserInteractingRef.current = true; });
-    controls.addEventListener("end", () => { isUserInteractingRef.current = false; });
+    controls.addEventListener("end", () => {
+      isUserInteractingRef.current = false;
+      targetCamPosRef.current.copy(camera.position);
+      targetCamLookRef.current.copy(controls.target);
+    });
     controlsRef.current = controls;
 
     // 4. Directional Sun + Ambient Light
@@ -538,7 +542,9 @@ export function CislunarOrbitalCanvas({
       const theta = -Math.PI * 0.5 + prog * (Math.PI * 0.5);
       const r = EARTH_RADIUS + prog * (PARKING_RADIUS - EARTH_RADIUS);
       craftPos.set(EARTH_POS.x + Math.cos(theta) * r, EARTH_POS.y + Math.sin(theta) * r, 0);
-      forwardVec.set(-Math.sin(theta), Math.cos(theta), 0).normalize();
+      const radialUp = new THREE.Vector3(Math.cos(theta), Math.sin(theta), 0);
+      const orbitalTangent = new THREE.Vector3(-Math.sin(theta), Math.cos(theta), 0);
+      forwardVec.copy(radialUp).lerp(orbitalTangent, Math.min(1, Math.pow(prog, 0.65))).normalize();
       hasPlume = true;
     } else if (activePhaseId === "parking") {
       const theta = prog * Math.PI * 4;
@@ -572,10 +578,10 @@ export function CislunarOrbitalCanvas({
       const theta = Math.PI * 0.5 - prog * (Math.PI * 0.38);
       const r = LLO_RADIUS - prog * (LLO_RADIUS - MOON_RADIUS * 1.02);
       craftPos.set(MOON_POS.x + Math.cos(theta) * r, MOON_POS.y + Math.sin(theta) * r, 0.10 * prog);
-      forwardVec.set(-Math.sin(theta), Math.cos(theta), -0.1).normalize();
+      const flightTangent = new THREE.Vector3(Math.sin(theta), -Math.cos(theta), 0.1).normalize();
+      const surfaceNormal = new THREE.Vector3(Math.cos(theta), Math.sin(theta), 0).normalize();
+      forwardVec.copy(flightTangent).lerp(surfaceNormal, prog * 0.85).normalize();
       hasPlume = true;
-      // Terminal descent pitch towards radial vertical
-      forwardVec.lerp(new THREE.Vector3(0, 1, 0), prog * 0.6).normalize();
     }
 
     craft.position.copy(craftPos);

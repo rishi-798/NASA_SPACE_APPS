@@ -46,7 +46,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <div className="project-rail" role="status" aria-label="Lunar platform metrics" data-home-reveal>
+      <div className="project-rail" aria-label="Lunar platform metrics" data-home-reveal>
         <span>ONE MOON. MANY QUESTIONS.</span>
         <span><i aria-hidden="true" /> {landingSites.length} landing sites</span>
         <span>3D exploration + SPICE analysis</span>
@@ -63,7 +63,7 @@ export function HomePage() {
             <div className="project-card-copy"><div><p className="project-author">RISHI / MOON MAP</p><h3>A world worth<br />looking closer at.</h3><p>Orbit the NASA 3D Moon, choose a location, and put the surface in perspective.</p></div><span className="card-arrow"><ArrowUpRight aria-hidden="true" /></span></div>
           </Link>
           <div className="project-side">
-            <Link className="project-card project-compute" to="/explorer?tool=visibility" data-home-reveal>
+            <Link className="project-card project-compute" to="/explorer" data-home-reveal>
               <div className="compute-symbol" aria-hidden="true"><SunHorizon weight="thin" /><Broadcast weight="thin" /></div>
               <div className="project-card-copy"><div><p className="project-author">SUHAS / VISIBILITY ENGINE</p><h3>Beyond the<br />visible surface.</h3><p>Real Sun and Earth geometry. Terrain-aware horizons. One UTC timestamp.</p></div><span className="card-arrow"><ArrowUpRight aria-hidden="true" /></span></div>
             </Link>

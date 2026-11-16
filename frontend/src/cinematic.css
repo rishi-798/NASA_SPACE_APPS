@@ -89,7 +89,7 @@ body { min-width: 0; }
 .project-author { margin: 0 0 18px; color: var(--muted); font-family: var(--mono); font-size: 9px; letter-spacing: .1em; }
 .project-card h3 { margin: 0; font-size: clamp(29px, 3vw, 45px); font-weight: 420; line-height: 1.05; letter-spacing: -.035em; }
 .project-card-copy p:last-child { max-width: 360px; color: var(--muted); font-size: 14px; line-height: 1.6; margin: 18px 0 0; }
-.card-arrow { flex-shrink: 0; align-self: end; display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--text); transition: color 180ms ease, background 180ms ease; }
+.card-arrow { flex-shrink: 0; align-self: end; display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--text); background: rgba(255, 255, 255, 0.05); transition: color 180ms ease, background 180ms ease; }
 .card-arrow svg { width: 20px; height: 20px; }
 .project-card:hover .card-arrow { color: #111216; background: var(--accent); border-color: var(--accent); }
 .project-side { display: flex; flex-direction: column; gap: 20px; }
@@ -97,7 +97,7 @@ body { min-width: 0; }
 .compute-symbol { min-height: 172px; flex: 1; display: flex; justify-content: center; align-items: center; gap: 28px; margin: 0 30px; border-bottom: 1px solid var(--line); color: #d3b7a7; }
 .compute-symbol svg { width: 74px; height: 74px; }
 .compute-symbol svg:last-child { color: #9ea4b4; }
-.archive-card { display: flex; align-items: center; gap: 20px; padding: 28px; border: 1px solid var(--line); border-radius: var(--radius-panel); transition: background 180ms ease; }
+.archive-card { display: flex; align-items: center; gap: 20px; padding: 28px; border: 1px solid var(--line-strong); background: rgba(255, 255, 255, 0.03); border-radius: var(--radius-panel); transition: background 180ms ease, border-color 180ms ease; }
 .archive-card > svg:first-child { width: 40px; height: 40px; color: #a7a8b3; flex-shrink: 0; }
 .archive-card > svg:last-child { width: 22px; height: 22px; margin-left: auto; flex-shrink: 0; }
 .archive-card h3 { font-size: 18px; font-weight: 450; margin: 0; }

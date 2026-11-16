@@ -126,7 +126,7 @@ export const MISSION_PHASES: MissionPhase[] = [
     overview:
       "A temporary circular coast in Low Earth Orbit (LEO) at ~185 km altitude. Spacecraft subsystems, solar arrays, navigation gyroscopes, and thermal loops undergo automated checkout while tracking ground stations verify orbital parameters.",
     orbitalMechanics:
-      "In a circular orbit, gravitational force equals required centripetal acceleration ($v_c = \\sqrt{\\mu_E / r}$). At 185 km altitude, orbital velocity is exactly 7.79 km/s and the orbital period is 88.3 minutes. The parking orbit is essential for translunar flight because the Earth and Moon are not static; the parking orbit allows the spacecraft to coast until reaching the exact perigee position (phase angle ~115° relative to the Moon) required for translunar injection.",
+      "In a circular orbit, gravitational force equals required centripetal acceleration (vc = √(μE / r)). At 185 km altitude, orbital velocity is exactly 7.79 km/s and the orbital period is 88.3 minutes. The parking orbit is essential for translunar flight because the Earth and Moon are not static; the parking orbit allows the spacecraft to coast until reaching the exact perigee position (phase angle ~115° relative to the Moon) required for translunar injection.",
     engineeringChallenges:
       "Managing cryogenic boil-off of liquid hydrogen and liquid oxygen in the upper stage tanks, tracking orbital decay from upper-atmospheric drag, and establishing precise navigation state vectors using star trackers and DSN / TDRSS telemetry.",
     telemetryProfile: {

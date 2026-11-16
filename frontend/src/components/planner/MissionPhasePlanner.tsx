@@ -64,7 +64,7 @@ export function MissionPhasePlanner() {
       distEarthKm = 6371 + alt;
       distMoonKm = 384400 - alt;
     } else if (p.id === "tli" || p.id === "cruise") {
-      const cruiseProg = (simMetSeconds - 9900) / (259200 - 9900);
+      const cruiseProg = (simMetSeconds - 9900) / (257400 - 9900);
       distEarthKm = 6371 + 380000 * Math.max(0, Math.min(1, Math.pow(cruiseProg, 0.75)));
       distMoonKm = Math.max(1837, 384400 - distEarthKm);
     } else {
