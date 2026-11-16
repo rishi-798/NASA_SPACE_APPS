@@ -11,6 +11,8 @@ import {createAtmosphere,createStarPoints,createSunGlow,disposeObjects,fitToRadi
 import {createThrusterPuffs} from './thrusterPuffs';
 
 const SCALE=1/100000;
+// Wider presentation framing; physical positions and selected vehicle geometry are unchanged.
+const FLIGHT_CAMERA_DISTANCE=2;
 const point=(v:number[])=>new THREE.Vector3(v[0],v[2],-v[1]).multiplyScalar(SCALE);
 const P=new THREE.Matrix4().set(1,0,0,0,0,0,1,0,0,-1,0,0,0,0,0,1);
 function orientation(values:number[]) {
@@ -152,9 +154,9 @@ export function MissionFlightAnimation({data,modelUrl,modelName,modelCredit}:{da
       moonLabel.position.copy(moon.position).y+=moonRadius+.025;ghostLabel.position.copy(ghost.position).y+=moonRadius+.025;ghostLabel.visible=moon.position.distanceTo(ghost.position)>.15;ghost.visible=ghostLabel.visible;
       const {mode,serial}=focusRef.current;
       cinematicTarget.copy(spacecraft.position).lerp(moon.position,approach*.48);
-      const flightOffset=spacecraft.position.clone().normalize().multiplyScalar(.24).addScaledVector(velocity,-.17).add(new THREE.Vector3(0,.09,0));
+      const flightOffset=spacecraft.position.clone().normalize().multiplyScalar(.24).addScaledVector(velocity,-.17).add(new THREE.Vector3(0,.09,0)).multiplyScalar(FLIGHT_CAMERA_DISTANCE);
       // Fit the approaching spacecraft and true-size Moon together, including narrow screens.
-      const arrivalOffset=new THREE.Vector3(.05,.035,.075).multiplyScalar(Math.max(1,1/camera.aspect));
+      const arrivalOffset=new THREE.Vector3(.05,.035,.075).multiplyScalar(Math.max(1,1/camera.aspect)*FLIGHT_CAMERA_DISTANCE);
       cinematicOffset.copy(flightOffset).lerp(arrivalOffset,approach);
       const focusTarget=mode==='cinematic'&&!manualCamera?cinematicTarget:mode==='rocket'||mode==='cinematic'?spacecraft.position:mode==='moon'?moon.position:mode==='earth'?earth.position:bounds.center;
       if(serial!==previousSerial){

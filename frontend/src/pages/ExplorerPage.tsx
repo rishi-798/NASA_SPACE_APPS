@@ -232,7 +232,7 @@ function ExplorerWorkspace() {
                 aria-pressed={visualMode === "orbit"}
                 onClick={() => setVisualMode("orbit")}
               >
-                <span aria-hidden="true">🌐</span> Global Moon Orbit
+                Global Moon Orbit
               </button>
               <button
                 type="button"
@@ -240,7 +240,7 @@ function ExplorerWorkspace() {
                 aria-pressed={visualMode === "surface"}
                 onClick={() => setVisualMode("surface")}
               >
-                <span aria-hidden="true">🏔️</span> 3D Surface Terrain
+                3D Surface Terrain
               </button>
             </div>
             {visualMode === "surface" ? (

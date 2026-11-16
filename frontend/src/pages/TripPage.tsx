@@ -217,7 +217,7 @@ export function TripPage() {
       <Link to="/"><ArrowLeft /> Back to website</Link>
       <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
         <Link to="/planner" style={{ color: "#38bdf8", textDecoration: "none", fontSize: "0.82rem", fontWeight: 600 }}>
-          🚀 Mission Phase Planner
+          Mission Phase Planner
         </Link>
         <span>TEAM BRAHMOS / MISSION PROTOTYPE</span>
       </div>
@@ -266,14 +266,14 @@ export function TripPage() {
               className={`visual-toggle-btn ${tripMoonView === "globe" ? "active" : ""}`}
               onClick={() => setTripMoonView("globe")}
             >
-              🌐 Global Moon Orbit
+              Global Moon Orbit
             </button>
             <button
               type="button"
               className={`visual-toggle-btn ${tripMoonView === "surface" ? "active" : ""}`}
               onClick={() => setTripMoonView("surface")}
             >
-              🏔️ 3D Surface Terrain
+              3D Surface Terrain
             </button>
           </div>
           {tripMoonView === "surface" && (

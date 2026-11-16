@@ -1133,20 +1133,20 @@ export default function LocalTerrainViewer({ region, latitude, longitude, observ
         {mode === 'eye' && onMesh && (
           <div className="surface-hud-targets">
             <button type="button" className="hud-target-btn" disabled={!skyReady} onClick={() => runtime.current?.faceBody('sun')}>
-              ☀️ Face Sun
+              Face Sun
             </button>
             <button type="button" className="hud-target-btn" disabled={!skyReady} onClick={() => runtime.current?.faceBody('earth')}>
-              🌍 Face Earth
+              Face Earth
             </button>
             <button type="button" className="hud-target-btn" onClick={() => runtime.current?.faceBody('north')}>
-              🧭 North (0°)
+              North (0°)
             </button>
           </div>
         )}
 
         <div className="surface-hud-telemetry">
           {mode === 'eye' && onMesh ? (
-            <span>🔭 Heading {camHeading.toString().padStart(3, '0')}° · Pitch {camPitch}° · Drag or use arrows to look</span>
+            <span>Heading {camHeading.toString().padStart(3, '0')}° · Pitch {camPitch}° · Drag or use arrows to look</span>
           ) : mode === 'aerial' ? (
             <span>Terrain view · Drag to pan</span>
           ) : (

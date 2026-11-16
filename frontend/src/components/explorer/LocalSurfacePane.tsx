@@ -75,7 +75,7 @@ export function LocalSurfacePane({ latitude, longitude, observationTime, onPick,
                 cursor: 'pointer',
               }}
             >
-              🌐 Global Moon Orbit
+              Global Moon Orbit
             </button>
           )}
           <label className="surface-patch-select-label">
@@ -137,7 +137,7 @@ function SurfaceSession(props: {
     <div className="surface-session-container">
       <div className="surface-time-scrubber-bar">
         <div className="surface-time-label">
-          <span className="surface-time-title">☀️ Solar Ephemeris &amp; Shadow Scrubber (24h UTC Window)</span>
+          <span className="surface-time-title">Solar Ephemeris &amp; Shadow Scrubber (24h UTC Window)</span>
           <time className="surface-time-utc" dateTime={time}>
             {time.replace('T', ' ').replace('.000Z', ' UTC')} (+{(minutes / 60).toFixed(1)}h)
           </time>

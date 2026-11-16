@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { SpeakerHigh, SpeakerSlash, Pause, Play, ArrowCounterClockwise, X } from "@phosphor-icons/react";
+import { SpeakerHigh, SpeakerSlash, RocketLaunch, Pause, Play, ArrowCounterClockwise, X } from "@phosphor-icons/react";
 import "../../asteroid-game.css";
 
 interface Asteroid {
@@ -958,7 +958,7 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
         {gameState === "ready" && (
           <div className="game-overlay-screen">
             <div className="overlay-dialog">
-              <div className="overlay-rocket-icon">🚀</div>
+              <div className="overlay-rocket-icon" aria-hidden="true"><RocketLaunch size={48} weight="light" /></div>
               <h2>ASTEROID DEFENSE PROTOCOL</h2>
               <p>Telemetry standby. Protect your lunar transit rocket through the asteroid belt.</p>
 
@@ -1055,7 +1055,7 @@ export function AsteroidShooterGame({ onClose, isOverlay = false, onCalculationF
           onPointerUp={() => handleTouchFire(false)}
           onPointerLeave={() => handleTouchFire(false)}
         >
-          🔥 FIRE
+          FIRE
         </button>
       </div>
     </div>
