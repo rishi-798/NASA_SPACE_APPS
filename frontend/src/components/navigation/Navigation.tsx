@@ -1,17 +1,19 @@
 import { ArrowUpRight, List, Moon, X } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const links = [
   { to: "/explorer", label: "Analyze a site" },
   { to: "/trip", label: "Plan a trip" },
   { to: "/planner", label: "Flight phases" },
   { to: "/missions", label: "Missions" },
-  { to: "/about", label: "About" },
 ];
 
 export function Navigation() {
+  const { pathname } = useLocation();
+  const home = "/brahmos/index.html?return=1#top";
   const [open, setOpen] = useState(false);
+  useEffect(() => setOpen(false), [pathname]);
 
   useEffect(() => {
     if (!open) return;
@@ -24,16 +26,10 @@ export function Navigation() {
 
   return (
     <header className="topbar">
-      <NavLink className="wordmark" to="/" aria-label="CLPS Lunar home" onClick={() => setOpen(false)}>
-        <span className="wordmark-mark" aria-hidden="true">
-          <Moon weight="fill" />
-        </span>
-        <span>CLPS</span>
-        <span className="wordmark-divider">/</span>
-        <span className="wordmark-muted">LUNAR</span>
-      </NavLink>
+      <a className="wordmark" href={home} aria-label="BRAHMOS home"><Moon weight="fill" /><span>BRAHMOS</span></a>
 
       <nav className="desktop-nav" aria-label="Primary navigation">
+        <a className="nav-link" href="/brahmos/index.html?return=1#about">About</a>
         {links.map((link) => (
           <NavLink
             key={link.to}
@@ -62,6 +58,7 @@ export function Navigation() {
 
       {open && (
         <nav id="mobile-navigation" className="mobile-nav" aria-label="Mobile navigation">
+          <a className="mobile-nav-link" href="/brahmos/index.html?return=1#about">About</a>
           {links.map((link) => (
             <NavLink
               key={link.to}

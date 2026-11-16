@@ -5,17 +5,18 @@ import { Navigation } from "../navigation/Navigation";
 import { MissionControlDock } from "../voice/MissionControlDock";
 import { VoiceGuideProvider } from "../voice/VoiceGuideProvider";
 import { OfflineNotice } from "../game/OfflineNotice";
+import "../../brahmos-shell.css";
 
 export function AppShell() {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
     const name = pathname === "/" ? "The Moon. In context." : pathname.slice(1).replace(/^./, (letter) => letter.toUpperCase());
-    document.title = `${name} | CLPS Lunar Browser`;
+    document.title = `${name} | BRAHMOS`;
   }, [pathname]);
   return (
     <VoiceGuideProvider>
-    <div className={`app-shell${pathname === "/" ? " app-shell-home" : ""}`}>
+    <div className={`app-shell brahmos-tools${pathname === "/" ? " app-shell-home" : ""}`}>
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
@@ -26,14 +27,15 @@ export function AppShell() {
       </main>
       <footer className="site-footer">
         <div className="footer-top">
-          <Link className="footer-wordmark" to="/">CLPS<span> / LUNAR</span></Link>
+          <a className="footer-wordmark" href="/brahmos/index.html?return=1#top">BRAHMOS</a>
           <nav aria-label="Footer navigation">
-            <Link to="/trip">Plan a trip</Link>
+            <a href="/brahmos/index.html?return=1#about">About</a>
             <Link to="/explorer">Explorer <ArrowUpRight aria-hidden="true" /></Link>
-            <Link to="/missions">Missions</Link>
-            <Link to="/about">About</Link>
+            <Link to="/trip">Plan a trip</Link>
             <Link to="/planner">Flight phases</Link>
-            <Link to="/game">Asteroid Game</Link>
+            <Link to="/missions">Missions</Link>
+            <Link to="/timeline">Timeline</Link>
+            <Link to="/discover">Discover</Link>
           </nav>
         </div>
         <div className="footer-bottom">
