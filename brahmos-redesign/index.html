@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#08090b">
+  <meta name="description" content="BRAHMOS is a lunar terrain and mission planning workspace built for NASA Space Apps.">
+  <title>BRAHMOS</title>
+  <link rel="icon" href="media/brahmos-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="hero.css">
+  <link rel="stylesheet" href="orbit.css">
+  <link rel="stylesheet" href="about.css">
+  <link rel="stylesheet" href="launch.css">
+  <link rel="stylesheet" href="vendor/lenis.css">
+  <link rel="stylesheet" href="material.css">
+  <script src="vendor/gsap.min.js" defer></script>
+  <script src="vendor/ScrollTrigger.min.js" defer></script>
+  <script src="vendor/lenis.min.js" defer></script>
+  <script src="launch.js" defer></script>
+  <script src="hero.js" defer></script>
+  <script src="moon.js" defer></script>
+  <script src="glyphs.js" defer></script>
+  <script src="orbit.js" defer></script>
+  <script src="about.js" defer></script>
+  <script src="mission-data.js" defer></script>
+  <script src="glass.js" defer></script>
+  <script src="mission-control.js" defer></script>
+</head>
+<body>
+  <section class="launch-screen" role="dialog" aria-modal="true" aria-label="BRAHMOS launch intro" tabindex="-1" hidden>
+    <div class="launch-screen__field" aria-hidden="true"></div>
+    <div class="launch-screen__flare" aria-hidden="true"></div>
+    <div class="launch-screen__brand" aria-hidden="true">BRAHMOS</div>
+    <div class="launch-screen__vehicle" aria-hidden="true">
+      <img src="media/launch-rocket.webp" alt="" width="87" height="560">
+      <span class="launch-screen__plume">
+        <video class="launch-screen__shader" data-src="media/shader-r.mp4" muted playsinline preload="none"></video>
+      </span>
+    </div>
+    <div class="launch-screen__status" role="status" aria-label="Loading BRAHMOS">
+      <div class="launch-screen__measure" aria-hidden="true"><span>Loading</span><span class="launch-screen__count">00%</span></div>
+      <div class="launch-screen__rail" aria-hidden="true">
+        <span class="halo-fill">
+        </span>
+      </div>
+    </div>
+  </section>
+  <main id="top" tabindex="-1">
+    <div class="journey">
+      <div class="journey__frame">
+        <section class="hero" aria-labelledby="hero-title">
+          <header class="topbar">
+            <div class="brand" aria-hidden="true">
+              <img src="media/brahmos-mark.svg" alt="" width="29" height="29">
+              <span>BRAHMOS</span>
+            </div>
+
+            <nav class="navigation glass" data-lens data-halo-hover aria-label="Main navigation">
+              <span class="halo-fill" aria-hidden="true">
+              </span>
+              <ul>
+                  <li><a href="#about">About</a></li>
+                  <li><a href="workspace.html?view=analyze">Analyze a site</a></li>
+                  <li><a href="workspace.html?view=trip">Plan a trip</a></li>
+                  <li><a href="workspace.html?view=phases">Flight phases</a></li>
+                  <li><a href="workspace.html?view=missions">Missions</a></li>
+                </ul>
+            </nav>
+
+            <details class="mobile-menu">
+              <summary class="glass" data-lens data-halo-hover>
+                Menu
+                <span class="halo-fill" aria-hidden="true">
+                </span>
+                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg>
+              </summary>
+              <nav class="mobile-menu__panel glass" aria-label="Main navigation">
+                <ul>
+                  <li><a href="#about">About</a></li>
+                  <li><a href="workspace.html?view=analyze">Analyze a site</a></li>
+                  <li><a href="workspace.html?view=trip">Plan a trip</a></li>
+                  <li><a href="workspace.html?view=phases">Flight phases</a></li>
+                  <li><a href="workspace.html?view=missions">Missions</a></li>
+                </ul>
+              </nav>
+            </details>
+          </header>
+
+          <section class="intro" aria-labelledby="hero-title">
+            <p class="project"><span></span>NASA Space Apps 2026</p>
+            <h1 id="hero-title">BRAHMOS</h1>
+          </section>
+
+          <div class="scene">
+            <div class="scene__camera" aria-hidden="true">
+              <div class="cabin">
+                <div class="viewport">
+                  <div class="viewport__media">
+                    <img src="media/lunar-flyover.jpg" alt="" width="1920" height="1080" fetchpriority="high">
+                    <video data-src="media/lunar-flyover.mp4" muted playsinline loop preload="none" disablepictureinpicture></video>
+                  </div>
+                  <div class="viewport__reflection"></div>
+                </div>
+                <picture class="cabin__art">
+                  <source media="(max-aspect-ratio: 1/1)" srcset="media/cabin-mobile.webp" width="941" height="1672">
+                  <img src="media/cabin-desktop.webp" alt="" width="1672" height="941" fetchpriority="high">
+                </picture>
+                <div class="cabin__bounce"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-footer">
+            <p class="summary">Explore lunar terrain, track sunlight and check whether a landing site can see Earth.</p>
+            <button class="primary-action glass" data-lens data-halo-hover type="button" aria-controls="lunar-wheel" disabled>
+              <span class="primary-action__face">
+                <span class="halo-fill" aria-hidden="true">
+                </span>
+                <span class="primary-action__label">Open Explorer
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 15 15 5m-8 0h8v8"/></svg>
+                </span>
+              </span>
+            </button>
+            <div class="footage">
+              <span>Apollo 8 lunar flyover</span>
+              <span>NASA Goddard SVS</span>
+            </div>
+          </div>
+          <footer class="site-footer glass" data-lens data-halo-surface>
+            <span class="halo-fill" aria-hidden="true"></span>
+            <a class="site-footer__brand" href="#top" aria-label="BRAHMOS home">
+              <img src="media/brahmos-mark.svg" width="24" height="24" alt="">
+              <span>BRAHMOS</span>
+            </a>
+            <nav aria-label="Landing footer">
+              <a href="#about">About</a>
+              <a href="workspace.html?view=analyze">Analyze a site</a>
+              <a href="workspace.html?view=trip">Plan a trip</a>
+              <a href="workspace.html?view=phases">Flight phases</a>
+              <a href="workspace.html?view=missions">Missions</a>
+            </nav>
+          </footer>
+        </section>
+
+        <section class="orbit" id="lunar-wheel" aria-label="Lunar Explorer">
+          <div class="orbit__sky" aria-hidden="true"></div>
+          <a class="orbit-home glass" href="#top" aria-label="BRAHMOS home" data-lens data-halo-surface>
+            <span class="halo-fill" aria-hidden="true"></span>
+            <img src="media/brahmos-mark.svg" width="23" height="23" alt="">
+            <span>BRAHMOS</span>
+          </a>
+          <div class="orbit__system">
+            <svg class="orbit__track" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="belt-sheen" x1="0%" y1="10%" x2="100%" y2="75%">
+                  <stop stop-color="#f6e7d5" stop-opacity=".06"/>
+                  <stop offset=".28" stop-color="#e5ccac" stop-opacity=".40"/>
+                  <stop offset=".57" stop-color="#e4cbb3" stop-opacity=".18"/>
+                  <stop offset=".86" stop-color="#faac67" stop-opacity=".67"/>
+                  <stop offset="1" stop-color="#ecdfd1" stop-opacity=".10"/>
+                </linearGradient>
+              </defs>
+              <ellipse class="belt-haze" cx="500" cy="250" rx="486" ry="227"/>
+              <ellipse class="belt-core" cx="500" cy="250" rx="486" ry="227"/>
+              <ellipse class="belt-trace" cx="500" cy="250" rx="478" ry="217"/>
+              <ellipse class="belt-trace" cx="500" cy="250" rx="496" ry="241"/>
+              <ellipse class="belt-marks" cx="500" cy="250" rx="491" ry="234"/>
+            </svg>
+            <div class="moon" role="img" aria-label="Three-dimensional Moon">
+              <img class="moon__fallback" src="media/moon-fallback.jpg" width="1920" height="1080" alt="">
+              <canvas class="moon__canvas" aria-hidden="true"></canvas>
+            </div>
+            <svg class="orbit__front" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true">
+              <path class="belt-haze" d="M14 250a486 227 0 0 0 972 0"/>
+              <path class="belt-core" d="M14 250a486 227 0 0 0 972 0"/>
+            </svg>
+            <div class="orbit__cards" role="group" aria-label="Explorer categories">
+              <a class="orbit-card orbit-card--analyze" href="workspace.html?view=analyze">
+                <span class="orbit-card__face glass">
+                  <span class="halo-fill" aria-hidden="true"></span>
+                  <svg class="orbit-card__art" viewBox="0 0 72 72" aria-hidden="true">
+                    <path d="M26 15H15v11m31-11h11v11M15 46v11h11m31-11v11H46M36 10v12m0 28v12M10 36h12m28 0h12"/><circle cx="36" cy="36" r="13"/><circle cx="36" cy="36" r="3"/>
+                  </svg>
+                  <span class="orbit-card__chip" aria-hidden="true"></span>
+                  <span class="orbit-card__title">Analyze a site</span>
+                </span>
+              </a>
+              <a class="orbit-card orbit-card--trip" href="workspace.html?view=trip">
+                <span class="orbit-card__face glass">
+                  <span class="halo-fill" aria-hidden="true"></span>
+                  <svg class="orbit-card__art" viewBox="0 0 72 72" aria-hidden="true">
+                    <path d="M12 58C24 31 29 41 41 28c5-5 8-10 12-16m-11 3 13-5-2 14m-27 32c6-8 12-6 17-10"/><circle cx="15" cy="52" r="8"/><circle cx="53" cy="46" r="7"/>
+                  </svg>
+                  <span class="orbit-card__chip" aria-hidden="true"></span>
+                  <span class="orbit-card__title">Plan a trip</span>
+                </span>
+              </a>
+              <a class="orbit-card orbit-card--phases" href="workspace.html?view=phases">
+                <span class="orbit-card__face glass">
+                  <span class="halo-fill" aria-hidden="true"></span>
+                  <svg class="orbit-card__art" viewBox="0 0 72 72" aria-hidden="true">
+                    <circle cx="20" cy="43" r="12"/><circle cx="37" cy="35" r="12"/><circle cx="54" cy="27" r="12"/><path d="M20 31a14 14 0 0 1 0 24m17-32v24m17-32a14 14 0 0 0 0 24"/>
+                  </svg>
+                  <span class="orbit-card__chip" aria-hidden="true"></span>
+                  <span class="orbit-card__title">Flight phases</span>
+                </span>
+              </a>
+              <a class="orbit-card orbit-card--missions" href="workspace.html?view=missions">
+                <span class="orbit-card__face glass">
+                  <span class="halo-fill" aria-hidden="true"></span>
+                  <svg class="orbit-card__art" viewBox="0 0 72 72" aria-hidden="true">
+                    <path d="M23 56V15c11-10 22 9 34-1v23c-12 10-23-9-34 1m-14 22c10-7 42-7 53 0"/><path d="M40 25h9m-4.5-4.5v9"/>
+                  </svg>
+                  <span class="orbit-card__chip" aria-hidden="true"></span>
+                  <span class="orbit-card__title">Missions</span>
+                </span>
+              </a>
+              <a class="orbit-card orbit-card--about" href="#about">
+                <span class="orbit-card__face glass" data-lens data-panel-lens>
+                  <span class="halo-fill" aria-hidden="true"></span>
+                  <svg class="orbit-card__art" viewBox="0 0 72 72" aria-hidden="true">
+                    <circle cx="36" cy="36" r="24"/><path d="M43 12a25 25 0 0 0 15 40M16 44c13-3 16-9 24-9m-11-9h.1M21 34h.1M35 53h.1"/><ellipse cx="36" cy="36" rx="35" ry="9" transform="rotate(-31 36 36)"/>
+                  </svg>
+                  <span class="orbit-card__chip" aria-hidden="true"></span>
+                  <span class="orbit-card__title">About</span>
+                </span>
+              </a>
+            </div>
+          </div>
+        </section>
+        <div class="journey-progress" aria-hidden="true">
+          <div class="halo-fill">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section id="about" class="about" aria-labelledby="about-title">
+      <div class="about__water" aria-hidden="true"><canvas></canvas></div>
+      <div class="about__inner">
+        <header class="about__header">
+          <h2 id="about-title" tabindex="-1">About BRAHMOS</h2>
+        </header>
+
+        <div class="about__cards">
+          <article class="about-card about-card--why glass" aria-labelledby="why-title" data-halo-surface>
+            <span class="halo-fill" aria-hidden="true"></span>
+            <div class="about-card__content">
+              <p class="about-card__label">Why this exists</p>
+              <h3 id="why-title">LOOK CLOSER.<br>GO FURTHER.</h3>
+              <p>CLPS Lunar Browser brings Rishi's interactive Moon map and Suhas's visibility backend together. Choose a landing site and UTC timestamp to explore sunlight, Earth visibility, and terrain context.</p>
+              <a class="about-card__action" href="workspace.html?view=analyze">Open Explorer
+                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 15 15 5m-8 0h8v8"/></svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="about-card about-card--model glass" aria-labelledby="model-title" data-halo-surface>
+            <span class="halo-fill" aria-hidden="true"></span>
+            <div class="about-card__content">
+              <p class="about-card__label">Analysis model</p>
+              <h3 id="model-title">One observation.<span>Three operational questions.</span></h3>
+              <dl class="about-model">
+                <div>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2m0-14-2 2M7 17l-2 2"/></svg>
+                  <dt>Solar vector</dt>
+                  <dd>Azimuth, elevation, and above-horizon visibility.</dd>
+                </div>
+                <div>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16m-8-7v7M6 8a8 8 0 0 0 10 10l4-4L10 4 6 8Zm9-5a6 6 0 0 1 6 6"/></svg>
+                  <dt>Earth link</dt>
+                  <dd>Communications line-of-sight from the selected site.</dd>
+                </div>
+                <div>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20h20L15 9l-3 4L8 6 2 20Zm4-9 2 2 2-2"/></svg>
+                  <dt>Terrain profile</dt>
+                  <dd>Local obstruction context when a horizon profile exists.</dd>
+                </div>
+              </dl>
+            </div>
+          </article>
+
+          <article class="about-card about-card--sources glass" aria-labelledby="specifications-title" data-halo-surface>
+            <span class="halo-fill" aria-hidden="true"></span>
+            <div class="about-card__content">
+              <p class="about-card__disclosure">This is an independent NASA Space Apps 2026 project and not an official NASA product. Lunar imagery is credited to NASA’s Scientific Visualization Studio and the Lunar Reconnaissance Orbiter program. The local preview interpolates hourly geometric Sun and Earth positions generated from the project’s NAIF SPICE kernels. Athena uses the bundled LOLA terrain horizon. Other locations use a flat horizon. Visibility windows report their sampling interval. Landing safety requires separate assessment.</p>
+              <h3 id="specifications-title">Scientific Specifications &amp; Data Sources</h3>
+              <dl class="about-specifications">
+                <div>
+                  <dt>Planetary Reference Frame</dt>
+                  <dd>Observation vectors are computed in the IAU <code>MOON_ME_DE440_ME421</code> mean Earth/polar axis selenographic reference frame with mean lunar radius R = 1737.4 km and planetocentric east-positive selenographic coordinates.</dd>
+                </div>
+                <div>
+                  <dt>Ephemeris Toolkit</dt>
+                  <dd>Generated with <a href="https://naif.jpl.nasa.gov/">NASA/JPL NAIF SPICE</a> using <code>de440s.bsp</code>, <code>naif0012.tls</code>, <code>pck00011.tpc</code>, <code>moon_pa_de440_200625.bpc</code>, and <code>moon_de440_220930.tf</code>.</dd>
+                </div>
+                <div>
+                  <dt>Topographic Horizon Modeling</dt>
+                  <dd>Athena’s profile evaluates 720 azimuthal bins at 0.5° intervals, using the south-polar LOLA 80 m DEM. The profile extends 40 km and assumes a 2 m observer height.</dd>
+                </div>
+                <div>
+                  <dt>Visual Mapping</dt>
+                  <dd>The <a href="https://svs.gsfc.nasa.gov/4720/">NASA SVS CGI Moon Kit</a> supplies LROC-derived color and LOLA displacement maps for visual context.</dd>
+                </div>
+                <div>
+                  <dt>Preliminary Orbital Mechanics</dt>
+                  <dd>Trip transfers use an Earth-centered, short-way Lambert solution with date-based DE440 endpoints. The arrival reference is 1,000 km above the Moon’s Earth-facing side. Ascent, capture, and landing require separate models.</dd>
+                </div>
+              </dl>
+              <hr>
+              <h3>Academic &amp; Technical Citations</h3>
+              <ul class="about-citations">
+                <li>Acton, C., et al. (2018). <cite>A look towards the future in the handling of space science mission geometry</cite>. Planetary and Space Science, 150, 9–12. <a href="https://doi.org/10.1016/j.pss.2017.02.013">doi:10.1016/j.pss.2017.02.013</a></li>
+                <li>Smith, D. E., et al. (2017). <cite>Summary of the results from the Lunar Orbiter Laser Altimeter after seven years in lunar orbit</cite>. Icarus, 283, 70–91. <a href="https://doi.org/10.1016/j.icarus.2016.06.006">doi:10.1016/j.icarus.2016.06.006</a></li>
+                <li>Park, R. S., et al. (2021). <cite>The JPL Planetary and Lunar Ephemerides DE440 and DE441</cite>. The Astronomical Journal, 161(3), 105. <a href="https://doi.org/10.3847/1538-3881/abd414">doi:10.3847/1538-3881/abd414</a></li>
+              </ul>
+            </div>
+          </article>
+        </div>
+
+        <footer class="site-footer glass" data-lens data-halo-surface>
+          <span class="halo-fill" aria-hidden="true"></span>
+          <a class="site-footer__brand" href="#top" aria-label="BRAHMOS home">
+            <img src="media/brahmos-mark.svg" width="24" height="24" alt="">
+            <span>BRAHMOS</span>
+          </a>
+          <nav aria-label="About footer">
+              <a href="#about">About</a>
+              <a href="workspace.html?view=analyze">Analyze a site</a>
+              <a href="workspace.html?view=trip">Plan a trip</a>
+              <a href="workspace.html?view=phases">Flight phases</a>
+              <a href="workspace.html?view=missions">Missions</a>
+            </nav>
+        </footer>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

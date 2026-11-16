@@ -1,0 +1,326 @@
+.journey { background: #000; }
+.journey__frame { position: relative; isolation: isolate; }
+.journey[data-enhanced]::after { content: ""; display: block; height: 88svh; }
+.journey[data-enhanced] .journey__frame {
+  position: sticky;
+  top: 0;
+  overflow: clip;
+}
+.scene__camera {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform-origin: 50% calc(50% + var(--scene-shift));
+}
+.journey[data-enhanced] .hero[data-covered] { visibility: hidden; }
+.journey[data-enhanced] .hero [inert] { pointer-events: none; }
+
+.primary-action__label { position: relative; display: inline-flex; align-items: center; gap: 16px; }
+.primary-action:enabled { cursor: pointer; }
+.halo-fill {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  border-radius: inherit;
+  background: #25324b url("media/halo-still.webp") center / cover no-repeat;
+  pointer-events: none;
+}
+.halo-fill video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+.halo-fill video[data-frame] { opacity: 1; }
+.primary-action .halo-fill {
+  clip-path: inset(0 100% 0 0 round 100px);
+  filter: brightness(.59) saturate(1.2);
+  transition: clip-path 325ms var(--ease);
+}
+.topbar .halo-fill {
+  z-index: -1;
+  clip-path: inset(0 100% 0 0 round 100px);
+  filter: brightness(.46) saturate(1.25);
+  transition: clip-path 525ms var(--ease);
+}
+.mobile-menu summary:focus-visible .halo-fill { clip-path: inset(0 0 0 0 round 100px); }
+.primary-action:focus-visible .primary-action__face {
+  border-color: #d7e3ffaa;
+}
+.primary-action:focus-visible .halo-fill { clip-path: inset(0 0 0 0 round 100px); }
+@media (hover: hover) and (pointer: fine) {
+  .primary-action:enabled:hover .primary-action__face {
+    border-color: #d7e3ffaa;
+  }
+  .primary-action:enabled:hover .halo-fill { clip-path: inset(0 0 0 0 round 100px); }
+  .topbar [data-halo-hover]:hover .halo-fill { clip-path: inset(0 0 0 0 round 100px); }
+  .navigation li { border-radius: 100px; }
+  .navigation li:hover { background: #fcffff14; }
+}
+.journey-progress {
+  display: none;
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  width: min(168px, 30vw);
+  height: 5px;
+  border-radius: 100px;
+  background: #cab0923b;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.journey[data-enhanced] .journey-progress { display: block; opacity: 0; }
+.journey-progress .halo-fill { transform: scaleX(0); transform-origin: left center; }
+
+.glyph-label { position: relative; display: inline-block; }
+.glyph-label__animation { position: absolute; inset: 0; overflow: clip; white-space: nowrap; pointer-events: none; }
+.glyph-label[data-scrambling] > .glyph-label__text { opacity: 0; }
+
+.orbit {
+  --belt-x: min(34vw, 490px);
+  --belt-y: min(33svh, 300px);
+  --belt-tilt: -13deg;
+  --card-width: clamp(146px, min(15.6vw, 25svh), 220px);
+  position: relative;
+  isolation: isolate;
+  min-height: max(580px, 100svh);
+  overflow: clip;
+  background: #000;
+}
+.journey[data-enhanced] .orbit {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  min-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.journey[data-enhanced] .orbit[data-visible] { pointer-events: auto; }
+.orbit__sky, .orbit__system { position: absolute; inset: 0; }
+.orbit__sky {
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 16% 24%, #f6eee1a1 .6px, transparent 1.4px),
+    radial-gradient(circle at 83% 69%, #d4cec87a .8px, transparent 1.7px),
+    radial-gradient(circle at 77% 19%, #e9ddc9a6 .7px, transparent 1.7px),
+    radial-gradient(circle at 27% 81%, #f2e8da69 .6px, transparent 1.5px),
+    radial-gradient(circle at 89% 35%, #dfd6c56b .5px, transparent 1.4px),
+    radial-gradient(circle at 38% 11%, #e0d8cc6e .5px, transparent 1.4px),
+    radial-gradient(circle at 62% 88%, #e7dbca80 .7px, transparent 1.5px),
+    radial-gradient(circle at 11% 63%, #ebdfcd60 .6px, transparent 1.5px);
+}
+.orbit__sky::before, .orbit__sky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 54% 39%, #e3dece55 .4px, transparent 1.25px) 0 0 / 199px 143px;
+}
+.orbit__sky::after {
+  background: radial-gradient(circle at 27% 53%, #f2e1c53b .4px, transparent 1.15px) 37px 54px / 127px 173px;
+}
+
+.orbit__track, .orbit__front {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 1;
+  width: calc(var(--belt-x) * 2);
+  height: calc(var(--belt-y) * 2);
+  transform: translate(-50%, -50%) rotate(var(--belt-tilt));
+  overflow: visible;
+  pointer-events: none;
+}
+.orbit__front { z-index: 5; }
+.orbit__track :is(ellipse, path), .orbit__front path { vector-effect: non-scaling-stroke; }
+.belt-haze { stroke: #ffb66a; stroke-width: 7; opacity: .065; }
+.belt-core { stroke: url("#belt-sheen"); stroke-width: 1.4; }
+.belt-trace { stroke: url("#belt-sheen"); stroke-width: .65; opacity: .61; }
+.belt-marks { stroke: #e4ccb1; stroke-width: 1.25; stroke-dasharray: .7 10 1.2 3 3 14; stroke-linecap: round; opacity: .26; }
+.orbit__front .belt-haze { opacity: .09; }
+
+.moon {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 4;
+  width: min(34vw, 47svh, 440px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  contain: layout;
+  touch-action: pan-y;
+}
+.journey[data-enhanced] .moon { transform: none; }
+.moon::before {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 47% 51%, #ffb06933 39%, #e6763135 53%, #ff9b4c12 59%, transparent 69%);
+  pointer-events: none;
+}
+.moon__fallback, .moon__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.moon__fallback { object-fit: cover; border-radius: 50%; }
+.moon__canvas {
+  opacity: 0;
+  transition: opacity 240ms var(--ease);
+}
+.moon[data-rendered] { cursor: grab; }
+.moon[data-rendered] .moon__canvas { opacity: 1; }
+.moon[data-rendered] .moon__fallback { visibility: hidden; }
+.moon[data-dragging] { cursor: grabbing; }
+
+.orbit-card {
+  text-decoration: none;
+  --rest-x: 0;
+  --rest-y: 0;
+  position: absolute;
+  --card-radius: clamp(9px, 1.05vw, 15px);
+  z-index: var(--orbit-depth, 6);
+  top: calc(50% + var(--belt-y) * var(--rest-y));
+  left: calc(50% + var(--belt-x) * var(--rest-x));
+  width: var(--card-width);
+  aspect-ratio: 1.586;
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: var(--card-radius);
+  background: none;
+  color: #fbf6ed;
+  cursor: pointer;
+  text-align: left;
+  perspective: 650px;
+  transform: translate(-50%, -50%);
+}
+.journey[data-enhanced] .orbit-card { top: 50%; left: 50%; }
+.orbit-card--about { --rest-y: -.96; --card-signal: #faeee0; }
+.orbit-card--analyze { --rest-x: .94; --rest-y: -.31; --card-signal: #eadcc2; }
+.orbit-card--trip { --rest-x: .58; --rest-y: .80; --card-signal: #ffe5c5; }
+.orbit-card--phases { --rest-x: -.58; --rest-y: .80; --card-signal: #f0e4d5; }
+.orbit-card--missions { --rest-x: -.94; --rest-y: -.31; --card-signal: #ffc996; }
+
+.orbit-card__face.glass {
+  --glass-fill: rgb(0 0 0 / .05);
+  --glass-inner: rgb(255 255 255 / .25);
+  --glass-edge: rgb(255 255 255 / .16);
+  --glass-glint: .9;
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  display: block;
+  border: 1px solid var(--glass-edge);
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg, #eee0cc0c 1px, transparent 1px) 0 0 / 19px 19px,
+    linear-gradient(0deg, #eee0cc0b 1px, transparent 1px) 0 0 / 19px 19px,
+    linear-gradient(153deg, #fff1 7%, #bc9a741a 29%, #090806c8 87%),
+    var(--glass-fill);
+  box-shadow: inset 0 0 14.1px var(--glass-inner), 0 3px 9px #000b;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+/* HorizonX Components board, 304° specular edge and a 14.1px inner shadow.
+   Blur is confined to the highlighted, stationary panel. */
+.orbit-card__face.glass::before {
+  background: linear-gradient(304deg, #e5a276bf 3%, #ffdbab55 13%, #fff0 35%, #fff0 57%, #fff6e1c5 84%, #fff8ebd6 98%) border-box;
+}
+.orbit-card .halo-fill {
+  inset: 1px;
+  opacity: 0;
+  filter: grayscale(1) sepia(.42) brightness(.41);
+  clip-path: inset(0 100% 0 0 round var(--card-radius));
+  transition: opacity 250ms var(--ease), clip-path 350ms var(--ease);
+}
+.orbit-card[data-halo] .halo-fill {
+  opacity: 1;
+  clip-path: inset(0 round var(--card-radius));
+}
+.orbit-card[data-refracting] .orbit-card__face.glass {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: var(--panel-refraction, blur(10px));
+}
+.orbit-card__face::after {
+  content: "";
+  position: absolute;
+  left: 9%;
+  right: 9%;
+  bottom: 38%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--card-signal) 0 20%, #dec8ab4d 20% 83%, #dec8ab00 100%);
+  opacity: .58;
+}
+.orbit-card[data-active], .orbit-card:focus-visible { z-index: 9; }
+.orbit-card[data-active] .orbit-card__face.glass,
+.orbit-card:focus-visible .orbit-card__face.glass {
+  border-color: #fff0d8a6;
+  box-shadow: inset 0 0 14.1px #ffddad57, 0 0 14px #e8a35e29;
+}
+.orbit-card:focus-visible { outline-offset: 12px; }
+.orbit-card__art {
+  position: absolute;
+  top: 12%;
+  left: 9%;
+  width: 26%;
+  height: auto;
+  color: var(--card-signal);
+  stroke-width: 1.75;
+  filter: drop-shadow(0 0 4px #e9c29e5e);
+}
+.orbit-card__chip {
+  position: absolute;
+  top: 18%;
+  right: 10%;
+  width: 21%;
+  aspect-ratio: 2.6;
+  border: 1px solid #ead5c34a;
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 3px, #d4b89852 3px 4px) 6px 50% / calc(100% - 15px) 45% no-repeat,
+    radial-gradient(circle, var(--card-signal) 0 1px, transparent 1.5px) right 4px center / 4px 4px no-repeat,
+    #15110d;
+  box-shadow: inset 0 -1px 2px #0009;
+}
+.orbit-card__title {
+  position: absolute;
+  left: 9%;
+  right: 7%;
+  bottom: 12%;
+  white-space: nowrap;
+  font: 570 clamp(.86rem, 1.38vw, 1.22rem)/1.12 Geist, system-ui, sans-serif;
+  letter-spacing: -.025em;
+}
+.orbit-card__title .glyph-label { max-width: 100%; }
+
+@media (max-width: 700px) and (orientation: portrait) {
+  .orbit {
+    --belt-x: min(32vw, 164px, calc((100vw - var(--card-width)) / 2 - 16px));
+    --belt-y: min(29svh, 241px);
+    --belt-tilt: -8deg;
+    --card-width: clamp(104px, 30vw, 148px);
+  }
+  .moon { width: min(51vw, 34svh, 280px); }
+  .orbit-card { z-index: 6; }
+  .orbit-card__title { font-size: clamp(.80rem, 3.35vw, 1.05rem); }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .orbit { --card-width: clamp(110px, 26svh, 147px); --belt-y: 32svh; --belt-tilt: -8deg; }
+  .moon { width: min(34vw, 39svh); }
+  .orbit-card__title { font-size: clamp(.81rem, 3.3svh, .975rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary-action__face, .primary-action .halo-fill, .topbar .halo-fill, .moon__canvas, .orbit-card .halo-fill { transition: none; }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .orbit-card__face.glass, .orbit-card[data-refracting] .orbit-card__face.glass {
+    background: #211c17;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
