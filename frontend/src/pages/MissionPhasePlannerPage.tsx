@@ -8,9 +8,9 @@ export function MissionPhasePlannerPage() {
   return (
     <article className="phase-planner-page phases-workspace">
       <div className="planner-topline">
-        <Link to="/">
+        <a href="/brahmos/index.html?return=1#top">
           <ArrowLeft size={16} /> Back to overview
-        </Link>
+        </a>
         <span>BRAHMOS / FLIGHT DYNAMICS</span>
       </div>
 

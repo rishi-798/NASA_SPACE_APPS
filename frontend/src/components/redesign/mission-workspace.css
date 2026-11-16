@@ -36,3 +36,5 @@
 .mission-workspace .chronology-years .chronology-event time {font-size:11px;}
 .mission-workspace .chronology-line,.mission-workspace .chronology-years i {display:none;}
 .mission-workspace .timeline-filter-bar button[aria-pressed="true"] {background:var(--mw-orange)!important;border-color:var(--mw-orange)!important;}
+
+@media(max-width:1100px){.mission-workspace .mission-explore-link,.mission-workspace .timeline-filter-bar button,.mission-workspace .unscheduled-record a{min-height:44px;display:inline-flex;align-items:center}}
