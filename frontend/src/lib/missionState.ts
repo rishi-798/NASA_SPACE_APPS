@@ -80,7 +80,13 @@ export function restoreMission(raw: string | null, departures: string[], rocketI
       mission = missionReducer(mission, {type:"transfer-departure", time:data.transferDepartureUtcTime});
     else mission.transferDepartureUtcTime = new Date(Date.parse(mission.utcTime)-96*3600000).toISOString();
     if (typeof data.parkingAltitudeKm === "number") mission = missionReducer(mission, {type:"parking-altitude", altitude:data.parkingAltitudeKm});
-    // Keep saved choices, but always enter the planner at its first step.
-    return { ...mission, stage: "earth" };
+    // Restore editable progress, never persisted calculations. Completed/active
+    // simulations return to conditions so results are recalculated for this session.
+    const stages: TripStage[] = ["earth", "rocket", "moon", "landing", "preparing", "flight", "simulate", "reveal"];
+    const savedStage = stages.includes(data.stage as TripStage) ? data.stage! : "earth";
+    let stage: TripStage = ["preparing", "flight", "simulate", "reveal"].includes(savedStage) ? "landing" : savedStage;
+    if (stage !== "earth" && stage !== "rocket" && !mission.rocketId) stage = "rocket";
+    if (stage === "landing" && !mission.landing) stage = "moon";
+    return missionReducer({ ...mission, stage: "earth" }, { type: "stage", stage });
   } catch { return empty; }
 }

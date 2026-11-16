@@ -1,5 +1,5 @@
 import { ArrowUpRight, List, Moon, X } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 const links = [
@@ -12,11 +12,16 @@ const links = [
 export function Navigation() {
   const home = "/brahmos/index.html?return=1#top";
   const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpen(false);
+        menuButton.current?.focus();
+      }
     };
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
@@ -44,6 +49,7 @@ export function Navigation() {
       <NavLink className="nav-explore" to="/explorer">Open Explorer <ArrowUpRight aria-hidden="true" /></NavLink>
 
       <button
+        ref={menuButton}
         className="menu-button"
         type="button"
         aria-label={open ? "Close menu" : "Open menu"}
