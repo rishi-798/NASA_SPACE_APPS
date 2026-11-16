@@ -21,7 +21,7 @@ export function AppShell() {
         Skip to content
       </a>
       <OfflineNotice />
-      <Navigation />
+      <Navigation key={pathname} />
       <main id="main-content" className="page-frame" tabIndex={-1}>
         <Outlet />
       </main>
