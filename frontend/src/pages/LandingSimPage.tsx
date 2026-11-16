@@ -13,6 +13,7 @@ import { createSnapshotStore, type SimPhase } from "../sim/store";
 import { gridTerrain, syntheticPlane, type Terrain, type TerrainPatch } from "../sim/terrain";
 import type { RocketChoice } from "../data/tripCatalogue";
 import "../components/landing/landing.css";
+import "../components/redesign/landing-workspace.css";
 
 /** Where the terrain comes from: a team measured-terrain model at this point, the LOLA 80 m grid, or a synthetic plane. */
 type Scenario = "synthetic" | "scene" | "dem80";
@@ -252,9 +253,10 @@ export function LandingSimPage({ landing, rocket, onContinue, onBack }: { landin
   const running = phase === "running" || phase === "paused";
   const lockedConfig = running || phase === "replay";
 
-  return <article className="sim-page sim-embedded">
+  return <article className="sim-page sim-embedded landing-workspace">
     <header className="sim-header">
       <div>
+        <p className="landing-workspace-label">BRAHMOS / LANDING WORKSPACE</p>
         <p className="eyebrow">Educational prototype · not a validated flight simulator</p>
         <h2 className="sim-embedded-title">Descent over {landing.name}</h2>
         <p className="sim-lede">Final descent over a small square of terrain ({terrain ? `${(2 * terrain.halfSizeM) / 1000} km` : "up to 4 km"} across): lunar gravity, lander mass, thrust, fuel and terrain. 3-D point-mass motion with a simplified thrust-direction model.</p>
@@ -326,6 +328,7 @@ export function LandingSimPage({ landing, rocket, onContinue, onBack }: { landin
 
       {/* ------------------------------------------------ scene + controls */}
       <section className="sim-main" aria-label="Simulation view">
+        <div className="sim-viewport-card">
         <div className="sim-stage">
           {terrain ? <LandingScene terrain={terrain} store={store} exaggeration={exaggeration} targetRadiusM={TARGET_RADIUS_M} padRadiusM={vehicle.padRadiusM} overview={overview} landerScale={landerScale}
             terrainModel={scenario === "scene" ? currentPatch?.model ?? null : null}
@@ -333,6 +336,10 @@ export function LandingSimPage({ landing, rocket, onContinue, onBack }: { landin
             : <div className="sim-scene sim-scene-empty">{terrainError ?? "Loading terrain…"}</div>}
           {vehicleStatus !== "ready" && terrain && <p className="sim-model-status" role="status">{vehicleStatus === "loading" ? `Loading selected ${rocket.name} model…` : `The selected ${rocket.name} model is unavailable; contact discs show the position. No substitute rocket is shown.`}</p>}
           {terrain && <p className={`sim-badge ${terrain.kind === "synthetic" ? "sim-badge-synthetic" : ""}`}>{terrain.kind === "synthetic" ? "SYNTHETIC TRAINING SCENARIO · not a real site" : terrain.label}</p>}
+
+          {snap.source === "replay" && <p className="sim-replay-flag">REPLAY · recorded states</p>}
+        </div>
+
           <dl className="sim-hud" aria-live="off">
             <div><dt>Sim time</dt><dd>{simClock(s.t)}</dd></div>
             <div><dt>Altitude</dt><dd>{fmt(Math.max(0, s.altitudeM))} m</dd></div>
@@ -345,10 +352,9 @@ export function LandingSimPage({ landing, rocket, onContinue, onBack }: { landin
             <div><dt>Tilt</dt><dd>{fmt(Math.hypot(s.tilt[0], s.tilt[1]), 1)}°</dd></div>
             <div><dt>T/W (lunar)</dt><dd className={twr < 1 && s.propellantKg > 0 ? "warn" : ""}>{fmt(s.thrustN / (s.massKg * MOON_G), 2)} / {fmt(twr, 2)}</dd></div>
           </dl>
-          {snap.source === "replay" && <p className="sim-replay-flag">REPLAY · recorded states</p>}
         </div>
 
-        <div className="sim-controls">
+        <div className="sim-controls" role="group" aria-label="Simulation playback and display">
           {!running && phase !== "replay" && <button type="button" className="sim-primary" onClick={start} disabled={!terrain || errors.length > 0}><Play weight="fill" aria-hidden="true" /> Start</button>}
           {phase === "running" && <button type="button" className="sim-primary" onClick={pause}><Pause weight="fill" aria-hidden="true" /> Pause</button>}
           {phase === "paused" && <button type="button" className="sim-primary" onClick={start}><Play weight="fill" aria-hidden="true" /> Resume</button>}
@@ -391,11 +397,11 @@ export function LandingSimPage({ landing, rocket, onContinue, onBack }: { landin
         </div>
       </div>
       <p>{record.outcome?.explanation}</p>
-      {record.outcome && record.outcome.checks.length > 0 && <table className="sim-checks">
+      {record.outcome && record.outcome.checks.length > 0 && <div className="landing-checks-scroll"><table className="sim-checks">
         <thead><tr><th>Configured limit</th><th>Recorded</th><th>Limit</th><th>Result</th></tr></thead>
         <tbody>{record.outcome.checks.map((c) => <tr key={c.name}><th scope="row">{c.name}</th><td>{c.value === null ? "unknown" : `${c.value.toFixed(2)} ${c.unit}`}</td><td>{c.limit} {c.unit}</td>
           <td className={c.met === null ? "unknown" : c.met ? "met" : "exceeded"}>{c.met === null ? "not assessed" : c.met ? "met" : "exceeded"}</td></tr>)}</tbody>
-      </table>}
+      </table></div>}
       <dl className="sim-facts">
         {record.contact ? <>
           <div><dt>Touchdown</dt><dd>{simClock(record.contact.t)} at {fmt(record.contact.pos[0], 1)} m east, {fmt(record.contact.pos[1], 1)} m north ({fmt(Math.hypot(record.contact.pos[0], record.contact.pos[1]), 1)} m from target{Math.hypot(record.contact.pos[0], record.contact.pos[1]) <= TARGET_RADIUS_M ? ", inside the 50 m target area" : ""})</dd></div>
