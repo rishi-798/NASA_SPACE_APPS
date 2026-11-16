@@ -223,11 +223,16 @@ export function CislunarOrbitalCanvas({
 
   const transferCurveRef = useRef<THREE.CatmullRomCurve3 | null>(null);
 
+  const cameraPresetRef = useRef(cameraPreset);
+  useEffect(() => { cameraPresetRef.current = cameraPreset; }, [cameraPreset]);
+
   // Initialize Scene & WebGL Context
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
+    let disposed = false;
+    const loadedTextures = new Set<THREE.Texture>();
     // 1. Scene & Camera
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#05070a");
@@ -288,6 +293,8 @@ export function CislunarOrbitalCanvas({
     textureLoader.load(
       "/earth/2k-daymap.jpg",
       (texture) => {
+        if (disposed) { texture.dispose(); return; }
+        loadedTextures.add(texture);
         texture.colorSpace = THREE.SRGBColorSpace;
         earthMat.map = texture;
         earthMat.color.set(0xffffff);
@@ -313,6 +320,8 @@ export function CislunarOrbitalCanvas({
       blending: THREE.AdditiveBlending,
     });
     textureLoader.load("/earth/2k-clouds.jpg", (tex) => {
+      if (disposed) { tex.dispose(); return; }
+      loadedTextures.add(tex);
       tex.colorSpace = THREE.SRGBColorSpace;
       cloudsMat.map = tex;
       cloudsMat.needsUpdate = true;
@@ -336,6 +345,8 @@ export function CislunarOrbitalCanvas({
     textureLoader.load(
       "/moon-lroc-2k.jpg",
       (texture) => {
+        if (disposed) { texture.dispose(); return; }
+        loadedTextures.add(texture);
         texture.colorSpace = THREE.SRGBColorSpace;
         moonMat.map = texture;
         moonMat.color.set(0xffffff);
@@ -468,7 +479,7 @@ export function CislunarOrbitalCanvas({
       if (moonMeshRef.current) moonMeshRef.current.rotation.y += 0.0002;
 
       // Smooth camera interpolation towards target when user is not manually interacting
-      if (cameraPreset === "vehicle" && spacecraftRef.current) {
+      if (cameraPresetRef.current === "vehicle" && spacecraftRef.current) {
         const pos = spacecraftRef.current.position;
         targetCamPosRef.current.set(pos.x + 0.28, pos.y + 0.18, pos.z + 0.55);
         targetCamLookRef.current.copy(pos);
@@ -487,7 +498,20 @@ export function CislunarOrbitalCanvas({
     animate();
 
     return () => {
+      disposed = true;
       cancelAnimationFrame(animId);
+      controls.dispose();
+      const geometries = new Set<THREE.BufferGeometry>();
+      const materials = new Set<THREE.Material>();
+      scene.traverse((object) => {
+        if (object instanceof THREE.Mesh || object instanceof THREE.Line || object instanceof THREE.Points) {
+          geometries.add(object.geometry);
+          for (const material of Array.isArray(object.material) ? object.material : [object.material]) materials.add(material);
+        }
+      });
+      geometries.forEach((geometry) => geometry.dispose());
+      materials.forEach((material) => material.dispose());
+      loadedTextures.forEach((texture) => texture.dispose());
       resizeObserver.disconnect();
       if (renderer.domElement && container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
@@ -517,7 +541,7 @@ export function CislunarOrbitalCanvas({
 
   // Automatic Camera Alignment on Phase Change
   useEffect(() => {
-    if (cameraPreset !== "vehicle") {
+    if (cameraPresetRef.current !== "vehicle") {
       if (activePhaseId === "ascent" || activePhaseId === "parking") {
         onCameraPresetChange("earth");
       } else if (activePhaseId === "tli" || activePhaseId === "cruise") {
