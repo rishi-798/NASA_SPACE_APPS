@@ -25,6 +25,7 @@ import { formatCoordinate } from "../lib/format";
 import { conditionsAt, idlePlayback, playbackReducer, SPEEDS } from "../lib/playback";
 import { createRequestGate } from "../lib/requestGate";
 import type { AnalysisResult, AnalysisState, ComparisonResult } from "../types";
+import "../components/redesign/explorer-workspace.css";
 
 const DEFAULT_INPUT: RangeInput = {
   startDate: "2026-10-03", startTime: "18:00", endDate: "2026-10-04", endTime: "18:00", stepMinutes: "30",
@@ -207,12 +208,13 @@ function ExplorerWorkspace() {
   const loadingScreen = useLoadingScreen(analysisState === "loading" || comparisonState === "loading");
 
   return (
-    <article ref={root} className="explorer-page">
+    <article ref={root} className="explorer-page explorer-workspace">
       <LoadingScreen visible={loadingScreen.visible} ready={loadingScreen.ready} onDismiss={loadingScreen.dismiss} message={comparisonState === "loading" ? "Comparing both sites" : undefined} />
       <header className="explorer-context" data-reveal>
         <div>
-          <p className="eyebrow">Lunar surface operations</p>
-          <h1>Landing condition explorer</h1>
+          <p className="eyebrow">BRAHMOS / LUNAR OBSERVATORY</p>
+          <h1>Analyze a site<span className="ew-title-dot">.</span></h1>
+          <p className="ew-subtitle">Explore measured terrain, follow sunlight, and find Earth in the lunar sky.</p>
         </div>
         <dl className="context-coordinates">
           <div><dt>LAT</dt><dd>{formatCoordinate(location.latitude, "lat")}</dd></div>
@@ -223,6 +225,20 @@ function ExplorerWorkspace() {
 
       {searchParams.get("context") && <p className="trip-notice" role="note">{searchParams.get("context")?.slice(0, 500)}</p>}
       <div className="explorer-grid">
+        <aside className="explorer-setup" aria-label="Analysis setup">
+          <ExplorerControls
+            sites={landingSites}
+            selectedId={pickedLocation ? "custom" : selectedSite.id}
+            customLocation={!!pickedLocation}
+            input={input}
+            check={check}
+            loading={analysisState === "loading"}
+            horizonExpectation={horizonExpectation(!!pickedLocation, location.latitude)}
+            onSiteChange={selectSite}
+            onInputChange={changeInput}
+            onSubmit={analyze}
+          />
+        </aside>
         <div className="explorer-visual" data-reveal>
           <div className="visual-view-header">
             <div className="visual-view-toggle" role="group" aria-label="Visual view mode">
@@ -284,18 +300,6 @@ function ExplorerWorkspace() {
           )}
         </div>
         <aside className="explorer-sidebar" data-reveal>
-          <ExplorerControls
-            sites={landingSites}
-            selectedId={pickedLocation ? "custom" : selectedSite.id}
-            customLocation={!!pickedLocation}
-            input={input}
-            check={check}
-            loading={analysisState === "loading"}
-            horizonExpectation={horizonExpectation(!!pickedLocation, location.latitude)}
-            onSiteChange={selectSite}
-            onInputChange={changeInput}
-            onSubmit={analyze}
-          />
           <ConditionsPanel
             conditions={active}
             state={analysisState}

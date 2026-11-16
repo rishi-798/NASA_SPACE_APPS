@@ -309,7 +309,7 @@ export function MissionPhasePlanner() {
             <div className="metric-box">
               <span className="m-label">MOON DISTANCE</span>
               <strong className="m-val">{Math.round(telemetry.distMoonKm).toLocaleString()} <small>km</small></strong>
-              <span className="m-sub">Target perilune</span>
+              <span className="m-sub">Illustrative distance to Moon centre</span>
             </div>
 
             <div className="metric-box">
@@ -453,7 +453,7 @@ export function MissionPhasePlanner() {
             )}
             {activePhase.id === "ascent" && (
               <Link to="/trip" className="btn-handoff">
-                Inspect Flight Departure Sites <ArrowRight size={16} />
+                Plan a trip <ArrowRight size={16} />
               </Link>
             )}
             {activePhase.id === "parking" && (

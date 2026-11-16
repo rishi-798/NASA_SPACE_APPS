@@ -356,7 +356,7 @@ export const MISSION_PHASES: MissionPhase[] = [
     name: "Powered Descent & Surface Touchdown",
     shortName: "Descent & Landing",
     tagline: "DOI deorbit, braking phase, terrain hazard avoidance & soft touchdown",
-    durationLabel: "12 to 14 minutes (PDI → Touchdown)",
+    durationLabel: "4-hour phase; 12–14 minutes of powered descent",
     startMetSeconds: 273600,
     endMetSeconds: 288000,
     deltaVBudgetMS: 2150,

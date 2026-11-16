@@ -1,0 +1,39 @@
+/* Route-scoped dashboard treatment; scene meshes, shaders and mission state are unchanged. */
+.trip-workspace { --tw-edge: #eac5a42e; max-width: 1640px; padding-top: 30px; color: #f8eee3; }
+.trip-workspace .trip-topline { flex-wrap: wrap; font: 10px/1.8 var(--mono); letter-spacing: .05em; color: #c7bbaa; }
+.trip-workspace .trip-topline > div { flex-wrap: wrap; }
+.trip-workspace .trip-progress { margin: 24px 0 30px; padding: 10px; border: 1px solid var(--tw-edge); border-radius: 24px; background: #ffffff04; gap: 8px; scrollbar-width: thin; }
+.trip-workspace .trip-progress button { min-height: 44px; border-color: transparent; padding: 10px 17px; }
+.trip-workspace .trip-progress button[aria-current] { color: #fff5e9; background: #d5af7f24; border-color: #eac5a455; box-shadow: inset 0 1px 2px #ffffff25; }
+.trip-workspace .trip-heading { padding-bottom: 28px; margin-bottom: 24px; border-bottom: 1px solid var(--tw-edge); }
+.trip-workspace .trip-heading h1 { max-width: 1000px; font-size: clamp(36px, 4.8vw, 68px); line-height: 1.1; font-weight: 470; letter-spacing: -.055em; }
+.trip-workspace .trip-heading p { color: #c0b9b0; font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; }
+.trip-workspace .trip-layout { gap: 20px; grid-template-columns: minmax(0, 1.7fr) minmax(300px, .9fr); align-items: start; }
+.trip-workspace .trip-visual { border-color: var(--tw-edge); border-radius: 24px; background: #030405; box-shadow: 0 20px 55px #0004; }
+.trip-workspace .trip-panel { border: 1px solid var(--tw-edge); border-radius: 24px; background: linear-gradient(145deg, #29231fd9, #121213ed 58%, #090a0cf5); box-shadow: inset 0 1px 1px #ffffff25, inset 0 0 14px #ffffff08, 0 14px 36px #0003; padding: 24px; gap: 18px; }
+.trip-workspace .trip-panel h2 { font-size: clamp(23px, 2.3vw, 32px); line-height: 1.2; }
+.trip-workspace .trip-site-list { gap: 8px; }
+.trip-workspace .trip-site-option { min-height: 68px; border-radius: 14px; border: 1px solid #ffffff13; background: #07080980; padding: 14px; }
+.trip-workspace .trip-site-option[aria-pressed=true] { border-color: #eac5a477; background: #d5af7f16; box-shadow: inset 2px 0 #eac5a4; }
+.trip-workspace :is(.trip-field input, .trip-field select) { min-height: 44px; max-width: 100%; color-scheme: dark; background: #060708a8; border: 1px solid #ffffff29; border-radius: 10px; }
+.trip-workspace .trip-primary { min-height: 46px; background: #f4eee5; color: #171310; border-color: #f4eee5; }
+.trip-workspace .trip-secondary { min-height: 44px; border-color: #ffffff30; background: #ffffff06; }
+.trip-workspace .trip-rocket-gallery { gap: 14px; padding: 20px 0; }
+.trip-workspace .trip-rocket-gallery button { border-color: var(--tw-edge); border-radius: 18px; background: #ffffff05; min-height: 130px; }
+.trip-workspace .trip-rocket-gallery button[aria-pressed=true] { border-color: #eac5a4; background: #d5af7f18; }
+.trip-workspace .trip-stat-list > div { border-color: var(--tw-edge); gap: 14px; }
+.trip-workspace .trip-stat-list dd, .trip-workspace .trip-note { overflow-wrap: anywhere; }
+.trip-workspace :is(a, button, input, select):focus-visible { outline: 2px solid #eac5a4; outline-offset: 4px; }
+@media (max-width: 1000px) {
+  .trip-workspace .trip-layout { grid-template-columns: minmax(0, 1fr); }
+  .trip-workspace .trip-visual { min-height: 440px; }
+  .trip-workspace :is(.trip-earth-wrap, .trip-space-scene) { min-height: 440px; }
+}
+@media (max-width: 600px) {
+  .trip-workspace { padding-top: 22px; }
+  .trip-workspace .trip-progress { border-radius: 18px; margin-bottom: 24px; }
+  .trip-workspace .trip-progress button { padding: 9px 12px; font-size: 11px; }
+  .trip-workspace .trip-panel { padding: 18px; }
+  .trip-workspace .trip-visual, .trip-workspace :is(.trip-earth-wrap, .trip-space-scene) { min-height: 380px; }
+  .trip-workspace .trip-heading h1 { font-size: clamp(34px, 9vw, 46px); }
+}

@@ -1,0 +1,48 @@
+/* Presentation only: the existing measured terrain and scientific controls remain mounted. */
+.explorer-workspace {
+  --ew-edge: #eac5a42e;
+  --ew-glass: linear-gradient(145deg, #29231fd9, #121213ed 58%, #090a0cf5);
+  padding-top: 34px;
+  color: #f8eee3;
+}
+.explorer-workspace .explorer-context { align-items: end; padding-bottom: 28px; margin-bottom: 24px; border-color: var(--ew-edge); }
+.explorer-workspace .explorer-context h1 { font-size: clamp(34px, 4.5vw, 64px); font-weight: 470; letter-spacing: -.055em; line-height: 1.1; margin-top: 12px; }
+.ew-title-dot { color: #eac5a4; }
+.ew-subtitle { color: #c0b9b0; font-size: 14px; line-height: 1.7; max-width: 48ch; margin: 16px 0 0; }
+.explorer-workspace .context-coordinates { flex-wrap: wrap; gap: 20px; padding: 16px 20px; border: 1px solid var(--ew-edge); border-radius: 18px; background: #ffffff04; }
+.explorer-workspace .explorer-grid { grid-template-columns: minmax(230px, .78fr) minmax(0, 1.8fr) minmax(270px, .95fr); gap: 18px; align-items: start; border: 0; }
+.explorer-workspace .explorer-setup { grid-column: 1; min-width: 0; }
+.explorer-workspace .explorer-visual { grid-column: 2; min-width: 0; border: 1px solid var(--ew-edge); border-radius: 24px; overflow: hidden; background: #030405; }
+.explorer-workspace .explorer-sidebar { grid-column: 3; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.explorer-workspace :is(.configuration, .conditions, .terrain-context) { border: 1px solid var(--ew-edge); border-radius: 24px; padding: 20px; background: var(--ew-glass); box-shadow: inset 0 1px 1px #ffffff25, inset 0 0 14px #ffffff08, 0 14px 36px #0003; min-width: 0; }
+.explorer-workspace .panel-heading { gap: 10px; margin-bottom: 20px; }
+.explorer-workspace .panel-heading h2 { font-size: 18px; line-height: 1.3; }
+.explorer-workspace .eyebrow { color: #eac5a4; font-size: 9px; letter-spacing: .12em; }
+.explorer-workspace .instrument-fields { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.explorer-workspace .instrument-field { min-width: 0; grid-column: 1; }
+.explorer-workspace :is(input:not([type=range]):not([type=checkbox]), select) { min-width: 0; max-width: 100%; min-height: 44px; color-scheme: dark; border-color: #ffffff29; background: #060708a8; border-radius: 10px; }
+.explorer-workspace .visual-view-header { padding: 14px; gap: 12px; flex-wrap: wrap; border-color: var(--ew-edge); background: #101114; }
+.explorer-workspace .visual-view-toggle { display: flex; flex-wrap: wrap; gap: 8px; }
+.explorer-workspace .visual-toggle-btn { min-height: 44px; border-radius: 100px; padding: 10px 15px; }
+.explorer-workspace .visual-view-badge { white-space: normal; font-size: 9px; line-height: 1.6; }
+.explorer-workspace .moon-explorer { min-height: 600px; }
+.explorer-workspace :is(.telemetry-values, .conditions-time, .terrain-context dl) { overflow-wrap: anywhere; }
+.explorer-workspace .analysis-grid { margin-top: 24px; }
+.explorer-workspace :is(button, a, input, select):focus-visible { outline: 2px solid #eac5a4; outline-offset: 4px; }
+@media (max-width: 1100px) {
+  .explorer-workspace .explorer-grid { grid-template-columns: minmax(0, 1fr); }
+  .explorer-workspace .explorer-visual { grid-column: 1; grid-row: 1; }
+  .explorer-workspace .explorer-setup { grid-column: 1; grid-row: 2; }
+  .explorer-workspace .explorer-sidebar { grid-column: 1; grid-row: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .explorer-workspace .instrument-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .explorer-workspace .instrument-field { grid-column: auto; }
+  .explorer-workspace .instrument-field-wide { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  .explorer-workspace { padding-top: 24px; }
+  .explorer-workspace .explorer-context { align-items: start; flex-direction: column; gap: 18px; }
+  .explorer-workspace .context-coordinates { width: 100%; justify-content: space-between; gap: 12px; padding: 14px; }
+  .explorer-workspace .explorer-sidebar, .explorer-workspace .instrument-fields { grid-template-columns: minmax(0, 1fr); }
+  .explorer-workspace .moon-explorer { min-height: 440px; }
+  .explorer-workspace :is(.configuration, .conditions, .terrain-context) { padding: 18px; }
+}

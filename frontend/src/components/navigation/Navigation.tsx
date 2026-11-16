@@ -1,4 +1,4 @@
-import { ArrowUpRight, List, Moon, X } from "@phosphor-icons/react";
+import { List, Moon, X } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 
@@ -45,8 +45,6 @@ export function Navigation() {
           </NavLink>
         ))}
       </nav>
-
-      <NavLink className="nav-explore" to="/explorer">Open Explorer <ArrowUpRight aria-hidden="true" /></NavLink>
 
       <button
         ref={menuButton}
