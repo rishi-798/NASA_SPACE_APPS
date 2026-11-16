@@ -235,7 +235,7 @@ export function TripPage() {
           {!filteredDepartures.length && <p role="status">No matching launch sites. Try a country or spaceport name.</p>}
           {departure && <div className="trip-selected"><strong>{departure.name} / {departure.pad}</strong><p>{departure.latitude.toFixed(2)}°, {departure.longitude.toFixed(2)}°</p><a href={departure.source} target="_blank" rel="noreferrer">Spaceport reference <ArrowUpRight /></a></div>}
           <label className="trip-field">Optional liftoff date and time (UTC)<input type="datetime-local" value={liftoffUtc} onChange={event => setLiftoffUtc(event.target.value)} /></label>
-          {departure && <LaunchWeatherPanel key={departure.id} siteId={departure.id} />}
+          {departure && <LaunchWeatherPanel key={departure.id} siteId={departure.id} liftoffUtc={liftoffUtc} />}
           <p className="trip-note">Pins are approximate prototype locations, not surveyed pad coordinates. Compatibility here is a catalogue association, not a launch approval.</p>
           <button className="trip-primary" disabled={!departure} onClick={() => go("rocket")}>Depart from here <ArrowRight /></button>
         </aside></div>}

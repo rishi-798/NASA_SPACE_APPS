@@ -124,6 +124,10 @@
 
 .launch-weather { min-width: 0; margin: 1.5rem 0; padding-top: 1.5rem; border-top: 1px solid var(--line); }
 .launch-weather h3 { margin: 0.5rem 0; font-size: 1.25rem; }
+.trip-weather-progress { color: #a8aab5; font-size: 0.82rem; line-height: 1.6; }
+.trip-weather-reading { animation: trip-weather-arrive 480ms ease-out both; }
+@keyframes trip-weather-arrive { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .trip-weather-reading { animation-duration: 1ms; } }
 .launch-weather details { margin: 1rem 0; }
 .launch-weather summary { cursor: pointer; }
 .launch-weather-table { max-width: 100%; max-height: 320px; overflow: auto; margin-top: 0.75rem; }

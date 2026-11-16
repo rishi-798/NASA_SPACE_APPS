@@ -6,45 +6,65 @@ const formatTime = (value: string) => new Intl.DateTimeFormat('en', {
 }).format(new Date(value));
 const reading = (value: number | null, unit: string) => value === null ? 'Unavailable' : `${value.toFixed(1)} ${unit}`;
 
-export function LaunchWeatherPanel({ siteId }: { siteId: string }) {
+const revealRows = [
+  ['Temperature at 2 m', 'temperature_c', '°C'],
+  ['Wind speed at 10 m', 'wind_speed_ms', 'm/s'],
+  ['Cloud cover', 'cloud_cover_pct', '%'],
+  ["Preceding hour’s precipitation", 'precipitation_mm', 'mm'],
+] as const;
+
+export function LaunchWeatherPanel({ siteId, liftoffUtc }: { siteId: string; liftoffUtc: string }) {
   const [weather, setWeather] = useState<LaunchWeather | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [revealed, setRevealed] = useState(0);
+  const [loadingStep, setLoadingStep] = useState(0);
   const active = useRef<AbortController | null>(null);
-  useEffect(() => () => active.current?.abort(), []);
-
-  async function load() {
+  useEffect(() => {
     active.current?.abort();
+    setWeather(null); setError(''); setRevealed(0); setLoadingStep(0);
+    if (!liftoffUtc || !Number.isFinite(Date.parse(`${liftoffUtc}:00Z`))) { setLoading(false); return; }
     const controller = new AbortController();
     active.current = controller;
     const timeout = window.setTimeout(() => controller.abort('timeout'), 35000);
-    setLoading(true); setError(''); setWeather(null);
-    try {
-      const result = await getLaunchWeather(siteId, controller.signal);
-      if (!controller.signal.aborted) setWeather(result);
-    } catch (cause) {
-      if (!controller.signal.aborted || controller.signal.reason === 'timeout') {
-        setError(controller.signal.reason === 'timeout' ? 'Weather request timed out. Please retry.' : cause instanceof Error ? cause.message : 'Weather unavailable. Please retry.');
+    setLoading(true);
+    const stepTimer = window.setInterval(() => setLoadingStep(step => Math.min(step + 1, 2)), 850);
+    void (async () => {
+      try {
+        const result = await getLaunchWeather(siteId, controller.signal);
+        if (!controller.signal.aborted) setWeather(result);
+      } catch (cause) {
+        if (!controller.signal.aborted || controller.signal.reason === 'timeout') {
+          setError(controller.signal.reason === 'timeout' ? 'Weather request timed out. Change the date or time to try again.' : cause instanceof Error ? cause.message : 'Weather unavailable. Change the date or time to try again.');
+        }
+      } finally {
+        window.clearTimeout(timeout); window.clearInterval(stepTimer);
+        if (active.current === controller) setLoading(false);
       }
-    } finally {
-      window.clearTimeout(timeout);
-      if (active.current === controller && (!controller.signal.aborted || controller.signal.reason === 'timeout')) setLoading(false);
-    }
-  }
+    })();
+    return () => { window.clearTimeout(timeout); window.clearInterval(stepTimer); controller.abort(); };
+  }, [siteId, liftoffUtc]);
+  useEffect(() => {
+    if (!weather) return;
+    setRevealed(0);
+    const timer = window.setInterval(() => setRevealed(count => {
+      if (count >= revealRows.length) { window.clearInterval(timer); return count; }
+      return count + 1;
+    }), 420);
+    return () => window.clearInterval(timer);
+  }, [weather]);
   const first = weather?.samples[0];
   return <section className="launch-weather" aria-label="Launch-site weather" aria-busy={loading}>
     <p className="trip-section-label">Earth departure / Meteomatics</p>
     <h3>Launch-site weather</h3>
-    <p className="trip-note">Latest 24-hour forecast, independent of your lunar observation date. Approximate pad location; not a launch clearance.</p>
-    {loading && <p role="status">Fetching the hourly forecast…</p>}
+    <p className="trip-note">Set a liftoff date and time to load the latest 24-hour forecast. Approximate pad location; not a launch clearance.</p>
+    {!liftoffUtc && <p className="trip-weather-progress">Choose a liftoff date and time to load weather.</p>}
+    {loading && <p className="trip-weather-progress" role="status" aria-live="polite">{['Connecting to the weather service…', 'Reading temperature, wind, and cloud cover…', 'Preparing the forecast…'][loadingStep]}</p>}
     {error && <p className="trip-notice" role="alert">{error}</p>}
     {weather && first && <>
       <p className="trip-note">{weather.site_name}<br /><time dateTime={weather.start}>{formatTime(weather.start)}</time> – <time dateTime={weather.end}>{formatTime(weather.end)}</time> UTC</p>
-      <dl className="trip-stat-list">
-        <div><dt>Temperature at 2 m</dt><dd>{reading(first.temperature_c, '°C')}</dd></div>
-        <div><dt>Wind speed at 10 m</dt><dd>{reading(first.wind_speed_ms, 'm/s')}</dd></div>
-        <div><dt>Cloud cover</dt><dd>{reading(first.cloud_cover_pct ?? null, '%')}</dd></div>
-        <div><dt>Preceding hour’s precipitation</dt><dd>{reading(first.precipitation_mm, 'mm')}</dd></div>
+      <dl className="trip-stat-list" aria-live="polite">
+        {revealRows.map(([label, field, unit], index) => revealed > index && <div className="trip-weather-reading" key={field} style={{ animationDelay: '0ms' }}><dt>{label}</dt><dd>{reading(first[field] ?? null, unit)}</dd></div>)}
       </dl>
       <p className="trip-note">First hourly forecast: {formatTime(first.time)} UTC. {weather.partial && 'Some readings are unavailable.'}</p>
       <details><summary>View hourly forecast</summary>
@@ -56,7 +76,6 @@ export function LaunchWeatherPanel({ siteId }: { siteId: string }) {
       </details>
       <p className="trip-note">Fetched {formatTime(weather.fetched_at)} UTC. {weather.generated_at && `Provider generated ${formatTime(weather.generated_at)} UTC.`} Forecasts are cached for the current UTC hour.</p>
     </>}
-    <button className="trip-secondary" disabled={loading} onClick={() => void load()}>{loading ? 'Loading weather…' : error ? 'Retry weather' : weather ? 'Reload weather' : 'Load launch-site weather'}</button>
     <a className="source-link" href="https://www.meteomatics.com/en/weather-api/" target="_blank" rel="noreferrer">Weather data: Meteomatics</a>
   </section>;
 }
