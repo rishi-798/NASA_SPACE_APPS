@@ -1,4 +1,4 @@
-import { DownloadSimple, Pause, Play, ArrowCounterClockwise, Warning, Robot, GameController } from "@phosphor-icons/react";
+import { DownloadSimple, Pause, Play, ArrowRight, ArrowCounterClockwise, Warning, Robot, GameController } from "@phosphor-icons/react";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { LandingScene } from "../components/landing/LandingScene";
 import { loadBlenderTerrain } from "../components/landing/blenderTerrain";
@@ -261,6 +261,7 @@ export function LandingSimPage({ landing, rocket, onContinue, onBack }: { landin
       </div>
       <p className="sim-timebase"><strong>Simulation time (T+)</strong> counts from the start of the descent. It is not linked to the UTC observation time chosen in the previous step.</p>
     </header>
+    {onContinue && <nav className="sim-step-nav sim-step-nav-top" aria-label="Landing next step"><button type="button" className="sim-primary" onClick={onContinue}>Next: Overview <ArrowRight aria-hidden="true" /></button></nav>}
     {entry.note && <div className="sim-alert" role="status"><Warning aria-hidden="true" /> {entry.note}</div>}
 
     <div className="sim-layout">
@@ -437,7 +438,7 @@ export function LandingSimPage({ landing, rocket, onContinue, onBack }: { landin
 
     <div className="sim-step-nav">
       {onBack && <button type="button" onClick={onBack}>Back to flight</button>}
-      {onContinue && <button type="button" className="sim-primary" onClick={onContinue} disabled={phase === "running" || phase === "replay"}>Continue to overview</button>}
+      {onContinue && <button type="button" className="sim-primary" onClick={onContinue}>Next: Overview <ArrowRight aria-hidden="true" /></button>}
       <small>The simulation is optional: you can continue at any time.</small>
     </div>
 

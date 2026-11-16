@@ -246,6 +246,6 @@ arrow keys tilt, Z full, X cut, C centre tilt, Space start/pause).
   - **A custom point south of about 80° S:** the real LOLA 80 m grid at that exact point.
   - **Any other point:** no real terrain exists, so a clear notice appears and the **synthetic training scenario** is
     used. It is labelled, and never silently substituted.
-  - The step is optional: **Continue to overview** works at any time, and **Back to flight** keeps your analysis.
+  - The step is optional: **Next: Overview** is available above and below the simulator, including during a run, and **Back to flight** keeps your analysis.
 - Step 7, **Overview**: the mission record.
 - Simulation time (T+) starts at 0 for each run and is separate from the UTC observation time chosen in step 4.

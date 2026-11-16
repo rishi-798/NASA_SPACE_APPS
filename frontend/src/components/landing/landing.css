@@ -95,4 +95,5 @@ kbd { padding: 0.05rem 0.35rem; border: 1px solid var(--line-strong); border-rad
 .sim-embedded { padding: 0; max-width: none; }
 .sim-embedded-title { margin: 0.2rem 0 0.4rem; font-size: 1.4rem; font-weight: 500; }
 .sim-step-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 1rem; }
+.sim-step-nav-top { margin-bottom: 1rem; }
 .sim-step-nav small { color: var(--quiet); }
