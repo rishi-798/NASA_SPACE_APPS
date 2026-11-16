@@ -2,18 +2,18 @@ import { lazy, Suspense, useEffect } from "react";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
 
-function CinematicHome() {
+function CinematicHome({ section }: { section?: string }) {
   const { search, hash } = useLocation();
+  const targetHash = section ?? hash;
   useEffect(() => {
-    window.location.replace(`/brahmos/index.html${search}${hash}`);
-  }, [search, hash]);
-  return <p role="status">Opening BRAHMOS… <a href={`/brahmos/index.html${search}${hash}`}>Continue to home</a></p>;
+    window.location.replace(`/brahmos/index.html${search}${targetHash}`);
+  }, [search, targetHash]);
+  return <p role="status">Opening BRAHMOS… <a href={`/brahmos/index.html${search}${targetHash}`}>Continue to home</a></p>;
 }
 
 const ExplorerPage = lazy(() => import("./pages/ExplorerPage").then((module) => ({ default: module.ExplorerPage })));
 const MissionsPage = lazy(() => import("./pages/MissionsPage").then((module) => ({ default: module.MissionsPage })));
 const TimelinePage = lazy(() => import("./pages/TimelinePage").then((module) => ({ default: module.TimelinePage })));
-const AboutPage = lazy(() => import("./pages/AboutPage").then((module) => ({ default: module.AboutPage })));
 const TripPage = lazy(() => import("./pages/TripPage").then((module) => ({ default: module.TripPage })));
 const DiscoverPage = lazy(() => import("./discover20261114/DiscoverPage20261114").then((module) => ({ default: module.DiscoverPage20261114 })));
 const GamePage = lazy(() => import("./pages/GamePage").then((module) => ({ default: module.GamePage })));
@@ -54,7 +54,7 @@ export function App() {
         <Route path="/analyze" element={<Navigate replace to="/explorer" />} />
         <Route path="/missions" element={<MissionsPage />} />
         <Route path="/timeline" element={<TimelinePage />} />
-        <Route path="/about" element={<AboutPage />} />
+        <Route path="/about" element={<CinematicHome section="#about" />} />
         <Route path="/trip" element={<TripPage />} />
         <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/landing" element={<Navigate replace to="/trip" />} />
