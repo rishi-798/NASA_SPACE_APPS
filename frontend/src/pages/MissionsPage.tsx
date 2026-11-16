@@ -10,21 +10,30 @@ import { Link } from "react-router-dom";
 import { RouteIntro } from "../components/ui/RouteIntro";
 import { missions, landingSites, missionRecordCount } from "../data/landingSites";
 
+import { formatCoordinate } from "../lib/format";
+import "../components/redesign/mission-workspace.css";
+
 import { missionEvents, missionFacts } from "../data/missionEvents";
 
 export function MissionsPage() {
   const [selectedId, setSelectedId] = useState(missions[0]?.id ?? "");
-  const selected = missions.find((m) => m.id === selectedId) ?? missions[0]!;
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("all");
+  const [kind, setKind] = useState("all");
+  const filtered = missions.filter((mission) =>
+    (status === "all" || mission.status === status) && (kind === "all" || mission.missionType === kind) &&
+    `${mission.name} ${mission.provider} ${mission.landingArea}`.toLowerCase().includes(query.toLowerCase().trim()));
+  const selected = filtered.find((m) => m.id === selectedId) ?? filtered[0];
 
-  const explorerUrl = missionExplorerUrl(selected);
-  const facts = missionFacts.find((record) => record.siteId === selected.siteId);
-  const events = missionEvents.filter((event) => event.siteId === selected.siteId);
+  const explorerUrl = selected ? missionExplorerUrl(selected) : null;
+  const facts = missionFacts.find((record) => record.siteId === selected?.siteId);
+  const events = missionEvents.filter((event) => event.siteId === selected?.siteId);
 
   return (
-    <article className="editorial-page missions-page">
+    <article className="editorial-page missions-page mission-workspace">
       <RouteIntro
-        eyebrow="CLPS & Artemis mission archive"
-        title={<>THE MISSION<br />ARCHIVE.</>}
+        eyebrow="BRAHMOS / MISSION INTELLIGENCE"
+        title={<>Mission catalogue<span className="mw-title-dot">.</span></>}
         description="Selected CLPS deliveries, crewed flybys, and orbital demonstrations, with verified sources and landing areas where applicable."
         side={
           <div className="dataset-readout">
@@ -34,6 +43,12 @@ export function MissionsPage() {
         }
       />
 
+      <div className="mw-toolbar" role="search" aria-label="Filter mission catalogue">
+        <div className="mw-filter"><label htmlFor="mw-search">Search missions</label><input id="mw-search" type="search" placeholder="Mission, provider or destination" value={query} onChange={(event) => setQuery(event.target.value)} />
+        </div><div className="mw-filter"><label htmlFor="mw-status">Status</label><select id="mw-status" value={status} onChange={(event) => setStatus(event.target.value)}><option value="all">All statuses</option>{[...new Set(missions.map((m) => m.status))].map((value) => <option key={value}>{value}</option>)}</select>
+        </div><div className="mw-filter"><label htmlFor="mw-type">Mission type</label><select id="mw-type" value={kind} onChange={(event) => setKind(event.target.value)}><option value="all">All mission types</option><option value="surface">Lunar surface</option><option value="flyby">Lunar flyby</option><option value="orbital-demo">Earth-orbit demonstration</option></select>
+        </div><p role="status">{filtered.length} / {missionRecordCount} records</p>
+      </div>
       <div className="mission-browser">
         <section className="mission-index" aria-label="Mission records">
           <div className="mission-columns" aria-hidden="true">
@@ -41,12 +56,13 @@ export function MissionsPage() {
             <span>Target area</span>
             <span>Status</span>
           </div>
-          {missions.map((m) => (
+          {!filtered.length && <div className="mw-empty"><h2>No missions match these filters</h2><p>Try another name or reset the catalogue filters.</p><button type="button" onClick={() => { setQuery(""); setStatus("all"); setKind("all"); }}>Reset filters</button></div>}
+          {filtered.map((m) => (
             <div key={m.id} className="mission-row-with-action"><button
-              className={`mission-row${m.id === selected.id ? " mission-row-selected" : ""}`}
+              className={`mission-row${m.id === selected?.id ? " mission-row-selected" : ""}`}
               key={m.id}
               type="button"
-              aria-pressed={m.id === selected.id}
+              aria-pressed={m.id === selected?.id}
               onClick={() => setSelectedId(m.id)}
             >
               <strong>{m.name}</strong>
@@ -63,7 +79,7 @@ export function MissionsPage() {
           ))}
         </section>
 
-        <aside className="mission-detail" aria-live="polite">
+        {selected && <aside className="mission-detail" aria-live="polite" aria-label="Selected mission details">
           <div className="mission-detail-topline">
             <span>{selected.provider.toUpperCase()}</span>
             <span>{selected.year} · {selected.status.toUpperCase()}</span>
@@ -100,8 +116,9 @@ export function MissionsPage() {
             </div>
             <div>
               <dt>Payload highlights</dt>
-              <dd>{selected.payloads.join(", ")}</dd>
+              <dd>{selected.payloads.length ? selected.payloads.join(", ") : "Unavailable in cited mission sources"}</dd>
             </div>
+            {Number.isFinite(selected.latitude) && Number.isFinite(selected.longitude) && <div><dt>Lunar coordinates · east-positive longitude</dt><dd>{formatCoordinate(selected.latitude!, "lat")} / {formatCoordinate(selected.longitude!, "lon")}</dd></div>}
             {facts && <div><dt>Outcome</dt><dd>{facts.outcome}</dd></div>}
           </dl>
           {events.length > 0 && <ul className="evidence-list" aria-label="Dated events">
@@ -119,7 +136,7 @@ export function MissionsPage() {
               {index === 0 ? "Mission source" : `Supporting source ${index}`} <ArrowUpRight />
             </a>)}
           </div>
-        </aside>
+        </aside>}
       </div>
     </article>
   );
