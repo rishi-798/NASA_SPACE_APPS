@@ -30,7 +30,7 @@ export function AppShell() {
           <a className="footer-wordmark" href="/brahmos/index.html?return=1#top">BRAHMOS</a>
           <nav aria-label="Footer navigation">
             <a href="/brahmos/index.html?return=1#about">About</a>
-            <Link to="/explorer">Explorer <ArrowUpRight aria-hidden="true" /></Link>
+            <Link to="/explorer">Analyze a site <ArrowUpRight aria-hidden="true" /></Link>
             <Link to="/trip">Plan a trip</Link>
             <Link to="/planner">Flight phases</Link>
             <Link to="/missions">Missions</Link>
