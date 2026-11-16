@@ -147,9 +147,8 @@ export function MissionFlightAnimation({data,modelUrl,modelName,modelCredit}:{da
       earth.quaternion.copy(orientation(a.earth_orientation).slerp(orientation(b.earth_orientation),fraction));
       moon.quaternion.copy(orientation(a.moon_orientation).slerp(orientation(b.moon_orientation),fraction));
       const velocity=point(active.spacecraft_velocity_km_s).normalize();
-      const approachProgress=THREE.MathUtils.smoothstep(progress,0.78,0.95);
-      const targetVelocity=approachProgress>0?velocity.clone().lerp(velocity.clone().negate(),approachProgress).normalize():velocity;
-      spacecraft.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),targetVelocity);
+      // Keep the nose aligned with forward motion through arrival; no illustrative turnaround.
+      spacecraft.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),velocity);
       const sunDirection=point(active.sun_direction).normalize();sunlight.position.copy(sunDirection.clone().multiplyScalar(20));sun.position.copy(sunDirection.multiplyScalar(42));glow.position.copy(sun.position);
       moonLabel.position.copy(moon.position).y+=moonRadius+.025;ghostLabel.position.copy(ghost.position).y+=moonRadius+.025;ghostLabel.visible=moon.position.distanceTo(ghost.position)>.15;ghost.visible=ghostLabel.visible;
       const {mode,serial}=focusRef.current;
