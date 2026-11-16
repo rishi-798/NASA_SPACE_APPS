@@ -13,3 +13,5 @@
 .phases-workspace .planner-step-tab.active .step-badge {color:#ffbe9c;background:#493027;}
 /* Keep text compositing predictable over the WebGL viewport on narrow screens. */
 @media(max-width:600px){.phases-workspace .hud-metric,.phases-workspace .planner-timeline-bar{backdrop-filter:none;background:#0a111ced;}}
+
+@media(max-width:1100px){.phases-workspace :is(.cam-btn,.rate-btn,.btn-play,.btn-reset,.tab-btn,.planner-topline a){min-height:44px;min-width:44px}.phases-workspace .planner-topline a{display:inline-flex;align-items:center}}

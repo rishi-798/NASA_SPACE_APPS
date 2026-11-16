@@ -215,7 +215,7 @@ export function TripPage() {
   return <article className="trip-page trip-workspace" data-trip-stage={mission.stage}>
     <LoadingScreen visible={loadingScreen.visible} ready={loadingScreen.ready} onDismiss={loadingScreen.dismiss} message="Analyzing your landing site" />
     <div className="trip-topline">
-      <Link to="/"><ArrowLeft /> Back to website</Link>
+      <a href="/brahmos/index.html?return=1#top"><ArrowLeft /> Back to website</a>
       <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
         <Link to="/planner" style={{ color: "#38bdf8", textDecoration: "none", fontSize: "0.82rem", fontWeight: 600 }}>
           Mission Phase Planner
