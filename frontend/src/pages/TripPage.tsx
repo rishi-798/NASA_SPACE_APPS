@@ -25,6 +25,7 @@ import { formatCoordinate } from "../lib/format";
 import { missionReady, missionReducer, restoreMission, type TripStage } from "../lib/missionState";
 import type { AnalysisResult, AnalysisState } from "../types";
 import "../trip.css";
+import "../components/redesign/trip-workspace.css";
 
 const EarthGlobe = lazy(() => import("../components/trip/EarthGlobe").then((module) => ({ default: module.EarthGlobe })));
 const SpaceScene = lazy(() => import("../components/trip/SpaceScene").then((module) => ({ default: module.SpaceScene })));
@@ -211,7 +212,7 @@ export function TripPage() {
   function go(stage: TripStage) { active.current?.abort(); dispatch({ type: "stage", stage }); }
   const title = mission.stage === "earth" ? "Where will you leave from?" : mission.stage === "rocket" ? "Choose your ride." : mission.stage === "moon" ? "Find your place on the Moon." : mission.stage === "flight" ? "Your journey to the Moon." : mission.stage === "simulate" ? "Now, land it." : mission.stage === "reveal" ? "Your mission. In context." : "Look before you land.";
 
-  return <article className="trip-page">
+  return <article className="trip-page trip-workspace" data-trip-stage={mission.stage}>
     <LoadingScreen visible={loadingScreen.visible} ready={loadingScreen.ready} onDismiss={loadingScreen.dismiss} message="Analyzing your landing site" />
     <div className="trip-topline">
       <Link to="/"><ArrowLeft /> Back to website</Link>
@@ -219,7 +220,7 @@ export function TripPage() {
         <Link to="/planner" style={{ color: "#38bdf8", textDecoration: "none", fontSize: "0.82rem", fontWeight: 600 }}>
           Mission Phase Planner
         </Link>
-        <span>TEAM BRAHMOS / MISSION PROTOTYPE</span>
+        <span>BRAHMOS / MISSION WORKSPACE</span>
       </div>
     </div>
     <nav className="trip-progress" aria-label="Trip progress">{stages.map((stage, index) => <button key={stage.id} type="button" aria-current={mission.stage === stage.id ? "step" : undefined}
